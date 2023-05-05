@@ -35,7 +35,7 @@ def collectProcessOnSample(entry, entry_id, entry_data):
             {"previous_process": entry_data["previous_process"]})
     # Check if it is a layer deposition
     import inspect
-    import nomad.datamodel.metainfo.eln
+    import baseclasses
 
     entry[entry_id].update({"layer_deposition": False})
     if baseclasses.LayerDeposition in inspect.getmro(
