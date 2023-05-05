@@ -17,7 +17,7 @@
 #
 
 from nomad.datamodel.metainfo.eln import SampleID
-from . import BatchID
+from .. import BatchID
 
 from ..helper.utilities import get_reference, create_archive, get_entry_id_from_file_name, add_section_markdown
 
