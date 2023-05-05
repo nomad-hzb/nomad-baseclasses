@@ -35,7 +35,7 @@ def collectProcessOnSample(entry, entry_id, entry_data):
             {"previous_process": entry_data["previous_process"]})
     # Check if it is a layer deposition
     import inspect
-    import baseclasses
+    import baseclasses, hysprint_s
 
     entry[entry_id].update({"layer_deposition": False})
     if baseclasses.LayerDeposition in inspect.getmro(
@@ -138,7 +138,7 @@ def collectSampleData(archive):
     from nomad.search import search
     from nomad.app.v1.models import MetadataPagination
     from nomad import files
-    import baseclasses
+    import baseclasses, hysprint_s
     import inspect
 
     # search for all archives referencing this archive
