@@ -26,6 +26,7 @@ from nomad.datamodel.data import ArchiveSection
 
 from ..solution import Solution
 from .. import LayerDeposition
+from ..material_processes_misc import Annealing
 
 
 class SlotDieCoatingProperties(ArchiveSection):
@@ -68,8 +69,15 @@ class SlotDieCoatingProperties(ArchiveSection):
             component='NumberEditQuantity',
             defaultDisplayUnit='ml/minute', props=dict(minValue=0)))
 
-    length_of_die_head = Quantity(type=np.dtype(np.float64), unit=('mm'), a_eln=dict(
-        component='NumberEditQuantity', defaultDisplayUnit='mm, props=dict(minValue=0)'))
+    length_of_die_head = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=('mm'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mm',
+            props=dict(
+                minValue=0)))
 
     temperature = Quantity(
         type=np.dtype(
@@ -96,6 +104,7 @@ class SlotDieCoating(LayerDeposition):
     '''Spin Coating'''
 
     properties = SubSection(section_def=SlotDieCoatingProperties)
+    annealing = SubSection(section_def=Annealing)
 
     def normalize(self, archive, logger):
         super(SlotDieCoating, self).normalize(archive, logger)

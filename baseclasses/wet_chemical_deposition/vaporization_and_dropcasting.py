@@ -27,7 +27,7 @@ from nomad.metainfo import (
 from nomad.datamodel.data import ArchiveSection
 
 from ..solution import Solution
-from ..chemical import Solvent
+from ..chemical import Chemical
 from .. import LayerDeposition
 
 
@@ -66,7 +66,7 @@ class AntiSolvent(ArchiveSection):
     name = Quantity(type=str)
 
     anti_solvent = Quantity(
-        type=Reference(Solvent.m_def),
+        type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     anti_solvent_volume = Quantity(

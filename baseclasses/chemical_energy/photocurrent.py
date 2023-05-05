@@ -184,7 +184,7 @@ class PhotoCurrent(MeasurementOnSample):
                 try:
                     with archive.m_context.raw_file(data_file) as f:
                         if os.path.splitext(data_file)[-1] == ".mps":
-                            from nomad.datamodel.metainfo.eln.helper.mps_file_parser import read_mps_file
+                            from ..helper.mps_file_parser import read_mps_file
                             self.electro_meta_data = read_mps_file(f.name)
                             self.electro_meta_data_file_name = os.path.basename(
                                 f.name)

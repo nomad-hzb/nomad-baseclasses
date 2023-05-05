@@ -32,7 +32,7 @@ from nomad.datamodel.metainfo.eln import (
 from nomad.datamodel.results import Results, Material
 
 
-from nomad.datamodel.metainfo.eln.helper.add_solar_cell import add_solar_cell
+from .helper.add_solar_cell import add_solar_cell
 
 
 class BasicSample(Entity):
@@ -144,8 +144,8 @@ class ProcessOnSample(Process):
         if self.is_standard_process:
             self.samples = []
             self.batches = []
-            if self.name and not self.name.startswith("Standard"):
-                self.name = f"Standard -  {self.method} - {self.name}"
+            # if self.name and not self.name.startswith("Standard"):
+            #     self.name = f"Standard -  {self.method} - {self.name}"
 
         super(ProcessOnSample, self).normalize(archive, logger)
 
@@ -226,7 +226,7 @@ class LayerDeposition(ProcessOnSample):
         if self.layer_material_name:
             material = archive.results.material
 
-            from nomad.datamodel.metainfo.eln.helper.formula_normalizer import PerovskiteFormulaNormalizer
+            from .helper.formula_normalizer import PerovskiteFormulaNormalizer
             formulas = [PerovskiteFormulaNormalizer(
                 formula.strip()).clean_formula()
                 for formula in self.layer_material_name.split(",")]
@@ -235,8 +235,9 @@ class LayerDeposition(ProcessOnSample):
                 material.elements = []
                 material.elements = list(set(elements))
 
-                if len(formulas) == 1:
-                    self.layer_material = formulas[0][0]
+                self.layer_material = ",".join(
+                    [formulas[i][0] for i, _ in enumerate(formulas)])
+
             except BaseException:
                 pass
 

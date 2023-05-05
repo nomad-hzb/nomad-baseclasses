@@ -25,7 +25,7 @@ from nomad.metainfo import (
 from nomad.datamodel.data import ArchiveSection
 
 from .. import ProcessOnSample
-from ..chemical import Solvent
+from ..chemical import Chemical
 
 
 class CleaningTechnique(ArchiveSection):
@@ -45,7 +45,7 @@ class SolutionCleaning(CleaningTechnique):
         type=str
     )
     solvent = Quantity(
-        type=Reference(Solvent.m_def),
+        type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     temperature = Quantity(

@@ -18,7 +18,7 @@
 
 from nomad.metainfo import Reference, Quantity
 from .. import Batch
-from nomad.datamodel.metainfo.eln.hzb_electron_microscopy.microscope import OpticalMicroscopeTechnique
+from ..characterizations.electron_microscopy.microscope import OpticalMicroscopeTechnique
 
 
 class OpticalMicroscope(OpticalMicroscopeTechnique):

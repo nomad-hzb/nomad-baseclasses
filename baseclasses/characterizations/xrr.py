@@ -134,7 +134,7 @@ class XRR(MeasurementOnSample):
         self.method = "XRR"
 
         if self.data_file:
-            from nomad.datamodel.metainfo.eln.helper.fhi_archive import get_xrr_data_entry
+            from ..fhi_archive import get_xrr_data_entry
             measurement, fitted_data = get_xrr_data_entry(
                 archive, self.data_file)
 

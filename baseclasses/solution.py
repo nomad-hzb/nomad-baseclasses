@@ -26,75 +26,39 @@ from nomad.metainfo import (
     MEnum, SectionProxy)
 from nomad.datamodel.data import ArchiveSection
 
-from .chemical import Solvent, Powder, LiquidSolute
+from .chemical import Chemical
 from nomad.datamodel.metainfo.eln import Entity
 
 
-class SolutionPowder(ArchiveSection):
+class SolutionChemical(ArchiveSection):
     m_def = Section(label_quantity='name')
+
     name = Quantity(type=str)
 
     chemical = Quantity(
-        type=Reference(Powder.m_def),
+        type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
-    powder_mass = Quantity(
+    chemical_volume = Quantity(
+        type=np.dtype(np.float64),
+        unit=('ml'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'))
+
+    chemical_mass = Quantity(
         type=np.dtype(np.float64),
         unit=('mg'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mg'))
 
     def normalize(self, archive, logger):
 
-        if self.chemical and self.chemical.name:
-            if self.powder_mass:
-                self.name = self.chemical.name + ' ' + str(self.powder_mass)
+        if self.chemical is not None and self.chemical.name is not None:
+            if self.chemical_volume is not None:
+                self.name = self.chemical.name + \
+                    ' ' + str(self.chemical_volume)
+            elif self.chemical_mass is not None:
+                self.name = self.chemical.name + ' ' + str(self.chemical_mass)
             else:
                 self.name = self.chemical.name
-
-
-class SolutionLiquidSolute(ArchiveSection):
-    m_def = Section(label_quantity='name')
-    name = Quantity(type=str)
-
-    chemical = Quantity(
-        type=Reference(LiquidSolute.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
-
-    solute_volume = Quantity(
-        type=np.dtype(np.float64),
-        unit=('ml'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'))
-
-    def normalize(self, archive, logger):
-
-        if self.chemical and self.chemical.name:
-            if self.solute_volume:
-                self.name = self.chemical.name + ' ' + str(self.solute_volume)
-            else:
-                self.name = self.chemical.name
-
-
-class SolutionSolvent(ArchiveSection):
-    m_def = Section(label_quantity='name')
-
-    name = Quantity(type=str)
-
-    solvent = Quantity(
-        type=Reference(Solvent.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
-
-    solvent_volume = Quantity(
-        type=np.dtype(np.float64),
-        unit=('ml'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'))
-
-    def normalize(self, archive, logger):
-
-        if self.solvent and self.solvent.name:
-            if self.solvent_volume:
-                self.name = self.solvent.name + ' ' + str(self.solvent_volume)
-            else:
-                self.name = self.solvent.name
 
 
 class OtherSolution(ArchiveSection):
@@ -153,14 +117,11 @@ class Solution(Entity):
         unit=('Hz'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='rpm'))
 
-    powder = SubSection(
-        section_def=SolutionPowder, repeats=True)
-
-    liquid_solute = SubSection(
-        section_def=SolutionLiquidSolute, repeats=True)
+    solute = SubSection(
+        section_def=SolutionChemical, repeats=True)
 
     solvent = SubSection(
-        section_def=SolutionSolvent, repeats=True)
+        section_def=SolutionChemical, repeats=True)
 
     other_solution = SubSection(
         section_def=OtherSolution, repeats=True)

@@ -249,7 +249,7 @@ class PECVDeposition(LayerDeposition):
             process = self.process
         if self.recipe is not None and os.path.splitext(self.recipe)[
                 1] == ".set":
-            from nomad.datamodel.metainfo.eln.helper.parse_files_pecvd_pvcomb import parse_recipe
+            from ..helper.parse_files_pecvd_pvcomb import parse_recipe
             with archive.m_context.raw_file(self.recipe) as f:
                 parse_recipe(f, process)
 
@@ -257,7 +257,7 @@ class PECVDeposition(LayerDeposition):
             logs = []
             for log in self.logs:
                 if os.path.splitext(log)[1] == ".log":
-                    from nomad.datamodel.metainfo.eln.helper.parse_files_pecvd_pvcomb import parse_log
+                    from ..helper.parse_files_pecvd_pvcomb import parse_log
                     with archive.m_context.raw_file(log) as f:
                         if process.time:
                             data = parse_log(

@@ -21,14 +21,14 @@ import numpy as np
 from nomad.metainfo import (Quantity, Reference, SubSection)
 from nomad.datamodel.data import ArchiveSection
 
-from ..chemical import Solid
+from ..chemical import Chemical
 from .. import LayerDeposition
 
 
 class PVDProcess(ArchiveSection):
 
     target = Quantity(
-        type=Reference(Solid.m_def),
+        type=Reference(Chemical.m_def),
         shape=['*'],
         a_eln=dict(component='ReferenceEditQuantity'))
 

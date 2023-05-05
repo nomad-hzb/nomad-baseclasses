@@ -266,8 +266,8 @@ class ElectrochemicalImpedanceSpectroscopy(PotentiostatMeasurement):
                 with archive.m_context.raw_file(self.data_file) as f:
 
                     if os.path.splitext(self.data_file)[-1] == ".DTA":
-                        from nomad.datamodel.metainfo.eln.helper.gamry_parser import get_header_and_data
-                        from nomad.datamodel.metainfo.eln.helper.gamry_archive import get_eis_data, get_meta_data
+                        from ..helper.gamry_parser import get_header_and_data
+                        from ..helper.gamry_archive import get_eis_data, get_meta_data
 
                         metadata, data = get_header_and_data(filename=f.name)
                         data = data[0]
@@ -275,7 +275,7 @@ class ElectrochemicalImpedanceSpectroscopy(PotentiostatMeasurement):
                         get_meta_data(metadata, self)
 
                         if "EISPOT" in metadata["TAG"] and self.properties is None:
-                            from nomad.datamodel.metainfo.eln.helper.gamry_archive import get_eis_properties
+                            from ..helper.gamry_archive import get_eis_properties
 
                             properties = EISProperties()
                             get_eis_properties(metadata, properties)

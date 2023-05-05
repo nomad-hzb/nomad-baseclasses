@@ -21,18 +21,18 @@ import numpy as np
 from nomad.datamodel.data import ArchiveSection
 from nomad.metainfo import (Quantity, Reference, SubSection)
 
-from ..chemical import Solid, Gas
+from ..chemical import Chemical
 from .. import LayerDeposition
 
 
 class SputteringProcess(ArchiveSection):
 
     target = Quantity(
-        type=Reference(Solid.m_def),
+        type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     gas = Quantity(
-        type=Reference(Gas.m_def),
+        type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     source = Quantity(

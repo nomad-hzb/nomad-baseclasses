@@ -29,6 +29,8 @@ from nomad.datamodel.metainfo.eln import Entity
 
 from ..solution import Solution
 from .. import LayerDeposition
+from ..material_processes_misc import Annealing, SpinCoatingAntiSolvent
+
 
 
 class SpinCoatingRecipeSteps(ArchiveSection):
@@ -60,10 +62,10 @@ class SpinCoatingRecipeSteps(ArchiveSection):
     acceleration = Quantity(
         type=np.dtype(
             np.float64),
-        unit=('rpm/minute'),
+        unit=('rpm/s'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='rpm/minute', props=dict(minValue=0)))
+            defaultDisplayUnit='rpm/s', props=dict(minValue=0)))
 
 
 class SpinCoatingRecipe(Entity):
@@ -110,6 +112,12 @@ class SpinCoating(LayerDeposition):
 
     precursor_solution = SubSection(
         section_def=SpinCoatingPrecursorSolution, repeats=True)
+    
+    anti_solvent = SubSection(
+        section_def=SpinCoatingAntiSolvent, repeats=True)
+
+    annealing = SubSection(section_def=Annealing, repeats=True)
+
 
     def normalize(self, archive, logger):
         super(SpinCoating, self).normalize(archive, logger)

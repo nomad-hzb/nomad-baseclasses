@@ -21,13 +21,13 @@ import numpy as np
 from nomad.metainfo import (Quantity, Reference, SubSection)
 from nomad.datamodel.data import ArchiveSection
 
-from ..chemical import Solid
+from ..chemical import Chemical
 from .. import LayerDeposition
 
 
 class EvaporationSources(ArchiveSection):
     chemical = Quantity(
-        type=Reference(Solid.m_def),
+        type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     sources = Quantity(
@@ -88,7 +88,7 @@ class PerovsciteEvaporation(ArchiveSection):
 class Evaporation(ArchiveSection):
 
     chemical = Quantity(
-        type=Reference(Solid.m_def),
+        type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     source = Quantity(

@@ -27,6 +27,7 @@ from nomad.datamodel.data import ArchiveSection
 
 from .. import LayerDeposition
 from ..solution import Solution
+from ..material_processes_misc import Annealing
 
 
 class SprayPyrolysisProperties(ArchiveSection):
@@ -55,6 +56,7 @@ class SprayPyrolysis(LayerDeposition):
     '''Base class for spray pyrolysis of a sample'''
 
     precursor_solution = SubSection(section_def=SprayPyrolysisProperties)
+    annealing = SubSection(section_def=Annealing, repeats=True)
 
     def normalize(self, archive, logger):
         super(SprayPyrolysis, self).normalize(archive, logger)

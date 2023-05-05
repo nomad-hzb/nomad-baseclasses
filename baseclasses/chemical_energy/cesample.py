@@ -18,10 +18,11 @@
 
 import numpy as np
 
-from nomad.metainfo import (Quantity, SubSection, Reference, Datetime)
+from nomad.metainfo import (Quantity, SubSection, Section, Reference, Datetime)
 
-from nomad.datamodel.metainfo.eln import SampleID
+from nomad.datamodel.metainfo.eln import SampleID, Substance
 from nomad.datamodel.results import Results, Material
+from nomad.datamodel.data import ArchiveSection
 
 from .. import BasicSample
 
@@ -106,7 +107,6 @@ class CESample(BasicSample):
 
     def normalize(self, archive, logger):
         super(CESample, self).normalize(archive, logger)
-
         if self.chemical_composition_or_formulas:
             if not archive.results:
                 archive.results = Results()
@@ -119,10 +119,11 @@ class CESample(BasicSample):
             formulas = [
                 Atoms(Composition(formula.strip()
                                   ).get_integer_formula_and_factor()[0])
-                for formula in self.chemical_composition_or_formulas.split(",")]
+                for formula in self.chemical_composition_or_formulas.split(",") if formula]
             elements = []
             for f in formulas:
                 elements.extend(f.get_chemical_symbols())
+            material.elements = []
             material.elements = list(set(elements))
             if len(formulas) == 1:
                 formula = formulas[0]
@@ -231,8 +232,67 @@ class Electrode(CESample):
     pass
 
 
+class SubstanceWithConcentration(ArchiveSection):
+    m_def = Section(label_quantity='name')
+    substance = Quantity(
+        type=Reference(Substance.m_def),
+        a_eln=dict(component='ReferenceEditQuantity'))
+
+    name = Quantity(type=str)
+
+    concentration_mmol_per_l = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=("mmol/l"),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit="mmol/l"))
+
+    concentration_g_per_l = Quantity(
+        type=np.dtype(np.float64), unit=("g/l"),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit="g/l"))
+
+    # concentration_perw_w = Quantity(
+    #     type=np.dtype(np.float64), unit=("g/g"),
+    #     a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit="g/g"))
+
+    # concentration_perv_v = Quantity(
+    #     type=np.dtype(np.float64), unit=("l/l"),
+    #     a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit="l/l"))
+
+    def normalize(self, archive, logger):
+
+        if self.substance and self.substance.name:
+            self.name = self.substance.name
+
+
 class Electrolyte(CESample):
-    pass
+    ph_value = Quantity(
+        type=np.dtype(np.float64),
+        a_eln=dict(component='NumberEditQuantity', label="pH Value"))
+
+    solvent = Quantity(
+        type=Reference(Substance.m_def),
+        a_eln=dict(component='ReferenceEditQuantity'))
+
+    substances = SubSection(
+        section_def=SubstanceWithConcentration, repeats=True)
+
+    def normalize(self, archive, logger):
+
+        formulas = []
+        try:
+            if self.solvent is not None:
+                formulas.append(
+                    self.solvent.molecular_formula.strip().replace(
+                        ".", ""))
+            if self.substances is not None:
+                formulas.extend([subs.substance.molecular_formula.strip().replace(
+                    ".", "") for subs in self.substances if subs.substance is not None and subs.substance.molecular_formula is not None])
+            self.chemical_composition_or_formulas = ','.join(formulas)
+            super(Electrolyte, self).normalize(archive, logger)
+        except:
+            pass
 
 
 class ElectroChemicalCell(CESample):

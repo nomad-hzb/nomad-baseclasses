@@ -226,7 +226,7 @@ class Voltammetry(PotentiostatMeasurement):
                 with archive.m_context.raw_file(self.data_file) as f:
 
                     if os.path.splitext(self.data_file)[-1] == ".mpt":
-                        from nomad.datamodel.metainfo.eln.helper.mps_file_parser import read_mpt_file
+                        from ..helper.mps_file_parser import read_mpt_file
 
                         metadata, data, _ = read_mpt_file(f.name)
                         if "curve" in data.index.name:
@@ -254,7 +254,7 @@ class Voltammetry(PotentiostatMeasurement):
                                 data["control/V"]) if "control/V" in data.columns else None
 
                     if os.path.splitext(self.data_file)[-1] == ".cor":
-                        from nomad.datamodel.metainfo.eln.helper.corr_ware_parser import get_header_data_corrware
+                        from ..helper.corr_ware_parser import get_header_data_corrware
                         metadata, data, _ = get_header_data_corrware(
                             filename=f.name)
                         if "curve" in data.index.name:
@@ -284,8 +284,8 @@ class Voltammetry(PotentiostatMeasurement):
                             "%Y-%m-%d %H:%M:%S.%f")
 
                     if os.path.splitext(self.data_file)[-1] == ".DTA":
-                        from nomad.datamodel.metainfo.eln.helper.gamry_parser import get_header_and_data
-                        from nomad.datamodel.metainfo.eln.helper.gamry_archive import get_voltammetry_data, get_meta_data
+                        from ..helper.gamry_parser import get_header_and_data
+                        from ..helper.gamry_archive import get_voltammetry_data, get_meta_data
                         metadata, data = get_header_and_data(filename=f.name)
 
                         if len(data) > 1:
@@ -309,7 +309,7 @@ class Voltammetry(PotentiostatMeasurement):
             try:
                 with archive.m_context.raw_file(self.metadata_file) as f:
                     if os.path.splitext(self.data_file)[-1] == ".mps":
-                        from nomad.datamodel.metainfo.eln.helper.mps_file_parser import read_mps_file
+                        from ..helper.mps_file_parser import read_mps_file
                         self.metadata = read_mps_file(f.name)
 
             except Exception as e:

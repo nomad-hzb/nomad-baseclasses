@@ -26,7 +26,7 @@ from nomad.metainfo import (
 
 from nomad.datamodel.metainfo.eln import SolarCellJVCurve
 from .. import MeasurementOnSample
-from nomad.datamodel.metainfo.eln.helper.add_solar_cell import add_solar_cell
+from ..helper.add_solar_cell import add_solar_cell
 
 
 class SolarCellJVCurveCustom(SolarCellJVCurve):
@@ -115,16 +115,20 @@ class JVMeasurement(MeasurementOnSample):
 
         if self.data_file:
             # todo detect file format
+            from ..helper.utilities import get_encoding
+            with archive.m_context.raw_file(self.data_file, "br") as f:
+                encoding = get_encoding(f)
+            
             with archive.m_context.raw_file(self.data_file, "br") as f:
                 import chardet
                 encoding = chardet.detect(f.read())["encoding"]
 
             with archive.m_context.raw_file(self.data_file, encoding=encoding) as f:
                 if "LTI @ KIT" in f.readline():
-                    from nomad.datamodel.metainfo.eln.helper.KIT_jv_parser import get_jv_data
+                    from ..helper.KIT_jv_parser import get_jv_data
                 else:
-                    from nomad.datamodel.metainfo.eln.helper.jv_parser import get_jv_data
-                from nomad.datamodel.metainfo.eln.helper.jv_archive import get_jv_archive
+                    from ..helper.jv_parser import get_jv_data
+                from ..helper.jv_archive import get_jv_archive
 
                 jv_dict = get_jv_data(f.name, encoding)
                 get_jv_archive(jv_dict, self.data_file, self)

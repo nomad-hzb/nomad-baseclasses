@@ -17,27 +17,18 @@
 #
 
 from nomad.datamodel.metainfo.eln import Substance
+from nomad.metainfo import MEnum, Quantity
 
 
-class Solid(Substance):
-    pass
+class Chemical(Substance):
+    state_of_matter = Quantity(
+        type=MEnum('Liquid', 'Solid', 'Gas'),
+        shape=[],
+        a_eln=dict(
+            component='EnumEditQuantity',
+        ))
 
-
-class Powder(Solid):
-    pass
-
-
-class Liquid(Substance):
-    pass
-
-
-class LiquidSolute(Liquid):
-    pass
-
-
-class Solvent(Liquid):
-    pass
-
-
-class Gas(Substance):
-    pass
+    def normalize(self, archive, logger):
+        super(Chemical, self).normalize(archive, logger)
+        if self.cas_name is not None:
+            archive.metadata.entry_name = self.cas_name

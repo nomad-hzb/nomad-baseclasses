@@ -21,10 +21,11 @@ import numpy as np
 from nomad.metainfo import (Quantity, Reference)
 
 from .. import ProcessOnSample
-from ..chemical import Solvent
+from ..chemical import Chemical
+from nomad.datamodel.data import ArchiveSection
 
 
-class Annealing(ProcessOnSample):
+class Annealing(ArchiveSection):
     '''Base class for annealing of a sample'''
     temperature = Quantity(
         type=np.dtype(
@@ -59,17 +60,19 @@ class Annealing(ProcessOnSample):
                            'Annealing after deposition',
                        ])))
 
+    
+
+class AnnealingStandAlone(Annealing,ProcessOnSample):
     def normalize(self, archive, logger):
         super(Annealing, self).normalize(archive, logger)
 
         self.method = "Annealing"
 
-
-class ThermalAnnealing(Annealing):
+class ThermalAnnealing(AnnealingStandAlone):
     pass
 
 
-class SolventAnnealing(Annealing):
+class SolventAnnealing(AnnealingStandAlone):
     solvent = Quantity(
-        type=Reference(Solvent.m_def),
+        type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))

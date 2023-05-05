@@ -22,7 +22,7 @@ from nomad.metainfo import (SubSection, Quantity)
 from nomad.datamodel.metainfo.eln import SampleID
 from nomad.datamodel.data import ArchiveSection
 
-from nomad.datamodel.metainfo.eln.base_classes_hzb.chemical_energy import CESample
+from baseclasses.chemical_energy import CESample
 
 
 class Grid(ArchiveSection):
@@ -55,11 +55,18 @@ class Grid(ArchiveSection):
 
 class CatalyticSample(CESample):
 
-    sample_area = Quantity(
+    surface_area = Quantity(
         type=np.dtype(np.float64),
         unit=("cm**2"),
         a_eln=dict(
             component='NumberEditQuantity', defaultDisplayUnit='cm**2',
+        ))
+
+    mass = Quantity(
+        type=np.dtype(np.float64),
+        unit=("mg"),
+        a_eln=dict(
+            component='NumberEditQuantity', defaultDisplayUnit='mg',
         ))
 
     sample_id = SubSection(

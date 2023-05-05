@@ -117,18 +117,18 @@ class CyclicVoltammetry(Voltammetry):
             try:
                 with archive.m_context.raw_file(self.data_file) as f:
                     if os.path.splitext(self.data_file)[-1] == ".DTA":
-                        from nomad.datamodel.metainfo.eln.helper.gamry_parser import get_header_and_data
+                        from ..helper.gamry_parser import get_header_and_data
                         metadata, _ = get_header_and_data(filename=f.name)
 
                         if "CV" in metadata["TAG"] and self.properties is None:
                             properties = CVProperties()
-                            from nomad.datamodel.metainfo.eln.helper.gamry_archive import get_cv_properties
+                            from ..helper.gamry_archive import get_cv_properties
                             get_cv_properties(metadata, properties)
 
                             self.properties = properties
 
                     if os.path.splitext(self.data_file)[-1] == ".mpt":
-                        from nomad.datamodel.metainfo.eln.helper.mps_file_parser import read_mpt_file
+                        from ..helper.mps_file_parser import read_mpt_file
                         metadata, _, technique = read_mpt_file(datafile=f.name)
 
                         if "Cyclic" in technique and self.properties is None:
@@ -156,7 +156,7 @@ class CyclicVoltammetry(Voltammetry):
                             self.properties = properties
 
                     if os.path.splitext(self.data_file)[-1] == ".cor":
-                        from nomad.datamodel.metainfo.eln.helper.corr_ware_parser import get_header_data_corrware
+                        from ..helper.corr_ware_parser import get_header_data_corrware
                         metadata, _, technique = get_header_data_corrware(
                             filename=f.name)
                         if "Cyclic" in technique and self.properties is None:

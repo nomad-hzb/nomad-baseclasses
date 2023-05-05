@@ -278,6 +278,6 @@ class MPPTracking(MeasurementOnSample):
 
             with archive.m_context.raw_file(self.data_file, encoding=encoding) as f:
                 if "@ LTI" in f.readline():
-                    from nomad.datamodel.metainfo.eln.helper.KIT_mpp_parser import get_mpp_data, get_mpp_archive
+                    from ..helper.KIT_mpp_parser import get_mpp_data, get_mpp_archive
                     mpp_dict, data = get_mpp_data(f.name, encoding)
                     get_mpp_archive(mpp_dict, data, self)

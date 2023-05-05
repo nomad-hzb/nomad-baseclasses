@@ -19,7 +19,7 @@ import numpy as np
 
 from nomad.metainfo import (Quantity)
 from nomad.datamodel.metainfo.eln import Entity
-from nomad.datamodel.metainfo.eln.helper.add_solar_cell import add_solar_cell
+from ..helper.add_solar_cell import add_solar_cell
 
 
 class Substrate(Entity):

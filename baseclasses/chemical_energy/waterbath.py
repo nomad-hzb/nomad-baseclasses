@@ -25,7 +25,7 @@ from nomad.metainfo import (
 from nomad.datamodel.data import ArchiveSection
 
 from .. import Deposition
-from ..chemical import Solvent
+from ..chemical import Chemical
 
 
 class PMMARemoval(ArchiveSection):
@@ -39,7 +39,7 @@ class PMMARemoval(ArchiveSection):
             defaultDisplayUnit='°C'))
 
     solvent = Quantity(
-        type=Reference(Solvent.m_def),
+        type=Reference(Chemical.m_def),
         shape=['*'],
         a_eln=dict(component='ReferenceEditQuantity'))
 

@@ -18,3 +18,4 @@
 
 from .catalytic_design_sample import DesignSample, ActiveDesignParameter, PassiveDesignParameter, FurtherDesignParameter, DesignSampleID
 from .catalytic_sample import CatalyticSample, CatalyticSampleWithGrid
+from .catalytic_measurement import CatalyticReaction

@@ -119,7 +119,7 @@ class XRD(MeasurementOnSample):
         if self.data_file:
 
             if self.identifier == "FHI_IRIS":
-                from nomad.datamodel.metainfo.eln.helper.fhi_archive import get_xrd_data_entry
+                from ..helper.fhi_archive import get_xrd_data_entry
                 measurements, shifted_data = get_xrd_data_entry(
                     archive, self.data_file)
 

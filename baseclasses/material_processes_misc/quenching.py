@@ -24,7 +24,7 @@ from nomad.metainfo import (
     Reference)
 from nomad.datamodel.data import ArchiveSection
 
-from ..chemical import Solvent
+from ..chemical import Chemical
 
 
 class AntiSolventQuenching(ArchiveSection):
@@ -33,7 +33,7 @@ class AntiSolventQuenching(ArchiveSection):
     name = Quantity(type=str)
 
     anti_solvent = Quantity(
-        type=Reference(Solvent.m_def),
+        type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     anti_solvent_volume = Quantity(

@@ -163,7 +163,7 @@ class XASFluorescence(XAS):
         self.method = "XAS Fluoresence"
 
         if self.k1 is not None and self.k0 is not None:
-            self.absorbance_of_the_reference = -np.log(self.k1/self.k0)
+            self.absorbance_of_the_reference = -np.log(self.k1 / self.k0)
 
         if self.k3 is not None and self.k0 is not None:
             self.fluorescence_yield = self.k3 / self.k0
@@ -202,7 +202,7 @@ class XASTransmission(XAS):
         self.method = "XAS Transmission"
 
         if self.k1 is not None and self.k0 is not None:
-            self.absorbance_of_the_sample = -np.log(self.k1/self.k0)
+            self.absorbance_of_the_sample = -np.log(self.k1 / self.k0)
 
         if self.k1 is not None and self.k0 is not None:
             self.absorbance_of_the_reference = -np.log(self.k3 / self.k1)

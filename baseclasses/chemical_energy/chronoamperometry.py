@@ -134,11 +134,11 @@ class Chronoamperometry(Voltammetry):
             try:
                 with archive.m_context.raw_file(self.data_file) as f:
                     if os.path.splitext(self.data_file)[-1] == ".DTA":
-                        from nomad.datamodel.metainfo.eln.helper.gamry_parser import get_header_and_data
+                        from ..helper.gamry_parser import get_header_and_data
                         metadata, _ = get_header_and_data(filename=f.name)
 
                         if "CHRONOA" in metadata["TAG"] and self.properties is None:
-                            from nomad.datamodel.metainfo.eln.helper.gamry_archive import get_ca_properties
+                            from ..helper.gamry_archive import get_ca_properties
 
                             properties = CAProperties()
                             get_ca_properties(metadata, properties)
