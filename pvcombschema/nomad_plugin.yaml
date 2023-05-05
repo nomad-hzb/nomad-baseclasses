@@ -1,4 +1,0 @@
-plugin_type: schema
-name: Schemas for HZB PVcomB
-description: |
-  These are the Nomad schemas for PVcomB at HZB.

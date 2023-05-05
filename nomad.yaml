@@ -6,7 +6,7 @@ plugins:
   # We only include our schema here. Without the explicit include, all plugins will be
   # loaded. Many build in plugins require more dependencies. Install nomad-lab[parsing]
   # to make all default plugins work.
-  include: 'schemas/pvcomb'
+  include: 'schemas/baseclasses'
   options:
-    schemas/example:
-      python_package: pvcombschema
+    schemas/baseclasses:
+      python_package: baseclasses
