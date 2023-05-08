@@ -32,6 +32,7 @@ from nomad.datamodel.metainfo.eln import (
 
 from .jvmeasurement import JVMeasurement
 from .mpp_tracking import MPPTracking
+from .mpp_tracking_hysprint_custom import MPPTrackingHsprintCustom
 from .plmeasurement import PLMeasurement
 from .uvvismeasurement import UVvisMeasurement
 from .eqemeasurement import EQEMeasurement

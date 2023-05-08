@@ -287,3 +287,13 @@ class MeasurementOnSample(Measurement):
 
     def normalize(self, archive, logger):
         super(MeasurementOnSample, self).normalize(archive, logger)
+
+class MeasurementOnBatch(Measurement):
+
+    samples = Quantity(
+        type=Reference(Batch.m_def),
+        shape=['*'],
+        a_eln=dict(component='ReferenceEditQuantity'))
+
+    def normalize(self, archive, logger):
+        super(MeasurementOnBatch, self).normalize(archive, logger)
