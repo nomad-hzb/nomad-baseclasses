@@ -35,13 +35,25 @@ def process_timestamp(df):
     df["Duration_h"] = df.Duration.dt.total_seconds()/3600
 
 
-def process_mpp_data(df, area=0.18):
-    df["MPPT_J"] = df.InMPPT_I.abs() / area
+def process_mpp_data(df):
+    df["MPPT_J"] = df.InMPPT_I.abs()  # division by area in normalizer
     df["MPPT_V"] = df.InMPPT_V / 1000
     df["MPPT_EFF"] = (df.MPPT_J * df.MPPT_V * 1000 / df.InEinstrahlung).abs()
     if df.empty:
         return
     process_timestamp(df)
+
+
+def process_mpp_data_jv(df, suffix):
+    # division by area in normalizer
+    df["J_sc"] = df[f"InIV_I_sc{suffix}"].abs()
+    df["V_oc"] = df[f"InIV_V_oc{suffix}"] / 1000
+    df["n"] = df[f"InIV_n{suffix}"]
+    df["FF"] = df[f"InIV_FF{suffix}"] * 100
+    if df.empty:
+        return
+    process_timestamp(df)
+
 
 def rename_columns(df, box, sample_id, pixel_id):
     columns_new = {}
@@ -52,13 +64,45 @@ def rename_columns(df, box, sample_id, pixel_id):
     df = df.rename(columns=columns_new)
     return df
 
-def filter_and_process_mpp_data(df, box, sample_id, pixel_id, trigger_code):
-    df_filtered = df.loc[(df[f"Anlage_Box{box}_InTriggerSource"] == trigger_code)
-                         & (df[f"Anlage_Box{box}_Probe({sample_id})_Pixel({pixel_id})_InMPPT_I"] > -999)]
-    df_final = df_filtered.drop(columns=[f"Anlage_Box{box}_InTriggerSource"])
 
-    df_final = rename_columns(df_final, box, sample_id, pixel_id)
+def apply_filter_trigger_code(df, box, trigger_code):
+    df_filtered = df.loc[(
+        df[f"Anlage_Box{box}_InTriggerSource"] == trigger_code)]
+    df_final = df_filtered.drop(columns=[f"Anlage_Box{box}_InTriggerSource"])
+    return df_final
+
+
+def filter_and_process_mpp_data(df, box, sample_id, pixel_id, trigger_code):
+    df_filtered = apply_filter_trigger_code(df, box, trigger_code)
+    df_filtered = df.loc[(
+        df[f"Anlage_Box{box}_Probe({sample_id})_Pixel({pixel_id})_InMPPT_I"] > -999)]
+
+    df_final = rename_columns(df_filtered, box, sample_id, pixel_id)
     process_mpp_data(df_final)
+    return df_final
+
+
+def calculate_trigger_code_jv(box, sample_id, pixel_id):
+    return (box-1)*48+sample_id*6+pixel_id + 1
+
+
+def get_jv_data(df, box, sample_id, pixel_id, forward=True):
+    suffix = ''
+    if not forward:
+        suffix = "_rev"
+    columns = ["Zeitstempel", f"Anlage_Box{box}_Probe({sample_id})_Pixel({pixel_id})_InIV_V_oc{suffix}",
+               f"Anlage_Box{box}_Probe({sample_id})_Pixel({pixel_id})_InIV_FF{suffix}",
+               f"Anlage_Box{box}_Probe({sample_id})_Pixel({pixel_id})_InIV_n{suffix}",
+               f"Anlage_Box{box}_Probe({sample_id})_Pixel({pixel_id})_InIV_I_sc{suffix}",
+               f"Anlage_Box{box}_InTriggerSource"]
+    df_raw = df[columns].copy()
+
+    trigger_code_jv = calculate_trigger_code_jv(box, sample_id, pixel_id)
+    if not forward:
+        trigger_code_jv = (-1) * trigger_code_jv
+    df_filtered = apply_filter_trigger_code(df_raw, box, trigger_code_jv)
+    df_final = rename_columns(df_filtered, box, sample_id, pixel_id)
+    process_mpp_data_jv(df_final, suffix)
     return df_final
 
 
@@ -76,14 +120,17 @@ def parse_pixel(box, sample_id, pixel_id, df):
     df_final_dark = filter_and_process_mpp_data(
         df_raw_dark, box, sample_id, pixel_id, trigger_code=10000)
 
+    data_jv_for = get_jv_data(df, box, sample_id, pixel_id, forward=True)
+    data_jv_rev = get_jv_data(df, box, sample_id, pixel_id, forward=False)
+
     data = {"id": pixel_id,
-            "data": df_final, "data_dark": df_final_dark}
+            "data": df_final, "data_dark": df_final_dark, "data_jv_for": data_jv_for, "data_jv_rev": data_jv_rev}
     return data
 
 
 def parse_sample(info, sample_id, df):
     df_sample = df[["Zeitstempel", f"Anlage_Box{info['box']}_Probe({sample_id})_InTemperatur",
-                     f"Anlage_Box{info['box']}_Probe({sample_id})_InEinstrahlung"]].copy()
+                    f"Anlage_Box{info['box']}_Probe({sample_id})_InEinstrahlung"]].copy()
     df_sample = rename_columns(df_sample, info['box'], sample_id, None)
     process_timestamp(df_sample)
     data = {
@@ -104,7 +151,8 @@ def load_mpp_file(filename):
     info = get_dimensions(df.columns)
     print(info)
 
-    data = {"samples": []}
+    data = {"samples": [],
+            "box": info["box"]}
     for sample_id in range(info["number_of_samples"]):
         sample_data = parse_sample(info, sample_id, df)
         data["samples"].append(sample_data)

@@ -59,6 +59,24 @@ class ProcessedEfficiency(ArchiveSection):
         shape=['*'])
 
 
+class JVData(ProcessedEfficiency):
+    v_oc = Quantity(
+        type=np.dtype(
+            np.float64),
+        shape=['*'], unit='V')
+
+    j_sc = Quantity(
+        type=np.dtype(
+            np.float64),
+        shape=['*'],
+        unit='mA/cm^2')
+
+    fill_factor = Quantity(
+        type=np.dtype(
+            np.float64),
+        shape=['*'])
+
+
 class PixelData(ProcessedEfficiency):
 
     include_for_average = Quantity(
@@ -105,6 +123,9 @@ class PixelData(ProcessedEfficiency):
                     "editable": True,
                     "scrollZoom": True}}])
 
+    jv_data = SubSection(
+        section_def=JVData, repeats=True)
+
 
 class SampleData(ArchiveSection):
     m_def = Section(label_quantity='name',
@@ -112,6 +133,50 @@ class SampleData(ArchiveSection):
                         {
                             'x': 'pixels/:/time',
                             'y': 'pixels/:/efficiency',
+                            'layout': {
+                                "showlegend": True,
+                                'yaxis': {
+                                    "fixedrange": False},
+                                'xaxis': {
+                                    "fixedrange": False}},
+                        },
+                        {
+                            'label': "JV Data Efficiency",
+                            'x': 'pixels/:/jv_data/:/time',
+                            'y': 'pixels/:/jv_data/:/efficiency',
+                            'layout': {
+                                "showlegend": True,
+                                'yaxis': {
+                                    "fixedrange": False},
+                                'xaxis': {
+                                    "fixedrange": False}},
+                        },
+                        {
+                            'label': "JV Data J sc",
+                            'x': 'pixels/:/jv_data/:/time',
+                            'y': 'pixels/:/jv_data/:/j_sc',
+                            'layout': {
+                                "showlegend": True,
+                                'yaxis': {
+                                    "fixedrange": False},
+                                'xaxis': {
+                                    "fixedrange": False}},
+                        },
+                        {
+                            'label': "JV Data V oc",
+                            'x': 'pixels/:/jv_data/:/time',
+                            'y': 'pixels/:/jv_data/:/v_oc',
+                            'layout': {
+                                "showlegend": True,
+                                'yaxis': {
+                                    "fixedrange": False},
+                                'xaxis': {
+                                    "fixedrange": False}},
+                        },
+                        {
+                            'label': "JV Data Fill Factor",
+                            'x': 'pixels/:/jv_data/:/time',
+                            'y': 'pixels/:/jv_data/:/fill_factor',
                             'layout': {
                                 "showlegend": True,
                                 'yaxis': {
@@ -129,13 +194,6 @@ class SampleData(ArchiveSection):
         type=str,
         a_eln=dict(component='StringEditQuantity')
     )
-
-    solar_cell_area = Quantity(
-        type=np.dtype(np.float64),
-        unit='cm**2',
-        shape=[],
-        a_eln=dict(
-            component='NumberEditQuantity'))
 
     samples = Quantity(
         type=Reference(BasicSample.m_def),
@@ -200,6 +258,14 @@ class MPPTrackingHsprintCustom(MeasurementOnBatch):
         a_eln=dict(
             component='NumberEditQuantity'))
 
+    pixel_area = Quantity(
+        type=np.dtype(np.float64),
+        unit='cm**2',
+        default=0.18,
+        shape=[],
+        a_eln=dict(
+            component='NumberEditQuantity'))
+
     samples = SubSection(
         section_def=SampleData, repeats=True)
 
@@ -228,31 +294,49 @@ class MPPTrackingHsprintCustom(MeasurementOnBatch):
                 data = load_mpp_file(f.name)  # , encoding)
 
             samples = []
-            for sample in data["samples"]:
+            for sample_idx, sample in enumerate(data["samples"]):
                 df = sample["data"]
-                sample_entry = SampleData(
-                    name=f"Sample {sample['id']} (in Box)",
-                    time=df.groupby(pd.Grouper(key="Timestamp", freq=f"{self.averaging_grouping_minutes}Min"))[
-                        "Duration_h"].mean(),
-                    temperature=df.groupby(pd.Grouper(
-                        key="Timestamp", freq=f"{self.averaging_grouping_minutes}Min"))["InTemperatur"].mean(),
-                    radiation=df.groupby(pd.Grouper(
-                        key="Timestamp", freq=f"{self.averaging_grouping_minutes}Min"))["InEinstrahlung"].mean()
-                )
+                sample_entry = SampleData()
+                if self.samples is not None and len(self.samples) == len(data["samples"]):
+                    sample_entry = self.samples[sample_idx]
+
+                sample_entry.name = f"Sample {sample['id']} (in Box)"
+                sample_entry.time = df.groupby(pd.Grouper(key="Timestamp", freq=f"{self.averaging_grouping_minutes}Min"))[
+                    "Duration_h"].mean()
+                sample_entry.temperature = df.groupby(pd.Grouper(
+                    key="Timestamp", freq=f"{self.averaging_grouping_minutes}Min"))["InTemperatur"].mean()
+                sample_entry.radiation = df.groupby(pd.Grouper(
+                    key="Timestamp", freq=f"{self.averaging_grouping_minutes}Min"))["InEinstrahlung"].mean()
+
                 pixels = []
-                for pixel in sample["pixels"]:
+                for pixel_idx, pixel in enumerate(sample["pixels"]):
                     df = pixel["data"]
-                    pixel_entry = PixelData(
-                        name=f"Pixel {pixel['id']}",
-                        time=df.groupby(pd.Grouper(key="Timestamp", freq=f"{self.averaging_grouping_minutes}Min"))[
-                            "Duration_h"].mean(),
-                        voltage=df.groupby(pd.Grouper(key="Timestamp", freq=f"{self.averaging_grouping_minutes}Min"))[
-                            "MPPT_V"].mean(),
-                        efficiency=df.groupby(pd.Grouper(key="Timestamp", freq=f"{self.averaging_grouping_minutes}Min"))[
-                            "MPPT_EFF"].mean(),
-                        current_density=df.groupby(pd.Grouper(key="Timestamp", freq=f"{self.averaging_grouping_minutes}Min"))[
-                            "MPPT_J"].mean()
-                    )
+                    pixel_entry = PixelData()
+                    if sample_entry.pixels is not None and len(sample_entry.pixels) == len(sample["pixels"]):
+                        pixel_entry = sample_entry.pixels[pixel_idx]
+                    pixel_entry.name = f"Pixel {pixel['id']}"
+                    pixel_entry.time = df.groupby(pd.Grouper(key="Timestamp", freq=f"{self.averaging_grouping_minutes}Min"))[
+                        "Duration_h"].mean()
+                    pixel_entry.voltage = df.groupby(pd.Grouper(key="Timestamp", freq=f"{self.averaging_grouping_minutes}Min"))[
+                        "MPPT_V"].mean()
+                    pixel_entry.efficiency = df.groupby(pd.Grouper(key="Timestamp", freq=f"{self.averaging_grouping_minutes}Min"))[
+                        "MPPT_EFF"].mean() / self.pixel_area
+                    pixel_entry.current_density = df.groupby(pd.Grouper(key="Timestamp", freq=f"{self.averaging_grouping_minutes}Min"))[
+                        "MPPT_J"].mean() / self.pixel_area
+
+                    jvs = []
+                    for scan_direction in ["data_jv_for", "data_jv_rev"]:
+                        df = pixel[scan_direction]
+                        jv_entry = JVData(
+                            name=scan_direction[-3:],
+                            time=df["Duration_h"],
+                            efficiency=df["n"],
+                            v_oc=df["V_oc"],
+                            j_sc=df["J_sc"] / self.pixel_area,
+                            fill_factor=df["FF"],
+                        )
+                        jvs.append(jv_entry)
+                    pixel_entry.jv_data = jvs
                     pixels.append(pixel_entry)
                 sample_entry.pixels = pixels
                 samples.append(sample_entry)
