@@ -282,11 +282,11 @@ class MPPTrackingHsprintCustom(MeasurementOnBatch):
         if self.data_file and self.load_data_from_file:
             self.load_data_from_file = False
             # todo detect file format
-            with archive.m_context.raw_file(self.data_file, "br") as f:
-                import chardet
-                encoding = chardet.detect(f.read())["encoding"]
+            # with archive.m_context.raw_file(self.data_file, "br") as f:
+            #     import chardet
+            #     encoding = chardet.detect(f.read())["encoding"]
 
-            with archive.m_context.raw_file(self.data_file, encoding=encoding) as f:
+            with archive.m_context.raw_file(self.data_file, encoding="ascii") as f:
                 if os.path.splitext(f.name)[-1] != ".csv":
                     return
 
