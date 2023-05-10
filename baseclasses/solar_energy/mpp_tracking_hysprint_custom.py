@@ -315,14 +315,14 @@ class MPPTrackingHsprintCustom(MeasurementOnBatch):
                     if sample_entry.pixels is not None and len(sample_entry.pixels) == len(sample["pixels"]):
                         pixel_entry = sample_entry.pixels[pixel_idx]
                     pixel_entry.name = f"Pixel {pixel['id']}"
-                    pixel_entry.time = df.groupby(pd.Grouper(key="Timestamp", freq=f"{self.averaging_grouping_minutes}Min"))[
-                        "Duration_h"].mean()
-                    pixel_entry.voltage = df.groupby(pd.Grouper(key="Timestamp", freq=f"{self.averaging_grouping_minutes}Min"))[
-                        "MPPT_V"].mean()
-                    pixel_entry.efficiency = df.groupby(pd.Grouper(key="Timestamp", freq=f"{self.averaging_grouping_minutes}Min"))[
-                        "MPPT_EFF"].mean() / self.pixel_area
-                    pixel_entry.current_density = df.groupby(pd.Grouper(key="Timestamp", freq=f"{self.averaging_grouping_minutes}Min"))[
-                        "MPPT_J"].mean() / self.pixel_area
+                    df_tmp = df[["Timestamp", "Duration_h", "MPPT_V", "MPPT_EFF", "MPPT_J"]].groupby(
+                        pd.Grouper(key="Timestamp", freq=f"{self.averaging_grouping_minutes}Min")).mean()
+                    pixel_entry.time = df_tmp["Duration_h"]
+                    pixel_entry.voltage = df_tmp["MPPT_V"]
+                    pixel_entry.efficiency = df_tmp["MPPT_EFF"] / \
+                        self.pixel_area
+                    pixel_entry.current_density = df_tmp["MPPT_J"] / \
+                        self.pixel_area
 
                     jvs = []
                     for scan_direction in ["data_jv_for", "data_jv_rev"]:

@@ -1,5 +1,6 @@
 import pandas as pd
 import re
+import time
 
 
 def filter_columns(columns):
@@ -12,6 +13,15 @@ def filter_columns(columns):
 
     return matched_columns
 
+def lookup(date_pd_series, format=None):
+    """
+    This is an extremely fast approach to datetime parsing.
+    For large data, the same dates are often repeated. Rather than
+    re-parse these, we store all unique dates, parse them, and
+    use a lookup to convert all dates.
+    """
+    dates = {date:pd.to_datetime(date, format=format) for date in date_pd_series.unique()}
+    return date_pd_series.map(dates)
 
 def get_integer(string):
     return int(string.replace("(", "").replace(")", ""))
@@ -29,10 +39,10 @@ def get_dimensions(columns):
 
 
 def process_timestamp(df):
-    df.Timestamp = df.Timestamp.astype('datetime64[ns]')
     df["Duration"] = (df.Timestamp - df.Timestamp.iloc[0])
     df["Duration_s"] = df.Duration.dt.total_seconds()
     df["Duration_h"] = df.Duration.dt.total_seconds()/3600
+
 
 
 def process_mpp_data(df):
@@ -42,6 +52,7 @@ def process_mpp_data(df):
     if df.empty:
         return
     process_timestamp(df)
+
 
 
 def process_mpp_data_jv(df, suffix):
@@ -78,7 +89,9 @@ def filter_and_process_mpp_data(df, box, sample_id, pixel_id, trigger_code):
         df[f"Anlage_Box{box}_Probe({sample_id})_Pixel({pixel_id})_InMPPT_I"] > -999)]
 
     df_final = rename_columns(df_filtered, box, sample_id, pixel_id)
+
     process_mpp_data(df_final)
+
     return df_final
 
 
@@ -138,6 +151,8 @@ def parse_sample(info, sample_id, df):
         "data": df_sample,
         "pixels": []
     }
+    
+
 
     for pixel_id in range(info["number_of_pixels"]):
         pixel_data = parse_pixel(info["box"], sample_id, pixel_id, df)
@@ -148,8 +163,9 @@ def parse_sample(info, sample_id, df):
 
 def load_mpp_file(filename):
     df = pd.read_csv(filename, sep=";")
+    df['Zeitstempel'] = lookup(df['Zeitstempel'], format='%m/%d/%Y %H:%M:%S')
     info = get_dimensions(df.columns)
-    print(info)
+
 
     data = {"samples": [],
             "box": info["box"]}
@@ -159,6 +175,8 @@ def load_mpp_file(filename):
 
     return data
 
-
 # filename = "/home/a2853/Documents/Projects/nomad/hysprintlab/titan/20230503_AgeingTest_Example/20230331_113543_Jiahuan-2/Data.csv"
+# start_time = time.time()
 # d = load_mpp_file(filename)
+# print("--- %s seconds ---" % (time.time() - start_time))
+
