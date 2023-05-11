@@ -69,7 +69,7 @@ def add_key_item(md, key, item, item_entry, indent=0):
             md = add_key_item(md, key2, item2, getattr(
                 item_entry, key2), 8+indent)
     else:
-        md += add_next_md_line(key, item)
+        md += add_next_md_line(key, getattr(item_entry, key))
     return md
 
 
