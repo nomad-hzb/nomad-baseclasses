@@ -28,8 +28,49 @@ def get_encoding(file_obj):
 
 
 def add_next_md_line(key, item, indent=0):
+    try:
+        shift = '&nbsp;' * indent
+        return f"{shift}**{key.capitalize()}**: {item}  \n"
+    except Exception as e:
+        print(e)
+        return "  \n"
+
+
+def add_key_item(md, key, item, item_entry, indent=0):
+    print(type(item), type(item_entry), key, item)
+    if key in [
+        "previous_process",
+        "is_standard_process",
+        "samples",
+        "batch",
+        "name",
+        "datetime",
+        "lab_id",
+            "m_def"]:
+        return md
     shift = '&nbsp;' * indent
-    return f"{shift}**{key.capitalize()}**: {item}  \n"
+    if isinstance(item, dict):
+        md += f"{shift}**{key.capitalize()}**:  \n"
+        subsection = getattr(item_entry, key)
+        for key2 in item.keys():
+            md += add_next_md_line(key2, getattr(subsection, key2), 4+indent)
+    elif isinstance(item, list):
+        md += f"{shift}**{key.capitalize()}**:  \n"
+        for list_idx, subsection in enumerate(item):
+            shift2 = '&nbsp;' * 4
+            md += f"{shift}{shift2}**{list_idx+1}.**  \n"
+            for key2, item2 in subsection.items():
+                md += add_next_md_line(key2, item2, 8+indent)
+    elif isinstance(item_entry, MProxy):
+        md += add_next_md_line(key, item_entry.name, 4+indent)
+        item_dict = item_entry.m_to_dict()
+        print(item_dict)
+        for key2, item2 in item_dict.items():
+            md = add_key_item(md, key2, item2, getattr(
+                item_entry, key2), 8+indent)
+    else:
+        md += add_next_md_line(key, item)
+    return md
 
 
 def add_section_markdown(
@@ -41,38 +82,8 @@ def add_section_markdown(
     md += f"### {index_plan+1}.{index_batch+1} {batch_process.name.capitalize()}  \n"
     data_dict = batch_process.m_to_dict()
     md += f"**Batch Id**: {process_batch}  \n"
-
     for key, item in data_dict.items():
-        if key in [
-            "previous_process",
-            "is_standard_process",
-            "samples",
-            "batch",
-            "name",
-            "datetime",
-            "lab_id",
-                "m_def"]:
-            continue
-        if isinstance(item, dict):
-            md += f"**{key.capitalize()}**:  \n"
-            subsection = getattr(batch_process, key)
-            for key2 in item.keys():
-                md += add_next_md_line(key2, getattr(subsection, key2), 4)
-        elif isinstance(item, list):
-            md += f"**{key.capitalize()}**:  \n"
-            for list_idx, subsection in enumerate(item):
-                shift = '&nbsp;' * 4
-                md += f"{shift}**{list_idx+1}.**  \n"
-                for key2, item2 in subsection.items():
-                    md += add_next_md_line(key2, item2, 8)
-        elif isinstance(item, MProxy):
-            md += f"**{key.capitalize()}**:  \n"
-            item_dict = item.m_to_dict()
-            print(item_dict)
-            for key2, item2 in item_dict.items():
-                md += add_next_md_line(key2, item2, 8)
-        else:
-            md += add_next_md_line(key, getattr(batch_process, key))
+        md = add_key_item(md, key, item, getattr(batch_process, key))
 
     return md
 
