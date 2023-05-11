@@ -22,19 +22,13 @@ import chardet
 
 from nomad.metainfo import MProxy
 
+
 def get_encoding(file_obj):
     return chardet.detect(file_obj.read())["encoding"]
-    
+
+
 def add_next_md_line(key, item, indent=0):
     shift = '&nbsp;' * indent
-    try:
-        if isinstance(item, MProxy):
-            print(item)
-            print(item.name)
-            return f"{shift}**{key.capitalize()}**: {item.name}  \n"
-    except Exception as e:
-        print(e)
-
     return f"{shift}**{key.capitalize()}**: {item}  \n"
 
 
@@ -71,6 +65,12 @@ def add_section_markdown(
                 md += f"{shift}**{list_idx+1}.**  \n"
                 for key2, item2 in subsection.items():
                     md += add_next_md_line(key2, item2, 8)
+        elif isinstance(item, MProxy):
+            md += f"**{key.capitalize()}**:  \n"
+            item_dict = item.m_to_dict()
+            print(item_dict)
+            for key2, item2 in item_dict.items():
+                md += add_next_md_line(key2, item2, 8)
         else:
             md += add_next_md_line(key, getattr(batch_process, key))
 

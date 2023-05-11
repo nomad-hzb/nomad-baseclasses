@@ -37,7 +37,8 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
                 process] * number_of_batches
 
     # process, sample and batch creation
-    if plan_obj.create_samples_and_processes and plan_obj.batch_id and plan_obj.batch_id.sample_id:
+    if plan_obj.create_samples_and_processes \
+            and plan_obj.batch_id and plan_obj.batch_id.sample_id:
         plan_obj.create_samples_and_processes = False
         batch_id = BatchID(**plan_obj.batch_id.m_to_dict())
         sample_short_name = plan_obj.batch_id.sample_short_name
@@ -127,7 +128,8 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
                 batch_process.previous_process = previous_processes_tmp
                 # file_name_process = f'{name.replace(" ","_")}_{file_name_base}_{randStr()}.archive.json'
                 file_name_process = f'{idx2+1}_{name.replace("  ","_").replace(" ","_")}.archive.json'
-                entry_id = get_entry_id_from_file_name(file_name_process, archive)
+                entry_id = get_entry_id_from_file_name(
+                    file_name_process, archive)
                 previous_processes.append(get_reference(
                     archive.metadata.upload_id, entry_id))
                 batch_process.is_standard_process = False

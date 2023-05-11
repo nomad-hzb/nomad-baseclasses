@@ -35,7 +35,8 @@ def collectProcessOnSample(entry, entry_id, entry_data):
             {"previous_process": entry_data["previous_process"]})
     # Check if it is a layer deposition
     import inspect
-    import baseclasses, hysprint_s
+    import baseclasses
+    import hysprint_s
 
     entry[entry_id].update({"layer_deposition": False})
     if baseclasses.LayerDeposition in inspect.getmro(
@@ -138,7 +139,8 @@ def collectSampleData(archive):
     from nomad.search import search
     from nomad.app.v1.models import MetadataPagination
     from nomad import files
-    import baseclasses, hysprint_s
+    import baseclasses
+    import hysprint_s
     import inspect
 
     # search for all archives referencing this archive
@@ -186,30 +188,38 @@ def collectSampleData(archive):
     return result
 
 
-def addLayerDepositionToStack(archive, process):
+def getLayerForStack(process):
+    if 'layer_material' in process \
+            and process["layer_material"] is not None \
+            and process["layer_material"].strip():
+        return process["layer_material"].strip()
+    return process['layer_material_name']
 
+
+def addLayerDepositionToStack(archive, process):
+    layer_name = getLayerForStack(process)
     archive.results.properties.optoelectronic.solar_cell.device_stack.append(
-        f"{process['layer_material']}" if 'layer_material' in process else f"{process['layer_material_name']}")
+        layer_name)
 
     if "absorber" in process["layer_type"].lower():
         archive.results.properties.optoelectronic.solar_cell.absorber.append(
-            f"{process['layer_material']}" if 'layer_material' in process else f"{process['layer_material_name']}")
+            layer_name)
         archive.results.properties.optoelectronic.solar_cell.absorber_fabrication.append(
             f"{process['method']}")
 
     if "etl" in process["layer_type"].lower(
     ) or "electron" in process["layer_type"].lower():
         archive.results.properties.optoelectronic.solar_cell.electron_transport_layer.append(
-            f"{process['layer_material']}" if 'layer_material' in process else f"{process['layer_material_name']}")
+            layer_name)
 
     if "htl" in process["layer_type"].lower(
     ) or "hole" in process["layer_type"].lower():
         archive.results.properties.optoelectronic.solar_cell.hole_transport_layer.append(
-            f"{process['layer_material']}" if 'layer_material' in process else f"{process['layer_material_name']}")
+            layer_name)
 
     if "back" in process["layer_type"].lower():
         archive.results.properties.optoelectronic.solar_cell.back_contact.append(
-            f"{process['layer_material']}" if 'layer_material' in process else f"{process['layer_material_name']}")
+            layer_name)
 
 
 class BasicSampleWithID(BasicSample):
