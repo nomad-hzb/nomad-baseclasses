@@ -37,7 +37,6 @@ def add_next_md_line(key, item, indent=0):
 
 
 def add_key_item(md, key, item, item_entry, indent=0):
-    print(type(item), type(item_entry), key, item)
     if key in [
         "previous_process",
         "is_standard_process",
@@ -60,16 +59,16 @@ def add_key_item(md, key, item, item_entry, indent=0):
             shift2 = '&nbsp;' * 4
             md += f"{shift}{shift2}**{list_idx+1}.**  \n"
             for key2, item2 in subsection.items():
-                md += add_next_md_line(key2, item2, 8+indent)
+                md += add_next_md_line(key2,
+                                       getattr(item_entry[list_idx], key2), 8+indent)
     elif isinstance(item_entry, MProxy):
         md += add_next_md_line(key, item_entry.name, 4+indent)
         item_dict = item_entry.m_to_dict()
-        print(item_dict)
         for key2, item2 in item_dict.items():
             md = add_key_item(md, key2, item2, getattr(
                 item_entry, key2), 8+indent)
     else:
-        md += add_next_md_line(key, item_entry)
+        md += add_next_md_line(key, item_entry, indent)
     return md
 
 
