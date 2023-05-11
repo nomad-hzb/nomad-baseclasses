@@ -193,7 +193,7 @@ def getLayerForStack(process):
             and process["layer_material"] is not None \
             and process["layer_material"].strip():
         return process["layer_material"].strip()
-    return process['layer_material_name']
+    return process.get('layer_material_name')
 
 
 def addLayerDepositionToStack(archive, process):
