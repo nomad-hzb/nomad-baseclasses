@@ -94,7 +94,6 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
         previous_processes = {idx: "" for idx in range(number_of_subbatches)}
         md = f"# Batch plan of batch {batch_id.sample_id}\n\n"
         for idx2, plan in enumerate(plan_obj.plan):
-            print(previous_processes)
             for idx1, batch_process in enumerate(plan.batch_processes):
                 if not batch_process.present:
                     continue
@@ -130,15 +129,15 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
                 entry_id = get_entry_id_from_file_name(
                     file_name_process, archive)
                 if plan.vary_parameters:
-                    batch_process.previous_process \
-                        = [previous_processes[idx1]]
+                    previous_processes_tmp = [previous_processes[idx1]]
+                    batch_process.previous_process = previous_processes_tmp
                     previous_processes[idx1] = get_reference(
                         archive.metadata.upload_id, entry_id)
                 else:
                     previous_processes_tmp = []
                     for idx_tmp in range(number_of_subbatches):
                         previous_processes_tmp.append(
-                            previous_processes[idx1])
+                            previous_processes[idx_tmp])
                         previous_processes[idx_tmp] = get_reference(
                             archive.metadata.upload_id, entry_id)
                         batch_process.previous_process = previous_processes_tmp
