@@ -28,13 +28,13 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
     if plan_obj.load_standard_processes:
         plan_obj.load_standard_processes = False
 
-        number_of_batches = plan_obj.number_of_substrates // plan_obj.substrates_per_subbatch
+        number_of_subbatches = plan_obj.number_of_substrates // plan_obj.substrates_per_subbatch
         for i, process in enumerate(plan_obj.standard_plan.processes):
             if not plan_obj.plan[i].vary_parameters:
                 plan_obj.plan[i].batch_processes = [process]
                 continue
             plan_obj.plan[i].batch_processes = [
-                process] * number_of_batches
+                process] * number_of_subbatches
 
     # process, sample and batch creation
     if plan_obj.create_samples_and_processes \
@@ -47,9 +47,8 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
         sample_refs = []
         subs = plan_obj.standard_plan.substrate
         architecture = plan_obj.standard_plan.architecture
-        for idx1 in range(
-                plan_obj.number_of_substrates //
-                plan_obj.substrates_per_subbatch):
+        number_of_subbatches = plan_obj.number_of_substrates // plan_obj.substrates_per_subbatch
+        for idx1 in range(number_of_subbatches):
             sample_refs_subbatch = []
             for idx2 in range(plan_obj.substrates_per_subbatch):
 
@@ -92,12 +91,13 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
         create_archive(batch, archive, file_name)
 
         # create processes
-        previous_processes = []
+        previous_processes = {idx: "" for idx in range(number_of_subbatches)}
         md = f"# Batch plan of batch {batch_id.sample_id}\n\n"
         for idx2, plan in enumerate(plan_obj.plan):
-            previous_processes_tmp = previous_processes.copy()
-            previous_processes = []
+            print(previous_processes)
             for idx1, batch_process in enumerate(plan.batch_processes):
+                if not batch_process.present:
+                    continue
                 file_name_base = f'{plan_obj.batch_id.sample_id}_{idx1}' if \
                     plan.vary_parameters else \
                     f'{plan_obj.batch_id.sample_id}'
@@ -125,13 +125,23 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
                 if file_name_base not in name:
                     name = f'{name} {file_name_base}'
 
-                batch_process.previous_process = previous_processes_tmp
                 # file_name_process = f'{name.replace(" ","_")}_{file_name_base}_{randStr()}.archive.json'
                 file_name_process = f'{idx2+1}_{name.replace("  ","_").replace(" ","_")}.archive.json'
                 entry_id = get_entry_id_from_file_name(
                     file_name_process, archive)
-                previous_processes.append(get_reference(
-                    archive.metadata.upload_id, entry_id))
+                if plan.vary_parameters:
+                    batch_process.previous_process \
+                        = [previous_processes[idx1].copy()]
+                    previous_processes[idx1] = get_reference(
+                        archive.metadata.upload_id, entry_id)
+                else:
+                    previous_processes_tmp = []
+                    for idx_tmp in range(number_of_subbatches):
+                        previous_processes_tmp.append(
+                            previous_processes[idx1].copy())
+                        previous_processes[idx_tmp] = get_reference(
+                            archive.metadata.upload_id, entry_id)
+                        batch_process.previous_process = previous_processes_tmp
                 batch_process.is_standard_process = False
 
                 batch_process.description

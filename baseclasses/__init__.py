@@ -125,6 +125,12 @@ class ProcessOnSample(Process):
         a_eln=dict(component='BoolEditQuantity')
     )
 
+    present = Quantity(
+        type=bool,
+        default=True,
+        a_eln=dict(component='BoolEditQuantity')
+    )
+
     samples = Quantity(
         type=Reference(BasicSample.m_def),
         shape=['*'],
@@ -287,6 +293,7 @@ class MeasurementOnSample(Measurement):
 
     def normalize(self, archive, logger):
         super(MeasurementOnSample, self).normalize(archive, logger)
+
 
 class MeasurementOnBatch(Measurement):
 
