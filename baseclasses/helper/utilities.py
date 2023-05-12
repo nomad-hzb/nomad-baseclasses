@@ -82,7 +82,10 @@ def add_section_markdown(
     data_dict = batch_process.m_to_dict()
     md += f"**Batch Id**: {process_batch}  \n"
     for key, item in data_dict.items():
-        md = add_key_item(md, key, item, getattr(batch_process, key))
+        try:
+            md = add_key_item(md, key, item, getattr(batch_process, key))
+        except Exception as e:
+            print(e)
 
     return md
 
