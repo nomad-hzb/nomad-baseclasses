@@ -131,14 +131,14 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
                     file_name_process, archive)
                 if plan.vary_parameters:
                     batch_process.previous_process \
-                        = [previous_processes[idx1].copy()]
+                        = [previous_processes[idx1]]
                     previous_processes[idx1] = get_reference(
                         archive.metadata.upload_id, entry_id)
                 else:
                     previous_processes_tmp = []
                     for idx_tmp in range(number_of_subbatches):
                         previous_processes_tmp.append(
-                            previous_processes[idx1].copy())
+                            previous_processes[idx1])
                         previous_processes[idx_tmp] = get_reference(
                             archive.metadata.upload_id, entry_id)
                         batch_process.previous_process = previous_processes_tmp
