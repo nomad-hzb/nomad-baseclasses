@@ -124,11 +124,10 @@ def get_meta_data(metadata, entry):
 
     if entry.description is None:
         entry.description = ''
-    entry.description = f"{entry.description} \n{metadata['NOTES']}" if metadata[
-        'NOTES'] not in entry.description else entry.description
+    entry.description = f"{entry.description} \n{metadata['NOTES']}" \
+        if metadata['NOTES'] not in entry.description else entry.description
 
-    entry.description = f"{entry.description} \nInstrument {metadata['PSTAT']}" if metadata[
-        'PSTAT'] not in entry.description else entry.description
+    entry.station = metadata['PSTAT']
 
 
 def get_cam_properties_data(metadata, data, mainfile, properties):

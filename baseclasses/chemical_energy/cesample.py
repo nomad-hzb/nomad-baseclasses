@@ -295,6 +295,31 @@ class Electrolyte(CESample):
             pass
 
 
+class Purging(ArchiveSection):
+    gas = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'))
+
+    temperature = Quantity(
+        type=np.dtype(np.float64),
+        unit="°C",
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
+
+    time = Quantity(
+        type=np.dtype(np.float64),
+        unit="minute",
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='minute'))
+
+
+class Environment(Electrolyte):
+
+    purging = SubSection(
+        section_def=Purging)
+
+    sample_id = SubSection(
+        section_def=SampleIDCENOME)
+
+
 class ElectroChemicalCell(CESample):
     working_electrode = Quantity(
         type=Reference(CESample.m_def),
@@ -355,3 +380,50 @@ class ElectroChemicalCell(CESample):
             self.chemical_composition_or_formulas = self.chemical_composition_or_formulas[1:]
 
         super(ElectroChemicalCell, self).normalize(archive, logger)
+
+
+class ElectroChemicalSetup(CESample):
+
+    setup = Quantity(
+        type=str,
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=['Beaker', 'RDE', 'RRDE', 'flowcell XAS', 'flowcell FED', 'flowcell UVvis'])
+        ))
+
+    reference_electrode = Quantity(
+        type=Reference(Electrode.m_def),
+        a_eln=dict(component='ReferenceEditQuantity'))
+
+    counter_electrode = Quantity(
+        type=Reference(Electrode.m_def),
+        a_eln=dict(component='ReferenceEditQuantity'))
+
+    sample_id = SubSection(
+        section_def=SampleIDCENOME)
+
+    def normalize(self, archive, logger):
+
+        self.chemical_composition_or_formulas = ''
+
+        if self.reference_electrode is not None:
+            if self.reference_electrode.chemical_composition_or_formulas is not None:
+                elements_formula = [
+                    self.chemical_composition_or_formulas,
+                    self.reference_electrode.chemical_composition_or_formulas]
+                self.chemical_composition_or_formulas = ','.join(
+                    elements_formula)
+
+        if self.counter_electrode is not None:
+            if self.counter_electrode.chemical_composition_or_formulas is not None:
+                elements_formula = [
+                    self.chemical_composition_or_formulas,
+                    self.counter_electrode.chemical_composition_or_formulas]
+                self.chemical_composition_or_formulas = ','.join(
+                    elements_formula)
+
+        if self.chemical_composition_or_formulas.startswith(","):
+            self.chemical_composition_or_formulas = self.chemical_composition_or_formulas[1:]
+
+        super(ElectroChemicalSetup, self).normalize(archive, logger)

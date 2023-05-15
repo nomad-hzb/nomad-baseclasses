@@ -19,43 +19,22 @@
 from nomad.metainfo import (Quantity, Reference)
 
 from .. import MeasurementOnSample
-from .cesample import Electrode, Electrolyte, CESample, ElectroChemicalCell
+from .cesample import Environment, ElectroChemicalSetup
 
 
 class PotentiostatMeasurement(MeasurementOnSample):
 
-    working_electrode = Quantity(
-        type=Reference(CESample.m_def),
+    station = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'))
+
+    environment = Quantity(
+        type=Reference(Environment.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
-    reference_electrode = Quantity(
-        type=Reference(Electrode.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
-
-    counter_electrode = Quantity(
-        type=Reference(Electrode.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
-
-    electrolyte = Quantity(
-        type=Reference(Electrolyte.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
-
-    electrochemical_cell = Quantity(
-        type=Reference(ElectroChemicalCell.m_def),
+    setup = Quantity(
+        type=Reference(ElectroChemicalSetup.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     def normalize(self, archive, logger):
         super(PotentiostatMeasurement, self).normalize(archive, logger)
-
-        if self.electrochemical_cell:
-            if self.working_electrode is None:
-                self.working_electrode = self.electrochemical_cell.working_electrode
-
-            if self.reference_electrode is None:
-                self.reference_electrode = self.electrochemical_cell.reference_electrode
-
-            if self.counter_electrode is None:
-                self.counter_electrode = self.electrochemical_cell.counter_electrode
-
-            if self.electrolyte is None:
-                self.electrolyte = self.electrochemical_cell.electrolyte
