@@ -112,6 +112,21 @@ def get_reference(upload_id, entry_id):
     return f'../uploads/{upload_id}/archive/{entry_id}#data'
 
 
+def set_sample_reference(archive, entry, search_id):
+    from nomad.search import search
+    query = {
+        'results.eln.lab_ids': search_id
+    }
+    search_result = search(
+        owner='all',
+        query=query,
+        user_id=archive.metadata.main_author.user_id)
+    if len(search_result.data) == 1:
+        data = search_result.data[0]
+        upload_id, entry_id = data["upload_id"], data["entry_id"]
+        entry.samples = [get_reference(upload_id, entry_id)]
+
+
 def find_sample_by_id(archive, sample_id):
     from nomad.search import search
 

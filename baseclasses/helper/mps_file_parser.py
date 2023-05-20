@@ -17,7 +17,7 @@ def headeranddelimiter(file):
     with open(file, "br") as f:
         for i, line in enumerate(f):
             line = line.decode(encoding)
-            if line.startswith("mode"):
+            if line.startswith("mode") or line.startswith("freq/Hz"):
                 header = i
                 header_found = True
             if header_found:
@@ -38,9 +38,9 @@ def parse_line(line, separator, encoding):
 
     if separator in stripped_line:
         split = list(filter(None, stripped_line.split(separator)))
-        if len(split) != 2:
+        if len(split) < 2:
             return None, None
-        key, value = split
+        key, value = split[0], ':'.join(split[1:])
         return key.strip(), value.strip()
 
     return None, None
@@ -75,14 +75,14 @@ def read_mps_file(datafile, encoding="iso-8859-1"):
     return res
 
 
-def read_mpt_file(datafile, encoding="iso-8859-1"):
+def read_mpt_file(filename, encoding="iso-8859-1"):
     """Reads an MPS file, splits by : and if technique splits by spaces"""
     metadata = {}
     separator = ":"
     technique = ''
     count = 0
     key = ''
-    with open(datafile, 'rb') as file:
+    with open(filename, 'rb') as file:
         for line in file.readlines():
             line = line.decode(encoding)
             if count == 3:
@@ -113,9 +113,9 @@ def read_mpt_file(datafile, encoding="iso-8859-1"):
                 continue
             metadata.update({key: value})
 
-    header_line, decimal = headeranddelimiter(datafile)
+    header_line, decimal = headeranddelimiter(filename)
     data = pd.read_csv(
-        datafile,
+        filename,
         sep="\t",
         header=header_line,
         encoding=encoding,
@@ -139,5 +139,5 @@ def read_mpt_file(datafile, encoding="iso-8859-1"):
     return metadata, data, technique
 
 
-# r, d, t = read_mpt_file(
-#     '/home/a2853/Documents/Projects/nomad/hysprintlab/CV platinum 10 cycles.mpt')
+# filename = '/home/a2853/Documents/Projects/nomad/hysprintlab/manuel/HZB_MaVa_20230519_ITO._OCV_C01.mpt'
+# r, data, t = read_mpt_file(filename)

@@ -16,10 +16,33 @@
 # limitations under the License.
 #
 
-from nomad.metainfo import (Quantity, Reference)
+import numpy as np
+
+from nomad.metainfo import (Quantity, Reference, SubSection)
 
 from .. import MeasurementOnSample
 from .cesample import Environment, ElectroChemicalSetup
+
+from nomad.datamodel.data import ArchiveSection
+
+
+class PotentiostatSetup(ArchiveSection):
+
+    flow_cell_pump_rate = Quantity(
+        type=np.dtype(np.float64),
+        unit=('mL/minute'),
+        a_eln=dict(component='NumberEditQuantity',
+                   defaultDisplayUnit='mL/minute'))
+
+    flow_cell_pressure = Quantity(
+        type=np.dtype(np.float64),
+        unit=('bar'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='bar'))
+
+    rotation_speed = Quantity(
+        type=np.dtype(np.float64),
+        unit=('rpm'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='rpm'))
 
 
 class PotentiostatMeasurement(MeasurementOnSample):
@@ -35,6 +58,9 @@ class PotentiostatMeasurement(MeasurementOnSample):
     setup = Quantity(
         type=Reference(ElectroChemicalSetup.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
+
+    setup_parameters = SubSection(
+        section_def=PotentiostatSetup)
 
     def normalize(self, archive, logger):
         super(PotentiostatMeasurement, self).normalize(archive, logger)

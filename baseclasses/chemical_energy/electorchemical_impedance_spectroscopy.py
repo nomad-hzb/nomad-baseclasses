@@ -276,10 +276,22 @@ class ElectrochemicalImpedanceSpectroscopy(PotentiostatMeasurement):
 
                         if "EISPOT" in metadata["TAG"] and self.properties is None:
                             from ..helper.gamry_archive import get_eis_properties
-
                             properties = EISProperties()
                             get_eis_properties(metadata, properties)
+                            self.properties = properties
 
+                    if os.path.splitext(self.data_file)[-1] == ".mpt":
+                        from ..helper.mps_file_parser import read_mpt_file
+                        from ..helper.mpt_get_archive import get_eis_data, get_meta_data, get_eis_properties
+
+                        metadata, data, technique = read_mpt_file(
+                            filename=f.name)
+                        get_eis_data(data, self)
+                        get_meta_data(metadata, self)
+
+                        if "Potentio" in technique and self.properties is None:
+                            properties = EISProperties()
+                            get_eis_properties(metadata, properties)
                             self.properties = properties
 
             except Exception as e:

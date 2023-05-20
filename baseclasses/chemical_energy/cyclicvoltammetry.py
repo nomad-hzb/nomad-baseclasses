@@ -25,10 +25,6 @@ from nomad.datamodel.data import ArchiveSection
 from .voltammetry import Voltammetry
 
 
-def get_parameter(key, metadata):
-    return metadata[key] if key in metadata else None
-
-
 class CVProperties(ArchiveSection):
 
     initial_potential = Quantity(
@@ -121,38 +117,20 @@ class CyclicVoltammetry(Voltammetry):
                         metadata, _ = get_header_and_data(filename=f.name)
 
                         if "CV" in metadata["TAG"] and self.properties is None:
-                            properties = CVProperties()
                             from ..helper.gamry_archive import get_cv_properties
+                            properties = CVProperties()
                             get_cv_properties(metadata, properties)
-
                             self.properties = properties
 
                     if os.path.splitext(self.data_file)[-1] == ".mpt":
                         from ..helper.mps_file_parser import read_mpt_file
-                        metadata, _, technique = read_mpt_file(datafile=f.name)
+
+                        metadata, _, technique = read_mpt_file(f.name)
 
                         if "Cyclic" in technique and self.properties is None:
+                            from ..helper.mpt_get_archive import get_cv_properties
                             properties = CVProperties()
-                            properties.initial_potential = get_parameter(
-                                "Ei (V)", metadata)
-                            properties.initial_potential_measured_against = "Eoc" if get_parameter(
-                                "Ei (V) vs.", metadata) == "Eoc" else "Eref"
-                            properties.limit_potential_1 = get_parameter(
-                                "E1 (V)", metadata)
-                            properties.limit_potential_1_measured_against = "Eoc" if get_parameter(
-                                "E1 (V) vs.", metadata) == "Eoc" else "Eref"
-                            properties.limit_potential_2 = get_parameter(
-                                "E2 (V)", metadata)
-                            properties.limit_potential_2_measured_against = "Eoc" if get_parameter(
-                                "E2 (V) vs.", metadata) == "Eoc" else "Eref"
-                            properties.final_potential = get_parameter(
-                                "Ef (V)", metadata)
-                            properties.final_potential_measured_against = "Eoc" if get_parameter(
-                                "Ef (V) vs.", metadata) == "Eoc" else "Eref"
-                            properties.scan_rate = get_parameter(
-                                "dE/dt", metadata)
-                            properties.cycles = get_parameter(
-                                "nc cycles", metadata)
+                            get_cv_properties(metadata, properties)
                             self.properties = properties
 
                     if os.path.splitext(self.data_file)[-1] == ".cor":
@@ -160,30 +138,30 @@ class CyclicVoltammetry(Voltammetry):
                         metadata, _, technique = get_header_data_corrware(
                             filename=f.name)
                         if "Cyclic" in technique and self.properties is None:
-
+                            experiment = metadata['Experiment']
                             properties = CVProperties()
-                            properties.initial_potential = get_parameter(
-                                "Potential #1", metadata['Experiment'])
-                            properties.initial_potential_measured_against = "Eoc" if get_parameter(
-                                'Potential #1 Type', metadata['Experiment']) == 0.0 else "Eref"
-                            properties.limit_potential_1 = get_parameter(
-                                'Potential #2', metadata['Experiment'])
-                            properties.limit_potential_1_measured_against = "Eoc" if get_parameter(
-                                'Potential #2 Type', metadata['Experiment']) == 0.0 else "Eref"
-                            properties.limit_potential_2 = get_parameter(
-                                'Potential #3', metadata['Experiment'])
-                            properties.limit_potential_2_measured_against = "Eoc" if get_parameter(
-                                'Potential #3 Type', metadata['Experiment']) == 0.0 else "Eref"
-                            properties.final_potential = get_parameter(
-                                'Potential #4', metadata['Experiment'])
-                            properties.final_potential_measured_against = "Eoc" if get_parameter(
-                                'Potential #1 Type', metadata['Experiment']) == 0.0 else "Eref"
-                            properties.scan_rate = get_parameter(
-                                'Scan Rate', metadata['Experiment'])
-                            properties.cycles = get_parameter(
-                                'Scan Number', metadata['Experiment'])
-                            properties.open_circuit_potential = get_parameter(
-                                'Open Circuit Potential (V)', metadata)
+                            properties.initial_potential = experiment.get(
+                                "Potential #1")
+                            properties.initial_potential_measured_against = "Eoc" if experiment.get(
+                                'Potential #1 Type') == 0.0 else "Eref"
+                            properties.limit_potential_1 = experiment.get(
+                                'Potential #2')
+                            properties.limit_potential_1_measured_against = "Eoc" if experiment.get(
+                                'Potential #2 Type') == 0.0 else "Eref"
+                            properties.limit_potential_2 = experiment.get(
+                                'Potential #3')
+                            properties.limit_potential_2_measured_against = "Eoc" if experiment.get(
+                                'Potential #3 Type') == 0.0 else "Eref"
+                            properties.final_potential = experiment.get(
+                                'Potential #4')
+                            properties.final_potential_measured_against = "Eoc" if experiment.get(
+                                'Potential #1 Type') == 0.0 else "Eref"
+                            properties.scan_rate = experiment.get(
+                                'Scan Rate')
+                            properties.cycles = experiment.get(
+                                'Scan Number')
+                            properties.open_circuit_potential = metadata.get(
+                                'Open Circuit Potential (V)')
                             self.properties = properties
 
             except Exception as e:

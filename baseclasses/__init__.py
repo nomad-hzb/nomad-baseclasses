@@ -210,6 +210,7 @@ class LayerDeposition(ProcessOnSample):
 
     layer_material_name = Quantity(
         type=str,
+        # links=["https://www.helmholtz-berlin.de"],
         description=(
             'The chemical formula using common abreviations. This will be used to set layer material, if not set, e.g. MAPbI3.'),
         a_eln=dict(component='StringEditQuantity'))

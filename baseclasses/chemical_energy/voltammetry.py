@@ -227,31 +227,10 @@ class Voltammetry(PotentiostatMeasurement):
 
                     if os.path.splitext(self.data_file)[-1] == ".mpt":
                         from ..helper.mps_file_parser import read_mpt_file
+                        from ..helper.mpt_get_archive import get_voltammetry_data
 
                         metadata, data, _ = read_mpt_file(f.name)
-                        if "curve" in data.index.name:
-                            c = 0
-                            self.cycles = []
-                            while (c in data.index):
-                                curve = data.loc[c]
-                                cycle = VoltammetryCycleWithPlot()
-                                cycle.time = np.array(curve["time/s"])
-                                cycle.current = np.array(
-                                    curve["<I>/mA"]) if "<I>/mA" in curve.columns else None
-                                cycle.voltage = np.array(
-                                    curve["Ewe/V"]) if "Ewe/V" in curve.columns else np.array(curve["<Ewe>/V"])
-                                cycle.control = np.array(
-                                    curve["control/V"]) if "control/V" in curve.columns else None
-                                self.cycles.append(cycle)
-                                c += 1
-                        else:
-                            self.time = np.array(data["time/s"])
-                            self.current = np.array(
-                                data["<I>/mA"]) if "<I>/mA" in data.columns else None
-                            self.voltage = np.array(
-                                data["Ewe/V"]) if "Ewe/V" in data.columns else np.array(data["<Ewe>/V"])
-                            self.control = np.array(
-                                data["control/V"]) if "control/V" in data.columns else None
+                        get_voltammetry_data(data, self)
 
                     if os.path.splitext(self.data_file)[-1] == ".cor":
                         from ..helper.corr_ware_parser import get_header_data_corrware

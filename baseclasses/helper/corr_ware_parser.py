@@ -77,20 +77,19 @@ def get_header_data_corrware(filename):
         curve = 0
         v_min = _header["Experiment"]["Potential #2"]
         v_max = _header["Experiment"]["Potential #3"]
-        if v_max < v_min:
-            tmp = v_min
-            v_min = v_max
-            v_max = tmp
         _data["curve"] = 0
         v_value_new = _data.iloc[0]["E(Volts)"]
+        v_value_start = _data.iloc[0]["E(Volts)"]
         for index, row in _data[1:].iterrows():
             v_value_old = v_value_new
             v_value_new = row["E(Volts)"]
-            if v_value_new < (v_max + v_min) / 2\
-                    and v_value_old > (v_max + v_min) / 2:
-
+            if (v_value_new < v_value_start and v_value_old > v_value_start
+                    and v_max > v_min) or \
+                    (v_value_new > v_value_start
+                     and v_value_old < v_value_start and v_max < v_min) or \
+                    (v_value_new == v_max and v_value_start == v_max and v_value_new != v_value_old) or \
+                    (v_value_new == v_min and v_value_start == v_min and v_value_new != v_value_old):
                 curve += 1
-
             _data.at[index, "curve"] = curve
         _data = _data.set_index("curve")
 

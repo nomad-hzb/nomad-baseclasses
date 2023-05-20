@@ -76,5 +76,16 @@ class OpenCircuitVoltage(Voltammetry):
 
                             self.properties = properties
 
+                    if os.path.splitext(self.data_file)[-1] == ".mpt":
+                        from ..helper.mps_file_parser import read_mpt_file
+                        from ..helper.mpt_get_archive import get_ocv_properties
+
+                        metadata, _, technique = read_mpt_file(f.name)
+                        if "Open Circuit Voltage" in technique and self.properties is None:
+                            properties = OCVProperties()
+                            get_ocv_properties(metadata, properties)
+
+                            self.properties = properties
+
             except Exception as e:
                 logger.error(e)
