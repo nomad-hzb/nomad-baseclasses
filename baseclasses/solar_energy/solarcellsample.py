@@ -156,32 +156,35 @@ def collectSampleData(archive):
     result = {"processes": {}, "JVs": {}, "EQEs": {}}
 
     for res in search_result.data:
-        # Open Archives
-        with files.UploadFiles.get(upload_id=res["upload_id"]).read_archive(entry_id=res["entry_id"]) as archive:
-            entry_id = res["entry_id"]
-            entry_data = archive[entry_id]["data"]
-            entry = {entry_id: {}}
-            try:
-                entry[entry_id]["elements"] = archive[entry_id]["results"]["material"]["elements"]
-            except BaseException:
-                entry[entry_id]["elements"] = []
-            # Check if it is a ProcessOnSample
-            if baseclasses.ProcessOnSample in inspect.getmro(
-                    eval(entry_data["m_def"])):
-                collectProcessOnSample(entry, entry_id, entry_data)
-                result["processes"].update(entry)
+        try:
+            # Open Archives
+            with files.UploadFiles.get(upload_id=res["upload_id"]).read_archive(entry_id=res["entry_id"]) as archive:
+                entry_id = res["entry_id"]
+                entry_data = archive[entry_id]["data"]
+                entry = {entry_id: {}}
+                try:
+                    entry[entry_id]["elements"] = archive[entry_id]["results"]["material"]["elements"]
+                except BaseException:
+                    entry[entry_id]["elements"] = []
+                # Check if it is a ProcessOnSample
+                if baseclasses.ProcessOnSample in inspect.getmro(
+                        eval(entry_data["m_def"])):
+                    collectProcessOnSample(entry, entry_id, entry_data)
+                    result["processes"].update(entry)
 
-            # check if it is a JV measurement
-            if baseclasses.solar_energy.jvmeasurement.JVMeasurement in inspect.getmro(
-                    eval(entry_data["m_def"])):
-                collectJVMeasurement(entry, entry_id, entry_data)
-                result["JVs"].update(entry)
+                # check if it is a JV measurement
+                if baseclasses.solar_energy.jvmeasurement.JVMeasurement in inspect.getmro(
+                        eval(entry_data["m_def"])):
+                    collectJVMeasurement(entry, entry_id, entry_data)
+                    result["JVs"].update(entry)
 
-            # check if EQ Measurement
-            if baseclasses.solar_energy.eqemeasurement.EQEMeasurement in inspect.getmro(
-                    eval(entry_data["m_def"])):
-                collectEQEMeasurement(entry, entry_id, entry_data)
-                result["EQEs"].update(entry)
+                # check if EQ Measurement
+                if baseclasses.solar_energy.eqemeasurement.EQEMeasurement in inspect.getmro(
+                        eval(entry_data["m_def"])):
+                    collectEQEMeasurement(entry, entry_id, entry_data)
+                    result["EQEs"].update(entry)
+        except:
+            pass
 
     # sort processes by the fieled previous process
     result["processes"] = sortProcesses(result["processes"])
