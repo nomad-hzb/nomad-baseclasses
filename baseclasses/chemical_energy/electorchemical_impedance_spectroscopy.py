@@ -175,11 +175,6 @@ class EISPropertiesWithData(EISProperties):
 
 class ElectrochemicalImpedanceSpectroscopy(PotentiostatMeasurement):
 
-    data_file = Quantity(
-        type=str,
-        a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
-
     metadata_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),

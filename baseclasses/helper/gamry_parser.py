@@ -28,7 +28,7 @@ import pandas as pd
 from pandas.api.types import is_numeric_dtype
 
 
-def _read_curve_data(fid) -> tuple:
+def _read_curve_data(fid, curve_length) -> tuple:
     """helper function to process an EXPLAIN Table
     Args:
         fid (int): a file handle pointer to the table position in the data files
@@ -44,11 +44,13 @@ def _read_curve_data(fid) -> tuple:
 
     units = fid.readline().strip().split("\t")
     cur_line = fid.readline().strip()
+    line_count = 0
     while not re.search(r"(CURVE|EXPERIMENTABORTED)", cur_line):
+        line_count += 1
         curve += cur_line + "\n"
         pos = fid.tell()
         cur_line = fid.readline().strip()
-        if fid.tell() == pos:
+        if fid.tell() == pos or (curve_length is not None and curve_length == line_count):
             break
     try:
         curve = pd.read_csv(StringIO(curve), delimiter="\t",
@@ -64,22 +66,64 @@ def _read_curve_data(fid) -> tuple:
 
 
 def get_number(value_str):
-    if "." in value_str:
-        try:
-            return locale.atof(value_str)
-        except:
-            return value_str
     if "," in value_str:
         return get_number(value_str.replace(",", "."))
-    return value_str
+    try:
+        return locale.atof(value_str)
+    except:
+        return value_str
+
+
+def get_curve(f, _header, _curve_units, curve_length=None):
+    curve_keys, curve_units, curve = _read_curve_data(f, curve_length)
+    REQUIRED_UNITS: dict = dict(CV=dict(Vf="V vs. Ref.", Im="A"))
+    if curve.empty:
+        return None
+
+    for key in curve_keys:
+        nonnumeric_keys = [
+            "Over",
+        ]
+        if key in nonnumeric_keys:
+            continue
+        elif key == "Pt":
+            if not is_numeric_dtype(curve.index):
+                curve.index = curve.index.map(int)
+        else:
+            if not is_numeric_dtype(curve[key]):
+                try:
+                    curve[key] = curve[key].map(locale.atof)
+                except:
+                    curve[key] = curve[key].apply(
+                        lambda x: x.replace(",", "."))
+                    curve[key] = curve[key].map(locale.atof)
+    # print(curve_keys, curve_units)
+    # print(_curve_units, curve_units)
+
+    # if not bool(_curve_units.items()):
+    #     exp_type = _header["TAG"]
+    #     for key, unit in zip(curve_keys, curve_units):
+    #         if exp_type in REQUIRED_UNITS.keys():
+    #             if key in REQUIRED_UNITS[exp_type].keys():
+    #                 assert (
+    #                     unit == REQUIRED_UNITS[exp_type][key]
+    #                 ), "Unit error for '{}': Expected '{}', found '{}'!".format(
+    #                     key, REQUIRED_UNITS[exp_type][key], unit
+    #                 )
+    #         _curve_units[key] = unit
+    # else:
+    #     for key, unit in zip(curve_keys, curve_units):
+    #         assert _curve_units[key] == unit, "Unit mismatch found!"
+
+    return curve
 
 
 def get_header_and_data(filename):
 
-    REQUIRED_UNITS: dict = dict(CV=dict(Vf="V vs. Ref.", Im="A"))
-
     _header = dict()
     _curve_units = dict()
+    _curves = []
+
     pos = 0
     with open(file=filename, mode="r", encoding="utf8", errors="ignore") as f:
         cur_line = f.readline().split("\t")
@@ -94,6 +138,10 @@ def get_header_and_data(filename):
                 pass
 
             if len(cur_line) > 1:
+                if cur_line[0] in ["OCVCURVE"] and len(cur_line) > 2:
+                    table_length = get_number(cur_line[2])
+                    _header[cur_line[0]] = get_curve(
+                        f, _header, _curve_units, table_length)
                 # data format: key, type, value
                 if cur_line[1] in ["LABEL", "PSTAT"]:
                     _header[cur_line[0]] = cur_line[2]
@@ -137,50 +185,15 @@ def get_header_and_data(filename):
     assert (
         len(_header) > 0
     ), "Must read file header before curves can be extracted."
-    _curves = []
     curve_count = 0
 
     with open(file=filename, mode="r", encoding="utf8", errors="ignore") as f:
         f.seek(header_length)  # skip to end of header
 
         while True:
-            curve_keys, curve_units, curve = _read_curve_data(f)
-            if curve.empty:
+            curve = get_curve(f, _header, _curve_units)
+            if curve is None:
                 break
-
-            for key in curve_keys:
-                nonnumeric_keys = [
-                    "Over",
-                ]
-                if key in nonnumeric_keys:
-                    continue
-                elif key == "Pt":
-                    if not is_numeric_dtype(curve.index):
-                        curve.index = curve.index.map(int)
-                else:
-                    if not is_numeric_dtype(curve[key]):
-                        try:
-                            curve[key] = curve[key].map(locale.atof)
-                        except:
-                            curve[key] = curve[key].apply(
-                                lambda x: x.replace(",", "."))
-                            curve[key] = curve[key].map(locale.atof)
-
-            if not bool(_curve_units.items()):
-                exp_type = _header["TAG"]
-                for key, unit in zip(curve_keys, curve_units):
-                    if exp_type in REQUIRED_UNITS.keys():
-                        if key in REQUIRED_UNITS[exp_type].keys():
-                            assert (
-                                unit == REQUIRED_UNITS[exp_type][key]
-                            ), "Unit error for '{}': Expected '{}', found '{}'!".format(
-                                key, REQUIRED_UNITS[exp_type][key], unit
-                            )
-                    _curve_units[key] = unit
-            else:
-                for key, unit in zip(curve_keys, curve_units):
-                    assert _curve_units[key] == unit, "Unit mismatch found!"
-
             _curves.append(curve)
             curve_count += 1
 

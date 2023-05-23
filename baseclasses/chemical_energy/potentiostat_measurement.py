@@ -17,13 +17,81 @@
 #
 
 import numpy as np
+import os
 
-from nomad.metainfo import (Quantity, Reference, SubSection)
+from nomad.metainfo import (Quantity, Reference, SubSection, Section)
 
 from .. import MeasurementOnSample
 from .cesample import Environment, ElectroChemicalSetup
 
 from nomad.datamodel.data import ArchiveSection
+
+
+class VoltammetryCycle(ArchiveSection):
+
+    time = Quantity(
+        type=np.dtype(np.float64),
+        shape=['*'],
+        unit='s')
+
+    current = Quantity(
+        type=np.dtype(
+            np.float64), shape=['*'], unit='mA', a_plot=[
+            {
+                "label": "Current", 'x': 'time', 'y': 'current', 'layout': {
+                    'yaxis': {
+                        "fixedrange": False}, 'xaxis': {
+                            "fixedrange": False}}, "config": {
+                    "editable": True, "scrollZoom": True}}])
+
+    voltage = Quantity(
+        type=np.dtype(
+            np.float64), shape=['*'], unit='V', a_plot=[
+            {
+                "label": "Voltage", 'x': 'time', 'y': 'voltage', 'layout': {
+                    'yaxis': {
+                        "fixedrange": False}, 'xaxis': {
+                            "fixedrange": False}}, "config": {
+                    "editable": True, "scrollZoom": True}}])
+
+    control = Quantity(
+        type=np.dtype(
+            np.float64), shape=['*'], unit='V', a_plot=[
+            {
+                "label": "Control", 'x': 'time', 'y': 'control', 'layout': {
+                    'yaxis': {
+                        "fixedrange": False}, 'xaxis': {
+                            "fixedrange": False}}, "config": {
+                    "editable": True, "scrollZoom": True}}])
+
+    charge = Quantity(
+        type=np.dtype(
+            np.float64), shape=['n_values'], unit='mC', a_plot=[
+            {
+                "label": "Charge", 'x': 'time', 'y': 'charge', 'layout': {
+                    'yaxis': {
+                        "fixedrange": False}, 'xaxis': {
+                            "fixedrange": False}}, "config": {
+                    "editable": True, "scrollZoom": True}}])
+
+    current_density = Quantity(
+        type=np.dtype(
+            np.float64),
+        shape=['n_values'],
+        unit='mA/cm^2',
+        a_plot=[
+            {
+                "label": "Current Density",
+                'x': 'time',
+                'y': 'current_density',
+                'layout': {
+                    'yaxis': {
+                        "fixedrange": False},
+                    'xaxis': {
+                        "fixedrange": False}},
+                "config": {
+                    "editable": True,
+                    "scrollZoom": True}}])
 
 
 class PotentiostatSetup(ArchiveSection):
@@ -47,6 +115,11 @@ class PotentiostatSetup(ArchiveSection):
 
 class PotentiostatMeasurement(MeasurementOnSample):
 
+    data_file = Quantity(
+        type=str,
+        a_eln=dict(component='FileEditQuantity'),
+        a_browser=dict(adaptor='RawFileAdaptor'))
+
     station = Quantity(
         type=str,
         a_eln=dict(component='StringEditQuantity'))
@@ -59,8 +132,26 @@ class PotentiostatMeasurement(MeasurementOnSample):
         type=Reference(ElectroChemicalSetup.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
+    pretreatment = SubSection(
+        section_def=VoltammetryCycle)
+
     setup_parameters = SubSection(
         section_def=PotentiostatSetup)
 
     def normalize(self, archive, logger):
         super(PotentiostatMeasurement, self).normalize(archive, logger)
+        if self.data_file:
+            try:
+                with archive.m_context.raw_file(self.data_file) as f:
+
+                    if os.path.splitext(self.data_file)[-1] == ".DTA":
+                        from ..helper.gamry_parser import get_header_and_data
+                        from ..helper.gamry_archive import get_voltammetry_data
+                        metadata, _ = get_header_and_data(filename=f.name)
+                        if "OCVCURVE" in metadata:
+                            cycle = VoltammetryCycle()
+                            get_voltammetry_data(
+                                metadata["OCVCURVE"], cycle)
+                            self.pretreatment = cycle
+            except Exception as e:
+                logger.error(e)

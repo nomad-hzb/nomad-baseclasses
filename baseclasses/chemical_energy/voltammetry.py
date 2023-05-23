@@ -25,7 +25,7 @@ from nomad.units import ureg
 from nomad.metainfo import (Quantity, SubSection, Section)
 from nomad.datamodel.data import ArchiveSection
 
-from .potentiostat_measurement import PotentiostatMeasurement
+from .potentiostat_measurement import PotentiostatMeasurement, VoltammetryCycle
 
 encoding = "iso-8859-1"
 
@@ -49,73 +49,6 @@ def headeranddelimiter(file):
     return header, decimal
 
 
-class VoltammetryCycle(ArchiveSection):
-
-    time = Quantity(
-        type=np.dtype(np.float64),
-        shape=['*'],
-        unit='s')
-
-    current = Quantity(
-        type=np.dtype(
-            np.float64), shape=['*'], unit='mA', a_plot=[
-            {
-                "label": "Current", 'x': 'time', 'y': 'current', 'layout': {
-                    'yaxis': {
-                        "fixedrange": False}, 'xaxis': {
-                            "fixedrange": False}}, "config": {
-                    "editable": True, "scrollZoom": True}}])
-
-    voltage = Quantity(
-        type=np.dtype(
-            np.float64), shape=['*'], unit='V', a_plot=[
-            {
-                "label": "Voltage", 'x': 'time', 'y': 'voltage', 'layout': {
-                    'yaxis': {
-                        "fixedrange": False}, 'xaxis': {
-                            "fixedrange": False}}, "config": {
-                    "editable": True, "scrollZoom": True}}])
-
-    control = Quantity(
-        type=np.dtype(
-            np.float64), shape=['*'], unit='V', a_plot=[
-            {
-                "label": "Control", 'x': 'time', 'y': 'control', 'layout': {
-                    'yaxis': {
-                        "fixedrange": False}, 'xaxis': {
-                            "fixedrange": False}}, "config": {
-                    "editable": True, "scrollZoom": True}}])
-
-    charge = Quantity(
-        type=np.dtype(
-            np.float64), shape=['n_values'], unit='mC', a_plot=[
-            {
-                "label": "Charge", 'x': 'time', 'y': 'charge', 'layout': {
-                    'yaxis': {
-                        "fixedrange": False}, 'xaxis': {
-                            "fixedrange": False}}, "config": {
-                    "editable": True, "scrollZoom": True}}])
-
-    current_density = Quantity(
-        type=np.dtype(
-            np.float64),
-        shape=['n_values'],
-        unit='mA/cm^2',
-        a_plot=[
-            {
-                "label": "Current Density",
-                'x': 'time',
-                'y': 'current_density',
-                'layout': {
-                    'yaxis': {
-                        "fixedrange": False},
-                    'xaxis': {
-                        "fixedrange": False}},
-                "config": {
-                    "editable": True,
-                    "scrollZoom": True}}])
-
-
 class VoltammetryCycleWithPlot(VoltammetryCycle):
     m_def = Section(
         a_plot=[
@@ -132,11 +65,6 @@ class VoltammetryCycleWithPlot(VoltammetryCycle):
 
 
 class Voltammetry(PotentiostatMeasurement):
-
-    data_file = Quantity(
-        type=str,
-        a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
 
     metadata_file = Quantity(
         type=str,
