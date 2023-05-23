@@ -63,6 +63,17 @@ def _read_curve_data(fid) -> tuple:
     return keys, units, curve
 
 
+def get_number(value_str):
+    if "." in value_str:
+        try:
+            return locale.atof(value_str)
+        except:
+            return value_str
+    if "," in value_str:
+        return get_number(value_str.replace(",", "."))
+    return value_str
+
+
 def get_header_and_data(filename):
 
     REQUIRED_UNITS: dict = dict(CV=dict(Vf="V vs. Ref.", Im="A"))
@@ -89,41 +100,22 @@ def get_header_and_data(filename):
                     if cur_line[0] in ["TITLE"] and len(cur_line) > 3:
                         _header["SAMPLE_ID"] = cur_line[3]
                 elif cur_line[1] in ["POTEN"] and len(cur_line) == 5:
-                    try:
-                        tmp_value = locale.atof(cur_line[2])
-                    except:
-                        tmp_value = locale.atof(
-                            cur_line[2].replace(",", "."))
-
+                    tmp_value = get_number(cur_line[2])
                     _header[cur_line[0]] = (tmp_value, cur_line[3] == "T")
 
                 elif cur_line[1] in ["QUANT", "IQUANT", "POTEN"]:
                     # locale-friendly alternative to float
-                    try:
-                        _header[cur_line[0]] = locale.atof(cur_line[2])
-                    except:
-                        _header[cur_line[0]] = locale.atof(
-                            cur_line[2].replace(",", "."))
+                    _header[cur_line[0]] = get_number(cur_line[2])
                 elif cur_line[1] in ["IQUANT", "SELECTOR"]:
                     _header[cur_line[0]] = int(cur_line[2])
                 elif cur_line[1] in ["TOGGLE"]:
                     _header[cur_line[0]] = cur_line[2] == "T"
                 elif cur_line[1] in ["ONEPARAM"]:
-                    try:
-                        tmp_value = locale.atof(cur_line[3])
-                    except:
-                        tmp_value = locale.atof(
-                            cur_line[3].replace(",", "."))
+                    tmp_value = get_number(cur_line[3])
                     _header[cur_line[0]] = (tmp_value, cur_line[2] == "T")
                 elif cur_line[1] == "TWOPARAM":
-                    try:
-                        tmp_start = locale.atof(cur_line[3])
-                        tmp_finish = locale.atof(cur_line[4])
-                    except:
-                        tmp_start = locale.atof(
-                            cur_line[3].replace(",", "."))
-                        tmp_finish = locale.atof(
-                            cur_line[4].replace(",", "."))
+                    tmp_start = get_number(cur_line[3])
+                    tmp_finish = get_number(cur_line[4])
                     _header[cur_line[0]] = {
                         "enable": cur_line[2] == "T",
                         # locale-friendly alternative to float
@@ -170,7 +162,8 @@ def get_header_and_data(filename):
                         try:
                             curve[key] = curve[key].map(locale.atof)
                         except:
-                            curve[key] = curve[key].apply(lambda x: x.replace(",","."))
+                            curve[key] = curve[key].apply(
+                                lambda x: x.replace(",", "."))
                             curve[key] = curve[key].map(locale.atof)
 
             if not bool(_curve_units.items()):
