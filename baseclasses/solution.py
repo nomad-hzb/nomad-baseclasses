@@ -27,7 +27,7 @@ from nomad.metainfo import (
 from nomad.datamodel.data import ArchiveSection
 
 from .chemical import Chemical
-from nomad.datamodel.metainfo.eln import Entity
+from nomad.datamodel.metainfo.eln import Entity, SampleID
 
 
 class SolutionChemical(ArchiveSection):
@@ -125,6 +125,9 @@ class Solution(Entity):
 
     other_solution = SubSection(
         section_def=OtherSolution, repeats=True)
+    
+    solution_id = SubSection(
+        section_def=SampleID)
 
 
 class Ink(Solution):

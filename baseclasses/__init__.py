@@ -34,8 +34,19 @@ from nomad.datamodel.results import Results, Material
 
 from .helper.add_solar_cell import add_solar_cell
 
+from .solution import Solution
+
 
 class BasicSample(Entity):
+
+    state_of_sample = Quantity(
+        type=str,
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=['good', 'questionable', 'bad'])
+        ))
+
     def normalize(self, archive, logger):
         super(
             BasicSample, self).normalize(
@@ -289,6 +300,11 @@ class MeasurementOnSample(Measurement):
 
     samples = Quantity(
         type=Reference(BasicSample.m_def),
+        shape=['*'],
+        a_eln=dict(component='ReferenceEditQuantity'))
+
+    solution = Quantity(
+        type=Reference(Solution.m_def),
         shape=['*'],
         a_eln=dict(component='ReferenceEditQuantity'))
 

@@ -102,6 +102,26 @@ class CVProperties(ArchiveSection):
 
 class CyclicVoltammetry(Voltammetry):
 
+    voltage_shift = Quantity(
+        type=np.dtype(np.float64),
+        unit=('V'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
+
+    resistance = Quantity(
+        type=np.dtype(np.float64),
+        unit=('ohm'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ohm'))
+
+    voltage_rhe = Quantity(
+        type=np.dtype(
+            np.float64), shape=['n_values'], unit='V', a_plot=[
+            {
+                "label": "Voltage", 'x': 'time', 'y': 'voltage_rhe', 'layout': {
+                    'yaxis': {
+                        "fixedrange": False}, 'xaxis': {
+                            "fixedrange": False}}, "config": {
+                    "editable": True, "scrollZoom": True}}])
+
     properties = SubSection(
         section_def=CVProperties)
 
@@ -166,3 +186,27 @@ class CyclicVoltammetry(Voltammetry):
 
             except Exception as e:
                 logger.error(e)
+
+        if self.properties.sample_area is not None:
+            if self.current is not None:
+                self.current_density = self.current / self.properties.sample_area
+            if self.cycles is not None:
+                for cycle in self.cycles:
+                    if cycle.current is not None:
+                        cycle.current_density = cycle.current / self.properties.sample_area
+
+        if self.resistance is not None and self.voltage_shift:
+            resistance = np.array(self.resistance)
+            shift = np.array(self.voltage_shift)
+
+            if self.voltage is not None and self.current is not None:
+                volts = np.array(self.voltage)
+                current = np.array(self.current)/1000
+                self.voltage_rhe = (volts + shift) - (resistance*current)
+            if self.cycles is not None:
+                for cycle in self.cycles:
+                    if cycle.voltage is not None and cycle.current is not None:
+                        volts = np.array(cycle.voltage)
+                        current = np.array(cycle.current)/1000
+                        cycle.voltage_rhe = (
+                            volts + shift) - (current*resistance)

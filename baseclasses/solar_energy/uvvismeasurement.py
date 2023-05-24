@@ -116,6 +116,7 @@ class UVvisMeasurement(MeasurementOnSample):
             self.data_file = []
 
         measurements = []
+        files = []
         if self.data_file or data_in_folder:
             files = [file for file in self.data_file]
 
@@ -123,42 +124,50 @@ class UVvisMeasurement(MeasurementOnSample):
                 files.extend([os.path.join(folder, file) for file in os.listdir(
                     os.path.join(archive_base, folder))])
 
-            for data_file in files:
-                if os.path.splitext(data_file)[-1] not in [".txt", ".csv"]:
-                    continue
+        for data_file in files:
+            print(data_file)
+            if os.path.splitext(data_file)[-1] not in [".txt", ".csv", ".ABS"]:
+                continue
 
-                try:
-                    with archive.m_context.raw_file(data_file) as f:
-                        data_file = os.path.basename(data_file)
-                        if os.path.splitext(data_file)[-1] == ".txt":
-                            data = pd.read_csv(
-                                f.name, delimiter=';', header=None)
-                            datetime_str = data_file.split(".")[0]
-                            datetime_object = datetime.strptime(
-                                datetime_str, '%Y%m%d_%H_%M_%S_%f')
+            try:
+                with archive.m_context.raw_file(data_file) as f:
+                    data_file = os.path.basename(data_file)
+                    datetime_object = None
+                    if os.path.splitext(data_file)[-1] == ".txt":
+                        data = pd.read_csv(
+                            f.name, delimiter=';', header=None)
+                        datetime_str = data_file.split(".")[0]
+                        datetime_object = datetime.strptime(
+                            datetime_str, '%Y%m%d_%H_%M_%S_%f')
 
-                        if os.path.splitext(data_file)[-1] == ".csv":
-                            sections = dict()
-                            for index, line in enumerate(f.readlines()):
-                                if line.startswith("["):
-                                    sections.update({line[1:-2]: index})
-                            metadata = get_data_of_file(
-                                f.name, sections["SpectrumHeader"], sections["Data"])
-                            data = get_data_of_file(
-                                f.name, sections["Data"], sections["EndOfFile"])
-                            datetime_str = f"{metadata[metadata[0] == '#Date'][1].iloc[0]}_{metadata[metadata[0] == '#GMTTime'][1].iloc[0]}"
-                            datetime_object = datetime.strptime(
-                                datetime_str, '%Y%m%d_%H%M%S%f')
+                    if os.path.splitext(data_file)[-1] == ".csv":
+                        sections = dict()
+                        for index, line in enumerate(f.readlines()):
+                            if line.startswith("["):
+                                sections.update({line[1:-2]: index})
+                        metadata = get_data_of_file(
+                            f.name, sections["SpectrumHeader"], sections["Data"])
+                        data = get_data_of_file(
+                            f.name, sections["Data"], sections["EndOfFile"])
+                        datetime_str = f"{metadata[metadata[0] == '#Date'][1].iloc[0]}_{metadata[metadata[0] == '#GMTTime'][1].iloc[0]}"
+                        datetime_object = datetime.strptime(
+                            datetime_str, '%Y%m%d_%H%M%S%f')
+                    if os.path.splitext(data_file)[-1] == ".ABS":
+                        print(data_file)
+                        data = pd.read_csv(
+                            f.name, delimiter='  ', header=None, skiprows=2)
+                        print(data)
 
-                    data_entry = UVvisData()
+                data_entry = UVvisData()
+                if datetime_object is not None:
                     data_entry.datetime = datetime_object.strftime(
                         "%Y-%m-%d %H:%M:%S.%f")
-                    data_entry.name = data_file
-                    data_entry.wavelength = np.array(data[0])
-                    data_entry.intensity = np.array(data[1])
+                data_entry.name = data_file
+                data_entry.wavelength = np.array(data[0])
+                data_entry.intensity = np.array(data[1])
 
-                    measurements.append(data_entry)
-                except BaseException:
-                    pass
+                measurements.append(data_entry)
+            except BaseException:
+                pass
 
         self.measurements = measurements

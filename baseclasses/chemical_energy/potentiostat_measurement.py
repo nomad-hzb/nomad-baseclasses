@@ -18,6 +18,7 @@
 
 import numpy as np
 import os
+import pandas as pd
 
 from nomad.metainfo import (Quantity, Reference, SubSection, Section)
 
@@ -93,6 +94,53 @@ class VoltammetryCycle(ArchiveSection):
                     "editable": True,
                     "scrollZoom": True}}])
 
+    voltage_rhe = Quantity(
+        type=np.dtype(
+            np.float64), shape=['n_values'], unit='V', a_plot=[
+            {
+                "label": "Voltage", 'x': 'time', 'y': 'voltage_rhe', 'layout': {
+                    'yaxis': {
+                        "fixedrange": False}, 'xaxis': {
+                            "fixedrange": False}}, "config": {
+                    "editable": True, "scrollZoom": True}}])
+
+    export_cycle = Quantity(
+        type=bool,
+        default=False,
+        a_eln=dict(component='BoolEditQuantity')
+    )
+
+    export_file = Quantity(
+        type=str,
+        a_eln=dict(component='FileEditQuantity'),
+        a_browser=dict(adaptor='RawFileAdaptor')
+    )
+
+    def normalize(self, archive, logger):
+        if self.export_cycle:
+            self.export_cycle = False
+            df = pd.DataFrame()
+            if self.time is not None:
+                df["time"] = self.time
+            if self.current is not None:
+                df["current"] = self.current
+            if self.voltage is not None:
+                df["voltage"] = self.voltage
+            if self.control is not None:
+                df["control"] = self.control
+            if self.charge is not None:
+                df["charge"] = self.charge
+            if self.current_density is not None:
+                df["current_density"] = self.current_density
+            if self.voltage_rhe is not None:
+                df["voltage_rhe"] = self.voltage_rhe
+
+            from baseclasses.helper.utilities import randStr
+            export_file_name = f"curve_{randStr()}.csv"
+            with archive.m_context.raw_file(export_file_name, 'w') as outfile:
+                df.to_csv(outfile.name)
+            self.export_file = export_file_name
+
 
 class PotentiostatSetup(ArchiveSection):
 
@@ -155,3 +203,6 @@ class PotentiostatMeasurement(MeasurementOnSample):
                             self.pretreatment = cycle
             except Exception as e:
                 logger.error(e)
+
+        if self.pretreatment is not None:
+            self.pretreatment.normalize(archive, logger)

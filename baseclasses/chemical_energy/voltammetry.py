@@ -51,7 +51,16 @@ def headeranddelimiter(file):
 
 class VoltammetryCycleWithPlot(VoltammetryCycle):
     m_def = Section(
-        a_plot=[
+        a_plot=[{
+            'label': 'Current density over RHE',
+            'x': 'voltage_rhe',
+            'y': 'current_density',
+            'layout': {
+                'yaxis': {
+                    "fixedrange": False},
+                'xaxis': {
+                    "fixedrange": False}},
+        },
             {
                 'label': 'Current',
                 'x': 'voltage',
@@ -61,7 +70,7 @@ class VoltammetryCycleWithPlot(VoltammetryCycle):
                         "fixedrange": False},
                     'xaxis': {
                         "fixedrange": False}},
-            }])
+        }])
 
 
 class Voltammetry(PotentiostatMeasurement):
@@ -165,19 +174,20 @@ class Voltammetry(PotentiostatMeasurement):
                         metadata, data, _ = get_header_data_corrware(
                             filename=f.name)
                         if "curve" in data.index.name:
-                            c = 0
-                            self.cycles = []
-                            while (c in data.index):
-                                curve = data.loc[c]
-                                cycle = VoltammetryCycleWithPlot()
-                                cycle.voltage = curve["E(Volts)"]
-                                cycle.current_density = curve["I(A/cm2)"] * \
-                                    ureg("A/cm**2")
-                                cycle.current = curve["I(A/cm2)"] * \
-                                    ureg("A")
-                                cycle.time = curve["T(Seconds)"]
-                                self.cycles.append(cycle)
-                                c += 1
+                            if self.cycles is None:
+                                c = 0
+                                self.cycles = []
+                                while (c in data.index):
+                                    curve = data.loc[c]
+                                    cycle = VoltammetryCycleWithPlot()
+                                    cycle.voltage = curve["E(Volts)"]
+                                    cycle.current_density = curve["I(A/cm2)"] * \
+                                        ureg("A/cm**2")
+                                    cycle.current = curve["I(A/cm2)"] * \
+                                        ureg("A")
+                                    cycle.time = curve["T(Seconds)"]
+                                    self.cycles.append(cycle)
+                                    c += 1
                         else:
                             self.voltage = data["E(Volts)"]
                             self.current_density = data["I(A/cm2)"] * \
@@ -190,18 +200,19 @@ class Voltammetry(PotentiostatMeasurement):
                         self.datetime = datetime_object.strftime(
                             "%Y-%m-%d %H:%M:%S.%f")
 
-                    if os.path.splitext(self.data_file)[-1] == ".DTA":
+                    if os.path.splitext(self.data_file)[-1] == ".DTA" and self.cycles is None:
                         from ..helper.gamry_parser import get_header_and_data
                         from ..helper.gamry_archive import get_voltammetry_data, get_meta_data
                         metadata, data = get_header_and_data(filename=f.name)
 
                         if len(data) > 1:
-                            self.cycles = []
-                            for curve in data:
-                                cycle = VoltammetryCycleWithPlot()
-                                get_voltammetry_data(
-                                    curve, cycle)
-                                self.cycles.append(cycle)
+                            if self.cycles is None:
+                                self.cycles = []
+                                for curve in data:
+                                    cycle = VoltammetryCycleWithPlot()
+                                    get_voltammetry_data(
+                                        curve, cycle)
+                                    self.cycles.append(cycle)
 
                         if len(data) == 1:
                             get_voltammetry_data(
@@ -221,3 +232,7 @@ class Voltammetry(PotentiostatMeasurement):
 
             except Exception as e:
                 logger.error(e)
+
+        if self.cycles is not None:
+            for cycle in self.cycles:
+                cycle.normalize(archive, logger)

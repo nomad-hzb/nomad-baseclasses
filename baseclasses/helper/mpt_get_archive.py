@@ -13,20 +13,21 @@ from baseclasses.chemical_energy.voltammetry import VoltammetryCycleWithPlot
 
 def get_voltammetry_data(data, cycle_class):
     if data.index.name is not None and "curve" in data.index.name:
-        c = 0
-        cycle_class.cycles = []
-        while (c in data.index):
-            curve = data.loc[[c]]
-            cycle = VoltammetryCycleWithPlot()
-            cycle.time = np.array(curve["time/s"])
-            cycle.current = np.array(
-                curve["<I>/mA"]) if "<I>/mA" in curve.columns else None
-            cycle.voltage = np.array(
-                curve["Ewe/V"]) if "Ewe/V" in curve.columns else np.array(curve["<Ewe>/V"])
-            cycle.control = np.array(
-                curve["control/V"]) if "control/V" in curve.columns else None
-            cycle_class.cycles.append(cycle)
-            c += 1
+        if cycle_class.cycles is None:
+            c = 0
+            cycle_class.cycles = []
+            while (c in data.index):
+                curve = data.loc[[c]]
+                cycle = VoltammetryCycleWithPlot()
+                cycle.time = np.array(curve["time/s"])
+                cycle.current = np.array(
+                    curve["<I>/mA"]) if "<I>/mA" in curve.columns else None
+                cycle.voltage = np.array(
+                    curve["Ewe/V"]) if "Ewe/V" in curve.columns else np.array(curve["<Ewe>/V"])
+                cycle.control = np.array(
+                    curve["control/V"]) if "control/V" in curve.columns else None
+                cycle_class.cycles.append(cycle)
+                c += 1
     else:
         cycle_class.time = np.array(data["time/s"])
         cycle_class.current = np.array(

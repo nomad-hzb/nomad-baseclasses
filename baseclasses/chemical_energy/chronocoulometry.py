@@ -61,10 +61,6 @@ class Chronocoulometry(Voltammetry):
         super(Chronocoulometry, self).normalize(archive, logger)
         self.method = "Chronocoulometry"
 
-        if self.properties.sample_area and self.current is not None and self.charge is not None:
-            self.current_density = self.current / self.properties.sample_area
-            self.charge_density = self.charge / self.properties.sample_area
-
         if self.data_file:
             try:
                 with archive.m_context.raw_file(self.data_file) as f:
@@ -82,3 +78,8 @@ class Chronocoulometry(Voltammetry):
 
             except Exception as e:
                 logger.error(e)
+
+        if self.properties.sample_area and self.current is not None:
+            self.current_density = self.current / self.properties.sample_area
+        if self.properties.sample_area and self.charge is not None:
+            self.charge_density = self.charge / self.properties.sample_area
