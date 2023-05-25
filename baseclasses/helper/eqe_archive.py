@@ -30,7 +30,7 @@ def get_eqe_archive(eqe_dict, mainfile, eqem, logger):
         'A/m**2') if 'j0rad' in eqe_dict else logger.warning('The j0rad could not be calculated.')
     eqem.voc_rad = eqe_dict['voc_rad'] if 'voc_rad' in eqe_dict else logger.warning(
         'The voc_rad could not be calculated.')
-    eqem.urbach_energy = eqe_dict['urbach_e']
+    eqem.urbach_energy = eqe_dict.get('urbach_e')
     eqem.photon_energy_array = np.array(eqe_dict['interpolated_photon_energy'])
     eqem.raw_photon_energy_array = np.array(eqe_dict['photon_energy_raw'])
     eqem.eqe_array = np.array(eqe_dict['interpolated_eqe'])

@@ -41,6 +41,7 @@ class BasicSample(Entity):
 
     state_of_sample = Quantity(
         type=str,
+        default="good",
         a_eln=dict(
             component='EnumEditQuantity',
             props=dict(
@@ -216,7 +217,8 @@ class LayerDeposition(ProcessOnSample):
                              'Encapsulation',
                              'Light management',
                              'Upconversion',
-                             'Back Contact'])
+                             'Back Contact',
+                             'Passivation'])
         ))
 
     layer_material_name = Quantity(

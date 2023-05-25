@@ -25,9 +25,12 @@ from nomad.metainfo import (
     Reference,
     MEnum, SectionProxy)
 from nomad.datamodel.data import ArchiveSection
+from nomad.datamodel.results import Results, Material
 
 from .chemical import Chemical
 from nomad.datamodel.metainfo.eln import Entity, SampleID
+
+from nomad.atomutils import Formula
 
 
 class SolutionChemical(ArchiveSection):
@@ -125,9 +128,30 @@ class Solution(Entity):
 
     other_solution = SubSection(
         section_def=OtherSolution, repeats=True)
-    
+
     solution_id = SubSection(
         section_def=SampleID)
+
+    def normalize(self, archive, logger):
+        super(Solution, self).normalize(archive, logger)
+
+        # if not archive.results:
+        #     archive.results = Results()
+        # if not archive.results.material:
+        #     archive.results.material = Material()
+        # elements = []
+        # if self.solute:
+        #     for s in self.solute:
+        #         if s.molecular_formula is not None:
+        #             elements.extend(Formula(s.molecular_formula).elements())
+        # if self.solvent:
+        #     for s in self.solvent:
+        #         if s.molecular_formula is not None:
+        #             elements.extend(Formula(s.molecular_formula).elements())
+        # if self.other_solution:
+        #     for s in self.solvent:
+        #         if s.results.material is not None:
+        #             elements.extend(Formula(s.molecular_formula).elements())
 
 
 class Ink(Solution):
