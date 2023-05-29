@@ -32,7 +32,6 @@ from .. import LayerDeposition
 from ..material_processes_misc import Annealing, SpinCoatingAntiSolvent
 
 
-
 class SpinCoatingRecipeSteps(ArchiveSection):
     m_def = Section(label_quantity='name')
 
@@ -65,7 +64,7 @@ class SpinCoatingRecipeSteps(ArchiveSection):
         unit=('rpm/s'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='rpm/s', props=dict(minValue=0)))
+            defaultDisplayUnit='rpm/s'))
 
 
 class SpinCoatingRecipe(Entity):
@@ -112,12 +111,11 @@ class SpinCoating(LayerDeposition):
 
     precursor_solution = SubSection(
         section_def=SpinCoatingPrecursorSolution, repeats=True)
-    
+
     anti_solvent = SubSection(
         section_def=SpinCoatingAntiSolvent, repeats=True)
 
     annealing = SubSection(section_def=Annealing, repeats=True)
-
 
     def normalize(self, archive, logger):
         super(SpinCoating, self).normalize(archive, logger)

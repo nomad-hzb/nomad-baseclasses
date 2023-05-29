@@ -4,6 +4,7 @@ from datetime import datetime
 
 
 import numpy as np
+import os
 
 from nomad.units import ureg
 import baseclasses
@@ -119,6 +120,9 @@ def get_meta_data(metadata, entry):
 
     if entry.name is None:
         entry.name = metadata["TITLE"]
+
+    if not entry.name and entry.data_file is not None:
+        entry.name = os.path.splitext(entry.data_file)[0]
 
     get_meta_datetime(metadata, entry)
 

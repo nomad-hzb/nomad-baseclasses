@@ -104,7 +104,7 @@ class VoltammetryCycle(ArchiveSection):
                             "fixedrange": False}}, "config": {
                     "editable": True, "scrollZoom": True}}])
 
-    export_cycle = Quantity(
+    export_this_cycle_to_csv = Quantity(
         type=bool,
         default=False,
         a_eln=dict(component='BoolEditQuantity')
@@ -116,9 +116,9 @@ class VoltammetryCycle(ArchiveSection):
         a_browser=dict(adaptor='RawFileAdaptor')
     )
 
-    def normalize(self, archive, logger):
-        if self.export_cycle:
-            self.export_cycle = False
+    def export_cycle(self, archive,  name):
+        if self.export_this_cycle_to_csv:
+            self.export_this_cycle_to_csv = False
             df = pd.DataFrame()
             if self.time is not None:
                 df["time"] = self.time
@@ -134,12 +134,10 @@ class VoltammetryCycle(ArchiveSection):
                 df["current_density"] = self.current_density
             if self.voltage_rhe is not None:
                 df["voltage_rhe"] = self.voltage_rhe
-
-            from baseclasses.helper.utilities import randStr
-            export_file_name = f"curve_{randStr()}.csv"
-            with archive.m_context.raw_file(export_file_name, 'w') as outfile:
+            export_name = f"{name}.csv"
+            with archive.m_context.raw_file(export_name, 'w') as outfile:
                 df.to_csv(outfile.name)
-            self.export_file = export_file_name
+            self.export_file = export_name
 
 
 class PotentiostatSetup(ArchiveSection):
@@ -196,7 +194,7 @@ class PotentiostatMeasurement(MeasurementOnSample):
                         from ..helper.gamry_parser import get_header_and_data
                         from ..helper.gamry_archive import get_voltammetry_data
                         metadata, _ = get_header_and_data(filename=f.name)
-                        if "OCVCURVE" in metadata:
+                        if "OCVCURVE" in metadata and self.pretreatment is None:
                             cycle = VoltammetryCycle()
                             get_voltammetry_data(
                                 metadata["OCVCURVE"], cycle)
@@ -205,4 +203,5 @@ class PotentiostatMeasurement(MeasurementOnSample):
                 logger.error(e)
 
         if self.pretreatment is not None:
-            self.pretreatment.normalize(archive, logger)
+            self.pretreatment.export_cycle(
+                archive, os.path.splitext(self.data_file)[0] + "_pretreatment")

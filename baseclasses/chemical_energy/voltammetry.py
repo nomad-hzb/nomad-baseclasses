@@ -234,5 +234,6 @@ class Voltammetry(PotentiostatMeasurement):
                 logger.error(e)
 
         if self.cycles is not None:
-            for cycle in self.cycles:
-                cycle.normalize(archive, logger)
+            for i, cycle in enumerate(self.cycles):
+                name = f"{os.path.splitext(self.data_file)[0]}_cycle_{i}"
+                cycle.export_cycle(archive, name)

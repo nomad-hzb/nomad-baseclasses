@@ -70,25 +70,19 @@ class SampleIDCE(SampleID):
                               self.sample_short_name, owner]
             self.sample_id = '_'.join(sample_id_list)
 
-        if self.project_sample_number is None and self.sample_id:
-            from nomad.search import search
-
-            query = {
-                'results.eln.lab_ids': self.sample_id
-            }
-            search_result = search(
-                owner='all',
-                query=query,
-                user_id=archive.metadata.main_author.user_id)
-
-            self.project_sample_number = get_next_project_sample_number(
-                search_result.data, archive.metadata.entry_id)
+        from nomad.search import search
+        query = {'results.eln.lab_ids': self.sample_id}
+        search_result = search(owner='all', query=query,
+                               user_id=archive.metadata.main_author.user_id)
+        self.project_sample_number = get_next_project_sample_number(
+            search_result.data, archive.metadata.entry_id)
 
         if self.sample_id is not None and self.project_sample_number is not None:
             sample_id_old = self.sample_id
             self.sample_id = f"{self.sample_id}_{self.project_sample_number:04d}"
             archive.results.eln.lab_ids = []
             archive.results.eln.lab_ids = [self.sample_id, sample_id_old]
+            archive.data.lab_id = self.sample_id
 
 
 class CESample(BasicSample):

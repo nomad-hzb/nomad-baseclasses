@@ -125,7 +125,6 @@ class UVvisMeasurement(MeasurementOnSample):
                     os.path.join(archive_base, folder))])
 
         for data_file in files:
-            print(data_file)
             if os.path.splitext(data_file)[-1] not in [".txt", ".csv", ".ABS"]:
                 continue
 
@@ -153,10 +152,8 @@ class UVvisMeasurement(MeasurementOnSample):
                         datetime_object = datetime.strptime(
                             datetime_str, '%Y%m%d_%H%M%S%f')
                     if os.path.splitext(data_file)[-1] == ".ABS":
-                        print(data_file)
                         data = pd.read_csv(
                             f.name, delimiter='  ', header=None, skiprows=2)
-                        print(data)
 
                 data_entry = UVvisData()
                 if datetime_object is not None:

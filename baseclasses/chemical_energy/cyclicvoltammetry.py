@@ -103,12 +103,12 @@ class CVProperties(ArchiveSection):
 class CyclicVoltammetry(Voltammetry):
 
     voltage_shift = Quantity(
-        type=np.dtype(np.float64),
+        type=np.dtype(np.float64), default=0,
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
 
     resistance = Quantity(
-        type=np.dtype(np.float64),
+        type=np.dtype(np.float64), default=0,
         unit=('ohm'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ohm'))
 
@@ -195,7 +195,7 @@ class CyclicVoltammetry(Voltammetry):
                     if cycle.current is not None:
                         cycle.current_density = cycle.current / self.properties.sample_area
 
-        if self.resistance is not None and self.voltage_shift:
+        if self.resistance is not None and self.voltage_shift is not None:
             resistance = np.array(self.resistance)
             shift = np.array(self.voltage_shift)
 
