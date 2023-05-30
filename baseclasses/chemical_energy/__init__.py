@@ -26,7 +26,7 @@ from .electorchemical_impedance_spectroscopy import ElectrochemicalImpedanceSpec
 from .dropcast import Dropcast
 from .opticalmicroscopy import OpticalMicorscopy
 from .photocurrent import PhotoCurrent
-from .cesample import CESample
+from .cesample import CESample, SampleIDCENOME
 from .cesample import CENSLISample, get_next_project_sample_number
 from .cesample import CENOMESample, Electrode, Electrolyte, ElectroChemicalCell, ElectroChemicalSetup, Environment
 from .preparation_protocoll import PreparationProtocol

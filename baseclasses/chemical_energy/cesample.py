@@ -310,9 +310,6 @@ class Environment(Electrolyte):
     purging = SubSection(
         section_def=Purging)
 
-    environment_id = SubSection(
-        section_def=SampleIDCENOME)
-
 
 class ElectroChemicalCell(CESample):
     working_electrode = Quantity(
@@ -330,9 +327,6 @@ class ElectroChemicalCell(CESample):
     electrolyte = Quantity(
         type=Reference(Electrolyte.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
-
-    sample_id = SubSection(
-        section_def=SampleIDCENOME)
 
     def normalize(self, archive, logger):
 
@@ -393,9 +387,6 @@ class ElectroChemicalSetup(CESample):
     counter_electrode = Quantity(
         type=Reference(Electrode.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
-
-    setup_id = SubSection(
-        section_def=SampleIDCENOME)
 
     def normalize(self, archive, logger):
 
