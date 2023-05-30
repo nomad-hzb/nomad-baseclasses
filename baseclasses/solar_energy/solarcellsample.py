@@ -192,11 +192,11 @@ def collectSampleData(archive):
 
 
 def getLayerForStack(process):
-    if 'layer_material' in process \
-            and process["layer_material"] is not None \
-            and process["layer_material"].strip():
-        return process["layer_material"].strip()
-    return process.get('layer_material_name')
+    if 'layer_material_name' in process \
+            and process["layer_material_name"] is not None \
+            and process["layer_material_name"].strip():
+        return process["layer_material_name"].strip()
+    return process.get('layer_material')
 
 
 def addLayerDepositionToStack(archive, process):
