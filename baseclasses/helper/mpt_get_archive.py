@@ -13,7 +13,7 @@ from baseclasses.chemical_energy.voltammetry import VoltammetryCycleWithPlot
 
 def get_voltammetry_data(data, cycle_class):
     if data.index.name is not None and "curve" in data.index.name:
-        if cycle_class.cycles is None:
+        if cycle_class.cycles is None or len(cycle_class.cycles) == 0:
             c = 0
             cycle_class.cycles = []
             while (c in data.index):
