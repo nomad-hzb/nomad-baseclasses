@@ -312,7 +312,7 @@ class SolcarCellSample(BasicSample):
             archive.results.properties.optoelectronic.solar_cell.open_circuit_voltage = result_data[
                 "JVs"][jv_key]["open_circuit_voltage"][jv_idx]
             archive.results.properties.optoelectronic.solar_cell.illumination_intensity = result_data[
-                "JVs"][jv_key]["light_intensity"][jv_idx]
+                "JVs"][jv_key]["light_intensity"][jv_idx] * 10  # TODO check units
             archive.results.properties.optoelectronic.solar_cell.short_circuit_current_density = result_data[
                 "JVs"][jv_key]["short_circuit_current_density"][jv_idx]
             archive.results.properties.optoelectronic.solar_cell.device_area = result_data[

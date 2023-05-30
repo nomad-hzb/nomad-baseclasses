@@ -310,7 +310,7 @@ class Environment(Electrolyte):
     purging = SubSection(
         section_def=Purging)
 
-    sample_id = SubSection(
+    environment_id = SubSection(
         section_def=SampleIDCENOME)
 
 
@@ -394,7 +394,7 @@ class ElectroChemicalSetup(CESample):
         type=Reference(Electrode.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
-    sample_id = SubSection(
+    setup_id = SubSection(
         section_def=SampleIDCENOME)
 
     def normalize(self, archive, logger):
