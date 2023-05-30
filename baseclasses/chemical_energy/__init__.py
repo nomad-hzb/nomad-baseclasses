@@ -33,3 +33,4 @@ from .preparation_protocoll import PreparationProtocol
 from .diamondsample import DiamondSample
 from .waterbath import WaterBath
 from .voltammetry import VoltammetryCycle, Voltammetry
+from .potentiostat_measurement import PotentiostatMeasurement, PotentiostatSetup

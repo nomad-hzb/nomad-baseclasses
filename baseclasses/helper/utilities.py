@@ -130,6 +130,9 @@ def set_sample_reference(archive, entry, search_id):
 def find_sample_by_id(archive, sample_id):
     from nomad.search import search
 
+    if sample_id is None:
+        return None
+
     query = {
         'results.eln.lab_ids': sample_id
     }
