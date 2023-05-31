@@ -158,3 +158,18 @@ def find_sample_by_id(archive, sample_id):
         entry_id = search_result.data[0]["entry_id"]
         upload_id = search_result.data[0]["upload_id"]
         return get_reference(upload_id, entry_id)
+
+
+def search_class(archive, entry_type):
+    from nomad.search import search
+    query = {
+        'upload_id': archive.metadata.upload_id,
+        'entry_type': entry_type
+    }
+    search_result = search(
+        owner='all',
+        query=query,
+        user_id=archive.metadata.main_author.user_id)
+    if len(search_result.data) == 1:
+        data = search_result.data[0]
+        return data
