@@ -94,14 +94,34 @@ class VoltammetryCycle(ArchiveSection):
                     "editable": True,
                     "scrollZoom": True}}])
 
-    voltage_rhe = Quantity(
+    voltage_rhe_uncompensated = Quantity(
         type=np.dtype(
             np.float64), shape=['n_values'], unit='V', a_plot=[
             {
-                "label": "Voltage", 'x': 'time', 'y': 'voltage_rhe', 'layout': {
+                "label": "Voltage", 'x': 'time', 'y': 'voltage_rhe_uncompensated', 'layout': {
                     'yaxis': {
                         "fixedrange": False}, 'xaxis': {
                             "fixedrange": False}}, "config": {
+                    "editable": True, "scrollZoom": True}}])
+
+    voltage_ref_compensated = Quantity(
+        type=np.dtype(
+            np.float64), shape=['n_values'], unit='V', a_plot=[
+            {
+                "label": "Voltage", 'x': 'time', 'y': 'voltage_ref_compensated', 'layout': {
+                    'yaxis': {
+                        "fixedrange": False}, 'xaxis': {
+                            "fixedrange": False}}, "config": {
+                    "editable": True, "scrollZoom": True}}])
+
+    voltage_rhe_compensated = Quantity(
+        type=np.dtype(
+            np.float64), shape=['n_values'], unit='V', a_plot=[
+            {
+                "label": "Voltage", 'x': 'time', 'y': 'voltage_rhe_compensated', 'layout': {
+                    'yaxis': {
+                         "fixedrange": False}, 'xaxis': {
+                        "fixedrange": False}}, "config": {
                     "editable": True, "scrollZoom": True}}])
 
     export_this_cycle_to_csv = Quantity(
@@ -132,8 +152,13 @@ class VoltammetryCycle(ArchiveSection):
                 df["charge"] = self.charge
             if self.current_density is not None:
                 df["current_density"] = self.current_density
-            if self.voltage_rhe is not None:
-                df["voltage_rhe"] = self.voltage_rhe
+            if self.voltage_rhe_uncompensated is not None:
+                df["voltage_rhe_uncompensated"] = self.voltage_rhe_uncompensated
+            if self.voltage_ref_compensated is not None:
+                df["voltage_ref_compensated"] = self.voltage_ref_compensated
+            if self.voltage_rhe_compensated is not None:
+                df["voltage_rhe_compensated"] = self.voltage_rhe_compensated
+
             export_name = f"{name}.csv"
             with archive.m_context.raw_file(export_name, 'w') as outfile:
                 df.to_csv(outfile.name)

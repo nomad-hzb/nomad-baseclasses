@@ -112,16 +112,6 @@ class CyclicVoltammetry(Voltammetry):
         unit=('ohm'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ohm'))
 
-    voltage_rhe = Quantity(
-        type=np.dtype(
-            np.float64), shape=['n_values'], unit='V', a_plot=[
-            {
-                "label": "Voltage", 'x': 'time', 'y': 'voltage_rhe', 'layout': {
-                    'yaxis': {
-                        "fixedrange": False}, 'xaxis': {
-                            "fixedrange": False}}, "config": {
-                    "editable": True, "scrollZoom": True}}])
-
     properties = SubSection(
         section_def=CVProperties)
 
@@ -198,15 +188,13 @@ class CyclicVoltammetry(Voltammetry):
         if self.resistance is not None and self.voltage_shift is not None:
             resistance = np.array(self.resistance)
             shift = np.array(self.voltage_shift)
-
-            if self.voltage is not None and self.current is not None:
-                volts = np.array(self.voltage)
-                current = np.array(self.current)/1000
-                self.voltage_rhe = (volts + shift) - (resistance*current)
             if self.cycles is not None:
                 for cycle in self.cycles:
                     if cycle.voltage is not None and cycle.current is not None:
                         volts = np.array(cycle.voltage)
                         current = np.array(cycle.current)/1000
-                        cycle.voltage_rhe = (
+                        cycle.voltage_rhe_compensated = (
                             volts + shift) - (current*resistance)
+                        cycle.voltage_ref_compensated = (
+                            volts) - (current*resistance)
+                        cycle.voltage_rhe_uncompensated = volts + shift
