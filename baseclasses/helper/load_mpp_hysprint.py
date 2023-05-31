@@ -2,6 +2,8 @@ import pandas as pd
 import re
 import time
 
+from .utilities import lookup
+
 
 def filter_columns(columns):
     matched_columns = []
@@ -13,15 +15,6 @@ def filter_columns(columns):
 
     return matched_columns
 
-def lookup(date_pd_series, format=None):
-    """
-    This is an extremely fast approach to datetime parsing.
-    For large data, the same dates are often repeated. Rather than
-    re-parse these, we store all unique dates, parse them, and
-    use a lookup to convert all dates.
-    """
-    dates = {date:pd.to_datetime(date, format=format) for date in date_pd_series.unique()}
-    return date_pd_series.map(dates)
 
 def get_integer(string):
     return int(string.replace("(", "").replace(")", ""))
@@ -44,7 +37,6 @@ def process_timestamp(df):
     df["Duration_h"] = df.Duration.dt.total_seconds()/3600
 
 
-
 def process_mpp_data(df):
     df["MPPT_J"] = df.InMPPT_I.abs()  # division by area in normalizer
     df["MPPT_V"] = df.InMPPT_V / 1000
@@ -52,7 +44,6 @@ def process_mpp_data(df):
     if df.empty:
         return
     process_timestamp(df)
-
 
 
 def process_mpp_data_jv(df, suffix):
@@ -151,8 +142,6 @@ def parse_sample(info, sample_id, df):
         "data": df_sample,
         "pixels": []
     }
-    
-
 
     for pixel_id in range(info["number_of_pixels"]):
         pixel_data = parse_pixel(info["box"], sample_id, pixel_id, df)
@@ -166,7 +155,6 @@ def load_mpp_file(filename):
     df['Zeitstempel'] = lookup(df['Zeitstempel'], format='%m/%d/%Y %H:%M:%S')
     info = get_dimensions(df.columns)
 
-
     data = {"samples": [],
             "box": info["box"]}
     for sample_id in range(info["number_of_samples"]):
@@ -179,4 +167,3 @@ def load_mpp_file(filename):
 # start_time = time.time()
 # d = load_mpp_file(filename)
 # print("--- %s seconds ---" % (time.time() - start_time))
-

@@ -34,3 +34,5 @@ from .diamondsample import DiamondSample
 from .waterbath import WaterBath
 from .voltammetry import VoltammetryCycle, Voltammetry
 from .potentiostat_measurement import PotentiostatMeasurement, PotentiostatSetup
+from .phasefluorometryoxygen import PhaseFluorometryOxygen
+from .pumpratemeasurement import PumpRateMeasurement

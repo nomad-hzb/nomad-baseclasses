@@ -133,7 +133,6 @@ def get_header_and_data(filename):
 
             pos = f.tell()
             cur_line = f.readline().strip().split("\t")
-
             if len(cur_line[0]) == 0:
                 pass
 
@@ -143,7 +142,7 @@ def get_header_and_data(filename):
                     _header[cur_line[0]] = get_curve(
                         f, _header, _curve_units, table_length)
                 # data format: key, type, value
-                if cur_line[1] in ["LABEL", "PSTAT"]:
+                if cur_line[1].strip() in ["LABEL", "PSTAT"]:
                     _header[cur_line[0]] = cur_line[2]
                     if cur_line[0] in ["TITLE"] and len(cur_line) > 3:
                         _header["SAMPLE_ID"] = cur_line[3]
