@@ -21,20 +21,20 @@ def get_eis_properties(metadata, properties):
 
     properties.dc_voltage = metadata["VDC"][0]
     properties.dc_voltage_measured_against = "Eoc" if metadata["VDC"][1] else "Eref"
-    properties.initial_frequency = metadata["FREQINIT"]
-    properties.final_frequency = metadata["FREQFINAL"]
-    properties.points_per_decade = metadata["PTSPERDEC"]
-    properties.ac_voltage = metadata["VAC"]
-    properties.sample_area = metadata["AREA"]
+    properties.initial_frequency = metadata.get("FREQINIT")
+    properties.final_frequency = metadata.get("FREQFINAL")
+    properties.points_per_decade = metadata.get("PTSPERDEC")
+    properties.ac_voltage = metadata.get("VAC")
+    properties.sample_area = metadata.get("AREA")
 
 
 def get_ocv_properties(metadata, properties):
     assert isinstance(properties, OCVProperties)
 
-    properties.total_time = metadata["TIMEOUT"]
-    properties.sample_period = metadata["SAMPLETIME"]
-    properties.stability = metadata["STABILITY"]
-    properties.sample_area = metadata["AREA"]
+    properties.total_time = metadata.get("TIMEOUT")
+    properties.sample_period = metadata.get("SAMPLETIME")
+    properties.stability = metadata.get("STABILITY")
+    properties.sample_area = metadata.get("AREA")
 
 
 def get_cv_properties(metadata, properties):
@@ -48,10 +48,10 @@ def get_cv_properties(metadata, properties):
     properties.limit_potential_2_measured_against = "Eoc" if metadata["VLIMIT2"][1] else "Eref"
     properties.final_potential = metadata["VFINAL"][0]
     properties.final_potential_measured_against = "Eoc" if metadata["VFINAL"][1] else "Eref"
-    properties.scan_rate = metadata["SCANRATE"]
-    properties.step_size = metadata["STEPSIZE"]
-    properties.cycles = metadata["CYCLES"]
-    properties.sample_area = metadata["AREA"]
+    properties.scan_rate = metadata.get("SCANRATE")
+    properties.step_size = metadata.get("STEPSIZE")
+    properties.cycles = metadata.get("CYCLES")
+    properties.sample_area = metadata.get("AREA")
 
 
 def get_ca_properties(metadata, properties):
@@ -61,15 +61,15 @@ def get_ca_properties(metadata, properties):
     properties.pre_step_potential = metadata["VPRESTEP"][0]
     properties.pre_step_potential_measured_against = "Eoc" if metadata[
         "VPRESTEP"][1] else "Eref"
-    properties.pre_step_delay_time = metadata["TPRESTEP"]
+    properties.pre_step_delay_time = metadata.get("TPRESTEP")
     properties.step_1_potential = metadata["VSTEP1"][0]
     properties.step_1_potential_measured_against = "Eoc" if metadata["VSTEP1"][1] else "Eref"
-    properties.step_1_time = metadata["TSTEP1"]
+    properties.step_1_time = metadata.get("TSTEP1")
     properties.step_2_potential = metadata["VSTEP2"][0]
     properties.step_2_potential_measured_against = "Eoc" if metadata["VSTEP2"][1] else "Eref"
-    properties.step_2_time = metadata["TSTEP2"]
-    properties.sample_period = metadata["SAMPLETIME"]
-    properties.sample_area = metadata["AREA"]
+    properties.step_2_time = metadata.get("TSTEP2")
+    properties.sample_period = metadata.get("SAMPLETIME")
+    properties.sample_area = metadata.get("AREA")
 
 
 def get_cc_properties(metadata, properties):
@@ -119,7 +119,7 @@ def get_meta_data(metadata, entry):
         in inspect.getmro(type(entry))
 
     if entry.name is None:
-        entry.name = metadata["TITLE"]
+        entry.name = metadata.get("TITLE")
 
     if not entry.name and entry.data_file is not None:
         entry.name = os.path.splitext(entry.data_file)[0]
@@ -129,9 +129,9 @@ def get_meta_data(metadata, entry):
     if entry.description is None:
         entry.description = ''
     entry.description = f"{entry.description} \n{metadata['NOTES']}" \
-        if metadata['NOTES'] not in entry.description else entry.description
+        if metadata.get('NOTES') not in entry.description else entry.description
 
-    entry.station = metadata['PSTAT']
+    entry.station = metadata.get('PSTAT')
 
 
 def get_cam_properties_data(metadata, data, mainfile, properties):
