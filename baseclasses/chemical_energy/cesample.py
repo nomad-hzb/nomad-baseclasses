@@ -74,8 +74,9 @@ class SampleIDCE(SampleID):
         query = {'results.eln.lab_ids': self.sample_id}
         search_result = search(owner='all', query=query,
                                user_id=archive.metadata.main_author.user_id)
-        self.project_sample_number = get_next_project_sample_number(
-            search_result.data, archive.metadata.entry_id)
+        if self.project_sample_number is None:
+            self.project_sample_number = get_next_project_sample_number(
+                search_result.data, archive.metadata.entry_id)
 
         if self.sample_id is not None and self.project_sample_number is not None:
             sample_id_old = self.sample_id
