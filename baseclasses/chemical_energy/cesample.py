@@ -71,10 +71,14 @@ class SampleIDCE(SampleID):
             self.sample_id = '_'.join(sample_id_list)
 
         from nomad.search import search
-        query = {'results.eln.lab_ids': self.sample_id}
-        search_result = search(owner='all', query=query,
-                               user_id=archive.metadata.main_author.user_id)
-        if self.project_sample_number is None:
+        sample_id_tmp = f"{self.sample_id}_{self.project_sample_number:04d}"
+        query = {'results.eln.lab_ids': sample_id_tmp}
+        search_result_1 = search(owner='all', query=query,
+                                 user_id=archive.metadata.main_author.user_id)
+        if self.project_sample_number is None or len(search_result_1.data) != 0:
+            query = {'results.eln.lab_ids': self.sample_id}
+            search_result = search(owner='all', query=query,
+                                   user_id=archive.metadata.main_author.user_id)
             self.project_sample_number = get_next_project_sample_number(
                 search_result.data, archive.metadata.entry_id)
 
