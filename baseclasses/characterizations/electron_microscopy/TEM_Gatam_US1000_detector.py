@@ -25,7 +25,7 @@ from nomad.datamodel.data import ArchiveSection
 
 from .microscope import TEMMicroscopeTechnique, MicroscopeConfiguration2, Image
 
-from . import get_parameter
+from baseclasses.helpers.utilities import get_parameter
 
 
 class HighLevel(ArchiveSection):

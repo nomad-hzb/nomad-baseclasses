@@ -24,6 +24,16 @@ from nomad.metainfo import MProxy
 import pandas as pd
 
 
+def get_parameter(parameters, dictionary, tuple_index=None):
+    tmp_dict = dictionary
+    try:
+        for p in parameters:
+            tmp_dict = tmp_dict[p]
+        return tmp_dict[tuple_index] if tuple_index else tmp_dict
+    except Exception:
+        return None
+
+
 def lookup(date_pd_series, format=None):
     """
     This is an extremely fast approach to datetime parsing.

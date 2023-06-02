@@ -22,13 +22,3 @@ from .TEM_Gatam_US1000_detector import TEM_Gatam_US1000
 from .TEM_EDX_detector import TEM_EDX
 from .SEM_Zeiss_detector import SEM_Microscope_Merlin
 from .microscope import TEMMicroscopeConfiguration
-
-
-def get_parameter(parameters, dictionary, tuple_index=None):
-    tmp_dict = dictionary
-    try:
-        for p in parameters:
-            tmp_dict = tmp_dict[p]
-        return tmp_dict[tuple_index] if tuple_index else tmp_dict
-    except Exception:
-        return None

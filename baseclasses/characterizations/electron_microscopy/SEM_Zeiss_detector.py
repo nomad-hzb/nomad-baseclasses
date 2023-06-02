@@ -26,7 +26,7 @@ from nomad.metainfo import (
 
 from .microscope import SEMMicroscopeTechnique, Image
 
-from . import get_parameter
+from baseclasses.helpers.utilities import get_parameter
 
 
 class SEMImage_Zeiss_Detector(Image):
@@ -152,23 +152,38 @@ class SEM_Microscope_Merlin(SEMMicroscopeTechnique):
                     "*")
                 image_section = SEMImage_Zeiss_Detector(
                     file_name=os.path.basename(file_name),
-                    detector=get_parameter(["CZ_SEM", "dp_detector_type"], tif_file.original_metadata, 1),
-                    column_mode=get_parameter(["CZ_SEM", "dp_column_mode"], tif_file.original_metadata, 1),
-                    pixel_size=get_parameter(["CZ_SEM", "ap_pixel_size"], tif_file.original_metadata, 1),
-                    datetime_of_image=datetime_object.strftime("%Y-%m-%d %H:%M:%S.%f"),
+                    detector=get_parameter(
+                        ["CZ_SEM", "dp_detector_type"], tif_file.original_metadata, 1),
+                    column_mode=get_parameter(
+                        ["CZ_SEM", "dp_column_mode"], tif_file.original_metadata, 1),
+                    pixel_size=get_parameter(
+                        ["CZ_SEM", "ap_pixel_size"], tif_file.original_metadata, 1),
+                    datetime_of_image=datetime_object.strftime(
+                        "%Y-%m-%d %H:%M:%S.%f"),
                     store_resolution_x=int(store_resolution_x_val.strip()),
                     store_resolution_y=int(store_resolution_y_val.strip()),
-                    stage_at_x=get_parameter(["CZ_SEM", "ap_stage_at_x"], tif_file.original_metadata, 1),
-                    stage_at_y=get_parameter(["CZ_SEM", "ap_stage_at_y"], tif_file.original_metadata, 1),
-                    stage_at_z=get_parameter(["CZ_SEM", "ap_stage_at_z"], tif_file.original_metadata, 1),
-                    tilt=get_parameter(["CZ_SEM", "ap_stage_at_t"], tif_file.original_metadata, 1),
-                    rotation=get_parameter(["CZ_SEM", "ap_stage_at_r"], tif_file.original_metadata, 1),
-                    iprobe=get_parameter(["CZ_SEM", "ap_iprobe"], tif_file.original_metadata, 1),
-                    beam_current=get_parameter(["CZ_SEM", "ap_beam_current"], tif_file.original_metadata, 1),
-                    beam_energy=get_parameter(["CZ_SEM", "ap_actualkv"], tif_file.original_metadata, 1),
-                    dwell_time=get_parameter(["CZ_SEM", "dp_dwell_time"], tif_file.original_metadata, 1),
-                    magnification=get_parameter(["CZ_SEM", "ap_mag"], tif_file.original_metadata, 1),
-                    working_distance=get_parameter(["CZ_SEM", "ap_wd"], tif_file.original_metadata, 1),
+                    stage_at_x=get_parameter(
+                        ["CZ_SEM", "ap_stage_at_x"], tif_file.original_metadata, 1),
+                    stage_at_y=get_parameter(
+                        ["CZ_SEM", "ap_stage_at_y"], tif_file.original_metadata, 1),
+                    stage_at_z=get_parameter(
+                        ["CZ_SEM", "ap_stage_at_z"], tif_file.original_metadata, 1),
+                    tilt=get_parameter(
+                        ["CZ_SEM", "ap_stage_at_t"], tif_file.original_metadata, 1),
+                    rotation=get_parameter(
+                        ["CZ_SEM", "ap_stage_at_r"], tif_file.original_metadata, 1),
+                    iprobe=get_parameter(
+                        ["CZ_SEM", "ap_iprobe"], tif_file.original_metadata, 1),
+                    beam_current=get_parameter(
+                        ["CZ_SEM", "ap_beam_current"], tif_file.original_metadata, 1),
+                    beam_energy=get_parameter(
+                        ["CZ_SEM", "ap_actualkv"], tif_file.original_metadata, 1),
+                    dwell_time=get_parameter(
+                        ["CZ_SEM", "dp_dwell_time"], tif_file.original_metadata, 1),
+                    magnification=get_parameter(
+                        ["CZ_SEM", "ap_mag"], tif_file.original_metadata, 1),
+                    working_distance=get_parameter(
+                        ["CZ_SEM", "ap_wd"], tif_file.original_metadata, 1),
                     image_preview=os.path.basename(png_file)
                 )
                 return image_section
