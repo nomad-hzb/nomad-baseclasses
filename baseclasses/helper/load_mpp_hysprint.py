@@ -60,7 +60,7 @@ def process_mpp_data_jv(df, suffix):
 def rename_columns(df, box, sample_id, pixel_id):
     columns_new = {}
     for column in df.columns:
-        columns_new.update({column: column.replace(f"Anlage_Box{box}_", "").replace(
+        columns_new.update({column: column.replace(f"Anlage_Box{box:02d}_", "").replace(
             f"Probe({sample_id})_", "").replace(f"Pixel({pixel_id})_", "")})
     columns_new["Zeitstempel"] = "Timestamp"
     df = df.rename(columns=columns_new)
@@ -69,15 +69,16 @@ def rename_columns(df, box, sample_id, pixel_id):
 
 def apply_filter_trigger_code(df, box, trigger_code):
     df_filtered = df.loc[(
-        df[f"Anlage_Box{box}_InTriggerSource"] == trigger_code)]
-    df_final = df_filtered.drop(columns=[f"Anlage_Box{box}_InTriggerSource"])
+        df[f"Anlage_Box{box:02d}_InTriggerSource"] == trigger_code)]
+    df_final = df_filtered.drop(
+        columns=[f"Anlage_Box{box:02d}_InTriggerSource"])
     return df_final
 
 
 def filter_and_process_mpp_data(df, box, sample_id, pixel_id, trigger_code):
     df_filtered = apply_filter_trigger_code(df, box, trigger_code)
     df_filtered = df.loc[(
-        df[f"Anlage_Box{box}_Probe({sample_id})_Pixel({pixel_id})_InMPPT_I"] > -999)]
+        df[f"Anlage_Box{box:02d}_Probe({sample_id})_Pixel({pixel_id})_InMPPT_I"] > -999)]
 
     df_final = rename_columns(df_filtered, box, sample_id, pixel_id)
 
@@ -94,11 +95,11 @@ def get_jv_data(df, box, sample_id, pixel_id, forward=True):
     suffix = ''
     if not forward:
         suffix = "_rev"
-    columns = ["Zeitstempel", f"Anlage_Box{box}_Probe({sample_id})_Pixel({pixel_id})_InIV_V_oc{suffix}",
-               f"Anlage_Box{box}_Probe({sample_id})_Pixel({pixel_id})_InIV_FF{suffix}",
-               f"Anlage_Box{box}_Probe({sample_id})_Pixel({pixel_id})_InIV_n{suffix}",
-               f"Anlage_Box{box}_Probe({sample_id})_Pixel({pixel_id})_InIV_I_sc{suffix}",
-               f"Anlage_Box{box}_InTriggerSource"]
+    columns = ["Zeitstempel", f"Anlage_Box{box:02d}_Probe({sample_id})_Pixel({pixel_id})_InIV_V_oc{suffix}",
+               f"Anlage_Box{box:02d}_Probe({sample_id})_Pixel({pixel_id})_InIV_FF{suffix}",
+               f"Anlage_Box{box:02d}_Probe({sample_id})_Pixel({pixel_id})_InIV_n{suffix}",
+               f"Anlage_Box{box:02d}_Probe({sample_id})_Pixel({pixel_id})_InIV_I_sc{suffix}",
+               f"Anlage_Box{box:02d}_InTriggerSource"]
     df_raw = df[columns].copy()
 
     trigger_code_jv = calculate_trigger_code_jv(box, sample_id, pixel_id)
@@ -111,15 +112,15 @@ def get_jv_data(df, box, sample_id, pixel_id, forward=True):
 
 
 def parse_pixel(box, sample_id, pixel_id, df):
-    columns = ["Zeitstempel", f"Anlage_Box{box}_Probe({sample_id})_Pixel({pixel_id})_InMPPT_I",
-               f"Anlage_Box{box}_Probe({sample_id})_Pixel({pixel_id})_InMPPT_V", f"Anlage_Box{box}_Probe({sample_id})_InEinstrahlung",
-               f"Anlage_Box{box}_InTriggerSource"]
+    columns = ["Zeitstempel", f"Anlage_Box{box:02d}_Probe({sample_id})_Pixel({pixel_id})_InMPPT_I",
+               f"Anlage_Box{box:02d}_Probe({sample_id})_Pixel({pixel_id})_InMPPT_V", f"Anlage_Box{box:02d}_Probe({sample_id})_InEinstrahlung",
+               f"Anlage_Box{box:02d}_InTriggerSource"]
     df_raw = df[columns].copy()
     df_final = filter_and_process_mpp_data(
         df_raw, box, sample_id, pixel_id, trigger_code=0)
 
     columns_dark = columns.copy()
-    columns_dark.append(f"Anlage_Box{box}_InShutterState")
+    columns_dark.append(f"Anlage_Box{box:02d}_InShutterState")
     df_raw_dark = df[columns_dark].copy()
     df_final_dark = filter_and_process_mpp_data(
         df_raw_dark, box, sample_id, pixel_id, trigger_code=10000)
@@ -133,8 +134,8 @@ def parse_pixel(box, sample_id, pixel_id, df):
 
 
 def parse_sample(info, sample_id, df):
-    df_sample = df[["Zeitstempel", f"Anlage_Box{info['box']}_Probe({sample_id})_InTemperatur",
-                    f"Anlage_Box{info['box']}_Probe({sample_id})_InEinstrahlung"]].copy()
+    df_sample = df[["Zeitstempel", f"Anlage_Box{info['box']:02d}_Probe({sample_id})_InTemperatur",
+                    f"Anlage_Box{info['box']:02d}_Probe({sample_id})_InEinstrahlung"]].copy()
     df_sample = rename_columns(df_sample, info['box'], sample_id, None)
     process_timestamp(df_sample)
     data = {
@@ -163,7 +164,8 @@ def load_mpp_file(filename):
 
     return data
 
-# filename = "/home/a2853/Documents/Projects/nomad/hysprintlab/titan/20230503_AgeingTest_Example/20230331_113543_Jiahuan-2/Data.csv"
+
+# filename = "/home/a2853/Documents/Projects/nomad/hysprintlab/titan/Data.csv"
 # start_time = time.time()
 # d = load_mpp_file(filename)
 # print("--- %s seconds ---" % (time.time() - start_time))
