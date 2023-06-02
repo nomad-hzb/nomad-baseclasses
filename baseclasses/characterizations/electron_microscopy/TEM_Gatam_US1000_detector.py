@@ -25,7 +25,7 @@ from nomad.datamodel.data import ArchiveSection
 
 from .microscope import TEMMicroscopeTechnique, MicroscopeConfiguration2, Image
 
-from baseclasses.helpers.utilities import get_parameter
+from baseclasses.helper.utilities import get_parameter
 
 
 class HighLevel(ArchiveSection):
@@ -169,23 +169,36 @@ class TEM_Gatam_US1000(TEMMicroscopeTechnique):
                 )
 
                 microscope_configuration = MicroscopeConfiguration2(
-                    x_value=get_parameter(["Acquisition_instrument", "SEM", "Stage", "x"], dm3_file.metadata),
-                    y_value=get_parameter(["Acquisition_instrument", "SEM", "Stage", "y"], dm3_file.metadata),
-                    z_value=get_parameter(["Acquisition_instrument", "SEM", "Stage", "z"], dm3_file.metadata),
-                    alpha_tilt=get_parameter(["CZ_SEM", "ap_stage_at_t"], dm3_file.original_metadata, 1),
-                    beta_tilt=get_parameter(["CZ_SEM", "ap_stage_at_m"], dm3_file.original_metadata, 1)
+                    x_value=get_parameter(
+                        ["Acquisition_instrument", "SEM", "Stage", "x"], dm3_file.metadata),
+                    y_value=get_parameter(
+                        ["Acquisition_instrument", "SEM", "Stage", "y"], dm3_file.metadata),
+                    z_value=get_parameter(
+                        ["Acquisition_instrument", "SEM", "Stage", "z"], dm3_file.metadata),
+                    alpha_tilt=get_parameter(
+                        ["CZ_SEM", "ap_stage_at_t"], dm3_file.original_metadata, 1),
+                    beta_tilt=get_parameter(
+                        ["CZ_SEM", "ap_stage_at_m"], dm3_file.original_metadata, 1)
                 )
 
                 image_section = GatamScan(
                     file_name=os.path.basename(file_name),
-                    pixel_size=get_parameter(["ImageList", "TagGroup0", "ImageTags", "Acquisition", "Device", "CCD", "Pixel Size (um)"], dm3_file.original_metadata),
-                    bias=get_parameter(["ImageList", "TagGroup0", "ImageTags", "Acquisition", "Frame", "Intensity", "Range", "Bias (counts)"], dm3_file.original_metadata),
-                    dark_current=get_parameter(["ImageList", "TagGroup0", "ImageTags", "Acquisition", "Frame", "Intensity", "Range", "Dark Current (counts/s)"], dm3_file.original_metadata),
-                    dark_level=get_parameter(["ImageList", "TagGroup0", "ImageTags", "Acquisition", "Frame", "Intensity", "Range", "Dark Level (counts)"], dm3_file.original_metadata),
-                    maximum_value=get_parameter(["ImageList", "TagGroup0", "ImageTags", "Acquisition", "Frame", "Intensity", "Range", "Maximum Value (counts)"], dm3_file.original_metadata),
-                    minimum_value=get_parameter(["ImageList", "TagGroup0", "ImageTags", "Acquisition", "Frame", "Intensity", "Range", "Minimum Value (counts)"], dm3_file.original_metadata),
-                    saturation_level=get_parameter(["ImageList", "TagGroup0", "ImageTags", "Acquisition", "Frame", "Intensity", "Range", "Saturation Level (counts)"], dm3_file.original_metadata),
-                    scale=get_parameter(["ImageList", "TagGroup0", "ImageData", "Calibrations", "Brightness", "Scale"], dm3_file.original_metadata),
+                    pixel_size=get_parameter(["ImageList", "TagGroup0", "ImageTags", "Acquisition",
+                                             "Device", "CCD", "Pixel Size (um)"], dm3_file.original_metadata),
+                    bias=get_parameter(["ImageList", "TagGroup0", "ImageTags", "Acquisition",
+                                       "Frame", "Intensity", "Range", "Bias (counts)"], dm3_file.original_metadata),
+                    dark_current=get_parameter(["ImageList", "TagGroup0", "ImageTags", "Acquisition", "Frame",
+                                               "Intensity", "Range", "Dark Current (counts/s)"], dm3_file.original_metadata),
+                    dark_level=get_parameter(["ImageList", "TagGroup0", "ImageTags", "Acquisition",
+                                             "Frame", "Intensity", "Range", "Dark Level (counts)"], dm3_file.original_metadata),
+                    maximum_value=get_parameter(["ImageList", "TagGroup0", "ImageTags", "Acquisition",
+                                                "Frame", "Intensity", "Range", "Maximum Value (counts)"], dm3_file.original_metadata),
+                    minimum_value=get_parameter(["ImageList", "TagGroup0", "ImageTags", "Acquisition",
+                                                "Frame", "Intensity", "Range", "Minimum Value (counts)"], dm3_file.original_metadata),
+                    saturation_level=get_parameter(["ImageList", "TagGroup0", "ImageTags", "Acquisition",
+                                                   "Frame", "Intensity", "Range", "Saturation Level (counts)"], dm3_file.original_metadata),
+                    scale=get_parameter(["ImageList", "TagGroup0", "ImageData",
+                                        "Calibrations", "Brightness", "Scale"], dm3_file.original_metadata),
                     high_level=high_level,
                     microscope_configuration=microscope_configuration,
                     reference_image=reference_image

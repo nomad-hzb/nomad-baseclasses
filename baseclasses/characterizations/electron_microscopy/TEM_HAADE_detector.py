@@ -26,7 +26,7 @@ from nomad.datamodel.data import ArchiveSection
 
 from .microscope import TEMMicroscopeTechnique, MicroscopeConfiguration2, Image
 
-from baseclasses.helpers.utilities import get_parameter
+from baseclasses.helper.utilities import get_parameter
 
 
 class Illumination(ArchiveSection):

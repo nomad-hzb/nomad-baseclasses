@@ -26,7 +26,7 @@ from nomad.metainfo import (
 
 from .microscope import SEMMicroscopeTechnique, Image
 
-from baseclasses.helpers.utilities import get_parameter
+from baseclasses.helper.utilities import get_parameter
 
 
 class SEMImage_Zeiss_Detector(Image):
