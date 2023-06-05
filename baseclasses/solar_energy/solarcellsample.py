@@ -274,12 +274,13 @@ class SolcarCellSample(BasicSample):
 
         add_solar_cell(archive)
         archive.results.properties.optoelectronic.solar_cell.device_stack = []
-        if self.substrate:
-            archive.results.properties.optoelectronic.solar_cell.substrate = [
-                self.substrate.substrate]
-            archive.results.properties.optoelectronic.solar_cell.device_stack.append(
-                self.substrate.substrate)
-            if self.substrate.conducting_material:
+        if self.substrate is not None:
+            if self.substrate.substrate is not None:
+                archive.results.properties.optoelectronic.solar_cell.substrate = [
+                    self.substrate.substrate]
+                archive.results.properties.optoelectronic.solar_cell.device_stack.append(
+                    self.substrate.substrate)
+            if self.substrate.conducting_materialis not None:
                 archive.results.properties.optoelectronic.solar_cell.substrate.extend(
                     self.substrate.conducting_material)
                 archive.results.properties.optoelectronic.solar_cell.device_stack.extend(
@@ -290,7 +291,8 @@ class SolcarCellSample(BasicSample):
 
         if self.substrate:
             if self.substrate.pixel_area:
-                archive.results.properties.optoelectronic.solar_cell.device_area = self.substrate.pixel_area
+                archive.results.properties.optoelectronic.solar_cell.device_area = self.substrate.pixel_area * \
+                    ureg('cm**2')
 
         result_data = collectSampleData(archive)
 
@@ -310,19 +312,19 @@ class SolcarCellSample(BasicSample):
             archive.results.properties.optoelectronic.solar_cell.fill_factor = result_data[
                 "JVs"][jv_key]["fill_factor"][jv_idx]
             archive.results.properties.optoelectronic.solar_cell.open_circuit_voltage = result_data[
-                "JVs"][jv_key]["open_circuit_voltage"][jv_idx]
+                "JVs"][jv_key]["open_circuit_voltage"][jv_idx] * ureg('V')
             archive.results.properties.optoelectronic.solar_cell.illumination_intensity = result_data[
-                "JVs"][jv_key]["light_intensity"][jv_idx] * 10  # TODO check units
+                "JVs"][jv_key]["light_intensity"][jv_idx] * ureg('mW/cm**2')
             archive.results.properties.optoelectronic.solar_cell.short_circuit_current_density = result_data[
-                "JVs"][jv_key]["short_circuit_current_density"][jv_idx]
+                "JVs"][jv_key]["short_circuit_current_density"][jv_idx] * ureg('mA/cm**2')
             archive.results.properties.optoelectronic.solar_cell.device_area = result_data[
-                "JVs"][jv_key]["device_area"]
+                "JVs"][jv_key]["device_area"] * ureg('cm**2')
 
         eqe_eff_val = 0
         for entry in result_data["EQEs"]:
             for bandgap in result_data["EQEs"][entry]["band_gap"]:
                 if not np.isnan(bandgap) and bandgap > eqe_eff_val:
-                    eqe_eff_val = bandgap
+                    eqe_eff_val = bandgap * ureg("eV")
 
         if result_data["EQEs"]:
             band_gap = eqe_eff_val
