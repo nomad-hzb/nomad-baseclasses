@@ -23,6 +23,9 @@ import chardet
 from nomad.metainfo import MProxy
 import pandas as pd
 
+from baseclasses import BasicSample
+from baseclasses.solution import Solution
+
 
 def get_parameter(parameters, dictionary, tuple_index=None):
     tmp_dict = dictionary
@@ -137,6 +140,9 @@ def get_reference(upload_id, entry_id):
 
 def set_sample_reference(archive, entry, search_id):
     from nomad.search import search
+    import inspect
+    import baseclasses
+
     query = {
         'results.eln.lab_ids': search_id
     }
@@ -147,7 +153,12 @@ def set_sample_reference(archive, entry, search_id):
     if len(search_result.data) == 1:
         data = search_result.data[0]
         upload_id, entry_id = data["upload_id"], data["entry_id"]
-        entry.samples = [get_reference(upload_id, entry_id)]
+        if baseclasses.BasicSample in inspect.getmro(
+                eval(data["m_def"])):
+            entry.samples = [get_reference(upload_id, entry_id)]
+        if baseclasses.solution.Solution in inspect.getmro(
+                 eval(data["m_def"])):
+            entry.solution = [get_reference(upload_id, entry_id)]
 
 
 def find_sample_by_id(archive, sample_id):
