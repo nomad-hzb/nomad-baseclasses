@@ -291,8 +291,7 @@ class SolcarCellSample(BasicSample):
 
         if self.substrate:
             if self.substrate.pixel_area:
-                archive.results.properties.optoelectronic.solar_cell.device_area = self.substrate.pixel_area * \
-                    ureg('cm**2')
+                archive.results.properties.optoelectronic.solar_cell.device_area = self.substrate.pixel_area
 
         result_data = collectSampleData(archive)
 
