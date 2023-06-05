@@ -280,7 +280,7 @@ class SolcarCellSample(BasicSample):
                     self.substrate.substrate]
                 archive.results.properties.optoelectronic.solar_cell.device_stack.append(
                     self.substrate.substrate)
-            if self.substrate.conducting_materialis is not None:
+            if self.substrate.conducting_material is not None:
                 archive.results.properties.optoelectronic.solar_cell.substrate.extend(
                     self.substrate.conducting_material)
                 archive.results.properties.optoelectronic.solar_cell.device_stack.extend(
