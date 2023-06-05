@@ -153,11 +153,9 @@ def set_sample_reference(archive, entry, search_id):
     if len(search_result.data) == 1:
         data = search_result.data[0]
         upload_id, entry_id = data["upload_id"], data["entry_id"]
-        if baseclasses.BasicSample in inspect.getmro(
-                eval(data["m_def"])):
+        if "sample" in data["entry_type"].lower():
             entry.samples = [get_reference(upload_id, entry_id)]
-        if baseclasses.solution.Solution in inspect.getmro(
-                 eval(data["m_def"])):
+        if "solution" in data["entry_type"].lower() or "ink" in data["entry_type"].lower():
             entry.solution = [get_reference(upload_id, entry_id)]
 
 
