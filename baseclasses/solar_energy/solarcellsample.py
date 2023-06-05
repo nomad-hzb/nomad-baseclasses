@@ -18,7 +18,7 @@
 import numpy as np
 
 from nomad.metainfo import (Quantity, Reference, SubSection)
-# from nomad.units import ureg
+from nomad.units import ureg
 
 from nomad.datamodel.metainfo.eln import SampleID
 from .substrate import Substrate
@@ -280,7 +280,7 @@ class SolcarCellSample(BasicSample):
                     self.substrate.substrate]
                 archive.results.properties.optoelectronic.solar_cell.device_stack.append(
                     self.substrate.substrate)
-            if self.substrate.conducting_materialis not None:
+            if self.substrate.conducting_materialis is not None:
                 archive.results.properties.optoelectronic.solar_cell.substrate.extend(
                     self.substrate.conducting_material)
                 archive.results.properties.optoelectronic.solar_cell.device_stack.extend(
