@@ -221,7 +221,7 @@ class Voltammetry(PotentiostatMeasurement):
 
     def export_cycle(self, archive,  name):
 
-        self.export_this_cycle_to_csv = False
+        self.export_data_to_csv = False
         df = pd.DataFrame()
         if self.time is not None:
             df["time"] = self.time
