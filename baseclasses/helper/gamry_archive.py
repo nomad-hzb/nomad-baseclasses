@@ -108,8 +108,12 @@ def get_eis_data(data, cycle):
 
 def get_meta_datetime(metadata, entry):
     datetime_str = f"{metadata['DATE']} {metadata['TIME']}"
-    datetime_object = datetime.strptime(
-        datetime_str, '%d/%m/%Y %H:%M:%S')
+    try:
+        datetime_object = datetime.strptime(
+            datetime_str, '%d/%m/%Y %H:%M:%S')
+    except:
+        datetime_object = datetime.strptime(
+            datetime_str, '%d.%m.%Y %H:%M:%S')
     entry.datetime = datetime_object.strftime(
         "%Y-%m-%d %H:%M:%S.%f")
 
