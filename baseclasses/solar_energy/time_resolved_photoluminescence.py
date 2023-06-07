@@ -143,8 +143,8 @@ class TimeResolvedPhotoluminescence(MeasurementOnSample):
         section_def=TRPLProperties, repeats=True)
 
     def normalize(self, archive, logger):
-        super(TimeResolvedPhotoluminescence, self).normalize(archive, logger)
         self.method = "Time-Resolved Photoluminescence"
+        super(TimeResolvedPhotoluminescence, self).normalize(archive, logger)
 
         if self.data_file is not None:
             # if self.trpl_properties is not None:

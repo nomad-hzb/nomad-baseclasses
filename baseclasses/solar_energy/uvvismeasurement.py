@@ -103,8 +103,8 @@ class UVvisMeasurement(MeasurementOnSample):
         section_def=UVvisData, repeats=True)
 
     def normalize(self, archive, logger):
-        super(UVvisMeasurement, self).normalize(archive, logger)
         self.method = "UVvis Measurement"
+        super(UVvisMeasurement, self).normalize(archive, logger)
 
         archive_base = os.path.join(str(archive.m_context.upload_files), "raw")
         data_in_folder = []

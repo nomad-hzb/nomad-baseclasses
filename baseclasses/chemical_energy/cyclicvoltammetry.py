@@ -116,8 +116,8 @@ class CyclicVoltammetry(Voltammetry):
         section_def=CVProperties)
 
     def normalize(self, archive, logger):
-        super(CyclicVoltammetry, self).normalize(archive, logger)
         self.method = "Cyclic Voltammetry"
+        super(CyclicVoltammetry, self).normalize(archive, logger)
 
         if self.data_file:
             try:

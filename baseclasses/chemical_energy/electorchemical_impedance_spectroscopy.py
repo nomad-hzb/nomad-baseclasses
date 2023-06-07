@@ -249,12 +249,12 @@ class ElectrochemicalImpedanceSpectroscopy(PotentiostatMeasurement):
     n_values = Quantity(type=int, derived=derive_n_values)
 
     def normalize(self, archive, logger):
+        self.method = "Electrochemical Impedance Spectroscopy"
         super(
             ElectrochemicalImpedanceSpectroscopy,
             self).normalize(
             archive,
             logger)
-        self.method = "Electrochemical Impedance Spectroscopy"
 
         if self.data_file:
             try:

@@ -104,6 +104,7 @@ class PhaseFluorometryOxygen(MeasurementOnSample):
                     "editable": True, "scrollZoom": True}}])
 
     def normalize(self, archive, logger):
+        self.method = "Phase Fluorometry"
         super(PhaseFluorometryOxygen, self).normalize(archive, logger)
 
         if self.data_file:

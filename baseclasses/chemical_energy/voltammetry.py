@@ -191,7 +191,6 @@ class Voltammetry(PotentiostatMeasurement):
 
     def normalize(self, archive, logger):
         super(Voltammetry, self).normalize(archive, logger)
-        self.method = "Voltammetry Measurement"
 
         if self.data_file:
             try:

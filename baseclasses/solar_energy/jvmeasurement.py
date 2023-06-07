@@ -110,8 +110,8 @@ class JVMeasurement(MeasurementOnSample):
         label_quantity='cell_name')
 
     def normalize(self, archive, logger):
-        super(JVMeasurement, self).normalize(archive, logger)
         self.method = "JV Measurement"
+        super(JVMeasurement, self).normalize(archive, logger)
 
         if self.data_file:
             # todo detect file format

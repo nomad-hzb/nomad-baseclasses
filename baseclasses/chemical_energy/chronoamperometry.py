@@ -127,9 +127,8 @@ class Chronoamperometry(Voltammetry):
         section_def=CAProperties)
 
     def normalize(self, archive, logger):
-        super(Chronoamperometry, self).normalize(archive, logger)
         self.method = "Chronoamperometry"
-
+        super(Chronoamperometry, self).normalize(archive, logger)
         if self.data_file:
             try:
                 with archive.m_context.raw_file(self.data_file) as f:

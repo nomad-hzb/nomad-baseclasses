@@ -58,8 +58,8 @@ class OpenCircuitVoltage(Voltammetry):
         section_def=OCVProperties)
 
     def normalize(self, archive, logger):
-        super(OpenCircuitVoltage, self).normalize(archive, logger)
         self.method = "Open Circuit Voltage"
+        super(OpenCircuitVoltage, self).normalize(archive, logger)
 
         if self.data_file:
             try:

@@ -58,8 +58,8 @@ class Chronocoulometry(Voltammetry):
         section_def=CCProperties)
 
     def normalize(self, archive, logger):
-        super(Chronocoulometry, self).normalize(archive, logger)
         self.method = "Chronocoulometry"
+        super(Chronocoulometry, self).normalize(archive, logger)
 
         if self.data_file:
             try:
@@ -78,8 +78,8 @@ class Chronocoulometry(Voltammetry):
 
             except Exception as e:
                 logger.error(e)
-
-        if self.properties.sample_area and self.current is not None:
-            self.current_density = self.current / self.properties.sample_area
-        if self.properties.sample_area and self.charge is not None:
-            self.charge_density = self.charge / self.properties.sample_area
+        if self.properties is not None:
+            if self.properties.sample_area and self.current is not None:
+                self.current_density = self.current / self.properties.sample_area
+            if self.properties.sample_area and self.charge is not None:
+                self.charge_density = self.charge / self.properties.sample_area

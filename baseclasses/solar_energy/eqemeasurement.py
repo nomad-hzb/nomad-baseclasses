@@ -41,5 +41,5 @@ class EQEMeasurement(MeasurementOnSample):
         repeats=True)
 
     def normalize(self, archive, logger):
-        super(EQEMeasurement, self).normalize(archive, logger)
         self.method = "EQE Measurement"
+        super(EQEMeasurement, self).normalize(archive, logger)

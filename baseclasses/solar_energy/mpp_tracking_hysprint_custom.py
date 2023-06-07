@@ -276,8 +276,8 @@ class MPPTrackingHsprintCustom(MeasurementOnBatch):
         section_def=ProcessedEfficiency, repeats=True)
 
     def normalize(self, archive, logger):
-        super(MPPTrackingHsprintCustom, self).normalize(archive, logger)
         self.method = "MPP Tracking"
+        super(MPPTrackingHsprintCustom, self).normalize(archive, logger)
 
         if self.data_file and self.load_data_from_file:
             self.load_data_from_file = False
@@ -366,7 +366,8 @@ class MPPTrackingHsprintCustom(MeasurementOnBatch):
                 if pixel.include_for_average:
                     df = pd.DataFrame()
                     df["time"] = np.floor(
-                        pixel.time*self.averaging_grouping_minutes)/4
+                        pixel.time * self.averaging_grouping_minutes) / \
+                        self.averaging_grouping_minutes
                     df["efficiency"] = pixel.efficiency
                     df.set_index("time")
                     if parameter in averages:

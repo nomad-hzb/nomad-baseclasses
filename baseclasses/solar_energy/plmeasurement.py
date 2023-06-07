@@ -34,6 +34,5 @@ class PLMeasurement(MeasurementOnSample):
         a_browser=dict(adaptor='RawFileAdaptor'))
 
     def normalize(self, archive, logger):
-        super(PLMeasurement, self).normalize(archive, logger)
-
         self.method = "PL Measurement"
+        super(PLMeasurement, self).normalize(archive, logger)

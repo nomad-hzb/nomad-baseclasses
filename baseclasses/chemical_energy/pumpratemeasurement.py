@@ -83,8 +83,8 @@ class PumpRateMeasurement(MeasurementOnSample):
                     "editable": True, "scrollZoom": True}}])
 
     def normalize(self, archive, logger):
-        super(PumpRateMeasurement, self).normalize(archive, logger)
         self.method = "Pump Rate Measurement"
+        super(PumpRateMeasurement, self).normalize(archive, logger)
         if self.data_file:
             try:
                 with archive.m_context.raw_file(self.data_file) as f:
