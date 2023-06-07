@@ -39,7 +39,7 @@ def _read_curve_data(fid, curve_length) -> tuple:
     """
     pos = 0
     curve = fid.readline().strip() + "\n"  # grab header data
-    if len(curve) <= 1:
+    if len(curve) <= 1 or "CURVE" in curve:
         return [], [], pd.DataFrame()
 
     units = fid.readline().strip().split("\t")
