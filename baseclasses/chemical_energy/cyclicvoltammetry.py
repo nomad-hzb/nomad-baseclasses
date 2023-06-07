@@ -167,7 +167,7 @@ class CyclicVoltammetry(Voltammetry):
             except Exception as e:
                 logger.error(e)
 
-        if self.properties.sample_area is not None:
+        if self.properties is not None and self.properties.sample_area is not None:
             if self.current is not None:
                 self.current_density = self.current / self.properties.sample_area
             if self.cycles is not None:
