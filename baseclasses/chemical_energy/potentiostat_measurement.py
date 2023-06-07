@@ -20,7 +20,8 @@ import numpy as np
 import os
 import pandas as pd
 
-from nomad.metainfo import (Quantity, Reference, SubSection, Section)
+from nomad.metainfo import (
+    Quantity, Reference, SubSection, Section, SectionProxy)
 
 from .. import MeasurementOnSample
 from .cesample import Environment, ElectroChemicalSetup
@@ -201,6 +202,11 @@ class PotentiostatMeasurement(MeasurementOnSample):
 
     setup = Quantity(
         type=Reference(ElectroChemicalSetup.m_def),
+        a_eln=dict(component='ReferenceEditQuantity'))
+
+    connected_experiments = Quantity(
+        type=Reference(SectionProxy("PotentiostatMeasurement")),
+        shape=['*'],
         a_eln=dict(component='ReferenceEditQuantity'))
 
     pretreatment = SubSection(

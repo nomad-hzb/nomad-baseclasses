@@ -17,6 +17,7 @@
 #
 
 import numpy as np
+import pandas as pd
 from datetime import datetime
 import os
 
@@ -147,6 +148,40 @@ class Voltammetry(PotentiostatMeasurement):
     cycles = SubSection(
         section_def=VoltammetryCycleWithPlot, repeats=True)
 
+    export_data_to_csv = Quantity(
+        type=bool,
+        default=False,
+        a_eln=dict(component='BoolEditQuantity')
+    )
+
+    export_file = Quantity(
+        type=str,
+        a_eln=dict(component='FileEditQuantity'),
+        a_browser=dict(adaptor='RawFileAdaptor')
+    )
+
+    def export_cycle(self, archive,  name):
+
+        self.export_this_cycle_to_csv = False
+        df = pd.DataFrame()
+        if self.time is not None:
+            df["time"] = self.time
+        if self.current is not None:
+            df["current"] = self.current
+        if self.voltage is not None:
+            df["voltage"] = self.voltage
+        if self.control is not None:
+            df["control"] = self.control
+        if self.charge is not None:
+            df["charge"] = self.charge
+        if self.current_density is not None:
+            df["current_density"] = self.current_density
+
+        export_name = f"{name}.csv"
+        with archive.m_context.raw_file(export_name, 'w') as outfile:
+            df.to_csv(outfile.name)
+        self.export_file = export_name
+
     def derive_n_values(self):
         if self.current or self.voltage:
             return max(len(self.current), len(self.voltage))
@@ -237,3 +272,7 @@ class Voltammetry(PotentiostatMeasurement):
             for i, cycle in enumerate(self.cycles):
                 name = f"{os.path.splitext(self.data_file)[0]}_cycle_{i}"
                 cycle.export_cycle(archive, name)
+
+        if self.export_data_to_csv:
+            self.export_cycle(archive, os.path.splitext(
+                self.data_file)[0] + "_data")

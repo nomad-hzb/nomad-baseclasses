@@ -127,7 +127,7 @@ def get_header_and_data(filename):
     pos = 0
     with open(file=filename, mode="r", encoding="utf8", errors="ignore") as f:
         cur_line = f.readline().split("\t")
-        while not re.search(r"(^|Z|VFP|EFM)CURVE", cur_line[0]):
+        while not re.search(r"(^|Z|VFP|EFM|DISK)CURVE", cur_line[0]):
             if f.tell() == pos:
                 break
 
@@ -137,7 +137,7 @@ def get_header_and_data(filename):
                 pass
 
             if len(cur_line) > 1:
-                if cur_line[0] in ["OCVCURVE"] and len(cur_line) > 2:
+                if cur_line[0] in ["OCVCURVE", "RINGCURVE", ] and len(cur_line) > 2:
                     table_length = get_number(cur_line[2])
                     _header[cur_line[0]] = get_curve(
                         f, _header, _curve_units, table_length)
