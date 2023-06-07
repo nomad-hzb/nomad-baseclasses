@@ -159,7 +159,7 @@ class VoltammetryCycle(ArchiveSection):
                 df["voltage_ref_compensated"] = self.voltage_ref_compensated
             if self.voltage_rhe_compensated is not None:
                 df["voltage_rhe_compensated"] = self.voltage_rhe_compensated
-
+            name = name.replace("#", "")
             export_name = f"{name}.csv"
             with archive.m_context.raw_file(export_name, 'w') as outfile:
                 df.to_csv(outfile.name)
