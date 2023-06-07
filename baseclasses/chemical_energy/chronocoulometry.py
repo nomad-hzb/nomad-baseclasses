@@ -35,25 +35,6 @@ class CCProperties(CAProperties):
 
 class Chronocoulometry(Voltammetry):
 
-    charge_density = Quantity(
-        type=np.dtype(
-            np.float64),
-        shape=['n_values'],
-        unit='mC/cm^2',
-        a_plot=[
-            {
-                "label": "Charge Density",
-                'x': 'time',
-                'y': 'charge_density',
-                'layout': {
-                    'yaxis': {
-                        "fixedrange": False},
-                    'xaxis': {
-                        "fixedrange": False}},
-                "config": {
-                    "editable": True,
-                    "scrollZoom": True}}])
-
     properties = SubSection(
         section_def=CCProperties)
 

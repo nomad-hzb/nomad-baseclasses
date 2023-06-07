@@ -81,6 +81,16 @@ class Voltammetry(PotentiostatMeasurement):
         a_eln=dict(component='FileEditQuantity'),
         a_browser=dict(adaptor='RawFileAdaptor'))
 
+    voltage_shift = Quantity(
+        type=np.dtype(np.float64), default=0,
+        unit=('V'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
+
+    resistance = Quantity(
+        type=np.dtype(np.float64), default=0,
+        unit=('ohm'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ohm'))
+
     time = Quantity(
         type=np.dtype(np.float64),
         shape=['n_values'],
@@ -145,6 +155,55 @@ class Voltammetry(PotentiostatMeasurement):
                     "editable": True,
                     "scrollZoom": True}}])
 
+    charge_density = Quantity(
+        type=np.dtype(
+            np.float64),
+        shape=['n_values'],
+        unit='mC/cm^2',
+        a_plot=[
+            {
+                "label": "Charge Density",
+                'x': 'time',
+                'y': 'charge_density',
+                'layout': {
+                    'yaxis': {
+                        "fixedrange": False},
+                    'xaxis': {
+                        "fixedrange": False}},
+                "config": {
+                    "editable": True,
+                    "scrollZoom": True}}])
+
+    voltage_rhe_uncompensated = Quantity(
+        type=np.dtype(
+            np.float64), shape=['n_values'], unit='V', a_plot=[
+            {
+                "label": "Voltage", 'x': 'time', 'y': 'voltage_rhe_uncompensated', 'layout': {
+                    'yaxis': {
+                        "fixedrange": False}, 'xaxis': {
+                            "fixedrange": False}}, "config": {
+                    "editable": True, "scrollZoom": True}}])
+
+    voltage_ref_compensated = Quantity(
+        type=np.dtype(
+            np.float64), shape=['n_values'], unit='V', a_plot=[
+            {
+                "label": "Voltage", 'x': 'time', 'y': 'voltage_ref_compensated', 'layout': {
+                    'yaxis': {
+                        "fixedrange": False}, 'xaxis': {
+                            "fixedrange": False}}, "config": {
+                    "editable": True, "scrollZoom": True}}])
+
+    voltage_rhe_compensated = Quantity(
+        type=np.dtype(
+            np.float64), shape=['n_values'], unit='V', a_plot=[
+            {
+                "label": "Voltage", 'x': 'time', 'y': 'voltage_rhe_compensated', 'layout': {
+                    'yaxis': {
+                         "fixedrange": False}, 'xaxis': {
+                        "fixedrange": False}}, "config": {
+                    "editable": True, "scrollZoom": True}}])
+
     cycles = SubSection(
         section_def=VoltammetryCycleWithPlot, repeats=True)
 
@@ -176,6 +235,14 @@ class Voltammetry(PotentiostatMeasurement):
             df["charge"] = self.charge
         if self.current_density is not None:
             df["current_density"] = self.current_density
+        if self.charge_density is not None:
+            df["charge_density"] = self.charge_density
+        if self.voltage_rhe_uncompensated is not None:
+            df["voltage_rhe_uncompensated"] = self.voltage_rhe_uncompensated
+        if self.voltage_ref_compensated is not None:
+            df["voltage_ref_compensated"] = self.voltage_ref_compensated
+        if self.voltage_rhe_compensated is not None:
+            df["voltage_rhe_compensated"] = self.voltage_rhe_compensated
 
         export_name = f"{name}.csv"
         with archive.m_context.raw_file(export_name, 'w') as outfile:
@@ -191,7 +258,6 @@ class Voltammetry(PotentiostatMeasurement):
 
     def normalize(self, archive, logger):
         super(Voltammetry, self).normalize(archive, logger)
-
         if self.data_file:
             try:
                 with archive.m_context.raw_file(self.data_file) as f:
@@ -275,3 +341,26 @@ class Voltammetry(PotentiostatMeasurement):
         if self.export_data_to_csv:
             self.export_cycle(archive, os.path.splitext(
                 self.data_file)[0] + "_data")
+
+        if self.resistance is not None and self.voltage_shift is not None:
+            resistance = np.array(self.resistance)
+            shift = np.array(self.voltage_shift)
+            if self.voltage is not None and self.current is not None:
+                volts = np.array(self.voltage)
+                current = np.array(self.current)/1000
+                self.voltage_rhe_compensated = (
+                    volts + shift) - (current*resistance)
+                self.voltage_ref_compensated = (
+                    volts) - (current*resistance)
+                self.voltage_rhe_uncompensated = volts + shift
+
+            if self.cycles is not None:
+                for cycle in self.cycles:
+                    if cycle.voltage is not None and cycle.current is not None:
+                        volts = np.array(cycle.voltage)
+                        current = np.array(cycle.current)/1000
+                        cycle.voltage_rhe_compensated = (
+                            volts + shift) - (current*resistance)
+                        cycle.voltage_ref_compensated = (
+                            volts) - (current*resistance)
+                        cycle.voltage_rhe_uncompensated = volts + shift
