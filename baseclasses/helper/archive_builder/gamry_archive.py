@@ -8,15 +8,15 @@ import os
 
 from nomad.units import ureg
 import baseclasses
-from baseclasses.chemical_energy.chronoamperometry import CAPropertiesWithData, CAProperties
+from baseclasses.chemical_energy.chronoamperometry import CAProperties
 from baseclasses.chemical_energy.chronocoulometry import CCProperties
 from baseclasses.chemical_energy.cyclicvoltammetry import CVProperties
 from baseclasses.chemical_energy.opencircuitvoltage import OCVProperties
-from baseclasses.chemical_energy.electorchemical_impedance_spectroscopy import EISProperties, EISPropertiesWithData, EISCycle
+from baseclasses.chemical_energy.electorchemical_impedance_spectroscopy import EISProperties, EISCycle
 from baseclasses.chemical_energy.voltammetry import VoltammetryCycle, VoltammetryCycleWithPlot
 
 
-def get_eis_properties(metadata, properties):
+def get_eis_properties(metadata):
     properties = EISProperties()
 
     properties.dc_voltage = metadata["VDC"][0]
@@ -58,20 +58,28 @@ def get_cv_properties(metadata):
 
 
 def get_ca_properties(metadata, cc=False):
-    properties = CAPropertiesWithData()
+    properties = CAProperties()
     if cc:
         properties = CCProperties()
 
-    properties.pre_step_potential = metadata["VPRESTEP"][0]
-    properties.pre_step_potential_measured_against = "Eoc" if metadata[
-        "VPRESTEP"][1] else "Eref"
+    vprestep = metadata.get("VPRESTEP")
+    if vprestep is not None:
+        properties.pre_step_potential = vprestep[0]
+        properties.pre_step_potential_measured_against = "Eoc" if vprestep[1] else "Eref"
     properties.pre_step_delay_time = metadata.get("TPRESTEP")
-    properties.step_1_potential = metadata["VSTEP1"][0]
-    properties.step_1_potential_measured_against = "Eoc" if metadata["VSTEP1"][1] else "Eref"
+
+    vstep1 = metadata.get("VSTEP1")
+    if vstep1 is not None:
+        properties.step_1_potential = vstep1[0]
+        properties.step_1_potential_measured_against = "Eoc" if vstep1[1] else "Eref"
     properties.step_1_time = metadata.get("TSTEP1")
-    properties.step_2_potential = metadata["VSTEP2"][0]
-    properties.step_2_potential_measured_against = "Eoc" if metadata["VSTEP2"][1] else "Eref"
+
+    vstep2 = metadata.get("VSTEP2")
+    if vstep2 is not None:
+        properties.step_2_potential = vstep2[0]
+        properties.step_2_potential_measured_against = "Eoc" if vstep2[1] else "Eref"
     properties.step_2_time = metadata.get("TSTEP2")
+    
     properties.sample_period = metadata.get("SAMPLETIME")
     properties.sample_area = metadata.get("AREA")
     return properties
@@ -166,7 +174,7 @@ def get_meta_data(metadata, entry):
 
 def get_voltammetry_archive(data, metadata, entry_class):
     if len(data) > 1:
-        if entry_class.cycles is None:
+        if entry_class.cycles is None or len(entry_class.cycles) == 0:
             entry_class.cycles = []
             for curve in data:
                 cycle = VoltammetryCycleWithPlot()
@@ -177,5 +185,11 @@ def get_voltammetry_archive(data, metadata, entry_class):
     if len(data) == 1:
         get_voltammetry_data(
             data[0], entry_class)
+
+    if "OCVCURVE" in metadata and entry_class.pretreatment is None:
+        cycle = VoltammetryCycle()
+        get_voltammetry_data(
+            metadata["OCVCURVE"], cycle)
+        entry_class.pretreatment = cycle
 
     get_meta_data(metadata, entry_class)

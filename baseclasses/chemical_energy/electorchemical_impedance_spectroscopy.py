@@ -16,7 +16,6 @@
 # limitations under the License.
 #
 
-import os
 import numpy as np
 
 from nomad.metainfo import (

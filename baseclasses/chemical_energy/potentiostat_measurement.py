@@ -217,21 +217,6 @@ class PotentiostatMeasurement(MeasurementOnSample):
 
     def normalize(self, archive, logger):
         super(PotentiostatMeasurement, self).normalize(archive, logger)
-        if self.data_file:
-            try:
-                with archive.m_context.raw_file(self.data_file) as f:
-
-                    if os.path.splitext(self.data_file)[-1] == ".DTA":
-                        from ..helper.gamry_parser import get_header_and_data
-                        from ..helper.gamry_archive import get_voltammetry_data
-                        metadata, _ = get_header_and_data(filename=f.name)
-                        if "OCVCURVE" in metadata and self.pretreatment is None:
-                            cycle = VoltammetryCycle()
-                            get_voltammetry_data(
-                                metadata["OCVCURVE"], cycle)
-                            self.pretreatment = cycle
-            except Exception as e:
-                logger.error(e)
 
         if self.pretreatment is not None:
             self.pretreatment.export_cycle(
