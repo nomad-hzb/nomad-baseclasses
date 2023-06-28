@@ -18,11 +18,11 @@
 
 from .cleaning import Cleaning, SolutionCleaning
 from .constantpotential import ConstantPotential
-from .cyclicvoltammetry import CyclicVoltammetry
-from .chronoamperometry import Chronoamperometry, ChronoamperometryMultiple
+from .cyclicvoltammetry import CyclicVoltammetry, CVProperties
+from .chronoamperometry import Chronoamperometry
 from .chronocoulometry import Chronocoulometry
-from .opencircuitvoltage import OpenCircuitVoltage
-from .electorchemical_impedance_spectroscopy import ElectrochemicalImpedanceSpectroscopy, ElectrochemicalImpedanceSpectroscopyMultiple
+from .opencircuitvoltage import OpenCircuitVoltage, OCVProperties
+from .electorchemical_impedance_spectroscopy import ElectrochemicalImpedanceSpectroscopy, EISProperties
 from .dropcast import Dropcast
 from .opticalmicroscopy import OpticalMicorscopy
 from .photocurrent import PhotoCurrent
@@ -32,7 +32,7 @@ from .cesample import CENOMESample, Electrode, Electrolyte, ElectroChemicalCell,
 from .preparation_protocoll import PreparationProtocol
 from .diamondsample import DiamondSample
 from .waterbath import WaterBath
-from .voltammetry import VoltammetryCycle, Voltammetry
+from .voltammetry import VoltammetryCycle, Voltammetry, VoltammetryCycleWithPlot
 from .potentiostat_measurement import PotentiostatMeasurement, PotentiostatSetup
 from .phasefluorometryoxygen import PhaseFluorometryOxygen
 from .pumpratemeasurement import PumpRateMeasurement

@@ -109,64 +109,6 @@ class CyclicVoltammetry(Voltammetry):
         self.method = "Cyclic Voltammetry"
         super(CyclicVoltammetry, self).normalize(archive, logger)
 
-        if self.data_file:
-            try:
-                with archive.m_context.raw_file(self.data_file) as f:
-                    if os.path.splitext(self.data_file)[-1] == ".DTA":
-                        from ..helper.gamry_parser import get_header_and_data
-                        metadata, _ = get_header_and_data(filename=f.name)
-
-                        if "CV" in metadata["TAG"] and self.properties is None:
-                            from ..helper.gamry_archive import get_cv_properties
-                            properties = CVProperties()
-                            get_cv_properties(metadata, properties)
-                            self.properties = properties
-
-                    if os.path.splitext(self.data_file)[-1] == ".mpt":
-                        from ..helper.mps_file_parser import read_mpt_file
-
-                        metadata, _, technique = read_mpt_file(f.name)
-
-                        if "Cyclic" in technique and self.properties is None:
-                            from ..helper.mpt_get_archive import get_cv_properties
-                            properties = CVProperties()
-                            get_cv_properties(metadata, properties)
-                            self.properties = properties
-
-                    if os.path.splitext(self.data_file)[-1] == ".cor":
-                        from ..helper.corr_ware_parser import get_header_data_corrware
-                        metadata, _, technique = get_header_data_corrware(
-                            filename=f.name)
-                        if "Cyclic" in technique and self.properties is None:
-                            experiment = metadata['Experiment']
-                            properties = CVProperties()
-                            properties.initial_potential = experiment.get(
-                                "Potential #1")
-                            properties.initial_potential_measured_against = "Eoc" if experiment.get(
-                                'Potential #1 Type') == 0.0 else "Eref"
-                            properties.limit_potential_1 = experiment.get(
-                                'Potential #2')
-                            properties.limit_potential_1_measured_against = "Eoc" if experiment.get(
-                                'Potential #2 Type') == 0.0 else "Eref"
-                            properties.limit_potential_2 = experiment.get(
-                                'Potential #3')
-                            properties.limit_potential_2_measured_against = "Eoc" if experiment.get(
-                                'Potential #3 Type') == 0.0 else "Eref"
-                            properties.final_potential = experiment.get(
-                                'Potential #4')
-                            properties.final_potential_measured_against = "Eoc" if experiment.get(
-                                'Potential #1 Type') == 0.0 else "Eref"
-                            properties.scan_rate = experiment.get(
-                                'Scan Rate')
-                            properties.cycles = experiment.get(
-                                'Scan Number')
-                            properties.open_circuit_potential = metadata.get(
-                                'Open Circuit Potential (V)')
-                            self.properties = properties
-
-            except Exception as e:
-                logger.error(e)
-
         if self.properties is not None and self.properties.sample_area is not None:
             if self.current is not None:
                 self.current_density = self.current / self.properties.sample_area

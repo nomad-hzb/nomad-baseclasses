@@ -106,23 +106,3 @@ class PhaseFluorometryOxygen(MeasurementOnSample):
     def normalize(self, archive, logger):
         self.method = "Phase Fluorometry"
         super(PhaseFluorometryOxygen, self).normalize(archive, logger)
-
-        if self.data_file:
-            try:
-                with archive.m_context.raw_file(self.data_file) as f:
-                    if os.path.splitext(self.data_file)[-1] == ".csv":
-                        lookup = '"Date [mm/dd/yyyy]";'
-                        for num, line in enumerate(f):
-                            if lookup in line:
-                                break
-                    data = pd.read_csv(f.name, sep=";",
-                                       header=num, skip_blank_lines=False)
-                    self.time = data["Delta T"]
-                    self.oxygen = data["Oxygen Value"]
-                    self.temperature = data["Temperature [°C]"]
-                    self.phase = data["Phase [°]"]
-                    self.amplitude = data["Amplitude [rel. u.]"]
-                    self.pressure = data["Pressure [hPa]"]
-
-            except Exception as e:
-                logger.error(e)

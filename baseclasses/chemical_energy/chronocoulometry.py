@@ -42,23 +42,6 @@ class Chronocoulometry(Voltammetry):
         self.method = "Chronocoulometry"
         super(Chronocoulometry, self).normalize(archive, logger)
 
-        if self.data_file:
-            try:
-                with archive.m_context.raw_file(self.data_file) as f:
-                    if os.path.splitext(self.data_file)[-1] == ".DTA":
-                        from ..helper.gamry_parser import get_header_and_data
-                        metadata, _ = get_header_and_data(filename=f.name)
-
-                        if "CHRONOC" in metadata["TAG"] and self.properties is None:
-                            from ..helper.gamry_archive import get_cc_properties
-
-                            properties = CCProperties()
-                            get_cc_properties(metadata, properties)
-
-                            self.properties = properties
-
-            except Exception as e:
-                logger.error(e)
         if self.properties is not None:
             if self.properties.sample_area and self.current is not None:
                 self.current_density = self.current / self.properties.sample_area

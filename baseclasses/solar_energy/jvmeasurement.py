@@ -113,34 +113,18 @@ class JVMeasurement(MeasurementOnSample):
         self.method = "JV Measurement"
         super(JVMeasurement, self).normalize(archive, logger)
 
-        if self.data_file:
-            # todo detect file format
-            from ..helper.utilities import get_encoding
-            with archive.m_context.raw_file(self.data_file, "br") as f:
-                encoding = get_encoding(f)
-            
-            with archive.m_context.raw_file(self.data_file, "br") as f:
-                import chardet
-                encoding = chardet.detect(f.read())["encoding"]
-
-            with archive.m_context.raw_file(self.data_file, encoding=encoding) as f:
-                if "LTI @ KIT" in f.readline():
-                    from ..helper.KIT_jv_parser import get_jv_data
-                else:
-                    from ..helper.jv_parser import get_jv_data
-                from ..helper.jv_archive import get_jv_archive
-
-                jv_dict = get_jv_data(f.name, encoding)
-                get_jv_archive(jv_dict, self.data_file, self)
-
-                add_solar_cell(archive)
-                archive.results.properties.optoelectronic.solar_cell.open_circuit_voltage = np.average(
-                    jv_dict['V_oc']) * ureg('V')
-                archive.results.properties.optoelectronic.solar_cell.short_circuit_current_density = np.average(
-                    jv_dict['J_sc']) * ureg('mA/cm^2')
-                archive.results.properties.optoelectronic.solar_cell.fill_factor = np.average(
-                    jv_dict['Fill_factor'])
-                archive.results.properties.optoelectronic.solar_cell.efficiency = np.average(
-                    jv_dict['Efficiency'])
-                archive.results.properties.optoelectronic.solar_cell.illumination_intensity = jv_dict['intensity'] * ureg(
-                    'mW/cm^2') if 'intensity' in jv_dict else None
+        max_idx = -1
+        eff = -1
+        for i, curve in enumerate(self.jv_curve):
+            if curve.efficiency is not None and curve.efficiency > eff:
+                eff = curve.efficiency
+                max_idx = i
+        if max_idx >= 0:
+            add_solar_cell(archive)
+            solar_cell = archive.results.properties.optoelectronic.solar_cell
+            solar_cell.open_circuit_voltage = self.jv_curve[max_idx].open_circuit_voltage
+            solar_cell.short_circuit_current_density = self.jv_curve[
+                max_idx].short_circuit_current_density
+            solar_cell.fill_factor = self.jv_curve[max_idx].fill_factor
+            solar_cell.efficiency = self.jv_curve[max_idx].efficiency
+            solar_cell.illumination_intensity = self.jv_curve[max_idx].light_intensity

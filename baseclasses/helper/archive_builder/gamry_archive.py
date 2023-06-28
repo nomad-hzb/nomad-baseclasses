@@ -13,11 +13,11 @@ from baseclasses.chemical_energy.chronocoulometry import CCProperties
 from baseclasses.chemical_energy.cyclicvoltammetry import CVProperties
 from baseclasses.chemical_energy.opencircuitvoltage import OCVProperties
 from baseclasses.chemical_energy.electorchemical_impedance_spectroscopy import EISProperties, EISPropertiesWithData, EISCycle
-from baseclasses.chemical_energy.voltammetry import VoltammetryCycle
+from baseclasses.chemical_energy.voltammetry import VoltammetryCycle, VoltammetryCycleWithPlot
 
 
 def get_eis_properties(metadata, properties):
-    assert isinstance(properties, EISProperties)
+    properties = EISProperties()
 
     properties.dc_voltage = metadata["VDC"][0]
     properties.dc_voltage_measured_against = "Eoc" if metadata["VDC"][1] else "Eref"
@@ -26,19 +26,21 @@ def get_eis_properties(metadata, properties):
     properties.points_per_decade = metadata.get("PTSPERDEC")
     properties.ac_voltage = metadata.get("VAC")
     properties.sample_area = metadata.get("AREA")
+    return properties
 
 
-def get_ocv_properties(metadata, properties):
-    assert isinstance(properties, OCVProperties)
+def get_ocv_properties(metadata):
+    properties = OCVProperties()
 
     properties.total_time = metadata.get("TIMEOUT")
     properties.sample_period = metadata.get("SAMPLETIME")
     properties.stability = metadata.get("STABILITY")
     properties.sample_area = metadata.get("AREA")
+    return properties
 
 
-def get_cv_properties(metadata, properties):
-    assert isinstance(properties, CVProperties)
+def get_cv_properties(metadata):
+    properties = CVProperties()
 
     properties.initial_potential = metadata["VINIT"][0]
     properties.initial_potential_measured_against = "Eoc" if metadata["VINIT"][1] else "Eref"
@@ -52,11 +54,13 @@ def get_cv_properties(metadata, properties):
     properties.step_size = metadata.get("STEPSIZE")
     properties.cycles = metadata.get("CYCLES")
     properties.sample_area = metadata.get("AREA")
+    return properties
 
 
-def get_ca_properties(metadata, properties):
-    assert isinstance(properties, CAPropertiesWithData) or isinstance(
-        properties, CAProperties) or isinstance(properties, CCProperties)
+def get_ca_properties(metadata, cc=False):
+    properties = CAPropertiesWithData()
+    if cc:
+        properties = CCProperties()
 
     properties.pre_step_potential = metadata["VPRESTEP"][0]
     properties.pre_step_potential_measured_against = "Eoc" if metadata[
@@ -70,13 +74,13 @@ def get_ca_properties(metadata, properties):
     properties.step_2_time = metadata.get("TSTEP2")
     properties.sample_period = metadata.get("SAMPLETIME")
     properties.sample_area = metadata.get("AREA")
+    return properties
 
 
-def get_cc_properties(metadata, properties):
-    assert isinstance(properties, CCProperties)
-
-    get_ca_properties(metadata, properties)
+def get_cc_properties(metadata):
+    properties = get_ca_properties(metadata, True)
     properties.charge_limit = metadata["QLIMIT"][0]
+    return properties
 
 
 def get_voltammetry_data(data, cycle):
@@ -138,23 +142,40 @@ def get_meta_data(metadata, entry):
     entry.station = metadata.get('PSTAT')
 
 
-def get_cam_properties_data(metadata, data, mainfile, properties):
-    assert isinstance(properties, CAPropertiesWithData)
+# def get_cam_properties_data(metadata, data, mainfile, properties):
+#     assert isinstance(properties, CAPropertiesWithData)
 
-    curve_data = VoltammetryCycle()
-    get_voltammetry_data(data, curve_data)
-    get_ca_properties(metadata, properties)
-    get_meta_datetime(metadata, properties)
-    properties.data_file = mainfile
-    properties.data = curve_data
+#     curve_data = VoltammetryCycle()
+#     get_voltammetry_data(data, curve_data)
+#     get_ca_properties(metadata, properties)
+#     get_meta_datetime(metadata, properties)
+#     properties.data_file = mainfile
+#     properties.data = curve_data
 
 
-def get_eis_properties_data(metadata, data, mainfile, properties):
-    assert isinstance(properties, EISPropertiesWithData)
+# def get_eis_properties_data(metadata, data, mainfile, properties):
+#     assert isinstance(properties, EISPropertiesWithData)
 
-    curve_data = EISCycle()
-    get_eis_data(data, curve_data)
-    get_eis_properties(metadata, properties)
-    get_meta_datetime(metadata, properties)
-    properties.data_file = mainfile
-    properties.data = curve_data
+#     curve_data = EISCycle()
+#     get_eis_data(data, curve_data)
+#     get_eis_properties(metadata, properties)
+#     get_meta_datetime(metadata, properties)
+#     properties.data_file = mainfile
+#     properties.data = curve_data
+
+
+def get_voltammetry_archive(data, metadata, entry_class):
+    if len(data) > 1:
+        if entry_class.cycles is None:
+            entry_class.cycles = []
+            for curve in data:
+                cycle = VoltammetryCycleWithPlot()
+                get_voltammetry_data(
+                    curve, cycle)
+                entry_class.cycles.append(cycle)
+
+    if len(data) == 1:
+        get_voltammetry_data(
+            data[0], entry_class)
+
+    get_meta_data(metadata, entry_class)

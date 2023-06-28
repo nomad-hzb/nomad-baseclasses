@@ -32,11 +32,11 @@ from nomad.datamodel.metainfo.eln import (
 
 from .jvmeasurement import JVMeasurement
 from .mpp_tracking import MPPTracking
-from .mpp_tracking_hysprint_custom import MPPTrackingHsprintCustom
+from .mpp_tracking_hysprint_custom import MPPTrackingHsprintCustom, SampleData, JVData, PixelData
 from .plmeasurement import PLMeasurement
-from .uvvismeasurement import UVvisMeasurement
+from .uvvismeasurement import UVvisMeasurement, UVvisData
 from .eqemeasurement import EQEMeasurement
-from .time_resolved_photoluminescence import TimeResolvedPhotoluminescence
+from .time_resolved_photoluminescence import TimeResolvedPhotoluminescence, TRPLProperties
 from .standardsample import StandardSampleSolarCell
 from .substrate import Substrate
 from .solarcellsample import SolcarCellSample, BasicSampleWithID

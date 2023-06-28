@@ -38,8 +38,9 @@ def get_voltammetry_data(data, cycle_class):
             data["control/V"]) if "control/V" in data.columns else None
 
 
-def get_cv_properties(metadata, properties):
-    assert isinstance(properties, CVProperties)
+def get_cv_properties(metadata):
+    properties = CVProperties()
+
     properties.initial_potential = metadata.get("Ei (V)")
     properties.initial_potential_measured_against = "Eoc" if metadata.get(
         "Ei (V) vs.") == "Eoc" else "Eref"
@@ -55,18 +56,21 @@ def get_cv_properties(metadata, properties):
     properties.scan_rate = metadata.get("dE/dt")
     properties.cycles = metadata.get("nc cycles")
 
+    return properties
 
-def get_ocv_properties(metadata, properties):
-    assert isinstance(properties, OCVProperties)
+
+def get_ocv_properties(metadata):
+    properties = OCVProperties()
 
     # properties.total_time = metadata["TIMEOUT"]
     # properties.sample_period = metadata["SAMPLETIME"]
     # properties.stability = metadata["STABILITY"]
     # properties.sample_area = metadata.get("Electrode surface area")
+    return properties
 
 
-def get_eis_properties(metadata, properties):
-    assert isinstance(properties, EISProperties)
+def get_eis_properties(metadata, withdata=False):
+    properties = EISProperties()
 
     properties.dc_voltage = metadata["E (V)"]
     properties.dc_voltage_measured_against = "Eoc" if metadata.get(
@@ -76,6 +80,7 @@ def get_eis_properties(metadata, properties):
     properties.points_per_decade = metadata["Nd"]
     properties.ac_voltage = metadata["Va (mV)"]
     # properties.sample_area = metadata["AREA"]
+    return properties
 
 
 def get_eis_data(data, cycle):
@@ -110,12 +115,12 @@ def get_meta_data(metadata, entry):
     #     if metadata['NOTES'] not in entry.description else entry.description
 
 
-def get_eis_properties_data(metadata, data, mainfile, properties):
-    assert isinstance(properties, EISPropertiesWithData)
+# def get_eis_properties_data(metadata, data, mainfile, properties):
+#     assert isinstance(properties, EISPropertiesWithData)
 
-    curve_data = EISCycle()
-    get_eis_data(data, curve_data)
-    get_eis_properties(metadata, properties)
-    get_meta_datetime(metadata, properties)
-    properties.data_file = mainfile
-    properties.data = curve_data
+#     curve_data = EISCycle()
+#     get_eis_data(data, curve_data)
+#     get_eis_properties(metadata, properties)
+#     get_meta_datetime(metadata, properties)
+#     properties.data_file = mainfile
+#     properties.data = curve_data

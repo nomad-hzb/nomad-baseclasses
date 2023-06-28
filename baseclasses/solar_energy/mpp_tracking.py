@@ -271,13 +271,12 @@ class MPPTracking(MeasurementOnSample):
         self.method = "MPP Tracking"
 
         if self.data_file:
-            # todo detect file format
+            from baseclasses.helper.utilities import get_encoding
             with archive.m_context.raw_file(self.data_file, "br") as f:
-                import chardet
-                encoding = chardet.detect(f.read())["encoding"]
+                encoding = get_encoding(f)
 
             with archive.m_context.raw_file(self.data_file, encoding=encoding) as f:
                 if "@ LTI" in f.readline():
-                    from ..helper.KIT_mpp_parser import get_mpp_data, get_mpp_archive
+                    from ..helper.file_parser.KIT_mpp_parser import get_mpp_data, get_mpp_archive
                     mpp_dict, data = get_mpp_data(f.name, encoding)
                     get_mpp_archive(mpp_dict, data, self)

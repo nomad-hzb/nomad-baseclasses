@@ -85,23 +85,3 @@ class PumpRateMeasurement(MeasurementOnSample):
     def normalize(self, archive, logger):
         self.method = "Pump Rate Measurement"
         super(PumpRateMeasurement, self).normalize(archive, logger)
-        if self.data_file:
-            try:
-                with archive.m_context.raw_file(self.data_file) as f:
-                    if os.path.splitext(self.data_file)[-1] == ".csv":
-                        data = pd.read_csv(f.name, sep=";",
-                                           header=0, skip_blank_lines=False)
-
-                        from baseclasses.helper.utilities import lookup
-                        data['time'] = lookup(
-                            data.iloc[:, 0], format='%Y-%m-%d %H:%M:%S.%f')
-                        data["duration"] = (data.time - data.time.iloc[0])
-                        data["duration_s"] = data.duration.dt.total_seconds()
-                        self.time = data["duration_s"]
-                        self.flow_rate_set = data.iloc[:, 2]
-                        self.flow_rate_measured = data.iloc[:, 3]
-                        self.pressure = data.iloc[:, 1]
-                        self.datetime = data.iloc[0, 0]
-
-            except Exception as e:
-                logger.error(e)

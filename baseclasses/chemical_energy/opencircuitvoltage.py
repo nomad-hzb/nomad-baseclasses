@@ -60,32 +60,3 @@ class OpenCircuitVoltage(Voltammetry):
     def normalize(self, archive, logger):
         self.method = "Open Circuit Voltage"
         super(OpenCircuitVoltage, self).normalize(archive, logger)
-
-        if self.data_file:
-            try:
-                with archive.m_context.raw_file(self.data_file) as f:
-                    if os.path.splitext(self.data_file)[-1] == ".DTA":
-                        from ..helper.gamry_parser import get_header_and_data
-                        metadata, _ = get_header_and_data(filename=f.name)
-
-                        if "CORPOT" in metadata["TAG"] and self.properties is None:
-                            from ..helper.gamry_archive import get_ocv_properties
-
-                            properties = OCVProperties()
-                            get_ocv_properties(metadata, properties)
-
-                            self.properties = properties
-
-                    if os.path.splitext(self.data_file)[-1] == ".mpt":
-                        from ..helper.mps_file_parser import read_mpt_file
-                        from ..helper.mpt_get_archive import get_ocv_properties
-
-                        metadata, _, technique = read_mpt_file(f.name)
-                        if "Open Circuit Voltage" in technique and self.properties is None:
-                            properties = OCVProperties()
-                            get_ocv_properties(metadata, properties)
-
-                            self.properties = properties
-
-            except Exception as e:
-                logger.error(e)

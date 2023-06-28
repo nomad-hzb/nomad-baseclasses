@@ -23,22 +23,6 @@ from .. import MeasurementOnSample
 from nomad.metainfo import (Quantity)
 
 
-def getHeader(file):
-    header = 0
-    date_line_found = False
-    date_line = None
-    with open(file, "r") as f:
-        for i, line in enumerate(f):
-            if line.startswith("#D") and not date_line_found:
-                date_line_found = True
-                date_line = line
-            if line.startswith("#"):
-                continue
-            header = i - 1
-            break
-    return header, date_line.strip()
-
-
 class XAS(MeasurementOnSample):
     '''XAS Measurement'''
 
@@ -107,26 +91,6 @@ class XAS(MeasurementOnSample):
 
     def normalize(self, archive, logger):
         super(XAS, self).normalize(archive, logger)
-
-        if self.data_file:
-
-            if os.path.splitext(self.data_file)[-1] == ".dat":
-                with archive.m_context.raw_file(self.data_file) as f:
-                    import pandas as pd
-                    header, dateline = getHeader(f.name)
-                    data = pd.read_csv(f.name, header=header, sep="\t")
-
-                if dateline is not None:
-                    datetime_object = datetime.strptime(
-                        dateline, '#D\t%a %b %d\t%H:%M:%S\t%Y')
-                    self.datetime = datetime_object.strftime(
-                        "%Y-%m-%d %H:%M:%S.%f")
-
-                self.energy = data["#monoE"]
-                self.seconds = data["Seconds"]
-                self.k0 = data["K0"]
-                self.k1 = data["K1"]
-                self.k3 = data["K3"]
 
 
 class XASFluorescence(XAS):

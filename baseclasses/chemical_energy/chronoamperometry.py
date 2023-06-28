@@ -129,23 +129,6 @@ class Chronoamperometry(Voltammetry):
     def normalize(self, archive, logger):
         self.method = "Chronoamperometry"
         super(Chronoamperometry, self).normalize(archive, logger)
-        if self.data_file:
-            try:
-                with archive.m_context.raw_file(self.data_file) as f:
-                    if os.path.splitext(self.data_file)[-1] == ".DTA":
-                        from ..helper.gamry_parser import get_header_and_data
-                        metadata, _ = get_header_and_data(filename=f.name)
-
-                        if "CHRONOA" in metadata["TAG"] and self.properties is None:
-                            from ..helper.gamry_archive import get_ca_properties
-
-                            properties = CAProperties()
-                            get_ca_properties(metadata, properties)
-
-                            self.properties = properties
-
-            except Exception as e:
-                logger.error(e)
 
         if self.properties is not None:
             if self.properties.sample_area and self.current is not None:
@@ -154,11 +137,11 @@ class Chronoamperometry(Voltammetry):
                 self.charge_density = self.charge / self.properties.sample_area
 
 
-class ChronoamperometryMultiple(PotentiostatMeasurement):
+# class ChronoamperometryMultiple(PotentiostatMeasurement):
 
-    measurements = SubSection(
-        section_def=CAPropertiesWithData, repeats=True)
+#     measurements = SubSection(
+#         section_def=CAPropertiesWithData, repeats=True)
 
-    def normalize(self, archive, logger):
-        super(ChronoamperometryMultiple, self).normalize(archive, logger)
-        self.method = "Multiple Chronoamperometry"
+#     def normalize(self, archive, logger):
+#         super(ChronoamperometryMultiple, self).normalize(archive, logger)
+#         self.method = "Multiple Chronoamperometry"
