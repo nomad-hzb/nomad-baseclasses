@@ -67,7 +67,51 @@ class SpinCoatingAntiSolvent(AntiSolventQuenching):
 
 
 class GasQuenching(ArchiveSection):
-    pass
+    gas = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'))
+
+class AirKnifeGasQuenching(GasQuenching):
+    air_knife_pressure = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=('mbar'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mbar',
+            props=dict(
+                minValue=0)))
+    
+    air_knife_speed = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=('mm/s'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mm/s',
+            props=dict(
+                minValue=0)))
+    
+    air_knife_angle = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=('degree'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='degree',
+            props=dict(
+                minValue=0)))
+
+
+    air_knife_distance_to_thin_film = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=('um'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='um',
+            props=dict(
+                minValue=0)))
 
 
 class SpinCoatingGasQuenching(GasQuenching):

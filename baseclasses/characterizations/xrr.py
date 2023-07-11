@@ -130,13 +130,5 @@ class XRR(MeasurementOnSample):
         section_def=XRRFittedData, repeats=True)
 
     def normalize(self, archive, logger):
-        super(XRR, self).normalize(archive, logger)
         self.method = "XRR"
-
-        if self.data_file:
-            from ..fhi_archive import get_xrr_data_entry
-            measurement, fitted_data = get_xrr_data_entry(
-                archive, self.data_file)
-
-            self.measurement = measurement
-            self.fitted_data = fitted_data
+        super(XRR, self).normalize(archive, logger)

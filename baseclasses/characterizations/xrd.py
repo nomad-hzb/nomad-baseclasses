@@ -115,29 +115,3 @@ class XRD(MeasurementOnSample):
     def normalize(self, archive, logger):
         super(XRD, self).normalize(archive, logger)
         self.method = "XRD"
-
-        if self.data_file:
-
-            if self.identifier == "FHI_IRIS":
-                from ..helper.fhi_archive import get_xrd_data_entry
-                measurements, shifted_data = get_xrd_data_entry(
-                    archive, self.data_file)
-
-                self.measurements = measurements
-                self.shifted_data = shifted_data
-
-            if self.identifier == "HZB_WANNSEE":
-                measurements = []
-                for data_file in self.data_file:
-                    if os.path.splitext(data_file)[-1] == ".xy":
-                        with archive.m_context.raw_file(data_file) as f:
-                            import pandas as pd
-                            data = pd.read_csv(
-                                f.name, skiprows=1, sep=" ", header=None)
-                            measurements.append(XRDData(
-                                angle_type="2Theta",
-                                angle=data[0],
-                                intensity=data[1]
-                            ))
-
-                self.measurements = measurements

@@ -24,5 +24,5 @@ from .spv import SPV
 from .sxm import SXM
 from .xas import XAS, XASFluorescence, XASTransmission
 from .xpeem import XPEEM
-from .xrr import XRR
-from .xrd import XRD
+from .xrr import XRR, XRRData, XRRFittedData
+from .xrd import XRD, XRDData

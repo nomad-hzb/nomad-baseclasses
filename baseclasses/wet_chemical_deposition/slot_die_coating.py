@@ -26,42 +26,17 @@ from nomad.datamodel.data import ArchiveSection
 
 from ..solution import Solution
 from .. import LayerDeposition
-from ..material_processes_misc import Annealing
+from ..material_processes_misc import Annealing, AirKnifeGasQuenching
 
 
 class SlotDieCoatingProperties(ArchiveSection):
 
-    solution = Quantity(
+    ink = Quantity(
         type=Reference(Solution.m_def),
         shape=['*'],
         a_eln=dict(component='ReferenceEditQuantity'))
 
-    pre_pump = Quantity(
-        type=np.dtype(np.float64),
-        shape=['*'],
-        a_eln=dict(component='NumberEditQuantity', props=dict(minValue=0)))
-
-    speed = Quantity(
-        type=np.dtype(
-            np.float64),
-        unit=('mm/s'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='mm/s',
-            props=dict(
-                minValue=0)))
-
-    gap = Quantity(
-        type=np.dtype(
-            np.float64),
-        unit=('mm'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='mm',
-            props=dict(
-                minValue=0)))
-
-    coating_pump_rate = Quantity(
+    flow_rate = Quantity(
         type=np.dtype(
             np.float64),
         unit=('ml/minute'),
@@ -69,13 +44,52 @@ class SlotDieCoatingProperties(ArchiveSection):
             component='NumberEditQuantity',
             defaultDisplayUnit='ml/minute', props=dict(minValue=0)))
 
-    length_of_die_head = Quantity(
+    slot_die_head_width = Quantity(
         type=np.dtype(
             np.float64),
         unit=('mm'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='mm',
+            props=dict(
+                minValue=0)))
+
+    slot_die_shim_width = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=('mm'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mm',
+            props=dict(
+                minValue=0)))
+
+    slot_die_shim_thickness = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=('mm'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mm',
+            props=dict(
+                minValue=0)))
+
+    slot_die_head_distance_to_thinfilm = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=('mm'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mm',
+            props=dict(
+                minValue=0)))
+    slot_die_head_speed = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=('mm/s'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mm/s',
             props=dict(
                 minValue=0)))
 
@@ -89,22 +103,13 @@ class SlotDieCoatingProperties(ArchiveSection):
             props=dict(
                 minValue=0)))
 
-    air_knife_pressure = Quantity(
-        type=np.dtype(
-            np.float64),
-        unit=('mbar'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='mbar',
-            props=dict(
-                minValue=0)))
-
 
 class SlotDieCoating(LayerDeposition):
     '''Spin Coating'''
 
     properties = SubSection(section_def=SlotDieCoatingProperties)
     annealing = SubSection(section_def=Annealing)
+    air_knife_gas_quenching = SubSection(section_def=AirKnifeGasQuenching)
 
     def normalize(self, archive, logger):
         super(SlotDieCoating, self).normalize(archive, logger)

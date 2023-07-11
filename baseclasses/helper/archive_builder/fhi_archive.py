@@ -18,8 +18,8 @@
 
 import os
 import json
-from ..characterizations.xrd import XRDData, XRDShiftedData
-from ..characterizations.xrr import XRRData, XRRFittedData
+from baseclasses.characterizations.xrd import XRDData, XRDShiftedData
+from baseclasses.characterizations.xrr import XRRData, XRRFittedData
 
 
 def get_xrd_data_entry(archive, data_files):
@@ -29,7 +29,7 @@ def get_xrd_data_entry(archive, data_files):
 
     for data_file in data_files:
         if os.path.splitext(data_file)[-1] == ".uxd":
-            from ..helper.fhi_parsers import readUXD
+            from baseclasses.helper.file_parser.fhi_parsers import readUXD
             with archive.m_context.raw_file(data_file) as f:
                 data = readUXD(f.name)
 
@@ -37,7 +37,7 @@ def get_xrd_data_entry(archive, data_files):
                     json.dump(readUXD(f.name, False), outfile)
 
                 datarange = 1
-                while(True):
+                while (True):
                     if " Data for range " + str(datarange) in data:
                         xrr_data_entry = XRDData()
                         xrr_data_entry.angle_type = "2THETA"
@@ -55,7 +55,7 @@ def get_xrd_data_entry(archive, data_files):
                         break
 
         if os.path.splitext(data_file)[-1] == ".xy":
-            from ..helper.fhi_parsers import readXY
+            from baseclasses.helper.file_parser.fhi_parsers import readXY
             with archive.m_context.raw_file(data_file) as f:
                 data = readXY(f.name)
 
@@ -76,7 +76,7 @@ def get_xrr_data_entry(archive, data_files):
     measurement = None
     for data_file in data_files:
         if os.path.splitext(data_file)[-1] == ".uxd":
-            from ..helper.fhi_parsers import readUXD
+            from baseclasses.helper.file_parser.fhi_parsers import readUXD
             with archive.m_context.raw_file(data_file) as f:
                 data = readUXD(f.name)
 
@@ -90,7 +90,7 @@ def get_xrr_data_entry(archive, data_files):
                 measurement = xrr_data_entry
 
         if os.path.splitext(data_file)[-1] == ".ray":
-            from ..helper.fhi_parsers import readRayFile
+            from baseclasses.helper.file_parser.fhi_parsers import readRayFile
             with archive.m_context.raw_file(data_file) as f:
                 data, data_nice = readRayFile(f.name)
 
