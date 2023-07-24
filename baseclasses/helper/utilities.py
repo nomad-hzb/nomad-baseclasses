@@ -19,12 +19,26 @@
 import random
 import string
 import chardet
+import json
 
 from nomad.metainfo import MProxy
 import pandas as pd
 
-from baseclasses import BasicSample
-from baseclasses.solution import Solution
+
+def rewrite_json(keys_list, archive, value):
+    with archive.m_context.raw_file(archive.metadata.mainfile) as f:
+        file = f.name
+
+    with open(file, "r") as jsonFile:
+        data = json.load(jsonFile)
+    tmp = data
+    for key in keys_list[:-1]:
+        print(tmp)
+        tmp = tmp[key]
+    tmp[keys_list[-1]] = value
+
+    with open(file, "w") as jsonFile:
+        json.dump(data, jsonFile)
 
 
 def get_parameter(parameters, dictionary, tuple_index=None):

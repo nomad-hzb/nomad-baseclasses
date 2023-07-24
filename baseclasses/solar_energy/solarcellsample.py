@@ -328,6 +328,9 @@ class SolcarCellSample(BasicSample):
         if result_data["EQEs"]:
             band_gap = eqe_eff_val
             add_band_gap(archive, band_gap)
+            
+       
+            
 
         archive.results.properties.optoelectronic.solar_cell.absorber = []
         archive.results.properties.optoelectronic.solar_cell.absorber_fabrication = []
@@ -338,6 +341,9 @@ class SolcarCellSample(BasicSample):
         if not archive.results.material:
             archive.results.material = Material()
         archive.results.material.elements = []
+        
+        if result_data["EQEs"] or  result_data["JVs"]:
+            archive.results.material.functional_type = ["semiconductor", "solarcell"]
 
         for process in result_data["processes"]:
             if process["layer_deposition"]:
