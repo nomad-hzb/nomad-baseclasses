@@ -57,13 +57,13 @@ class ExperimentalPlan(Entity):
     load_standard_processes = Quantity(
         type=bool,
         default=False,
-        a_eln=dict(component='BoolEditQuantity')
+        a_eln=dict(component='ButtonEditQuantity')
     )
 
     create_samples_and_processes = Quantity(
         type=bool,
         default=False,
-        a_eln=dict(component='BoolEditQuantity')
+        a_eln=dict(component='ButtonEditQuantity')
     )
 
     number_of_substrates = Quantity(
