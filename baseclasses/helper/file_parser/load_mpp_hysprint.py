@@ -2,7 +2,7 @@ import pandas as pd
 import re
 import time
 
-from .utilities import lookup
+from baseclasses.helper.utilities import lookup
 
 
 def filter_columns(columns):
