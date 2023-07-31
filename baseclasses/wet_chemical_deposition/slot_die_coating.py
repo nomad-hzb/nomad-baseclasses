@@ -25,16 +25,11 @@ from nomad.metainfo import (
 from nomad.datamodel.data import ArchiveSection
 
 from ..solution import Solution
-from .. import LayerDeposition
+from .wet_chemical_deposition import WetChemicalDeposition
 from ..material_processes_misc import Annealing, AirKnifeGasQuenching
 
 
 class SlotDieCoatingProperties(ArchiveSection):
-
-    ink = Quantity(
-        type=Reference(Solution.m_def),
-        shape=['*'],
-        a_eln=dict(component='ReferenceEditQuantity'))
 
     flow_rate = Quantity(
         type=np.dtype(
@@ -104,12 +99,10 @@ class SlotDieCoatingProperties(ArchiveSection):
                 minValue=0)))
 
 
-class SlotDieCoating(LayerDeposition):
+class SlotDieCoating(WetChemicalDeposition):
     '''Spin Coating'''
 
     properties = SubSection(section_def=SlotDieCoatingProperties)
-    annealing = SubSection(section_def=Annealing)
-    air_knife_gas_quenching = SubSection(section_def=AirKnifeGasQuenching)
 
     def normalize(self, archive, logger):
         super(SlotDieCoating, self).normalize(archive, logger)

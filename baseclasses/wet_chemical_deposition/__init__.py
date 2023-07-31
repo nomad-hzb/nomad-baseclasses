@@ -18,6 +18,7 @@
 
 from .spray_pyrolysis import SprayPyrolysis
 from .spin_coating import SpinCoating, SpinCoatingRecipe
-from .inkjet_printing import InkjetPrinting
+from .inkjet_printing import LP50InkjetPrinting
 from .slot_die_coating import SlotDieCoating
 from .vaporization_and_dropcasting import VaporizationAndDropCasting
+from .wet_chemical_deposition import WetChemicalDeposition

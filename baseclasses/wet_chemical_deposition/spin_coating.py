@@ -27,9 +27,7 @@ from nomad.datamodel.data import ArchiveSection
 
 from nomad.datamodel.metainfo.eln import Entity
 
-from ..solution import Solution
-from .. import LayerDeposition
-from ..material_processes_misc import Annealing, SpinCoatingAntiSolvent
+from .wet_chemical_deposition import WetChemicalDeposition
 
 
 class SpinCoatingRecipeSteps(ArchiveSection):
@@ -73,49 +71,12 @@ class SpinCoatingRecipe(Entity):
         section_def=SpinCoatingRecipeSteps, repeats=True)
 
 
-class SpinCoatingPrecursorSolution(ArchiveSection):
-
-    m_def = Section(label_quantity='name')
-    name = Quantity(type=str)
-
-    solution = Quantity(
-        type=Reference(Solution.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
-
-    solution_volume = Quantity(
-        type=np.dtype(
-            np.float64),
-        unit=('ml'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='ml',
-            props=dict(
-                minValue=0)))
-
-    def normalize(self, archive, logger):
-
-        if self.solution and self.solution.name:
-            if self.solution_volume:
-                self.name = self.solution.name + \
-                    ' ' + str(self.solution_volume)
-            else:
-                self.name = self.solution.name
-
-
-class SpinCoating(LayerDeposition):
+class SpinCoating(WetChemicalDeposition):
     '''Base class for spin coating of a sample'''
 
     recipe = Quantity(
         type=Reference(SpinCoatingRecipe.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
-
-    precursor_solution = SubSection(
-        section_def=SpinCoatingPrecursorSolution, repeats=True)
-
-    anti_solvent = SubSection(
-        section_def=SpinCoatingAntiSolvent, repeats=True)
-
-    annealing = SubSection(section_def=Annealing, repeats=True)
 
     def normalize(self, archive, logger):
         super(SpinCoating, self).normalize(archive, logger)

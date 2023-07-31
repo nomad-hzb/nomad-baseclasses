@@ -43,7 +43,7 @@ def collectProcessOnSample(entry, entry_id, entry_data):
             eval(entry_data["m_def"])):
         entry[entry_id].update({"layer_deposition": True})
         entry[entry_id].update(
-            {"layer_type": entry_data["layer_type"]})
+            {"layer_type": entry_data["layer"]["layer_type"]})
 
     if "method" in entry_data:
         entry[entry_id].update(
@@ -58,13 +58,14 @@ def collectProcessOnSample(entry, entry_id, entry_data):
             {"datetime": entry_data["datetime"]})
 
     entry[entry_id].update({"layer_material": ''})
-    if "layer_material" in entry_data:
-        entry[entry_id].update(
-            {"layer_material": entry_data["layer_material"]})
+    if "layer" in entry_data:
+        if "layer_material" in entry_data["layer"]:
+            entry[entry_id].update(
+                {"layer_material": entry_data["layer"]["layer_material"]})
 
-    if "layer_material_name" in entry_data:
-        entry[entry_id].update(
-            {"layer_material_name": entry_data["layer_material_name"]})
+        if "layer_material_name" in entry_data["layer"]:
+            entry[entry_id].update(
+                {"layer_material_name": entry_data["layer"]["layer_material_name"]})
 
 
 def collectJVMeasurement(entry, entry_id, entry_data):
@@ -328,9 +329,6 @@ class SolcarCellSample(BasicSample):
         if result_data["EQEs"]:
             band_gap = eqe_eff_val
             add_band_gap(archive, band_gap)
-            
-       
-            
 
         archive.results.properties.optoelectronic.solar_cell.absorber = []
         archive.results.properties.optoelectronic.solar_cell.absorber_fabrication = []
@@ -341,8 +339,8 @@ class SolcarCellSample(BasicSample):
         if not archive.results.material:
             archive.results.material = Material()
         archive.results.material.elements = []
-        
-        if result_data["EQEs"] or  result_data["JVs"]:
+
+        if result_data["EQEs"] or result_data["JVs"]:
             archive.results.material.functional_type = ["semiconductor", "solarcell"]
 
         for process in result_data["processes"]:

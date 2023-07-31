@@ -26,116 +26,18 @@ from nomad.metainfo import (
 from nomad.datamodel.data import ArchiveSection
 
 from ..solution import Solution
-from .. import LayerDeposition
+from .wet_chemical_deposition import WetChemicalDeposition
 
 
-class InkjetPrintingProperties(ArchiveSection):
+class NozzleVoltageProfile(ArchiveSection):
+    pass
 
-    # m_def = Section(label_quantity='name')
 
-    not_using_lp50_computer = Quantity(
-        type=bool,
-        shape=[],
-        a_eln=dict(
-            component='BoolEditQuantity',
-        ))
+class PrintHeadPath(ArchiveSection):
+    pass
 
-    active_nozzles = Quantity(
-        type=MEnum('all', 'Spectra', 'DMC', 'Konika Minolta'),
-        shape=[],
-        a_eln=dict(
-            component='RadioEnumEditQuantity',
-        ))
 
-    print_speed = Quantity(
-        type=np.dtype(
-            np.float64),
-        unit=('mm/s'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='mm/s',
-            props=dict(
-                minValue=1, maxValue=400)))
-
-    quality_factor = Quantity(
-        type=MEnum(
-            'QF1',
-            'QF2',
-            'QF3',
-            'QF4',
-            'QF5',
-            'QF6',
-            'QF7',
-            'QF8',
-            'QF9',
-            'QF10',
-            'QF11',
-            'QF12',
-            'QF13',
-            'QF14',
-            'QF15',
-            'QF16'),
-        shape=[],
-        a_eln=dict(
-            component='EnumEditQuantity',
-        ))
-
-    print_angle = Quantity(
-        type=np.dtype(
-            np.float64),
-        unit=('deg'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='deg',
-            props=dict(
-                minValue=0)))
-
-    resolution_x = Quantity(
-        type=np.dtype(
-            np.float64),
-        # unit=('ml'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            # defaultDisplayUnit='ml',
-            props=dict(
-                minValue=0)))
-
-    resolution_y = Quantity(
-        type=np.dtype(
-            np.float64),
-        # unit=('ml'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            # defaultDisplayUnit='ml',
-            props=dict(
-                minValue=0)))
-
-    directional = Quantity(
-        type=MEnum('uni-directional', 'bi-directional',
-                   'uni-directional reverse'),
-        shape=[],
-        a_eln=dict(
-            component='EnumEditQuantity',
-        ))
-
-    print_head_temperature = Quantity(
-        type=np.dtype(
-            np.float64), unit=('°C'), a_eln=dict(
-            component='NumberEditQuantity', defaultDisplayUnit='°C', props=dict(
-                minValue=20, maxValue=120)))
-
-    substrate_temperature = Quantity(
-        type=np.dtype(
-            np.float64), unit=('°C'), a_eln=dict(
-            component='NumberEditQuantity', defaultDisplayUnit='°C', props=dict(
-                minValue=20, maxValue=60)))
-
-    pressure_setpoint = Quantity(
-        type=np.dtype(
-            np.float64), unit=('mbar'), a_eln=dict(
-            component='NumberEditQuantity', defaultDisplayUnit='mbar', props=dict(
-                minValue=0, maxValue=38)))
-
+class LP50NozzleVoltageProfile(NozzleVoltageProfile):
     voltage_a = Quantity(
         type=np.dtype(
             np.float64), unit=('V'), a_eln=dict(
@@ -214,17 +116,38 @@ class InkjetPrintingProperties(ArchiveSection):
                 minValue=1,
                 maxValue=25)))
 
-    print_head_distance_z = Quantity(
-        type=np.dtype(
-            np.float64), unit=('mm'), a_eln=dict(
-            component='NumberEditQuantity', defaultDisplayUnit='mm', props=dict(
-                minValue=-27, maxValue=35)))
 
-    substrate_height = Quantity(
-        type=np.dtype(
-            np.float64), unit=('mm'), a_eln=dict(
-            component='NumberEditQuantity', defaultDisplayUnit='mm', props=dict(
-                minValue=0, maxValue=35)))
+class LP50PrintHeadPath(PrintHeadPath):
+    quality_factor = Quantity(
+        type=MEnum(
+            'QF1',
+            'QF2',
+            'QF3',
+            'QF4',
+            'QF5',
+            'QF6',
+            'QF7',
+            'QF8',
+            'QF9',
+            'QF10',
+            'QF11',
+            'QF12',
+            'QF13',
+            'QF14',
+            'QF15',
+            'QF16'),
+        shape=[],
+        a_eln=dict(
+            component='EnumEditQuantity',
+        ))
+
+    directional = Quantity(
+        type=MEnum('uni-directional', 'bi-directional',
+                   'uni-directional reverse'),
+        shape=[],
+        a_eln=dict(
+            component='EnumEditQuantity',
+        ))
 
     swaths = Quantity(
         type=np.dtype(
@@ -243,17 +166,133 @@ class InkjetPrintingProperties(ArchiveSection):
             component='NumberEditQuantity', defaultDisplayUnit='s', props=dict(
                 minValue=0)))
 
-    def normalize(self, archive, logger):
 
-        if self.anti_solvent and self.anti_solvent.name:
-            if self.anti_solvent_volume:
-                self.name = self.anti_solvent.name + \
-                    ' ' + str(self.anti_solvent_volume)
-            else:
-                self.name = self.anti_solvent.name
+class PrintHeadProperties(ArchiveSection):
+    print_speed = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=('mm/s'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mm/s',
+            props=dict(
+                minValue=1, maxValue=400)))
+
+    print_head_angle = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=('deg'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='deg',
+            props=dict(
+                minValue=0)))
+
+    print_head_temperature = Quantity(
+        type=np.dtype(
+            np.float64), unit=('°C'), a_eln=dict(
+            component='NumberEditQuantity', defaultDisplayUnit='°C', props=dict(
+                minValue=20, maxValue=120)))
+
+    print_head_distance_to_substrate = Quantity(
+        type=np.dtype(
+            np.float64), unit=('mm'), a_eln=dict(
+            component='NumberEditQuantity', defaultDisplayUnit='mm', props=dict(
+                minValue=-27, maxValue=35)))
+
+    print_head_width = Quantity(
+        type=np.dtype(
+            np.float64), unit=('mm'), a_eln=dict(
+            component='NumberEditQuantity', defaultDisplayUnit='mm'))
+
+    print_nozzle_distance = Quantity(
+        type=np.dtype(
+            np.float64), unit=('mm'), a_eln=dict(
+            component='NumberEditQuantity', defaultDisplayUnit='mm'))
+
+    print_nozzle_width = Quantity(
+        type=np.dtype(
+            np.float64), unit=('um'), a_eln=dict(
+            component='NumberEditQuantity', defaultDisplayUnit='um'))
+
+    print_nozzle_drop_volume = Quantity(
+        type=np.dtype(
+            np.float64), unit=('pl'), a_eln=dict(
+            component='NumberEditQuantity', defaultDisplayUnit='pl'))
 
 
-class InkjetPrinting(LayerDeposition):
+class InkjetPrintingProperties(ArchiveSection):
+
+    # m_def = Section(label_quantity='name')
+
+    resolution_x = Quantity(
+        type=np.dtype(
+            np.float64),
+        # unit=('ml'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            # defaultDisplayUnit='ml',
+            props=dict(
+                minValue=0)))
+
+    resolution_y = Quantity(
+        type=np.dtype(
+            np.float64),
+        # unit=('ml'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            # defaultDisplayUnit='ml',
+            props=dict(
+                minValue=0)))
+
+    substrate_height = Quantity(
+        type=np.dtype(
+            np.float64), unit=('mm'), a_eln=dict(
+            component='NumberEditQuantity', defaultDisplayUnit='mm', props=dict(
+                minValue=0, maxValue=35)))
+
+    substrate_temperature = Quantity(
+        type=np.dtype(
+            np.float64), unit=('°C'), a_eln=dict(
+            component='NumberEditQuantity', defaultDisplayUnit='°C', props=dict(
+                minValue=20, maxValue=60)))
+
+    cartridge_pressure = Quantity(
+        type=np.dtype(
+            np.float64), unit=('mbar'), a_eln=dict(
+            component='NumberEditQuantity', defaultDisplayUnit='mbar', props=dict(
+                minValue=0, maxValue=38)))
+
+    cartridge_temperature = Quantity(
+        type=np.dtype(
+            np.float64), unit=('°C'), a_eln=dict(
+            component='NumberEditQuantity', defaultDisplayUnit='°C'))
+
+    print_head_properties = SubSection(
+        section_def=PrintHeadProperties)
+
+
+class LP50InkjetPrintingProperties(InkjetPrintingProperties):
+    not_using_lp50_computer = Quantity(
+        type=bool,
+        shape=[],
+        a_eln=dict(
+            component='BoolEditQuantity',
+        ))
+
+    active_nozzles = Quantity(
+        type=MEnum('all', 'Spectra', 'DMC', 'Konika Minolta'),
+        shape=[],
+        a_eln=dict(
+            component='RadioEnumEditQuantity',
+        ))
+
+    printer_software = Quantity(
+        type=str, a_eln=dict(
+            component='StringEditQuantity'))
+
+
+class LP50InkjetPrinting(WetChemicalDeposition):
     '''Base class for inkjet printing of a layer on a sample'''
 
     recipe_used = Quantity(
@@ -266,13 +305,15 @@ class InkjetPrinting(LayerDeposition):
         a_eln=dict(component='FileEditQuantity'),
         a_browser=dict(adaptor='RawFileAdaptor'))
 
-    ink = Quantity(
-        type=Reference(Solution.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
-
     properties = SubSection(
-        section_def=InkjetPrintingProperties)
+        section_def=LP50InkjetPrintingProperties)
+
+    print_head_path = SubSection(
+        section_def=LP50PrintHeadPath)
+
+    nozzle_voltage_profile = SubSection(
+        section_def=LP50NozzleVoltageProfile)
 
     def normalize(self, archive, logger):
-        super(InkjetPrinting, self).normalize(archive, logger)
+        super(LP50InkjetPrinting, self).normalize(archive, logger)
         self.method = "Inkjet printing"

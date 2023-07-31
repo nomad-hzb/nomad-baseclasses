@@ -30,6 +30,7 @@ from nomad.datamodel.metainfo.eln import (
     ElnWithFormulaBaseSection)
 
 from nomad.datamodel.results import Results, Material
+from nomad.datamodel.data import ArchiveSection
 
 
 from .helper.add_solar_cell import add_solar_cell
@@ -131,11 +132,11 @@ class Batch(BasicSample):
 
 class ProcessOnSample(Process):
 
-    is_standard_process = Quantity(
-        type=bool,
-        default=False,
-        a_eln=dict(component='BoolEditQuantity')
-    )
+    # is_standard_process = Quantity(
+    #     type=bool,
+    #     default=False,
+    #     a_eln=dict(component='BoolEditQuantity')
+    # )
 
     present = Quantity(
         type=bool,
@@ -158,13 +159,6 @@ class ProcessOnSample(Process):
         a_eln=dict(component='ReferenceEditQuantity'))
 
     def normalize(self, archive, logger):
-
-        if self.is_standard_process:
-            self.samples = []
-            self.batches = []
-            # if self.name and not self.name.startswith("Standard"):
-            #     self.name = f"Standard -  {self.method} - {self.name}"
-
         super(ProcessOnSample, self).normalize(archive, logger)
 
         if self.batch:
@@ -193,15 +187,14 @@ class StandardSample(Entity):
     def normalize(self, archive, logger):
         super(StandardSample, self).normalize(archive, logger)
         checked_processes = []
-        if self.processes:
-            for process in self.processes:
-                if process.is_standard_process:
-                    checked_processes.append(process)
-        self.processes = checked_processes
+        # if self.processes:
+        #     for process in self.processes:
+        #         if process.is_standard_process:
+        #             checked_processes.append(process)
+        # self.processes = checked_processes
 
 
-class LayerDeposition(ProcessOnSample):
-    m_def = Section(label_quantity='layer')
+class LayerProperties(ArchiveSection):
     layer_type = Quantity(
         type=str,
         shape=[],
@@ -235,6 +228,12 @@ class LayerDeposition(ProcessOnSample):
             'the extracted chemical elements.'), a_eln=dict(
             component='StringEditQuantity'))
 
+
+class LayerDeposition(ProcessOnSample):
+    m_def = Section(label_quantity='layer')
+
+    layer = SubSection(section_def=LayerProperties)
+
     def normalize(self, archive, logger):
         super(LayerDeposition, self).normalize(archive, logger)
 
@@ -243,57 +242,63 @@ class LayerDeposition(ProcessOnSample):
         if not archive.results.material:
             archive.results.material = Material()
 
-        if self.layer_material_name:
+        if self.layer is None:
+            return
+
+        layer_material_name = self.layer.layer_material_name
+        if layer_material_name:
             material = archive.results.material
 
             from .helper.formula_normalizer import PerovskiteFormulaNormalizer
             formulas = [PerovskiteFormulaNormalizer(
                 formula.strip()).clean_formula()
-                for formula in self.layer_material_name.split(",")]
+                for formula in layer_material_name.split(",")]
+            print([f for formula in formulas for f in formula[1]])
             try:
                 elements = [f for formula in formulas for f in formula[1]]
                 material.elements = []
                 material.elements = list(set(elements))
 
-                self.layer_material = ",".join(
+                self.layer.layer_material = ",".join(
                     [formulas[i][0] for i, _ in enumerate(formulas)])
 
-            except BaseException:
-                pass
+            except BaseException as e:
+                print(e)
 
         from nomad.atomutils import Formula
-        if self.layer_material:
-
+        layer_material = self.layer.layer_material
+        if layer_material:
             try:
-                formula = Formula(self.layer_material)
-                formula.populate_material(material=archive.results.material)
+                formula = Formula(layer_material)
+                formula.populate(section=archive.results.material)
             except Exception as e:
                 logger.warn('could not analyse layer material', exc_info=e)
 
-        if self.layer_type:
+        layer_type = self.layer.layer_type
+        if layer_type:
             add_solar_cell(archive)
 
-            if self.layer_material or self.layer_material_name:
+            if layer_material or layer_material_name:
 
-                layer_material_name = self.layer_material_name if self.layer_material_name else self.layer_material
+                layer_material_name_tmp = layer_material_name if layer_material_name else layer_material
 
-                if self.layer_type:
+                if layer_type:
                     archive.results.properties.optoelectronic.solar_cell.device_stack \
-                        = [self.layer_type + " " + layer_material_name]
-                if self.layer_type == 'Hole Transport Layer':
+                        = [layer_type + " " + layer_material_name_tmp]
+                if layer_type == 'Hole Transport Layer':
                     archive.results.properties.optoelectronic.solar_cell.hole_transport_layer \
-                        = [layer_material_name]
-                if self.layer_type == 'Electron Transport Layer':
+                        = [layer_material_name_tmp]
+                if layer_type == 'Electron Transport Layer':
                     archive.results.properties.optoelectronic.solar_cell.electron_transport_layer \
-                        = [layer_material_name]
-                if self.layer_type == 'Back Contact':
+                        = [layer_material_name_tmp]
+                if layer_type == 'Back Contact':
                     archive.results.properties.optoelectronic.solar_cell.back_contact \
-                        = [layer_material_name]
-                if self.layer_type == 'Absorber Layer':
+                        = [layer_material_name_tmp]
+                if layer_type == 'Absorber Layer':
                     archive.results.properties.optoelectronic.solar_cell.absorber \
-                        = [layer_material_name]
+                        = [layer_material_name_tmp]
 
-            if self.layer_type == 'Absorber Layer':
+            if layer_type == 'Absorber Layer':
                 archive.results.properties.optoelectronic.solar_cell.absorber_fabrication \
                     = [self.method]
 

@@ -27,7 +27,11 @@ from nomad.datamodel.data import ArchiveSection
 from ..chemical import Chemical
 
 
-class AntiSolventQuenching(ArchiveSection):
+class Quenching(ArchiveSection):
+    pass
+
+
+class AntiSolventQuenching(Quenching):
 
     m_def = Section(label_quantity='name')
     name = Quantity(type=str)
@@ -66,10 +70,11 @@ class SpinCoatingAntiSolvent(AntiSolventQuenching):
     pass
 
 
-class GasQuenching(ArchiveSection):
+class GasQuenching(Quenching):
     gas = Quantity(
         type=str,
         a_eln=dict(component='StringEditQuantity'))
+
 
 class AirKnifeGasQuenching(GasQuenching):
     air_knife_pressure = Quantity(
@@ -81,7 +86,7 @@ class AirKnifeGasQuenching(GasQuenching):
             defaultDisplayUnit='mbar',
             props=dict(
                 minValue=0)))
-    
+
     air_knife_speed = Quantity(
         type=np.dtype(
             np.float64),
@@ -91,7 +96,7 @@ class AirKnifeGasQuenching(GasQuenching):
             defaultDisplayUnit='mm/s',
             props=dict(
                 minValue=0)))
-    
+
     air_knife_angle = Quantity(
         type=np.dtype(
             np.float64),
@@ -101,7 +106,6 @@ class AirKnifeGasQuenching(GasQuenching):
             defaultDisplayUnit='degree',
             props=dict(
                 minValue=0)))
-
 
     air_knife_distance_to_thin_film = Quantity(
         type=np.dtype(

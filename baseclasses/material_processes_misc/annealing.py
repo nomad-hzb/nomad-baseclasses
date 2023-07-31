@@ -60,19 +60,18 @@ class Annealing(ArchiveSection):
                            'Annealing after deposition',
                        ])))
 
-    
 
-class AnnealingStandAlone(Annealing,ProcessOnSample):
-    def normalize(self, archive, logger):
-        super(Annealing, self).normalize(archive, logger)
+# class AnnealingStandAlone(Annealing,ProcessOnSample):
+#     def normalize(self, archive, logger):
+#         super(Annealing, self).normalize(archive, logger)
 
-        self.method = "Annealing"
+#         self.method = "Annealing"
 
-class ThermalAnnealing(AnnealingStandAlone):
-    pass
+# class ThermalAnnealing(AnnealingStandAlone):
+#     pass
 
 
-class SolventAnnealing(AnnealingStandAlone):
-    solvent = Quantity(
-        type=Reference(Chemical.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
+# class SolventAnnealing(AnnealingStandAlone):
+#     solvent = Quantity(
+#         type=Reference(Chemical.m_def),
+#         a_eln=dict(component='ReferenceEditQuantity'))

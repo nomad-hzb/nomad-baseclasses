@@ -20,79 +20,11 @@ import numpy as np
 
 from nomad.metainfo import (
     Quantity,
-    Section,
     SubSection,
-    Reference,
     Datetime)
 from nomad.datamodel.data import ArchiveSection
 
-from ..solution import Solution
-from ..chemical import Chemical
-from .. import LayerDeposition
-
-
-class PrecursorSolution(ArchiveSection):
-
-    m_def = Section(label_quantity='name')
-    name = Quantity(type=str)
-
-    solution = Quantity(
-        type=Reference(Solution.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
-
-    solution_volume = Quantity(
-        type=np.dtype(
-            np.float64),
-        unit=('ml'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='ml',
-            props=dict(
-                minValue=0)))
-
-    def normalize(self, archive, logger):
-
-        if self.solution and self.solution.name:
-            if self.solution_volume:
-                self.name = self.solution.name + \
-                    ' ' + str(self.solution_volume)
-            else:
-                self.name = self.solution.name
-
-
-class AntiSolvent(ArchiveSection):
-
-    m_def = Section(label_quantity='name')
-    name = Quantity(type=str)
-
-    anti_solvent = Quantity(
-        type=Reference(Chemical.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
-
-    anti_solvent_volume = Quantity(
-        type=np.dtype(
-            np.float64),
-        unit=('ml'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='ml',
-            props=dict(
-                minValue=0)))
-
-    anti_solvent_dropping_time = Quantity(
-        type=np.dtype(
-            np.float64), unit=('s'), a_eln=dict(
-            component='NumberEditQuantity', defaultDisplayUnit='s', props=dict(
-                minValue=0)))
-
-    def normalize(self, archive, logger):
-
-        if self.anti_solvent and self.anti_solvent.name:
-            if self.anti_solvent_volume:
-                self.name = self.anti_solvent.name + \
-                    ' ' + str(self.anti_solvent_volume)
-            else:
-                self.name = self.anti_solvent.name
+from .wet_chemical_deposition import WetChemicalDeposition
 
 
 class VaporizationProperties(ArchiveSection):
@@ -107,38 +39,11 @@ class VaporizationProperties(ArchiveSection):
         a_eln=dict(component='DateTimeEditQuantity'))
 
 
-class HotPlateProperties(ArchiveSection):
-
-    temperature = Quantity(
-        type=np.dtype(np.float64),
-        unit=('°C'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
-
-    time_on_hotplate = Quantity(
-        type=np.dtype(
-            np.float64),
-        unit=('minute'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='minute',
-            props=dict(
-                minValue=0)))
-
-
-class VaporizationAndDropCasting(LayerDeposition):
+class VaporizationAndDropCasting(WetChemicalDeposition):
     '''Base class for spin coating of a sample'''
 
-    small_vial = SubSection(
-        section_def=PrecursorSolution, repeats=True)
-
-    big_vial = SubSection(
-        section_def=AntiSolvent, repeats=True)
-
-    vaporization_properties = SubSection(
+    properties = SubSection(
         section_def=VaporizationProperties, repeats=True)
-
-    hotplate_properties = SubSection(
-        section_def=HotPlateProperties, repeats=True)
 
     def normalize(self, archive, logger):
         super(VaporizationAndDropCasting, self).normalize(archive, logger)
