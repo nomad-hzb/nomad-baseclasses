@@ -275,6 +275,7 @@ class SolcarCellSample(BasicSample):
 
         add_solar_cell(archive)
         archive.results.properties.optoelectronic.solar_cell.device_stack = []
+        archive.results.properties.optoelectronic.solar_cell.substrate = []
         if self.substrate is not None:
             if self.substrate.substrate is not None:
                 archive.results.properties.optoelectronic.solar_cell.substrate = [
