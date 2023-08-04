@@ -269,14 +269,3 @@ class MPPTracking(MeasurementOnSample):
     def normalize(self, archive, logger):
         super(MPPTracking, self).normalize(archive, logger)
         self.method = "MPP Tracking"
-
-        if self.data_file:
-            from baseclasses.helper.utilities import get_encoding
-            with archive.m_context.raw_file(self.data_file, "br") as f:
-                encoding = get_encoding(f)
-
-            with archive.m_context.raw_file(self.data_file, encoding=encoding) as f:
-                if "@ LTI" in f.readline():
-                    from ..helper.file_parser.KIT_mpp_parser import get_mpp_data, get_mpp_archive
-                    mpp_dict, data = get_mpp_data(f.name, encoding)
-                    get_mpp_archive(mpp_dict, data, self)

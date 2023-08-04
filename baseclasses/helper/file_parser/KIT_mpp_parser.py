@@ -61,7 +61,7 @@ def get_mpp_archive(header_dict, df, mpp_entitiy, mainfile=None):
 
     datetime_str = get_parameter(header_dict, "datetime")
     datetime_object = datetime.strptime(
-        datetime_str, '%Y-%m-%d %H:%M PM')
+        datetime_str, '%Y-%m-%d %I:%M %p')
     mpp_entitiy.datetime = datetime_object.strftime(
         "%Y-%m-%d %H:%M:%S.%f")
 
