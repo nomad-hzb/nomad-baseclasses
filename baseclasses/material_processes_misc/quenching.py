@@ -56,6 +56,18 @@ class AntiSolventQuenching(Quenching):
             component='NumberEditQuantity', defaultDisplayUnit='s', props=dict(
                 minValue=0)))
 
+    anti_solvent_dropping_flow_rate = Quantity(
+        type=np.dtype(
+            np.float64), unit=('ul/s'), a_eln=dict(
+            component='NumberEditQuantity', defaultDisplayUnit='ul/s', props=dict(
+                minValue=0)))
+
+    anti_solvent_dropping_height = Quantity(
+        type=np.dtype(
+            np.float64), unit=('mm'), a_eln=dict(
+            component='NumberEditQuantity', defaultDisplayUnit='mm', props=dict(
+                minValue=0)))
+
     def normalize(self, archive, logger):
 
         if self.anti_solvent and self.anti_solvent.name:
