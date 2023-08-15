@@ -225,8 +225,9 @@ class LayerProperties(ArchiveSection):
         type=str, description=(
             'The chemical formula of the layer. This will be used directly and '
             'indirectly in the search. The formula will be used itself as well as '
-            'the extracted chemical elements.'), a_eln=dict(
-            component='StringEditQuantity'))
+            'the extracted chemical elements.'),  # a_eln=dict(
+        # component='StringEditQuantity')
+    )
 
 
 class LayerDeposition(ProcessOnSample):
@@ -247,20 +248,20 @@ class LayerDeposition(ProcessOnSample):
 
         layer_material_name = self.layer.layer_material_name
         if layer_material_name:
+            self.layer.layer_material = ''
             material = archive.results.material
 
             from .helper.formula_normalizer import PerovskiteFormulaNormalizer
             formulas = [PerovskiteFormulaNormalizer(
                 formula.strip()).clean_formula()
                 for formula in layer_material_name.split(",")]
-            print([f for formula in formulas for f in formula[1]])
             try:
                 elements = [f for formula in formulas for f in formula[1]]
                 material.elements = []
                 material.elements = list(set(elements))
-
-                self.layer.layer_material = ",".join(
-                    [formulas[i][0] for i, _ in enumerate(formulas)])
+                lm_tmp = ",".join([formulas[i][0] for i, _ in enumerate(formulas)]
+                                  ) if isinstance(formulas, list) else None
+                self.layer.layer_material = lm_tmp
 
             except BaseException as e:
                 print(e)
