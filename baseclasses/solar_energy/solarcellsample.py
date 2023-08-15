@@ -185,7 +185,7 @@ def collectSampleData(archive):
                 if baseclasses.solar_energy.eqemeasurement.EQEMeasurement in inspect.getmro(
                         eval(entry_data["m_def"])):
                     collectEQEMeasurement(entry, entry_id, entry_data)
-                result["EQEs"].update(entry)
+                    result["EQEs"].update(entry)
         except Exception as e:
             print("Error in processing data: ", e)
 
