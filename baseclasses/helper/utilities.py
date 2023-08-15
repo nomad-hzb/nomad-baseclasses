@@ -68,6 +68,8 @@ def get_encoding(file_obj):
 
 
 def add_next_md_line(key, item, indent=0):
+    if key == "m_def":
+        return ""
     try:
         shift = '&nbsp;' * indent
         return f"{shift}**{key.capitalize()}**: {item}  \n"
@@ -90,9 +92,8 @@ def add_key_item(md, key, item, item_entry, indent=0):
     shift = '&nbsp;' * indent
     if isinstance(item, dict):
         md += f"{shift}**{key.capitalize()}**:  \n"
-        subsection = getattr(item_entry, key)
-        for key2 in item.keys():
-            md += add_next_md_line(key2, getattr(subsection, key2), 4+indent)
+        for key2, item2 in item.items():
+            md += add_next_md_line(key2, item2, 4+indent)
     elif isinstance(item, list):
         md += f"{shift}**{key.capitalize()}**:  \n"
         for list_idx, subsection in enumerate(item):

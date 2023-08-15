@@ -36,9 +36,10 @@ def collectProcessOnSample(entry, entry_id, entry_data):
     # Check if it is a layer deposition
     import inspect
     import baseclasses
-    import hysprint_s
 
     entry[entry_id].update({"layer_deposition": False})
+    module = entry_data['m_def'].split(".")[0]
+    eval(f"exec('import {module}')")
     if baseclasses.LayerDeposition in inspect.getmro(
             eval(entry_data["m_def"])):
         entry[entry_id].update({"layer_deposition": True})
@@ -141,7 +142,6 @@ def collectSampleData(archive):
     from nomad.app.v1.models import MetadataPagination
     from nomad import files
     import baseclasses
-    import hysprint_s
     import inspect
 
     # search for all archives referencing this archive
@@ -168,6 +168,8 @@ def collectSampleData(archive):
                 except BaseException:
                     entry[entry_id]["elements"] = []
                 # Check if it is a ProcessOnSample
+                module = entry_data['m_def'].split(".")[0]
+                eval(f"exec('import {module}')")
                 if baseclasses.ProcessOnSample in inspect.getmro(
                         eval(entry_data["m_def"])):
                     collectProcessOnSample(entry, entry_id, entry_data)
@@ -183,9 +185,9 @@ def collectSampleData(archive):
                 if baseclasses.solar_energy.eqemeasurement.EQEMeasurement in inspect.getmro(
                         eval(entry_data["m_def"])):
                     collectEQEMeasurement(entry, entry_id, entry_data)
-                    result["EQEs"].update(entry)
-        except:
-            pass
+                result["EQEs"].update(entry)
+        except Exception as e:
+            print("Error in processing data: ", e)
 
     # sort processes by the fieled previous process
     result["processes"] = sortProcesses(result["processes"])

@@ -103,7 +103,7 @@ class PlasmaCleaning(CleaningTechnique):
         a_eln=dict(
             component='EnumEditQuantity',
             props=dict(
-                suggestions=['Oxygen', 'Nitrogen'])
+                suggestions=['Oxygen', 'Nitrogen', 'Argon'])
         ))
 
 

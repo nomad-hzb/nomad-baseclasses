@@ -142,6 +142,9 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
                             archive.metadata.upload_id, entry_id)
                         batch_process.previous_process = previous_processes_tmp
                 batch_process.is_standard_process = False
+                if idx2 == 0:
+                    previous_processes_tmp = []
+                    batch_process.previous_process = previous_processes_tmp
 
                 batch_process.description
                 # todo add one second
