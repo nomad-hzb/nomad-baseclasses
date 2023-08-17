@@ -79,7 +79,7 @@ def get_ca_properties(metadata, cc=False):
         properties.step_2_potential = vstep2[0]
         properties.step_2_potential_measured_against = "Eoc" if vstep2[1] else "Eref"
     properties.step_2_time = metadata.get("TSTEP2")
-    
+
     properties.sample_period = metadata.get("SAMPLETIME")
     properties.sample_area = metadata.get("AREA")
     return properties
@@ -142,10 +142,8 @@ def get_meta_data(metadata, entry):
 
     get_meta_datetime(metadata, entry)
 
-    if entry.description is None:
-        entry.description = ''
-    entry.description = f"{entry.description} \n{metadata['NOTES']}" \
-        if metadata.get('NOTES') not in entry.description else entry.description
+    if not entry.description:
+        entry.description = metadata.get('NOTES') if metadata.get('NOTES') is not None else None
 
     entry.station = metadata.get('PSTAT')
 
