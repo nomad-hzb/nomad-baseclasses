@@ -9,6 +9,7 @@ import os
 from nomad.units import ureg
 import baseclasses
 from baseclasses.chemical_energy.chronoamperometry import CAProperties
+from baseclasses.chemical_energy.chronopotentiometry import CPProperties
 from baseclasses.chemical_energy.chronocoulometry import CCProperties
 from baseclasses.chemical_energy.cyclicvoltammetry import CVProperties
 from baseclasses.chemical_energy.opencircuitvoltage import OCVProperties
@@ -79,6 +80,26 @@ def get_ca_properties(metadata, cc=False):
         properties.step_2_potential = vstep2[0]
         properties.step_2_potential_measured_against = "Eoc" if vstep2[1] else "Eref"
     properties.step_2_time = metadata.get("TSTEP2")
+
+    properties.sample_period = metadata.get("SAMPLETIME")
+    properties.sample_area = metadata.get("AREA")
+    return properties
+
+
+def get_cp_properties(metadata, cc=False):
+    properties = CPProperties()
+
+    properties.pre_step_current = metadata.get("IPRESTEP")
+    properties.pre_step_delay_time = metadata.get("TPRESTEP")
+
+    properties.step_1_current = metadata.get("ISTEP1")
+    properties.step_1_time = metadata.get("TSTEP1")
+
+    properties.step_2_current = metadata.get("ISTEP2")
+    properties.step_2_time = metadata.get("TSTEP2")
+
+    properties.lower_limit_potential = metadata.get("VLIMITLOWER")
+    properties.upper_limit_potential = metadata.get("VLIMITUPPER")
 
     properties.sample_period = metadata.get("SAMPLETIME")
     properties.sample_area = metadata.get("AREA")

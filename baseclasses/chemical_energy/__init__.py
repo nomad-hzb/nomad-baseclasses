@@ -20,6 +20,7 @@ from .cleaning import Cleaning, SolutionCleaning
 from .constantpotential import ConstantPotential
 from .cyclicvoltammetry import CyclicVoltammetry, CVProperties
 from .chronoamperometry import Chronoamperometry
+from .chronopotentiometry import Chronopotentiometry
 from .chronocoulometry import Chronocoulometry
 from .opencircuitvoltage import OpenCircuitVoltage, OCVProperties
 from .electorchemical_impedance_spectroscopy import ElectrochemicalImpedanceSpectroscopy, EISProperties
