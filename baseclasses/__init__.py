@@ -275,13 +275,19 @@ class BaseMeasurement(Measurement):
         shape=['*'],
         a_eln=dict(component='ReferenceEditQuantity'))
 
+    samples2 = Quantity(
+        type=Reference(CompositeSystem.m_def),
+        shape=['*'],
+        a_eln=dict(component='ReferenceEditQuantity'))
+
     def normalize(self, archive, logger):
         super(BaseMeasurement, self).normalize(archive, logger)
-        if self.samples:
-            print([sample for sample in self.samples])
-        if self.samples and isinstance(self.samples[0], str):
+        if self.samples2 is None:
+            self.samples2 = self.samples
+            self.samples = None
+        if self.samples2 and self.samples is None:
             samples = []
-            for sample in self.samples:
+            for sample in self.samples2:
                 samples.append(CompositeSystemReference(reference=sample))
             print(samples)
             # self.samples = samples
