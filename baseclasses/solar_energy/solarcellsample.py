@@ -310,18 +310,24 @@ class SolcarCellSample(CompositeSystem):
                     jv_eff_val = eff
 
         if jv_key:
-            archive.results.properties.optoelectronic.solar_cell.efficiency = result_data[
-                "JVs"][jv_key]["efficiency"][jv_idx]
-            archive.results.properties.optoelectronic.solar_cell.fill_factor = result_data[
-                "JVs"][jv_key]["fill_factor"][jv_idx]
-            archive.results.properties.optoelectronic.solar_cell.open_circuit_voltage = result_data[
-                "JVs"][jv_key]["open_circuit_voltage"][jv_idx] * ureg('V')
-            archive.results.properties.optoelectronic.solar_cell.illumination_intensity = result_data[
-                "JVs"][jv_key]["light_intensity"][jv_idx] * ureg('mW/cm**2')
-            archive.results.properties.optoelectronic.solar_cell.short_circuit_current_density = result_data[
-                "JVs"][jv_key]["short_circuit_current_density"][jv_idx] * ureg('mA/cm**2')
-            archive.results.properties.optoelectronic.solar_cell.device_area = result_data[
-                "JVs"][jv_key]["device_area"] * ureg('cm**2')
+            if not np.isnan(result_data["JVs"][jv_key]["efficiency"][jv_idx]):
+                archive.results.properties.optoelectronic.solar_cell.efficiency = result_data[
+                    "JVs"][jv_key]["efficiency"][jv_idx]
+            if not np.isnan(result_data["JVs"][jv_key]["fill_factor"][jv_idx]):
+                archive.results.properties.optoelectronic.solar_cell.fill_factor = result_data[
+                    "JVs"][jv_key]["fill_factor"][jv_idx]
+            if not np.isnan(result_data["JVs"][jv_key]["open_circuit_voltage"][jv_idx]):
+                archive.results.properties.optoelectronic.solar_cell.open_circuit_voltage = result_data[
+                    "JVs"][jv_key]["open_circuit_voltage"][jv_idx] * ureg('V')
+            if not np.isnan(result_data["JVs"][jv_key]["light_intensity"][jv_idx]):
+                archive.results.properties.optoelectronic.solar_cell.illumination_intensity = result_data[
+                    "JVs"][jv_key]["light_intensity"][jv_idx] * ureg('mW/cm**2')
+            if not np.isnan(result_data["JVs"][jv_key]["short_circuit_current_density"][jv_idx]):
+                archive.results.properties.optoelectronic.solar_cell.short_circuit_current_density = result_data[
+                    "JVs"][jv_key]["short_circuit_current_density"][jv_idx] * ureg('mA/cm**2')
+            if not np.isnan(result_data["JVs"][jv_key]["device_area"]):
+                archive.results.properties.optoelectronic.solar_cell.device_area = result_data[
+                    "JVs"][jv_key]["device_area"] * ureg('cm**2')
 
         eqe_eff_val = 0
         for entry in result_data["EQEs"]:
