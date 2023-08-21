@@ -27,11 +27,11 @@ from nomad.datamodel.metainfo.eln import (
 
 from nomad.datamodel.metainfo.basesections import (
     CompositeSystem,
-    # CompositeSystemReference,
     Collection,
     Process,
     Measurement,
     Entity,
+    CompositeSystemReference
 )
 
 from nomad.datamodel.results import Results, Material
@@ -77,7 +77,7 @@ class Batch(Collection):
         if self.samples and self.entities is None:
             entities = []
             for sample in self.samples:
-                entities.append(CompositeSystemReference=sample)
+                entities.append(CompositeSystemReference(reference=sample))
             self.entities = entities
 
         if self.export_batch_ids and self.entities is not None:
@@ -277,6 +277,14 @@ class BaseMeasurement(Measurement):
 
     def normalize(self, archive, logger):
         super(BaseMeasurement, self).normalize(archive, logger)
+        if self.samples:
+            print([sample for sample in self.samples])
+        if self.samples and isinstance(self.samples[0], str):
+            samples = []
+            for sample in self.samples:
+                samples.append(CompositeSystemReference(reference=sample))
+            print(samples)
+            # self.samples = samples
 
 
 # class MeasurementOnBatch(Measurement):
