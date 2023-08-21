@@ -25,8 +25,9 @@ from nomad.metainfo import (
     Section,
     Reference)
 
-from baseclasses import BasicSample, MeasurementOnBatch
+from baseclasses import BaseMeasurement
 from nomad.datamodel.data import ArchiveSection
+from nomad.datamodel.metainfo.basesections import CompositeSystem
 
 
 class ProcessedEfficiency(ArchiveSection):
@@ -194,7 +195,7 @@ class SampleData(ArchiveSection):
     )
 
     samples = Quantity(
-        type=Reference(BasicSample.m_def),
+        type=Reference(CompositeSystem.m_def),
         shape=['*'],
         a_eln=dict(component='ReferenceEditQuantity'))
 
@@ -232,7 +233,7 @@ class SampleData(ArchiveSection):
         section_def=PixelData, repeats=True)
 
 
-class MPPTrackingHsprintCustom(MeasurementOnBatch):
+class MPPTrackingHsprintCustom(BaseMeasurement):
     '''
     MPP tracking measurement
     '''

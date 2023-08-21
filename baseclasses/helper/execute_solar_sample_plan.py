@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-from nomad.datamodel.metainfo.eln import SampleID
-from .. import BatchID
+from nomad.datamodel.metainfo.basesections import CompositeSystemReference
+from .. import ReadableIdentifiersCustom
 
-from ..helper.utilities import get_reference, create_archive, get_entry_id_from_file_name, add_section_markdown
+from ..helper.utilities import get_reference, create_archive, get_entry_id_from_file_name, add_section_markdown, rewrite_json
 
 
 def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
@@ -27,6 +27,7 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
     # standard process integration
     if plan_obj.load_standard_processes:
         plan_obj.load_standard_processes = False
+        rewrite_json(["data", "load_standard_processes"], archive, False)
 
         number_of_subbatches = plan_obj.number_of_substrates // plan_obj.substrates_per_subbatch
         for i, process in enumerate(plan_obj.standard_plan.processes):
@@ -38,11 +39,13 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
 
     # process, sample and batch creation
     if plan_obj.create_samples_and_processes \
-            and plan_obj.batch_id and plan_obj.batch_id.sample_id:
+            and plan_obj.batch_id and plan_obj.batch_id.lab_id:
         plan_obj.create_samples_and_processes = False
-        batch_id = BatchID(**plan_obj.batch_id.m_to_dict())
-        sample_short_name = plan_obj.batch_id.sample_short_name
-        sample_id = SampleID(**batch_id.m_to_dict())
+        rewrite_json(["data", "create_samples_and_processes"], archive, False)
+
+        batch_id = ReadableIdentifiersCustom(**plan_obj.batch_id.m_to_dict())
+        short_name = plan_obj.batch_id.short_name
+        sample_id = ReadableIdentifiersCustom(**batch_id.m_to_dict())
         # create samples and batches
         sample_refs = []
         subs = plan_obj.standard_plan.substrate
@@ -52,11 +55,11 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
             sample_refs_subbatch = []
             for idx2 in range(plan_obj.substrates_per_subbatch):
 
-                sample_id.sample_short_name = f"{sample_short_name}_{idx1}_{idx2}"
+                sample_id.short_name = f"{short_name}_{idx1}_{idx2}"
                 # For each sample number, create instance of sample.
-                file_name = f'{plan_obj.batch_id.sample_id}_{idx1}_{idx2}.archive.json'
+                file_name = f'{plan_obj.batch_id.lab_id}_{idx1}_{idx2}.archive.json'
                 sample = sample_cls(
-                    name=f'{plan_obj.name} {plan_obj.batch_id.sample_id}_{idx1}_{idx2}',
+                    name=f'{plan_obj.name} {plan_obj.batch_id.lab_id}_{idx1}_{idx2}',
                     sample_id=sample_id,
                     datetime=plan_obj.datetime,
                     substrate=subs,
@@ -68,38 +71,38 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
                 sample_refs_subbatch.append(get_reference(
                     archive.metadata.upload_id, entry_id))
             sample_refs.append(sample_refs_subbatch)
-            file_name = f'{plan_obj.batch_id.sample_id}_{idx1}.archive.json'
-            batch_id.sample_short_name = f"{sample_short_name}_{idx1}"
+            file_name = f'{plan_obj.batch_id.lab_id}_{idx1}.archive.json'
+            batch_id.short_name = f"{short_name}_{idx1}"
             subbatch = batch_cls(
-                name=f'{plan_obj.name} {plan_obj.batch_id.sample_id}_{idx1}',
+                name=f'{plan_obj.name} {plan_obj.batch_id.lab_id}_{idx1}',
                 datetime=plan_obj.datetime,
                 batch_id=batch_id,
-                samples=sample_refs_subbatch,
+                entities=[CompositeSystemReference(reference=sample_ref) for sample_ref in sample_refs_subbatch],
                 description=plan_obj.description if plan_obj.description else None)
             if plan_obj.substrates_per_subbatch > 1:
                 create_archive(subbatch, archive, file_name)
 
-        file_name = f'{plan_obj.batch_id.sample_id}.archive.json'
-        batch_id.sample_short_name = f"{sample_short_name}"
+        file_name = f'{plan_obj.batch_id.lab_id}.archive.json'
+        batch_id.short_name = f"{short_name}"
         batch = batch_cls(
-            name=f'{plan_obj.name} {plan_obj.batch_id.sample_id}',
+            name=f'{plan_obj.name} {plan_obj.batch_id.lab_id}',
             batch_id=batch_id,
             datetime=plan_obj.datetime,
-            samples=[
-                item for sublist in sample_refs for item in sublist],
+            entities=[CompositeSystemReference(reference=item)
+                      for sublist in sample_refs for item in sublist],
             description=plan_obj.description if plan_obj.description else None)
         create_archive(batch, archive, file_name)
 
         # create processes
         previous_processes = {idx: "" for idx in range(number_of_subbatches)}
-        md = f"# Batch plan of batch {batch_id.sample_id}\n\n"
+        md = f"# Batch plan of batch {batch_id.lab_id}\n\n"
         for idx2, plan in enumerate(plan_obj.plan):
             for idx1, batch_process in enumerate(plan.batch_processes):
                 if not batch_process.present:
                     continue
-                file_name_base = f'{plan_obj.batch_id.sample_id}_{idx1}' if \
+                file_name_base = f'{plan_obj.batch_id.lab_id}_{idx1}' if \
                     plan.vary_parameters else \
-                    f'{plan_obj.batch_id.sample_id}'
+                    f'{plan_obj.batch_id.lab_id}'
                 if plan_obj.substrates_per_subbatch == 1 and plan.vary_parameters:
                     file_name_base += "_0"
                 file_name = f"{file_name_base}.archive.json"
@@ -168,7 +171,7 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
 
         plan_obj.description = desc_tmp + \
             summary_html if desc_tmp is not None else summary_html
-        output = f"batch_plan_{batch_id.sample_id}.html"
+        output = f"batch_plan_{batch_id.lab_id}.html"
         with archive.m_context.raw_file(output, 'w') as outfile:
             outfile.write(str(html))
         plan_obj.batch_plan_pdf = output

@@ -24,7 +24,7 @@ from nomad.metainfo import (
     Section)
 from nomad.datamodel.data import ArchiveSection
 
-from .. import ProcessOnSample
+from .. import BaseProcess
 from ..chemical import Chemical
 
 
@@ -87,7 +87,7 @@ class PlasmaCleaning(CleaningTechnique):
         ))
 
 
-class Cleaning(ProcessOnSample):
+class Cleaning(BaseProcess):
     m_def = Section(
         a_eln=dict(
             hide=[

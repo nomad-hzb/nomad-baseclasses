@@ -23,11 +23,16 @@ from nomad.metainfo import (
     SubSection)
 
 from nomad.datamodel.metainfo.eln import (
-    Process,
-    Entity,
-    SampleID,
-    Measurement,
     ElnWithFormulaBaseSection)
+
+from nomad.datamodel.metainfo.basesections import (
+    CompositeSystem,
+    # CompositeSystemReference,
+    Collection,
+    Process,
+    Measurement,
+    Entity,
+)
 
 from nomad.datamodel.results import Results, Material
 from nomad.datamodel.data import ArchiveSection
@@ -36,62 +41,10 @@ from nomad.datamodel.data import ArchiveSection
 from .helper.add_solar_cell import add_solar_cell
 
 from .solution import Solution
+from .customreadable_identifier import ReadableIdentifiersCustom
 
 
-class BasicSample(Entity):
-
-    state_of_sample = Quantity(
-        type=str,
-        default="good",
-        a_eln=dict(
-            component='EnumEditQuantity',
-            props=dict(
-                suggestions=['good', 'questionable', 'bad'])
-        ))
-
-    def normalize(self, archive, logger):
-        super(
-            BasicSample, self).normalize(
-            archive,
-            logger)
-
-
-class BatchID(SampleID):
-
-    sample_owner = Quantity(
-        type=str,
-        shape=[],
-        description='Name or alias of the batch owner, e.g. a2853',
-        a_eln=dict(component='StringEditQuantity', label="Batch Owner"))
-
-    sample_short_name = Quantity(
-        type=str,
-        description='''A short name of the Batch, e.g. 4001-8, YAG-2-34.
-         This is to be managed and decided internally by the labs,
-         although we recomend to avoid the following characters on it: "_", "/", "\" and "."''',
-        a_eln=dict(component='StringEditQuantity', label="Batch Short Name"))
-
-    sample_id = Quantity(
-        type=str, description='''Full batch id. Ideally a human readable batch id convention,
-        which is simple, understandable and still having chances of becoming unique.
-        If the `batch_owner`, `batch_short_name`, `ìnstitute`, and `creation_datetime`
-        are provided, this will be formed automatically by joining these components by an underscore (_).
-        Spaces in any of the individual components will be replaced with hyphens (-).
-        An example would be hzb_oah_20200602_4001-08''',
-        a_eln=dict(component='StringEditQuantity', label="Batch Id"))
-
-    def normalize(self, archive, logger):
-        super(BatchID, self).normalize(archive, logger)
-
-
-class Batch(BasicSample):
-
-    samples = Quantity(
-        type=Reference(BasicSample),
-        shape=['*'],
-        descriptions='The samples in the batch.',
-        a_eln=dict(component='ReferenceEditQuantity')
-    )
+class Batch(Collection):
 
     export_batch_ids = Quantity(
         type=bool,
@@ -104,20 +57,36 @@ class Batch(BasicSample):
         a_eln=dict(component='FileEditQuantity'),
         a_browser=dict(adaptor='RawFileAdaptor')
     )
+    # for legacy reasons
+    samples = Quantity(
+        type=Reference(CompositeSystem),
+        shape=['*'],
+        descriptions='The samples in the batch.',
+        a_eln=dict(component='ReferenceEditQuantity')
+    )
+
+    entities = Collection.entities.m_copy()
+    entities.label = "Samples"
 
     batch_id = SubSection(
-        section_def=BatchID)
+        section_def=ReadableIdentifiersCustom)
 
     def normalize(self, archive, logger):
         super(Batch, self).normalize(archive, logger)
 
-        if self.export_batch_ids and self.samples is not None:
+        if self.samples and self.entities is None:
+            entities = []
+            for sample in self.samples:
+                entities.append(CompositeSystemReference=sample)
+            self.entities = entities
+
+        if self.export_batch_ids and self.entities is not None:
             self.export_batch_ids = False
             try:
                 samples = []
-                for sample in self.samples:
-                    sample_id = sample.sample_id.sample_id if sample.sample_id is not None else self.lab_id
-                    sample_name = sample.name
+                for sample in self.entities:
+                    sample_id = sample.reference.lab_id if sample.reference is not None else self.lab_id
+                    sample_name = sample.reference.name
                     samples.append([sample_id, sample_name])
                 import pandas as pd
                 df = pd.DataFrame(samples, columns=[
@@ -130,7 +99,7 @@ class Batch(BasicSample):
                 pass
 
 
-class ProcessOnSample(Process):
+class BaseProcess(Process):
 
     # is_standard_process = Quantity(
     #     type=bool,
@@ -144,28 +113,23 @@ class ProcessOnSample(Process):
         a_eln=dict(component='BoolEditQuantity')
     )
 
-    samples = Quantity(
-        type=Reference(BasicSample.m_def),
-        shape=['*'],
-        a_eln=dict(component='ReferenceEditQuantity'))
-
     batch = Quantity(
         type=Reference(Batch.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     previous_process = Quantity(
-        type=Reference(SectionProxy("ProcessOnSample")),
+        type=Reference(SectionProxy("BaseProcess")),
         shape=['*'],
         a_eln=dict(component='ReferenceEditQuantity'))
 
     def normalize(self, archive, logger):
-        super(ProcessOnSample, self).normalize(archive, logger)
+        super(BaseProcess, self).normalize(archive, logger)
 
         if self.batch:
-            self.samples = self.batch.samples
+            self.samples = self.batch.entities
 
 
-class Deposition(ProcessOnSample, ElnWithFormulaBaseSection):
+class Deposition(BaseProcess, ElnWithFormulaBaseSection):
     function = Quantity(
         type=str,
         shape=[],
@@ -180,13 +144,13 @@ class Deposition(ProcessOnSample, ElnWithFormulaBaseSection):
 class StandardSample(Entity):
 
     processes = Quantity(
-        type=Reference(ProcessOnSample.m_def),
+        type=Reference(BaseProcess.m_def),
         shape=['*'],
         a_eln=dict(component='ReferenceEditQuantity'))
 
     def normalize(self, archive, logger):
         super(StandardSample, self).normalize(archive, logger)
-        checked_processes = []
+        # checked_processesocesses = []
         # if self.processes:
         #     for process in self.processes:
         #         if process.is_standard_process:
@@ -230,7 +194,7 @@ class LayerProperties(ArchiveSection):
     )
 
 
-class LayerDeposition(ProcessOnSample):
+class LayerDeposition(BaseProcess):
     m_def = Section(label_quantity='layer')
 
     layer = SubSection(section_def=LayerProperties)
@@ -304,12 +268,7 @@ class LayerDeposition(ProcessOnSample):
                     = [self.method]
 
 
-class MeasurementOnSample(Measurement):
-
-    samples = Quantity(
-        type=Reference(BasicSample.m_def),
-        shape=['*'],
-        a_eln=dict(component='ReferenceEditQuantity'))
+class BaseMeasurement(Measurement):
 
     solution = Quantity(
         type=Reference(Solution.m_def),
@@ -317,15 +276,15 @@ class MeasurementOnSample(Measurement):
         a_eln=dict(component='ReferenceEditQuantity'))
 
     def normalize(self, archive, logger):
-        super(MeasurementOnSample, self).normalize(archive, logger)
+        super(BaseMeasurement, self).normalize(archive, logger)
 
 
-class MeasurementOnBatch(Measurement):
+# class MeasurementOnBatch(Measurement):
 
-    samples = Quantity(
-        type=Reference(Batch.m_def),
-        shape=['*'],
-        a_eln=dict(component='ReferenceEditQuantity'))
+#     samples = Quantity(
+#         type=Reference(Batch.m_def),
+#         shape=['*'],
+#         a_eln=dict(component='ReferenceEditQuantity'))
 
-    def normalize(self, archive, logger):
-        super(MeasurementOnBatch, self).normalize(archive, logger)
+#     def normalize(self, archive, logger):
+#         super(MeasurementOnBatch, self).normalize(archive, logger)

@@ -28,7 +28,7 @@ from nomad.datamodel.data import ArchiveSection
 
 from .TEM_Session import TEM_Session
 from nomad.datamodel.metainfo.eln import Entity
-from baseclasses import MeasurementOnSample
+from baseclasses import BaseMeasurement
 
 
 class TEMMicroscopeConfiguration(Entity):
@@ -91,7 +91,7 @@ class Image(ArchiveSection):
         a_eln=dict(component='StringEditQuantity'))
 
 
-class MicroscopeTechnique(MeasurementOnSample):
+class MicroscopeTechnique(BaseMeasurement):
 
     ''' Any physical process applied to the sample. '''
     name = Quantity(

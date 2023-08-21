@@ -29,7 +29,7 @@ from nomad.metainfo import (
     Datetime)
 from nomad.datamodel.data import ArchiveSection
 
-from .. import MeasurementOnSample
+from .. import BaseMeasurement
 
 
 class UVvisData(ArchiveSection):
@@ -72,7 +72,7 @@ class UVvisData(ArchiveSection):
                     "editable": True, "scrollZoom": True}}])
 
 
-class UVvisMeasurement(MeasurementOnSample):
+class UVvisMeasurement(BaseMeasurement):
     '''UV vis Measurement'''
 
     m_def = Section(

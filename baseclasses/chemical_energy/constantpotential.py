@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-from .. import MeasurementOnSample
+from .. import BaseMeasurement
 
 
-class ConstantPotential(MeasurementOnSample):
+class ConstantPotential(BaseMeasurement):
     '''Eqe Measurement'''
 
     def normalize(self, archive, logger):

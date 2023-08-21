@@ -19,11 +19,11 @@ import numpy as np
 import os
 from datetime import datetime
 
-from .. import MeasurementOnSample
+from .. import BaseMeasurement
 from nomad.metainfo import (Quantity)
 
 
-class XAS(MeasurementOnSample):
+class XAS(BaseMeasurement):
     '''XAS Measurement'''
 
     data_file = Quantity(

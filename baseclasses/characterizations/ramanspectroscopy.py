@@ -21,10 +21,10 @@ import os
 
 from nomad.metainfo import (Quantity)
 
-from .. import MeasurementOnSample
+from .. import BaseMeasurement
 
 
-class Raman(MeasurementOnSample):
+class Raman(BaseMeasurement):
 
     data_file = Quantity(
         type=str,

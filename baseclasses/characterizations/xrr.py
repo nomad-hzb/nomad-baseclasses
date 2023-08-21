@@ -24,7 +24,7 @@ from nomad.metainfo import (
     SubSection)
 from nomad.datamodel.data import ArchiveSection
 
-from .. import MeasurementOnSample
+from .. import BaseMeasurement
 
 
 class XRRData(ArchiveSection):
@@ -111,7 +111,7 @@ class XRRFittedData(XRRData):
         a_eln=dict(component='NumberEditQuantity'))
 
 
-class XRR(MeasurementOnSample):
+class XRR(BaseMeasurement):
     '''UV vis Measurement'''
 
     m_def = Section(

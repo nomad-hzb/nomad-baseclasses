@@ -24,7 +24,7 @@ from nomad.metainfo import (
     Section)
 from nomad.datamodel.data import ArchiveSection
 
-from .. import MeasurementOnSample
+from .. import BaseMeasurement
 
 
 class MPPTrackingProperties(ArchiveSection):
@@ -188,7 +188,7 @@ class StabilityFiguresOfMerit(ArchiveSection):
             component='NumberEditQuantity'))
 
 
-class MPPTracking(MeasurementOnSample):
+class MPPTracking(BaseMeasurement):
     '''
     MPP tracking measurement
     '''

@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-from .. import MeasurementOnSample
+from .. import BaseMeasurement
 
 
-class XPEEM(MeasurementOnSample):
+class XPEEM(BaseMeasurement):
     '''Eqe Measurement'''
 
     def normalize(self, archive, logger):

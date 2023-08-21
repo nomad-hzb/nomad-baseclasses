@@ -25,7 +25,7 @@ from nomad.metainfo import (
     Section)
 from nomad.datamodel.data import ArchiveSection
 
-from .. import MeasurementOnSample
+from .. import BaseMeasurement
 
 
 class TRPLProperties(ArchiveSection):
@@ -129,7 +129,7 @@ class TRPLProperties(ArchiveSection):
         })
 
 
-class TimeResolvedPhotoluminescence(MeasurementOnSample):
+class TimeResolvedPhotoluminescence(BaseMeasurement):
 
     m_def = Section(label_quantity='file_name', validate=False)
 

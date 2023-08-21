@@ -25,7 +25,7 @@ from nomad.metainfo import (
     Section)
 
 from nomad.datamodel.metainfo.eln import SolarCellJVCurve
-from .. import MeasurementOnSample
+from .. import BaseMeasurement
 from ..helper.add_solar_cell import add_solar_cell
 
 
@@ -39,7 +39,7 @@ class SolarCellJVCurveCustom(SolarCellJVCurve):
                 'certification_institute']))
 
 
-class JVMeasurement(MeasurementOnSample):
+class JVMeasurement(BaseMeasurement):
 
     m_def = Section(label_quantity='data_file', validate=False)
 

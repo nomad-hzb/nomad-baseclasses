@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import os
+
 import numpy as np
 
 from nomad.metainfo import (
@@ -24,7 +24,7 @@ from nomad.metainfo import (
     SubSection)
 from nomad.datamodel.data import ArchiveSection
 
-from .. import MeasurementOnSample
+from .. import BaseMeasurement
 
 
 class XRDData(ArchiveSection):
@@ -91,7 +91,7 @@ class XRDShiftedData(XRDData):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm'))
 
 
-class XRD(MeasurementOnSample):
+class XRD(BaseMeasurement):
     '''UV vis Measurement'''
 
     m_def = Section(

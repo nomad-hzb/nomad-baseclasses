@@ -21,9 +21,9 @@ import os
 import pandas as pd
 
 from nomad.metainfo import (
-    Quantity, Reference, SubSection, Section, SectionProxy)
+    Quantity, Reference, SubSection, SectionProxy)
 
-from .. import MeasurementOnSample
+from .. import BaseMeasurement
 from .cesample import Environment, ElectroChemicalSetup
 
 from nomad.datamodel.data import ArchiveSection
@@ -185,7 +185,7 @@ class PotentiostatSetup(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='rpm'))
 
 
-class PotentiostatMeasurement(MeasurementOnSample):
+class PotentiostatMeasurement(BaseMeasurement):
 
     data_file = Quantity(
         type=str,

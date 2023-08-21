@@ -20,12 +20,12 @@ import numpy as np
 
 from nomad.metainfo import (Quantity, SubSection, Section, Reference, Datetime)
 
-from nomad.datamodel.metainfo.eln import SampleID, Substance
+from nomad.datamodel.metainfo.eln import Substance
 from nomad.datamodel.results import Results, Material
 from nomad.datamodel.data import ArchiveSection
 
-from .. import BasicSample
-
+from nomad.datamodel.metainfo.basesections import CompositeSystem
+from .. import ReadableIdentifiersCustom
 from .preparation_protocoll import PreparationProtocol
 
 
@@ -42,7 +42,7 @@ def get_next_project_sample_number(data, entry_id):
     return max(project_sample_numbers) + 1 if project_sample_numbers else 0
 
 
-class SampleIDCE(SampleID):
+class SampleIDCE(ReadableIdentifiersCustom):
 
     sample_short_name = Quantity(
         type=str,
@@ -93,7 +93,7 @@ class SampleIDCE(SampleID):
             archive.data.lab_id = self.sample_id
 
 
-class CESample(BasicSample):
+class CESample(CompositeSystem):
 
     origin = Quantity(
         type=str,

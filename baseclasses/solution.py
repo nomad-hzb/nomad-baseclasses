@@ -28,7 +28,8 @@ from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.results import Results, Material
 
 from .chemical import Chemical
-from nomad.datamodel.metainfo.eln import Entity, SampleID
+from nomad.datamodel.metainfo.basesections import CompositeSystem
+from .customreadable_identifier import ReadableIdentifiersCustom
 
 from nomad.atomutils import Formula
 
@@ -88,7 +89,7 @@ class OtherSolution(ArchiveSection):
                 self.name = self.solution.name
 
 
-class Solution(Entity):
+class Solution(CompositeSystem):
     '''Base class for a solution'''
 
     method = Quantity(
@@ -130,7 +131,7 @@ class Solution(Entity):
         section_def=OtherSolution, repeats=True)
 
     solution_id = SubSection(
-        section_def=SampleID)
+        section_def=ReadableIdentifiersCustom)
 
     def normalize(self, archive, logger):
         super(Solution, self).normalize(archive, logger)

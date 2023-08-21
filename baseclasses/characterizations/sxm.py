@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-from .. import MeasurementOnSample
+from .. import BaseMeasurement
 
 
-class SXM(MeasurementOnSample):
+class SXM(BaseMeasurement):
     '''Eqe Measurement'''
 
     def normalize(self, archive, logger):

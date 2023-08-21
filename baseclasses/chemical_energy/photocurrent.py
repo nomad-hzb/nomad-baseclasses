@@ -22,7 +22,7 @@ import os
 from nomad.metainfo import (Quantity, Reference, SubSection)
 from nomad.datamodel.data import ArchiveSection
 
-from .. import MeasurementOnSample
+from .. import BaseMeasurement
 from .voltammetry import Voltammetry
 
 
@@ -98,7 +98,7 @@ class PhotoCurrentProperties(ArchiveSection):
         ))
 
 
-class PhotoCurrent(MeasurementOnSample):
+class PhotoCurrent(BaseMeasurement):
 
     photo_current_properties = SubSection(
         section_def=PhotoCurrentProperties)

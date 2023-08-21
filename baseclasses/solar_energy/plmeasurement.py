@@ -19,10 +19,10 @@
 from nomad.metainfo import (
     Quantity,
     Section)
-from .. import MeasurementOnSample
+from .. import BaseMeasurement
 
 
-class PLMeasurement(MeasurementOnSample):
+class PLMeasurement(BaseMeasurement):
     '''PL Measurement'''
 
     m_def = Section(

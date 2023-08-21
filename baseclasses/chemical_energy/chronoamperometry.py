@@ -16,7 +16,6 @@
 # limitations under the License.
 #
 
-import os
 import numpy as np
 
 from nomad.metainfo import (
@@ -24,7 +23,6 @@ from nomad.metainfo import (
 from nomad.datamodel.data import ArchiveSection
 
 from .voltammetry import Voltammetry, VoltammetryCycle
-from .potentiostat_measurement import PotentiostatMeasurement
 
 
 class CAProperties(ArchiveSection):

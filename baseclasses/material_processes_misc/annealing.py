@@ -18,10 +18,8 @@
 
 import numpy as np
 
-from nomad.metainfo import (Quantity, Reference)
+from nomad.metainfo import (Quantity)
 
-from .. import ProcessOnSample
-from ..chemical import Chemical
 from nomad.datamodel.data import ArchiveSection
 
 

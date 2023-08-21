@@ -21,7 +21,7 @@ import numpy as np
 from nomad.metainfo import (SubSection, Quantity)
 
 from nomad.datamodel.metainfo.eln import SolarCellEQE
-from .. import MeasurementOnSample
+from .. import BaseMeasurement
 
 
 class SolarCellEQECustom(SolarCellEQE):
@@ -34,7 +34,7 @@ class SolarCellEQECustom(SolarCellEQE):
         a_eln=dict(component='NumberEditQuantity'))
 
 
-class EQEMeasurement(MeasurementOnSample):
+class EQEMeasurement(BaseMeasurement):
     '''Eqe Measurement'''
     eqe_data = SubSection(
         section_def=SolarCellEQECustom,

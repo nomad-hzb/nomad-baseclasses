@@ -17,19 +17,15 @@
 #
 
 
-import os
 import numpy as np
-import pandas as pd
 
-from nomad.metainfo import (Quantity, SubSection, MEnum, Reference)
-from nomad.datamodel.data import ArchiveSection
-from .. import MeasurementOnSample
-from nomad.units import ureg
+from nomad.metainfo import (Quantity, Reference)
+from .. import BaseMeasurement
 from .potentiostat_measurement import PotentiostatMeasurement
 from .cesample import Environment, ElectroChemicalSetup
 
 
-class PhaseFluorometryOxygen(MeasurementOnSample):
+class PhaseFluorometryOxygen(BaseMeasurement):
 
     data_file = Quantity(
         type=str,

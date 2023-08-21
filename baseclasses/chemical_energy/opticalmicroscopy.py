@@ -15,10 +15,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-from .. import MeasurementOnSample
+from .. import BaseMeasurement
 
 
-class OpticalMicorscopy(MeasurementOnSample):
+class OpticalMicorscopy(BaseMeasurement):
 
     def normalize(self, archive, logger):
         super(OpticalMicorscopy, self).normalize(archive, logger)

@@ -20,15 +20,15 @@ import numpy as np
 from nomad.metainfo import (Quantity, Reference, SubSection)
 from nomad.units import ureg
 
-from nomad.datamodel.metainfo.eln import SampleID
 from .substrate import Substrate
 from ..helper.add_solar_cell import add_solar_cell, add_band_gap
 from nomad.datamodel.results import Material  # BandGapOptical, Material
+from .. import ReadableIdentifiersCustom
 
-from .. import BasicSample
+from nomad.datamodel.metainfo.basesections import CompositeSystem
 
 
-def collectProcessOnSample(entry, entry_id, entry_data):
+def collectBaseProcesses(entry, entry_id, entry_data):
     # read out information
     if "previous_process" in entry_data:
         entry[entry_id].update(
@@ -167,12 +167,12 @@ def collectSampleData(archive):
                     entry[entry_id]["elements"] = archive[entry_id]["results"]["material"]["elements"]
                 except BaseException:
                     entry[entry_id]["elements"] = []
-                # Check if it is a ProcessOnSample
+                # Check if it is a BaseProcess
                 module = entry_data['m_def'].split(".")[0]
                 eval(f"exec('import {module}')")
-                if baseclasses.ProcessOnSample in inspect.getmro(
+                if baseclasses.BaseProcess in inspect.getmro(
                         eval(entry_data["m_def"])):
-                    collectProcessOnSample(entry, entry_id, entry_data)
+                    collectBaseProcesses(entry, entry_id, entry_data)
                     result["processes"].update(entry)
 
                 # check if it is a JV measurement
@@ -228,13 +228,13 @@ def addLayerDepositionToStack(archive, process):
             layer_name)
 
 
-class BasicSampleWithID(BasicSample):
+class BasicSampleWithID(CompositeSystem):
 
     sample_id = SubSection(
-        section_def=SampleID)
+        section_def=ReadableIdentifiersCustom)
 
 
-class SolcarCellSample(BasicSample):
+class SolcarCellSample(CompositeSystem):
 
     substrate = Quantity(
         type=Reference(Substrate.m_def),
@@ -266,7 +266,7 @@ class SolcarCellSample(BasicSample):
                     'Schottky'])))
 
     sample_id = SubSection(
-        section_def=SampleID)
+        section_def=ReadableIdentifiersCustom)
 
     def normalize(self, archive, logger):
         super(

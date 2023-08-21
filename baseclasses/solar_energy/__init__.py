@@ -16,20 +16,6 @@
 # limitations under the License.
 #
 
-from nomad.metainfo import (
-    Quantity,
-    Reference,
-    Section,
-    SectionProxy)
-
-from nomad.datamodel.metainfo.eln import (
-    Process,
-    SampleID,
-    ElnWithFormulaBaseSection,
-    Measurement,
-    ElnBaseSection)
-
-
 from .jvmeasurement import JVMeasurement
 from .mpp_tracking import MPPTracking
 from .mpp_tracking_hysprint_custom import MPPTrackingHsprintCustom, SampleData, JVData, PixelData

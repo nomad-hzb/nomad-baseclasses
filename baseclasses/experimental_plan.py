@@ -26,7 +26,8 @@ from nomad.metainfo import (
 
 from nomad.datamodel.metainfo.eln import Entity
 
-from . import ProcessOnSample, StandardSample, BatchID
+from . import BaseProcess, StandardSample
+from .customreadable_identifier import ReadableIdentifiersCustom
 from nomad.datamodel.data import ArchiveSection
 
 
@@ -44,7 +45,7 @@ class Step(ArchiveSection):
     )
 
     batch_processes = SubSection(
-        section_def=ProcessOnSample, repeats=True)
+        section_def=BaseProcess, repeats=True)
 
 
 class ExperimentalPlan(Entity):
@@ -85,7 +86,7 @@ class ExperimentalPlan(Entity):
     )
 
     batch_id = SubSection(
-        section_def=BatchID)
+        section_def=ReadableIdentifiersCustom)
 
     plan = SubSection(
         section_def=Step, repeats=True)

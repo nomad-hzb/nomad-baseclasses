@@ -18,10 +18,10 @@
 
 from nomad.metainfo import (Quantity)
 
-from .. import MeasurementOnSample
+from .. import BaseMeasurement
 
 
-class TEM(MeasurementOnSample):
+class TEM(BaseMeasurement):
 
     link_to_external_measurement = Quantity(
         type=str,
