@@ -15,6 +15,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+import json
+
+
 from nomad.metainfo import (
     Quantity,
     Reference,
@@ -39,9 +43,30 @@ from nomad.datamodel.data import ArchiveSection
 
 
 from .helper.add_solar_cell import add_solar_cell
+from .helper.utilities import update_archive
 
 from .solution import Solution
 from .customreadable_identifier import ReadableIdentifiersCustom
+
+
+def keep_samples(class_obj, archive):
+    try:
+        with archive.m_context.raw_file(archive.metadata.mainfile, 'r') as outfile:
+            data = json.load(outfile)
+        print(data)
+        samples = data.get("data").get("samples").copy()
+        if samples and isinstance(samples[0], str):
+            data_samples = []
+            samples_ref = []
+            for sample in samples:
+                samples_ref.append(CompositeSystemReference(reference=sample))
+                data_samples.append(samples_ref[-1].m_to_dict())
+            data["data"]["samples"] = data_samples
+            with archive.m_context.raw_file(archive.metadata.mainfile, 'w') as outfile:
+                json.dump(data, outfile)
+            class_obj.samples = samples_ref
+    except Exception as e:
+        print(e)
 
 
 class Batch(Collection):
@@ -73,14 +98,14 @@ class Batch(Collection):
 
     def normalize(self, archive, logger):
         super(Batch, self).normalize(archive, logger)
-
-        if self.samples and self.entities is None:
+        if self.samples and not self.entities:
             entities = []
             for sample in self.samples:
                 entities.append(CompositeSystemReference(reference=sample))
             self.entities = entities
+            update_archive(self, archive, archive.metadata.mainfile)
 
-        if self.export_batch_ids and self.entities is not None:
+        if self.export_batch_ids and self.entities:
             self.export_batch_ids = False
             try:
                 samples = []
@@ -123,10 +148,11 @@ class BaseProcess(Process):
         a_eln=dict(component='ReferenceEditQuantity'))
 
     def normalize(self, archive, logger):
-        super(BaseProcess, self).normalize(archive, logger)
-
+        if self.samples and self.samples[0].reference is None:
+            keep_samples(self, archive)
         if self.batch:
             self.samples = self.batch.entities
+        super(BaseProcess, self).normalize(archive, logger)
 
 
 class Deposition(BaseProcess, ElnWithFormulaBaseSection):
@@ -275,22 +301,10 @@ class BaseMeasurement(Measurement):
         shape=['*'],
         a_eln=dict(component='ReferenceEditQuantity'))
 
-    samples2 = Quantity(
-        type=Reference(CompositeSystem.m_def),
-        shape=['*'],
-        a_eln=dict(component='ReferenceEditQuantity'))
-
     def normalize(self, archive, logger):
+        if self.samples and self.samples[0].reference is None:
+            keep_samples(self, archive)
         super(BaseMeasurement, self).normalize(archive, logger)
-        if self.samples2 is None:
-            self.samples2 = self.samples
-            self.samples = None
-        if self.samples2 and self.samples is None:
-            samples = []
-            for sample in self.samples2:
-                samples.append(CompositeSystemReference(reference=sample))
-            print(samples)
-            # self.samples = samples
 
 
 # class MeasurementOnBatch(Measurement):

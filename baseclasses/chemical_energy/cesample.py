@@ -43,8 +43,12 @@ def get_next_project_sample_number(data, entry_id):
 
 
 class SampleIDCE(ReadableIdentifiersCustom):
+    m_def = Section(
+        a_eln=dict(
+            hide=["sample_owner", "sample_short_name", "sample_id"]
+        ))
 
-    sample_short_name = Quantity(
+    short_name = Quantity(
         type=str,
         description='''A short handle of the Project the sample belongs to.''',
         a_eln=dict(component='StringEditQuantity', label='Project Name'))
@@ -58,39 +62,39 @@ class SampleIDCE(ReadableIdentifiersCustom):
     def normalize(self, archive, logger):
         super(SampleIDCE, self).normalize(archive, logger)
 
-        if self.institute and self.sample_short_name and self.sample_owner:
+        if self.institute and self.short_name and self.owner:
             from unidecode import unidecode
-            first_name, last_name = self.sample_owner, ''
-            if ' ' in self.sample_owner:
-                first_name, last_name = self.sample_owner.split(' ', 1)
+            first_name, last_name = self.owner, ''
+            if ' ' in self.owner:
+                first_name, last_name = self.owner.split(' ', 1)
             first_name = unidecode(first_name.strip())
             last_name = unidecode(last_name.strip())
             owner = ''.join([first_name[:2], last_name[:2]])
             sample_id_list = [self.institute,
-                              self.sample_short_name, owner]
-            self.sample_id = '_'.join(sample_id_list)
+                              self.short_name, owner]
+            self.lab_id = '_'.join(sample_id_list)
 
         from nomad.search import search
         if self.project_sample_number is not None:
-            sample_id_tmp = f"{self.sample_id}_{self.project_sample_number:04d}"
+            sample_id_tmp = f"{self.lab_id}_{self.project_sample_number:04d}"
         else:
-            sample_id_tmp = f"{self.sample_id}_{9999}"
+            sample_id_tmp = f"{self.lab_id}_9999"
         query = {'results.eln.lab_ids': sample_id_tmp}
         search_result_1 = search(owner='all', query=query,
                                  user_id=archive.metadata.main_author.user_id)
         if self.project_sample_number is None or len(search_result_1.data) != 0:
-            query = {'results.eln.lab_ids': self.sample_id}
+            query = {'results.eln.lab_ids': self.lab_id}
             search_result = search(owner='all', query=query,
                                    user_id=archive.metadata.main_author.user_id)
             self.project_sample_number = get_next_project_sample_number(
                 search_result.data, archive.metadata.entry_id)
 
-        if self.sample_id is not None and self.project_sample_number is not None:
-            sample_id_old = self.sample_id
-            self.sample_id = f"{self.sample_id}_{self.project_sample_number:04d}"
+        if self.lab_id is not None and self.project_sample_number is not None:
+            sample_id_old = self.lab_id
+            self.lab_id = f"{self.lab_id}_{self.project_sample_number:04d}"
             archive.results.eln.lab_ids = []
-            archive.results.eln.lab_ids = [self.sample_id, sample_id_old]
-            archive.data.lab_id = self.sample_id
+            archive.results.eln.lab_ids = [self.lab_id, sample_id_old]
+            archive.data.lab_id = self.lab_id
 
 
 class CESample(CompositeSystem):
@@ -137,6 +141,10 @@ class CESample(CompositeSystem):
 
 
 class SampleIDCENOME(SampleIDCE):
+    m_def = Section(
+        a_eln=dict(
+            hide=["sample_owner", "sample_short_name", "sample_id"]
+        ))
 
     institute = Quantity(
         type=str,
@@ -150,7 +158,7 @@ class SampleIDCENOME(SampleIDCE):
                     'CE-NOME Berlin',
                     'CE-NOME Göttingen'])))
 
-    sample_owner = Quantity(
+    owner = Quantity(
         type=str,
         description='Alias/short name of the home institute of the owner, i.e. *HZB*.',
         default='Marcel Risch',
@@ -182,16 +190,16 @@ class CENSLISample(CESample):
 
 class CENOMESample(CESample):
 
-    id_of_preparation_protocol = Quantity(
-        type=Reference(PreparationProtocol.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
+    # id_of_preparation_protocol = Quantity(
+    #     type=Reference(PreparationProtocol.m_def),
+    #     a_eln=dict(component='ReferenceEditQuantity'))
 
     date_of_disposal = Quantity(
         type=Datetime,
         description='The date where the sample was disposed',
         a_eln=dict(component='DateTimeEditQuantity'))
 
-    components = Quantity(
+    component_description = Quantity(
         type=str,
         description=(
             'A description of the components.'),

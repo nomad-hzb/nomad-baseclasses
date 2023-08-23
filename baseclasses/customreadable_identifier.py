@@ -29,11 +29,11 @@ class ReadableIdentifiersCustom(ReadableIdentifiers):
         a_eln=dict(component='StringEditQuantity'))
 
     def normalize(self, archive, logger):
-        if self.sample_owner and self.owner is None:
+        if self.sample_owner:
             self.owner = self.sample_owner
-        if self.sample_short_name and self.short_name is None:
-            self.sample_short_name = self.short_name
+        if self.sample_short_name:
+            self.short_name = self.sample_short_name
         if self.sample_id and self.lab_id is None:
-            self.sample_id = self.lab_id
+            self.lab_id = self.sample_id
 
         super(ReadableIdentifiersCustom, self).normalize(archive, logger)

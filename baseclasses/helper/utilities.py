@@ -24,6 +24,10 @@ import json
 from nomad.metainfo import MProxy
 import pandas as pd
 
+from nomad.datamodel.metainfo.basesections import (
+    CompositeSystemReference
+)
+
 
 def rewrite_json(keys_list, archive, value):
     with archive.m_context.raw_file(archive.metadata.mainfile) as f:
@@ -140,6 +144,14 @@ def get_entry_id_from_file_name(file_name, archive):
     return hash(archive.metadata.upload_id, file_name)
 
 
+def update_archive(entity, archive, file_name):
+    # use with care
+    import json
+    entity_entry = entity.m_to_dict(with_root_def=True)
+    with archive.m_context.raw_file(file_name, 'w') as outfile:
+        json.dump({"data": entity_entry}, outfile)
+
+
 def create_archive(entity, archive, file_name):
     import json
     if not archive.m_context.raw_path_exists(file_name):
@@ -169,7 +181,7 @@ def set_sample_reference(archive, entry, search_id):
         data = search_result.data[0]
         upload_id, entry_id = data["upload_id"], data["entry_id"]
         if "sample" in data["entry_type"].lower():
-            entry.samples = [get_reference(upload_id, entry_id)]
+            entry.samples = [CompositeSystemReference(reference=get_reference(upload_id, entry_id))]
         if "solution" in data["entry_type"].lower() or "ink" in data["entry_type"].lower():
             entry.solution = [get_reference(upload_id, entry_id)]
 
