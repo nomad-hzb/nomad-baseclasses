@@ -49,26 +49,6 @@ from .solution import Solution
 from .customreadable_identifier import ReadableIdentifiersCustom
 
 
-def keep_samples(class_obj, archive):
-    try:
-        with archive.m_context.raw_file(archive.metadata.mainfile, 'r') as outfile:
-            data = json.load(outfile)
-        print(data)
-        samples = data.get("data").get("samples").copy()
-        if samples and isinstance(samples[0], str):
-            data_samples = []
-            samples_ref = []
-            for sample in samples:
-                samples_ref.append(CompositeSystemReference(reference=sample))
-                data_samples.append(samples_ref[-1].m_to_dict())
-            data["data"]["samples"] = data_samples
-            with archive.m_context.raw_file(archive.metadata.mainfile, 'w') as outfile:
-                json.dump(data, outfile)
-            class_obj.samples = samples_ref
-    except Exception as e:
-        print(e)
-
-
 class Batch(Collection):
 
     export_batch_ids = Quantity(
@@ -82,28 +62,15 @@ class Batch(Collection):
         a_eln=dict(component='FileEditQuantity'),
         a_browser=dict(adaptor='RawFileAdaptor')
     )
-    # for legacy reasons
-    samples = Quantity(
-        type=Reference(CompositeSystem),
-        shape=['*'],
-        descriptions='The samples in the batch.',
-        a_eln=dict(component='ReferenceEditQuantity')
-    )
 
     entities = Collection.entities.m_copy()
-    entities.label = "Samples"
+    entities.a_eln = dict(label="Samples")
 
     batch_id = SubSection(
         section_def=ReadableIdentifiersCustom)
 
     def normalize(self, archive, logger):
         super(Batch, self).normalize(archive, logger)
-        if self.samples and not self.entities:
-            entities = []
-            for sample in self.samples:
-                entities.append(CompositeSystemReference(reference=sample))
-            self.entities = entities
-            update_archive(self, archive, archive.metadata.mainfile)
 
         if self.export_batch_ids and self.entities:
             self.export_batch_ids = False
@@ -148,8 +115,7 @@ class BaseProcess(Process):
         a_eln=dict(component='ReferenceEditQuantity'))
 
     def normalize(self, archive, logger):
-        if self.samples and self.samples[0].reference is None:
-            keep_samples(self, archive)
+
         if self.batch:
             self.samples = self.batch.entities
         super(BaseProcess, self).normalize(archive, logger)
@@ -296,14 +262,7 @@ class LayerDeposition(BaseProcess):
 
 class BaseMeasurement(Measurement):
 
-    solution = Quantity(
-        type=Reference(Solution.m_def),
-        shape=['*'],
-        a_eln=dict(component='ReferenceEditQuantity'))
-
     def normalize(self, archive, logger):
-        if self.samples and self.samples[0].reference is None:
-            keep_samples(self, archive)
         super(BaseMeasurement, self).normalize(archive, logger)
 
 
