@@ -183,7 +183,7 @@ def set_sample_reference(archive, entry, search_id):
         if "sample" in data["entry_type"].lower():
             entry.samples = [CompositeSystemReference(reference=get_reference(upload_id, entry_id))]
         if "solution" in data["entry_type"].lower() or "ink" in data["entry_type"].lower():
-            entry.solution = [get_reference(upload_id, entry_id)]
+            entry.samples = [CompositeSystemReference(reference=get_reference(upload_id, entry_id))]
 
 
 def find_sample_by_id(archive, sample_id):
