@@ -20,13 +20,12 @@ import numpy as np
 
 from nomad.metainfo import (Quantity, SubSection, Section, Reference, Datetime)
 
-from nomad.datamodel.metainfo.eln import Substance
 from nomad.datamodel.results import Results, Material
 from nomad.datamodel.data import ArchiveSection
 
-from nomad.datamodel.metainfo.basesections import CompositeSystem
+from nomad.datamodel.metainfo.basesections import CompositeSystem, PubChemPureSubstanceSection
 from .. import ReadableIdentifiersCustom
-from .preparation_protocoll import PreparationProtocol
+# from .preparation_protocoll import PreparationProtocol
 
 
 def get_next_project_sample_number(data, entry_id):
@@ -244,9 +243,8 @@ class Electrode(CESample):
 
 class SubstanceWithConcentration(ArchiveSection):
     m_def = Section(label_quantity='name')
-    substance = Quantity(
-        type=Reference(Substance.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
+    substance = SubSection(
+        section_def=PubChemPureSubstanceSection)
 
     name = Quantity(type=str)
 
@@ -281,9 +279,8 @@ class Electrolyte(CESample):
         type=np.dtype(np.float64),
         a_eln=dict(component='NumberEditQuantity', label="pH Value"))
 
-    solvent = Quantity(
-        type=Reference(Substance.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
+    solvent = SubSection(
+        section_def=PubChemPureSubstanceSection)
 
     substances = SubSection(
         section_def=SubstanceWithConcentration, repeats=True)
@@ -291,24 +288,20 @@ class Electrolyte(CESample):
     def normalize(self, archive, logger):
 
         formulas = []
-        try:
-            if self.solvent is not None:
-                formulas.append(
-                    self.solvent.molecular_formula.strip().replace(
-                        ".", ""))
-            if self.substances is not None:
-                formulas.extend([subs.substance.molecular_formula.strip().replace(
-                    ".", "") for subs in self.substances if subs.substance is not None and subs.substance.molecular_formula is not None])
-            self.chemical_composition_or_formulas = ','.join(formulas)
-            super(Electrolyte, self).normalize(archive, logger)
-        except:
-            pass
+        if self.solvent is not None:
+            formulas.append(
+                self.solvent.molecular_formula.strip().replace(
+                    ".", ""))
+        if self.substances is not None:
+            formulas.extend([subs.substance.molecular_formula.strip().replace(
+                ".", "") for subs in self.substances if subs.substance is not None and subs.substance.molecular_formula is not None])
+        self.chemical_composition_or_formulas = ','.join(formulas)
+        super(Electrolyte, self).normalize(archive, logger)
 
 
 class Purging(ArchiveSection):
-    gas = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
+    gas = SubSection(
+        section_def=PubChemPureSubstanceSection)
 
     temperature = Quantity(
         type=np.dtype(np.float64),
