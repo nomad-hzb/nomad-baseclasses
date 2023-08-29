@@ -131,7 +131,6 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
                 batch_process.positon_in_experimental_plan = idx2 + 1
                 entry_id = get_entry_id_from_file_name(
                     file_name_process, archive)
-                batch_process.is_standard_process = False
 
                 batch_process.description
                 # todo add one second
