@@ -30,9 +30,9 @@ from nomad.datamodel.metainfo.basesections import CompositeSystem
 
 def collectBaseProcesses(entry, entry_id, entry_data):
     # read out information
-    if "previous_process" in entry_data:
+    if "positon_in_experimental_plan" in entry_data:
         entry[entry_id].update(
-            {"previous_process": entry_data["previous_process"]})
+            {"positon_in_experimental_plan": entry_data["positon_in_experimental_plan"]})
     # Check if it is a layer deposition
     import inspect
     import baseclasses
@@ -102,34 +102,10 @@ def collectEQEMeasurement(entry, entry_id, entry_data):
 
 
 def sortProcesses(processes):
-    processes_sorted = []
-    processes_working = [(key, p) for key, p in processes.items()]
-    while (len(processes_working) > 0):
-        process_id, process = processes_working.pop(0)
-        inserted = False
-
-        for i, process_sorted in enumerate(processes_sorted.copy()):
-
-            if "previous_process" in process_sorted and any(
-                    process_id in j for j in process_sorted["previous_process"]):
-                processes_sorted.insert(i, process)
-                inserted = True
-                break
-
-        if not inserted:  # Todo insert by date comparism
-            has_followup_process = False
-            for key, p in processes.items():
-                if "previous_process" in p and any(
-                        process_id in j for j in p["previous_process"]):
-                    has_followup_process = True
-                    break
-            if has_followup_process:
-                processes_working.append((process_id, process))
-
-            else:
-                processes_sorted.append(process)
-
-    return processes_sorted
+    processes_working = [p for key, p in processes.items()]
+    process_positions = [p["positon_in_experimental_plan"]
+                         if "positon_in_experimental_plan" in p else -1 for p in processes_working]
+    return [x for _, x in sorted(zip(process_positions, processes_working), key=lambda pair: pair[0])]
 
 
 def collectSampleData(archive):
@@ -189,7 +165,7 @@ def collectSampleData(archive):
         except Exception as e:
             print("Error in processing data: ", e)
 
-    # sort processes by the fieled previous process
+    # sort processes by the filled previous process
     result["processes"] = sortProcesses(result["processes"])
     return result
 

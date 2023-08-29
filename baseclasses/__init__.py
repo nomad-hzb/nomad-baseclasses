@@ -17,7 +17,7 @@
 #
 
 import json
-
+import numpy as np
 
 from nomad.metainfo import (
     Quantity,
@@ -109,12 +109,17 @@ class BaseProcess(Process):
         type=Reference(Batch.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
-    previous_process = Quantity(
-        type=Reference(SectionProxy("BaseProcess")),
-        shape=['*'],
-        a_eln=dict(component='ReferenceEditQuantity'))
+    positon_in_experimental_plan = Quantity(
+        type=np.dtype(np.int64),
+        a_eln=dict(component='NumberEditQuantity'))
 
     def normalize(self, archive, logger):
+
+        if not self.positon_in_experimental_plan:
+            try:
+                self.positon_in_experimental_plan = float(archive.metadata.mainfile.split("_")[0])
+            except:
+                pass
 
         if self.batch:
             self.samples = self.batch.entities
