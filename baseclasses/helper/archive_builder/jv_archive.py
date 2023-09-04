@@ -42,27 +42,27 @@ def get_jv_archive(jv_dict, mainfile, jvm):
             light_intensity=jv_dict['intensity'] if 'intensity' in jv_dict else None,
             open_circuit_voltage=round(
                 jv_dict['V_oc'][curve_idx],
-                2) * ureg('V'),
+                8) * ureg('V'),
             short_circuit_current_density=round(
                 jv_dict['J_sc'][curve_idx],
-                2) * ureg('mA/cm^2'),
+                8) * ureg('mA/cm^2'),
             fill_factor=round(
                 jv_dict['Fill_factor'][curve_idx],
-                2) * 0.01,
+                8) * 0.01,
             efficiency=round(
                 jv_dict['Efficiency'][curve_idx],
-                2),
+                8),
             potential_at_maximum_power_point=round(
                 jv_dict['U_MPP'][curve_idx],
-                2) * ureg('V'),
+                8) * ureg('V'),
             current_density_at_maximun_power_point=round(
                 jv_dict['J_MPP'][curve_idx],
-                2) * ureg('mA/cm^2'),
+                8) * ureg('mA/cm^2'),
             series_resistance=round(
                     jv_dict['R_ser'][curve_idx],
-                    2) * ureg('ohm*cm^2'),
+                    8) * ureg('ohm*cm^2'),
             shunt_resistance=round(
                         jv_dict['R_par'][curve_idx],
-                        2) * ureg('ohm*cm^2'),
+                        8) * ureg('ohm*cm^2'),
         )
         jvm.jv_curve.append(jv_set)

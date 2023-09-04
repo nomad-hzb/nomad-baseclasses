@@ -342,7 +342,7 @@ def get_jv_data(filename, encoding='utf-8'):
     return jv_dict
 
 
-# filename="examplary_jv_data/CR/ACD3_1_04_Cycle_2_illu.csv"
+# filename="/home/a2853/Documents/Projects/nomad/perotf_examplary_jv_data/CR/ACL2_1_02_Cycle_0_illu.csv"
 # filename="examplary_jv_data/TFL/R4_XC2_thick_01_Cycle_2_illu.csv"
 # filename="examplary_jv_data/TFL/B4_01_GB_03_Cycle_1_illu.csv"
 # filename="examplary_jv_data/CR/MB3_Thick flipped_01_Cycle_1_illu.csv"
@@ -350,4 +350,4 @@ def get_jv_data(filename, encoding='utf-8'):
 # filename="examplary_jv_data/CR/Cell-01-Ref_02_Cycle_2_illu.csv"
 
 
-# jv_info=get_jv_data(filename)
+# jv_info=get_jv_data(filename, encoding='ISO-8859-1')
