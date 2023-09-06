@@ -21,14 +21,18 @@ import numpy as np
 from nomad.metainfo import (Quantity, Reference, SubSection)
 from nomad.datamodel.data import ArchiveSection
 
-from ..chemical import Chemical
+from nomad.datamodel.metainfo.basesections import PubChemPureSubstanceSection
 from .. import LayerDeposition
+from ..chemical import Chemical
 
 
 class EvaporationSources(ArchiveSection):
     chemical = Quantity(
         type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
+
+    chemical_2 = SubSection(
+        section_def=PubChemPureSubstanceSection)
 
     sources = Quantity(
         type=str,

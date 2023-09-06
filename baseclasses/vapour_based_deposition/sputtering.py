@@ -23,6 +23,7 @@ from nomad.metainfo import (Quantity, Reference, SubSection)
 
 from ..chemical import Chemical
 from .. import LayerDeposition
+from nomad.datamodel.metainfo.basesections import PubChemPureSubstanceSection
 
 
 class SputteringProcess(ArchiveSection):
@@ -30,6 +31,9 @@ class SputteringProcess(ArchiveSection):
     target = Quantity(
         type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
+
+    target_2 = SubSection(
+        section_def=PubChemPureSubstanceSection)
 
     gas = Quantity(
         type=Reference(Chemical.m_def),

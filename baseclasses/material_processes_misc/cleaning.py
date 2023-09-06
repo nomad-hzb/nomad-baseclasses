@@ -21,11 +21,12 @@ import numpy as np
 from nomad.metainfo import (
     Quantity,
     Reference,
-    Section)
+    Section, SubSection)
 from nomad.datamodel.data import ArchiveSection
 
 from .. import BaseProcess
 from ..chemical import Chemical
+from nomad.datamodel.metainfo.basesections import PubChemPureSubstanceSection
 
 
 class CleaningTechnique(ArchiveSection):
@@ -48,6 +49,9 @@ class SolutionCleaning(CleaningTechnique):
         type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
+    solvent_2 = SubSection(
+        section_def=PubChemPureSubstanceSection)
+    
     temperature = Quantity(
         type=np.dtype(np.float64),
         unit=('°C'),

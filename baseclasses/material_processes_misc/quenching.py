@@ -21,10 +21,11 @@ import numpy as np
 from nomad.metainfo import (
     Quantity,
     Section,
-    Reference)
+    Reference, SubSection)
 from nomad.datamodel.data import ArchiveSection
 
 from ..chemical import Chemical
+from nomad.datamodel.metainfo.basesections import PubChemPureSubstanceSection
 
 
 class Quenching(ArchiveSection):
@@ -39,6 +40,9 @@ class AntiSolventQuenching(Quenching):
     anti_solvent = Quantity(
         type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
+
+    anti_solvent_2 = SubSection(
+        section_def=PubChemPureSubstanceSection)
 
     anti_solvent_volume = Quantity(
         type=np.dtype(

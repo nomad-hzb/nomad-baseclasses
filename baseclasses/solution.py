@@ -28,6 +28,8 @@ from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.results import Results, Material
 
 from .chemical import Chemical
+from nomad.datamodel.metainfo.basesections import PubChemPureSubstanceSection
+
 from nomad.datamodel.metainfo.basesections import CompositeSystem
 from .customreadable_identifier import ReadableIdentifiersCustom
 
@@ -42,6 +44,9 @@ class SolutionChemical(ArchiveSection):
     chemical = Quantity(
         type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
+
+    chemical_2 = SubSection(
+        section_def=PubChemPureSubstanceSection)
 
     chemical_volume = Quantity(
         type=np.dtype(np.float64),

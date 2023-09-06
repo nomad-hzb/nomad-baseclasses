@@ -22,6 +22,7 @@ from nomad.metainfo import (Quantity, Reference, SubSection)
 from nomad.datamodel.data import ArchiveSection
 
 from ..chemical import Chemical
+from nomad.datamodel.metainfo.basesections import PubChemPureSubstanceSection
 from .. import LayerDeposition
 
 
@@ -31,6 +32,9 @@ class PVDProcess(ArchiveSection):
         type=Reference(Chemical.m_def),
         shape=['*'],
         a_eln=dict(component='ReferenceEditQuantity'))
+
+    target_2 = SubSection(
+        section_def=PubChemPureSubstanceSection, repeats=True)
 
     power = Quantity(
         type=np.dtype(
