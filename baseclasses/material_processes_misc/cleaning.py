@@ -51,7 +51,7 @@ class SolutionCleaning(CleaningTechnique):
 
     solvent_2 = SubSection(
         section_def=PubChemPureSubstanceSection)
-    
+
     temperature = Quantity(
         type=np.dtype(np.float64),
         unit=('°C'),
@@ -62,6 +62,10 @@ class SolutionCleaning(CleaningTechnique):
         if self.solvent:
             if self.solvent.name:
                 self.name = self.solvent.name
+
+        if self.solvent_2:
+            if self.solvent_2.name:
+                self.name = self.solvent_2.name
 
 
 class UVCleaning(CleaningTechnique):

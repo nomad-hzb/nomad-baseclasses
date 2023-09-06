@@ -69,6 +69,15 @@ class SolutionChemical(ArchiveSection):
             else:
                 self.name = self.chemical.name
 
+        if self.chemical_2 is not None and self.chemical_2.name is not None:
+            if self.chemical_volume is not None:
+                self.name = self.chemical_2.name + \
+                    ' ' + str(self.chemical_volume)
+            elif self.chemical_mass is not None:
+                self.name = self.chemical_2.name + ' ' + str(self.chemical_mass)
+            else:
+                self.name = self.chemical_2.name
+
 
 class OtherSolution(ArchiveSection):
     m_def = Section(label_quantity='name')
