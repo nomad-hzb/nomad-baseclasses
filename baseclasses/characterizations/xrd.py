@@ -91,6 +91,14 @@ class XRDShiftedData(XRDData):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm'))
 
 
+class XRDProperties(ArchiveSection):
+
+    sample_temperature = Quantity(
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
+
+
 class XRD(BaseMeasurement):
     '''UV vis Measurement'''
 
@@ -99,18 +107,19 @@ class XRD(BaseMeasurement):
 
     data_file = Quantity(
         type=str,
-        shape=['*'],
         a_eln=dict(component='FileEditQuantity'),
         a_browser=dict(adaptor='RawFileAdaptor'))
 
-    measurements = SubSection(
-        section_def=XRDData, repeats=True)
+    data = SubSection(
+        section_def=XRDData)
 
-    shifted_data = SubSection(
-        section_def=XRDShiftedData, repeats=True)
+    properties = SubSection(
+        section_def=XRDProperties)
+    # shifted_data = SubSection(
+    #     section_def=XRDShiftedData, repeats=True)
 
-    identifier = Quantity(
-        type=str)
+    # identifier = Quantity(
+    #     type=str)
 
     def normalize(self, archive, logger):
         super(XRD, self).normalize(archive, logger)
