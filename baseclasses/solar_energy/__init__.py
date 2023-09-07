@@ -27,3 +27,4 @@ from .standardsample import StandardSampleSolarCell
 from .substrate import Substrate
 from .solarcellsample import SolcarCellSample, BasicSampleWithID
 from .optical_microscope import OpticalMicroscope
+from .surface_photo_voltage import trSPVMeasurement, trSPVVoltage, trSPVData, trSPVProperties
