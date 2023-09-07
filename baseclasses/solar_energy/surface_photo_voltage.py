@@ -74,7 +74,7 @@ class trSPVVoltage(ArchiveSection):
 
     measurement = Quantity(
         type=np.dtype(
-            np.float64), shape=['*'], unit='mV/pF')
+            np.float64), shape=['*'], unit='V/pF')
 
     voltage = Quantity(
         type=np.dtype(
@@ -111,7 +111,7 @@ class trSPVMeasurement(BaseMeasurement):
         section_def=trSPVData)
 
     def normalize(self, archive, logger):
-        self.method = "PL Measurement"
+        self.method = "transient SPV Measurement"
         if self.properties is not None and self.properties.capacitance is not None \
                 and self.data is not None and self.data.voltages is not None:
             for voltage_data in self.data.voltages:
