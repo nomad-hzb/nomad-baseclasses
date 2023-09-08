@@ -23,7 +23,7 @@ from nomad.metainfo import (Quantity, SubSection, Section, Reference, Datetime)
 from nomad.datamodel.results import Results, Material
 from nomad.datamodel.data import ArchiveSection
 
-from nomad.datamodel.metainfo.basesections import CompositeSystem, PubChemPureSubstanceSection
+from nomad.datamodel.metainfo.basesections import CompositeSystem, PubChemPureSubstanceSection, CompositeSystemReference
 from .. import ReadableIdentifiersCustom
 # from .preparation_protocoll import PreparationProtocol
 
@@ -314,10 +314,20 @@ class Purging(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='minute'))
 
 
+class EnvironmentReference(CompositeSystemReference):
+    volume = Quantity(
+        type=np.dtype(np.float64),
+        unit="ml",
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'))
+
+
 class Environment(Electrolyte):
 
     purging = SubSection(
         section_def=Purging)
+
+    other_environments = SubSection(
+        section_def=EnvironmentReference, repeats=True)
 
 
 class ElectroChemicalCell(CESample):
