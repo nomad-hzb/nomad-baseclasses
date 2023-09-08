@@ -35,11 +35,15 @@ class trSPVProperties(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity',
                    defaultDisplayUnit='Hz'))
 
+    filter_setup = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'))
+
     laser_pulse_intensity = Quantity(
         type=np.dtype(np.float64),
-        unit=('uJ/cm**2'),
+        unit=('W/m**2'),
         a_eln=dict(component='NumberEditQuantity',
-                   defaultDisplayUnit='uJ/cm**2'))
+                   defaultDisplayUnit='W/m**2'))
 
     number_of_transients = Quantity(
         type=np.dtype(np.int64),
