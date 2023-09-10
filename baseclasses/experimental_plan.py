@@ -47,6 +47,15 @@ class Step(ArchiveSection):
     batch_processes = SubSection(
         section_def=BaseProcess, repeats=True)
 
+    process_reference = Quantity(
+        type=Reference(BaseProcess.m_def),
+        a_eln=dict(component='ReferenceEditQuantity')
+    )
+
+    def normalize(self, archive, logger):
+        if self.process_reference and self.name is None:
+            self.name = self.process_reference.name
+
 
 class ExperimentalPlan(Entity):
 
@@ -98,11 +107,11 @@ class ExperimentalPlan(Entity):
             archive.metadata.entry_name = self.name
 
         steps = []
-        if self.standard_plan and self.standard_plan.processes:
+        if self.standard_plan and self.standard_plan.processes and self.plan is None:
             number_of_entries = len(self.standard_plan.processes)
             if len(self.plan) < number_of_entries:
                 for step in self.standard_plan.processes:
-                    steps.append(Step(name=step.name))
+                    steps.append(Step(name=step.name, process_reference=step))
                 self.plan = steps
 
         self.method = "Experimental Plan"

@@ -23,7 +23,7 @@ from .plmeasurement import PLMeasurement
 from .uvvismeasurement import UVvisMeasurement, UVvisData
 from .eqemeasurement import EQEMeasurement
 from .time_resolved_photoluminescence import TimeResolvedPhotoluminescence, TRPLProperties
-from .standardsample import StandardSampleSolarCell
+from .standardsample import StandardSampleSolarCell, SolarCellProperties
 from .substrate import Substrate
 from .solarcellsample import SolcarCellSample, BasicSampleWithID
 from .optical_microscope import OpticalMicroscope

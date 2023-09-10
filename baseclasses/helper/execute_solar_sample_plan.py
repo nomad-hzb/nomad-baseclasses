@@ -20,9 +20,21 @@ from nomad.datamodel.metainfo.basesections import CompositeSystemReference
 from .. import ReadableIdentifiersCustom
 
 from ..helper.utilities import get_reference, create_archive, get_entry_id_from_file_name, add_section_markdown, rewrite_json
+from ..solar_energy import SolarCellProperties
 
 
 def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
+
+    if plan_obj.standard_plan is not None:
+        plan_obj.solar_cell_properties = SolarCellProperties(
+            substrate=plan_obj.standard_plan.substrate,
+            architecture=plan_obj.standard_plan.architecture
+        )
+
+    if not (plan_obj.number_of_substrates > 0
+            and plan_obj.number_of_substrates % plan_obj.substrates_per_subbatch == 0
+            and plan_obj.plan):
+        return
 
     # standard process integration
     if plan_obj.load_standard_processes:
@@ -30,16 +42,16 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
         rewrite_json(["data", "load_standard_processes"], archive, False)
 
         number_of_subbatches = plan_obj.number_of_substrates // plan_obj.substrates_per_subbatch
-        for i, process in enumerate(plan_obj.standard_plan.processes):
+        for i, step in enumerate(plan_obj.plan):
             if not plan_obj.plan[i].vary_parameters:
-                plan_obj.plan[i].batch_processes = [process]
+                plan_obj.plan[i].batch_processes = [step.process_reference]
                 continue
             plan_obj.plan[i].batch_processes = [
-                process] * number_of_subbatches
+                step.process_reference] * number_of_subbatches
 
     # process, sample and batch creation
     if plan_obj.create_samples_and_processes \
-            and plan_obj.batch_id and plan_obj.batch_id.lab_id:
+            and plan_obj.batch_id and plan_obj.batch_id.lab_id and plan_obj.solar_cell_properties:
         plan_obj.create_samples_and_processes = False
         rewrite_json(["data", "create_samples_and_processes"], archive, False)
 
@@ -48,8 +60,8 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
         sample_id = ReadableIdentifiersCustom(**batch_id.m_to_dict())
         # create samples and batches
         sample_refs = []
-        subs = plan_obj.standard_plan.substrate
-        architecture = plan_obj.standard_plan.architecture
+        subs = plan_obj.solar_cell_properties.substrate
+        architecture = plan_obj.solar_cell_properties.architecture
         number_of_subbatches = plan_obj.number_of_substrates // plan_obj.substrates_per_subbatch
         for idx1 in range(number_of_subbatches):
             sample_refs_subbatch = []
