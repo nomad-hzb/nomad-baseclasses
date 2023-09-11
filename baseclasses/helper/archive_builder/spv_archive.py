@@ -35,7 +35,11 @@ def get_spv_archive(spv_dict, spv_data, main_file_path, spv_entry):
     directory, main_file = os.path.split(main_file_path)
     try:
         lab_id = spv_entry.samples[0].lab_id
-        mapping = pd.read_csv(os.path.join(directory, "sample_capacitance.csv"), index_col=0, header=None)
+        try:
+            mapping = pd.read_csv(os.path.join(directory, "sample_capacitance.csv"), index_col=0, header=None)
+        except:
+            mapping = pd.read_excel(os.path.join(directory, "sample_capacitance.xlsx"), index_col=0, header=None)
+
         capacitance = mapping.loc[lab_id]
     except Exception as e:
         print(e)
