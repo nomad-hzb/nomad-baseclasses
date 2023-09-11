@@ -78,6 +78,13 @@ class SpinCoating(WetChemicalDeposition):
         type=Reference(SpinCoatingRecipe.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
+    recipe_steps = SubSection(
+        section_def=SpinCoatingRecipeSteps, repeats=True)
+
     def normalize(self, archive, logger):
         super(SpinCoating, self).normalize(archive, logger)
         self.method = "Spin Coating"
+
+        if self.recipe and self.recipe.steps is not None:
+            steps = [step for step in self.recipe.steps]
+            self.recipe_steps = steps

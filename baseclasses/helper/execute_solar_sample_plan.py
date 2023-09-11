@@ -33,7 +33,7 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
 
     if not (plan_obj.number_of_substrates > 0
             and plan_obj.number_of_substrates % plan_obj.substrates_per_subbatch == 0
-            and plan_obj.plan):
+            ):
         return
 
     # standard process integration
