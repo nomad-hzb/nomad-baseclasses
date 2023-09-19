@@ -57,7 +57,6 @@ class Step(ArchiveSection):
             self.process_reference = self.batch_processes[0]
         if self.process_reference and self.name is None:
             self.name = self.process_reference.name
-       
 
 
 class ExperimentalPlan(Entity):
@@ -110,7 +109,7 @@ class ExperimentalPlan(Entity):
             archive.metadata.entry_name = self.name
 
         steps = []
-        if self.standard_plan and self.standard_plan.processes and self.plan is None:
+        if self.standard_plan and self.standard_plan.processes and not self.plan:
             number_of_entries = len(self.standard_plan.processes)
             if len(self.plan) < number_of_entries:
                 for step in self.standard_plan.processes:
