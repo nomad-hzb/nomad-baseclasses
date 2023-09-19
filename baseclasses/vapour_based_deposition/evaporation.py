@@ -18,7 +18,7 @@
 
 import numpy as np
 
-from nomad.metainfo import (Quantity, Reference, SubSection)
+from nomad.metainfo import (Quantity, Reference, SubSection, Section)
 from nomad.datamodel.data import ArchiveSection
 
 from nomad.datamodel.metainfo.basesections import PubChemPureSubstanceSection
@@ -82,6 +82,8 @@ class EvaporationSources(ArchiveSection):
     # TODO add check if mass increased
     # if self.mass_before_weighing and self.mass_after_weighing:
     #     diff = self.mass_after_weighing - self.mass_before_weighing
+    
+    
 
 
 class PerovsciteEvaporation(ArchiveSection):
@@ -90,11 +92,15 @@ class PerovsciteEvaporation(ArchiveSection):
 
 
 class Evaporation(ArchiveSection):
+    m_def = Section(label_quantity='name')
+    name = Quantity(
+        type=str
+    )
 
     chemical = Quantity(
         type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
-    
+
     chemical_2 = SubSection(
         section_def=PubChemPureSubstanceSection)
 
@@ -156,7 +162,16 @@ class Evaporation(ArchiveSection):
             defaultDisplayUnit='s',
             props=dict(
                 minValue=0)))
+    
+    def normalize(self, archive, logger):
 
+        if self.chemical:
+            if self.chemical.name:
+                self.name = self.chemical.name
+
+        if self.chemical_2:
+            if self.chemical_2.name:
+                self.name = self.chemical_2.name
 
 class OrganicEvaporation(Evaporation):
     temparature = Quantity(
