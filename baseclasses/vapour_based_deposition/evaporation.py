@@ -94,6 +94,9 @@ class Evaporation(ArchiveSection):
     chemical = Quantity(
         type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
+    
+    chemical_2 = SubSection(
+        section_def=PubChemPureSubstanceSection)
 
     source = Quantity(
         type=str,
