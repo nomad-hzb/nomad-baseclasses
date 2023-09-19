@@ -173,7 +173,7 @@ class Evaporation(ArchiveSection):
 
         if self.thickness:
             if self.name:
-                self.name += str(self.thickness)
+                self.name += ' ' + str(self.thickness)
             else:
                 self.name = str(self.thickness)
 
