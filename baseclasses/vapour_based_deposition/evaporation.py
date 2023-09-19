@@ -173,9 +173,9 @@ class Evaporation(ArchiveSection):
 
         if self.thickness:
             if self.name:
-                self.name += self.thickness
+                self.name += str(self.thickness)
             else:
-                self.name = self.thickness
+                self.name = str(self.thickness)
 
 
 class OrganicEvaporation(Evaporation):
