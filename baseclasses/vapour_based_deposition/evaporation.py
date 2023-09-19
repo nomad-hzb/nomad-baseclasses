@@ -82,8 +82,6 @@ class EvaporationSources(ArchiveSection):
     # TODO add check if mass increased
     # if self.mass_before_weighing and self.mass_after_weighing:
     #     diff = self.mass_after_weighing - self.mass_before_weighing
-    
-    
 
 
 class PerovsciteEvaporation(ArchiveSection):
@@ -162,7 +160,7 @@ class Evaporation(ArchiveSection):
             defaultDisplayUnit='s',
             props=dict(
                 minValue=0)))
-    
+
     def normalize(self, archive, logger):
 
         if self.chemical:
@@ -172,6 +170,13 @@ class Evaporation(ArchiveSection):
         if self.chemical_2:
             if self.chemical_2.name:
                 self.name = self.chemical_2.name
+
+        if self.thickness:
+            if self.name:
+                self.name += self.thickness
+            else:
+                self.name = self.thickness
+
 
 class OrganicEvaporation(Evaporation):
     temparature = Quantity(
