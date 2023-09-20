@@ -26,3 +26,4 @@ from .xas import XAS, XASFluorescence, XASTransmission
 from .xpeem import XPEEM
 from .xrr import XRR, XRRData, XRRFittedData
 from .xrd import XRD, XRDData
+from .xrf import  XRFLibrary, XRFSingleLibraryMeasurement, XRFProperties,XRFComposition, XRFData

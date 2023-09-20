@@ -91,6 +91,52 @@ class Batch(Collection):
                 pass
 
 
+class LibrarySample(CompositeSystem):
+
+    grid_information = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity')
+    )
+
+    library_id = SubSection(
+        section_def=ReadableIdentifiersCustom)
+
+
+class SingleLibraryMeasurement(ArchiveSection):
+    m_def = Section(label_quantity='name')
+    name = Quantity(
+        type=str)
+
+    position_x = Quantity(
+        type=np.dtype(np.float64),
+        a_eln=dict(component='NumberEditQuantity')
+    )
+
+    position_y = Quantity(
+        type=np.dtype(np.float64),
+        a_eln=dict(component='NumberEditQuantity')
+    )
+
+    position_x_relative = Quantity(
+        type=np.dtype(np.float64),
+        a_eln=dict(component='NumberEditQuantity')
+    )
+
+    position_y_relative = Quantity(
+        type=np.dtype(np.float64),
+        a_eln=dict(component='NumberEditQuantity'))
+
+    position_index = Quantity(
+        type=np.dtype(np.int64),
+        a_eln=dict(component='NumberEditQuantity')
+    )
+
+    def normalize(self, archive, logger):
+        super(SingleLibraryMeasurement, self).normalize(archive, logger)
+        if self.position_x_relative and self.position_y_relative:
+            self.name = f"{self.position_x_relative},{self.position_y_relative}"
+
+
 class BaseProcess(Process):
 
     # is_standard_process = Quantity(
@@ -156,6 +202,8 @@ class StandardSample(Entity):
 
 
 class LayerProperties(ArchiveSection):
+    m_def = Section(label_quantity='layer_material_name')
+
     layer_type = Quantity(
         type=str,
         shape=[],
@@ -194,7 +242,7 @@ class LayerProperties(ArchiveSection):
 class LayerDeposition(BaseProcess):
     m_def = Section(label_quantity='layer')
 
-    layer = SubSection(section_def=LayerProperties)
+    layer = SubSection(section_def=LayerProperties, repeats=True)
 
     def normalize(self, archive, logger):
         super(LayerDeposition, self).normalize(archive, logger)
@@ -206,63 +254,68 @@ class LayerDeposition(BaseProcess):
 
         if self.layer is None:
             return
+        device_stack = []
+        hole_transport_layer = []
+        electron_transport_layer = []
+        back_contact = []
+        absorber = []
+        elements_final = []
+        for layer in self.layer:
+            layer_material_name = layer.layer_material_name
+            if layer_material_name:
+                layer.layer_material = ''
 
-        layer_material_name = self.layer.layer_material_name
-        if layer_material_name:
-            self.layer.layer_material = ''
-            material = archive.results.material
+                from .helper.formula_normalizer import PerovskiteFormulaNormalizer
+                formulas = [PerovskiteFormulaNormalizer(
+                    formula.strip()).clean_formula()
+                    for formula in layer_material_name.split(",")]
+                try:
+                    elements = [f for formula in formulas for f in formula[1]]
+                    elements_final.extend(list(set(elements)))
+                    lm_tmp = ",".join([formulas[i][0] for i, _ in enumerate(formulas)]
+                                      ) if isinstance(formulas, list) else None
+                    layer.layer_material = lm_tmp
 
-            from .helper.formula_normalizer import PerovskiteFormulaNormalizer
-            formulas = [PerovskiteFormulaNormalizer(
-                formula.strip()).clean_formula()
-                for formula in layer_material_name.split(",")]
-            try:
-                elements = [f for formula in formulas for f in formula[1]]
-                material.elements = []
-                material.elements = list(set(elements))
-                lm_tmp = ",".join([formulas[i][0] for i, _ in enumerate(formulas)]
-                                  ) if isinstance(formulas, list) else None
-                self.layer.layer_material = lm_tmp
+                except BaseException as e:
+                    print(e)
 
-            except BaseException as e:
-                print(e)
+            from nomad.atomutils import Formula
+            layer_material = layer.layer_material
+            if layer_material:
+                try:
+                    formula = Formula(layer_material)
+                    formula.populate(section=archive.results.material)
+                except Exception as e:
+                    logger.warn('could not analyse layer material', exc_info=e)
 
-        from nomad.atomutils import Formula
-        layer_material = self.layer.layer_material
-        if layer_material:
-            try:
-                formula = Formula(layer_material)
-                formula.populate(section=archive.results.material)
-            except Exception as e:
-                logger.warn('could not analyse layer material', exc_info=e)
+            layer_type = layer.layer_type
+            if layer_type:
+                add_solar_cell(archive)
 
-        layer_type = self.layer.layer_type
-        if layer_type:
-            add_solar_cell(archive)
+                if layer_material or layer_material_name:
 
-            if layer_material or layer_material_name:
+                    layer_material_name_tmp = layer_material_name if layer_material_name else layer_material
 
-                layer_material_name_tmp = layer_material_name if layer_material_name else layer_material
+                    if layer_type:
+                        device_stack.append(layer_material_name_tmp)
+                    if layer_type == 'Hole Transport Layer':
+                        hole_transport_layer.append(layer_material_name_tmp)
+                    if layer_type == 'Electron Transport Layer':
+                        electron_transport_layer.append(layer_material_name_tmp)
+                    if layer_type == 'Back Contact':
+                        back_contact.append(layer_material_name_tmp)
+                    if layer_type == 'Absorber Layer':
+                        absorber.append(layer_material_name_tmp)
 
-                if layer_type:
-                    archive.results.properties.optoelectronic.solar_cell.device_stack \
-                        = [layer_type + " " + layer_material_name_tmp]
-                if layer_type == 'Hole Transport Layer':
-                    archive.results.properties.optoelectronic.solar_cell.hole_transport_layer \
-                        = [layer_material_name_tmp]
-                if layer_type == 'Electron Transport Layer':
-                    archive.results.properties.optoelectronic.solar_cell.electron_transport_layer \
-                        = [layer_material_name_tmp]
-                if layer_type == 'Back Contact':
-                    archive.results.properties.optoelectronic.solar_cell.back_contact \
-                        = [layer_material_name_tmp]
                 if layer_type == 'Absorber Layer':
-                    archive.results.properties.optoelectronic.solar_cell.absorber \
-                        = [layer_material_name_tmp]
-
-            if layer_type == 'Absorber Layer':
-                archive.results.properties.optoelectronic.solar_cell.absorber_fabrication \
-                    = [self.method]
+                    archive.results.properties.optoelectronic.solar_cell.absorber_fabrication \
+                        = [self.method]
+        archive.results.properties.optoelectronic.solar_cell.device_stack = device_stack
+        archive.results.properties.optoelectronic.solar_cell.hole_transport_layer = hole_transport_layer
+        archive.results.properties.optoelectronic.solar_cell.electron_transport_layer = electron_transport_layer
+        archive.results.properties.optoelectronic.solar_cell.back_contact = back_contact
+        archive.results.properties.optoelectronic.solar_cell.absorber = absorber
+        archive.results.material.elements = elements_final
 
 
 class BaseMeasurement(Measurement):

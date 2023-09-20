@@ -85,6 +85,6 @@ class SpinCoating(WetChemicalDeposition):
         super(SpinCoating, self).normalize(archive, logger)
         self.method = "Spin Coating"
 
-        if self.recipe and self.recipe.steps is not None:
+        if self.recipe_steps is None and self.recipe and self.recipe.steps is not None:
             steps = [step for step in self.recipe.steps]
             self.recipe_steps = steps

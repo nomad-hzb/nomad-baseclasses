@@ -43,8 +43,6 @@ def collectBaseProcesses(entry, entry_id, entry_data):
     if baseclasses.LayerDeposition in inspect.getmro(
             eval(entry_data["m_def"])):
         entry[entry_id].update({"layer_deposition": True})
-        entry[entry_id].update(
-            {"layer_type": entry_data["layer"]["layer_type"]})
 
     if "method" in entry_data:
         entry[entry_id].update(
@@ -60,13 +58,7 @@ def collectBaseProcesses(entry, entry_id, entry_data):
 
     entry[entry_id].update({"layer_material": ''})
     if "layer" in entry_data:
-        if "layer_material" in entry_data["layer"]:
-            entry[entry_id].update(
-                {"layer_material": entry_data["layer"]["layer_material"]})
-
-        if "layer_material_name" in entry_data["layer"]:
-            entry[entry_id].update(
-                {"layer_material_name": entry_data["layer"]["layer_material_name"]})
+        entry[entry_id].update({"layer": [layer for layer in entry_data["layer"]]})
 
 
 def collectJVMeasurement(entry, entry_id, entry_data):
@@ -170,38 +162,31 @@ def collectSampleData(archive):
     return result
 
 
-def getLayerForStack(process):
-    if 'layer_material_name' in process \
-            and process["layer_material_name"] is not None \
-            and process["layer_material_name"].strip():
-        return process["layer_material_name"].strip()
-    return process.get('layer_material')
+def getLayerForStack(layer):
+    if 'layer_material_name' in layer \
+            and layer["layer_material_name"] is not None \
+            and layer["layer_material_name"].strip():
+        return layer["layer_material_name"].strip()
+    return layer.get('layer_material')
 
 
 def addLayerDepositionToStack(archive, process):
-    layer_name = getLayerForStack(process)
-    archive.results.properties.optoelectronic.solar_cell.device_stack.append(
-        layer_name)
+    for layer in process["layer"]:
+        layer_name = getLayerForStack(layer)
+        archive.results.properties.optoelectronic.solar_cell.device_stack.append(layer_name)
 
-    if "absorber" in process["layer_type"].lower():
-        archive.results.properties.optoelectronic.solar_cell.absorber.append(
-            layer_name)
-        archive.results.properties.optoelectronic.solar_cell.absorber_fabrication.append(
-            f"{process['method']}")
+        if "absorber" in layer["layer_type"].lower():
+            archive.results.properties.optoelectronic.solar_cell.absorber.append(layer_name)
+            archive.results.properties.optoelectronic.solar_cell.absorber_fabrication = [f"{process['method']}"]
 
-    if "etl" in process["layer_type"].lower(
-    ) or "electron" in process["layer_type"].lower():
-        archive.results.properties.optoelectronic.solar_cell.electron_transport_layer.append(
-            layer_name)
+        if "etl" in layer["layer_type"].lower() or "electron" in layer["layer_type"].lower():
+            archive.results.properties.optoelectronic.solar_cell.electron_transport_layer.append(layer_name)
 
-    if "htl" in process["layer_type"].lower(
-    ) or "hole" in process["layer_type"].lower():
-        archive.results.properties.optoelectronic.solar_cell.hole_transport_layer.append(
-            layer_name)
+        if "htl" in layer["layer_type"].lower() or "hole" in layer["layer_type"].lower():
+            archive.results.properties.optoelectronic.solar_cell.hole_transport_layer.append(layer_name)
 
-    if "back" in process["layer_type"].lower():
-        archive.results.properties.optoelectronic.solar_cell.back_contact.append(
-            layer_name)
+        if "back" in layer["layer_type"].lower():
+            archive.results.properties.optoelectronic.solar_cell.back_contact.append(layer_name)
 
 
 class BasicSampleWithID(CompositeSystem):
