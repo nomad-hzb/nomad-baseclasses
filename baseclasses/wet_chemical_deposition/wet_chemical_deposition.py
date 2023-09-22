@@ -24,15 +24,22 @@ from nomad.metainfo import (
     SubSection, Section)
 
 from nomad.datamodel.data import ArchiveSection
-from ..solution import Solution
+from ..solution import Solution, BasicSolutionProperties
 from .. import LayerDeposition
 from ..material_processes_misc import Annealing, Quenching
+from baseclasses.helper.utilities import rewrite_json_recursively
 
 
 class PrecursorSolution(ArchiveSection):
 
     m_def = Section(label_quantity='name')
     name = Quantity(type=str)
+
+    reload_referenced_solution = Quantity(
+        type=bool,
+        default=False,
+        a_eln=dict(component='ButtonEditQuantity')
+    )
 
     solution = Quantity(
         type=Reference(Solution.m_def),
@@ -48,7 +55,20 @@ class PrecursorSolution(ArchiveSection):
             props=dict(
                 minValue=0)))
 
+    solution_loaded = SubSection(
+        section_def=BasicSolutionProperties)
+
     def normalize(self, archive, logger):
+
+        if self.reload_referenced_solution and self.solution:
+            self.reload_referenced_solution = False
+            rewrite_json_recursively(archive, "reload_referenced_solution", False)
+            self.solution_loaded = BasicSolutionProperties(
+                solute=self.solution.solute,
+                solvent=self.solution.solvent,
+                other_solution=self.solution.other_solution,
+                solvent_ratio=self.solution.solvent_ratio
+            )
 
         if self.solution and self.solution.name:
             if self.solution_volume:

@@ -29,6 +29,29 @@ from nomad.datamodel.metainfo.basesections import (
 )
 
 
+def traverse_dictionary(entry_dict, key, value):
+
+    for k, v in entry_dict.items():
+        if isinstance(value, dict):
+            traverse_dictionary(v, key, value)
+        elif isinstance(value, list):
+            for entry in v:
+                traverse_dictionary(entry, key, value)
+        elif k == key:
+            entry_dict[k] = value
+
+
+def rewrite_json_recursively(archive, key, value):
+    with archive.m_context.raw_file(archive.metadata.mainfile) as f:
+        file = f.name
+
+    with open(file, "r") as jsonFile:
+        data = json.load(jsonFile)
+    traverse_dictionary(data, key, value)
+    with open(file, "w") as jsonFile:
+        json.dump(data, jsonFile)
+
+
 def rewrite_json(keys_list, archive, value):
     with archive.m_context.raw_file(archive.metadata.mainfile) as f:
         file = f.name

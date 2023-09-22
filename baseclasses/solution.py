@@ -35,6 +35,8 @@ from .customreadable_identifier import ReadableIdentifiersCustom
 
 from nomad.atomutils import Formula
 
+from baseclasses.helper.utilities import rewrite_json_recursively
+
 
 class SolutionChemical(ArchiveSection):
     m_def = Section(label_quantity='name')
@@ -58,6 +60,16 @@ class SolutionChemical(ArchiveSection):
         unit=('mg'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mg'))
 
+    concentration_mass = Quantity(
+        type=np.dtype(np.float64),
+        unit=('mg/ml'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mg/ml'))
+
+    concentration_mol = Quantity(
+        type=np.dtype(np.float64),
+        unit=('mol/ml'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mol/ml'))
+
     def normalize(self, archive, logger):
 
         if self.chemical is not None and self.chemical.name is not None:
@@ -79,21 +91,57 @@ class SolutionChemical(ArchiveSection):
                 self.name = self.chemical_2.name
 
 
+class BasicSolutionProperties(ArchiveSection):
+
+    solvent_ratio = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'))
+
+    solute = SubSection(
+        section_def=SolutionChemical, repeats=True)
+
+    solvent = SubSection(
+        section_def=SolutionChemical, repeats=True)
+
+    other_solution = SubSection(
+        section_def=SectionProxy("OtherSolution"), repeats=True)
+
+
 class OtherSolution(ArchiveSection):
     m_def = Section(label_quantity='name')
+
+    reload_referenced_solution = Quantity(
+        type=bool,
+        default=False,
+        a_eln=dict(component='ButtonEditQuantity')
+    )
 
     name = Quantity(type=str)
 
     solution = Quantity(
         type=Reference(SectionProxy("Solution")),
-        a_eln=dict(component='ReferenceEditQuantity'))
+        a_eln=dict(component='ReferenceEditQuantity', label="Solution Reference"))
 
     solution_volume = Quantity(
         type=np.dtype(np.float64),
         unit=('ml'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'))
 
+    solution_loaded = SubSection(
+        section_def=BasicSolutionProperties)
+
     def normalize(self, archive, logger):
+
+        if self.reload_referenced_solution and self.solution:
+            self.reload_referenced_solution = False
+            # TODO rewrite to FALSE in json for reprocess
+            rewrite_json_recursively(archive, "reload_referenced_solution", False)
+            self.solution_loaded = BasicSolutionProperties(
+                solute=self.solution.solute,
+                solvent=self.solution.solvent,
+                other_solution=self.solution.other_solution,
+                solvent_ratio=self.solution.solvent_ratio
+            )
 
         if self.solution and self.solution.name:
             if self.solution_volume:
