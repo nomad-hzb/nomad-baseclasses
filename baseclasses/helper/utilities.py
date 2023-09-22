@@ -108,7 +108,9 @@ def add_next_md_line(key, item, indent=0):
 def add_key_item(md, key, item, item_entry, indent=0):
     if key in [
         "previous_process",
-        "is_standard_process",
+        "is_standard_process", "positon_in_experimental_plan", "molecular_mass", "inchi", "inchi_key", "smile",
+        "canonical_smile", "cas_number", "pub_chem_cid", "pub_chem_link",
+        "reload_referenced_solution",
         "samples",
         "batch",
         "name",
@@ -120,15 +122,15 @@ def add_key_item(md, key, item, item_entry, indent=0):
     if isinstance(item, dict):
         md += f"{shift}**{key.capitalize()}**:  \n"
         for key2, item2 in item.items():
-            md += add_next_md_line(key2, item2, 4+indent)
+            md = add_key_item(md, key2, item2, getattr(item_entry, key2), 4+indent)
     elif isinstance(item, list):
         md += f"{shift}**{key.capitalize()}**:  \n"
         for list_idx, subsection in enumerate(item):
             shift2 = '&nbsp;' * 4
             md += f"{shift}{shift2}**{list_idx+1}.**  \n"
             for key2, item2 in subsection.items():
-                md += add_next_md_line(key2,
-                                       getattr(item_entry[list_idx], key2), 8+indent)
+                md = add_key_item(md, key2, item2, getattr(item_entry[list_idx], key2), 8+indent)
+
     elif isinstance(item_entry, MProxy):
         md += add_next_md_line(key, item_entry.name, 4+indent)
         item_dict = item_entry.m_to_dict()

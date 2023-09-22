@@ -127,7 +127,7 @@ class OtherSolution(ArchiveSection):
         unit=('ml'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'))
 
-    solution_loaded = SubSection(
+    solution_details = SubSection(
         section_def=BasicSolutionProperties)
 
     def normalize(self, archive, logger):
@@ -136,7 +136,7 @@ class OtherSolution(ArchiveSection):
             self.reload_referenced_solution = False
             # TODO rewrite to FALSE in json for reprocess
             rewrite_json_recursively(archive, "reload_referenced_solution", False)
-            self.solution_loaded = BasicSolutionProperties(
+            self.solution_details = BasicSolutionProperties(
                 solute=self.solution.solute,
                 solvent=self.solution.solvent,
                 other_solution=self.solution.other_solution,

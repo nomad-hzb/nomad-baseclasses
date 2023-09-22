@@ -43,7 +43,7 @@ class PrecursorSolution(ArchiveSection):
 
     solution = Quantity(
         type=Reference(Solution.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
+        a_eln=dict(component='ReferenceEditQuantity', label="Solution Reference"))
 
     solution_volume = Quantity(
         type=np.dtype(
@@ -55,7 +55,7 @@ class PrecursorSolution(ArchiveSection):
             props=dict(
                 minValue=0)))
 
-    solution_loaded = SubSection(
+    solution_details = SubSection(
         section_def=BasicSolutionProperties)
 
     def normalize(self, archive, logger):
@@ -63,7 +63,7 @@ class PrecursorSolution(ArchiveSection):
         if self.reload_referenced_solution and self.solution:
             self.reload_referenced_solution = False
             rewrite_json_recursively(archive, "reload_referenced_solution", False)
-            self.solution_loaded = BasicSolutionProperties(
+            self.solution_details = BasicSolutionProperties(
                 solute=self.solution.solute,
                 solvent=self.solution.solvent,
                 other_solution=self.solution.other_solution,
