@@ -54,7 +54,7 @@ class Batch(Collection):
     export_batch_ids = Quantity(
         type=bool,
         default=False,
-        a_eln=dict(component='BoolEditQuantity')
+        a_eln=dict(component='ButtonEditQuantity')
     )
 
     csv_export_file = Quantity(
