@@ -249,8 +249,8 @@ class LayerDeposition(BaseProcess):
 
         if not archive.results:
             archive.results = Results()
-        if not archive.results.material:
-            archive.results.material = Material()
+        # if not archive.results.material:
+        archive.results.material = Material()
 
         if self.layer is None:
             return
@@ -279,14 +279,14 @@ class LayerDeposition(BaseProcess):
                 except BaseException as e:
                     print(e)
 
-            from nomad.atomutils import Formula
+            # from nomad.atomutils import Formula
             layer_material = layer.layer_material
-            if layer_material:
-                try:
-                    formula = Formula(layer_material)
-                    formula.populate(section=archive.results.material)
-                except Exception as e:
-                    logger.warn('could not analyse layer material', exc_info=e)
+            # if layer_material:
+            #     try:
+            #         formula = Formula(layer_material)
+            #         formula.populate(section=archive.results.material)
+            #     except Exception as e:
+            #         logger.warn('could not analyse layer material', exc_info=e)
 
             layer_type = layer.layer_type
             if layer_type:
