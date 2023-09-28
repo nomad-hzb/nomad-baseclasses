@@ -260,6 +260,7 @@ class LayerDeposition(BaseProcess):
         back_contact = []
         absorber = []
         elements_final = []
+        add_solar_cell(archive)
         for layer in self.layer:
             layer_material_name = layer.layer_material_name
             if layer_material_name:
@@ -290,7 +291,6 @@ class LayerDeposition(BaseProcess):
 
             layer_type = layer.layer_type
             if layer_type:
-                add_solar_cell(archive)
 
                 if layer_material or layer_material_name:
 
