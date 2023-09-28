@@ -20,7 +20,7 @@ from .jvmeasurement import JVMeasurement
 from .mpp_tracking import MPPTracking
 from .mpp_tracking_hysprint_custom import MPPTrackingHsprintCustom, SampleData, JVData, PixelData
 from .plmeasurement import PLMeasurement
-from .uvvismeasurement import UVvisMeasurement, UVvisData
+from .uvvismeasurement import UVvisMeasurement, UVvisData, UVvisDataSimple, UVvisMeasurementLibrary, UVvisSingleLibraryMeasurement, UVvisProperties
 from .eqemeasurement import EQEMeasurement
 from .time_resolved_photoluminescence import TimeResolvedPhotoluminescence, TRPLProperties
 from .standardsample import StandardSampleSolarCell, SolarCellProperties

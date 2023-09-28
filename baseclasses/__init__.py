@@ -249,8 +249,8 @@ class LayerDeposition(BaseProcess):
 
         if not archive.results:
             archive.results = Results()
-        # if not archive.results.material:
-        archive.results.material = Material()
+        if not archive.results.material:
+            archive.results.material = Material()
 
         if self.layer is None:
             return

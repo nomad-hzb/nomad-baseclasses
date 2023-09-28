@@ -29,10 +29,21 @@ from nomad.metainfo import (
     Datetime)
 from nomad.datamodel.data import ArchiveSection
 
-from .. import BaseMeasurement
+from .. import BaseMeasurement, SingleLibraryMeasurement
 
 
-class UVvisData(ArchiveSection):
+class UVvisDataSimple(ArchiveSection):
+    m_def = Section(label_quantity='name')
+
+    name = Quantity(
+        type=str)
+
+    intensity = Quantity(
+        type=np.dtype(
+            np.float64), shape=['*'])
+
+
+class UVvisData(UVvisDataSimple):
     m_def = Section(label_quantity='name',
                     a_plot=[{
                         'x': 'wavelength',
@@ -42,9 +53,6 @@ class UVvisData(ArchiveSection):
                              "config": {"scrollZoom": True,
                                         'staticPlot': False,
                                         }}])
-
-    name = Quantity(
-        type=str)
 
     datetime = Quantity(
         type=Datetime,
@@ -61,15 +69,22 @@ class UVvisData(ArchiveSection):
                             "fixedrange": False}}, "config": {
                     "editable": True, "scrollZoom": True}}])
 
-    intensity = Quantity(
-        type=np.dtype(
-            np.float64), shape=['*'], a_plot=[
-            {
-                'x': 'wavelength', 'y': 'intensity', 'layout': {
-                    'yaxis': {
-                        "fixedrange": False}, 'xaxis': {
-                            "fixedrange": False}}, "config": {
-                    "editable": True, "scrollZoom": True}}])
+
+class UVvisProperties(ArchiveSection):
+
+    integration_time = Quantity(
+        type=np.dtype(np.float64),
+        unit=('s'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'))
+
+    number_of_averages = Quantity(
+        type=np.dtype(np.int64),
+        a_eln=dict(component='NumberEditQuantity'))
+
+    spot_size = Quantity(
+        type=np.dtype(np.float64),
+        unit=('mm'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm'))
 
 
 class UVvisMeasurement(BaseMeasurement):
@@ -90,3 +105,46 @@ class UVvisMeasurement(BaseMeasurement):
     def normalize(self, archive, logger):
         self.method = "UVvis Measurement"
         super(UVvisMeasurement, self).normalize(archive, logger)
+
+
+class UVvisSingleLibraryMeasurement(SingleLibraryMeasurement):
+    m_def = Section(label_quantity='name',
+                    a_eln=dict(properties=dict(
+                        order=[
+                            "name", "position_x_relative", "position_y_relative", "position_index", "position_x", "position_y"
+                        ]))
+                    )
+
+    data = SubSection(
+        section_def=UVvisDataSimple)
+
+
+class UVvisMeasurementLibrary(BaseMeasurement):
+    '''UV vis Measurement'''
+
+    m_def = Section(
+        a_eln=dict(hide=['certified_values', 'certification_institute']))
+
+    data_file = Quantity(
+        type=str,
+        a_eln=dict(component='FileEditQuantity'),
+        a_browser=dict(adaptor='RawFileAdaptor'))
+
+    reference_file = Quantity(
+        type=str,
+        a_eln=dict(component='FileEditQuantity'),
+        a_browser=dict(adaptor='RawFileAdaptor'))
+
+    wavelength = Quantity(
+        type=np.dtype(
+            np.float64), unit=('nm'), shape=['*'])
+
+    properties = SubSection(
+        section_def=UVvisProperties)
+
+    measurements = SubSection(
+        section_def=UVvisSingleLibraryMeasurement, repeats=True)
+
+    def normalize(self, archive, logger):
+        super(UVvisMeasurementLibrary, self).normalize(archive, logger)
+        self.method = "UVvis"
