@@ -146,8 +146,8 @@ def get_jv_data_iris(filename, encoding='utf-8'):
     jv_dict = {}
     jv_dict['active_area'] = list(ast.literal_eval(df_header.iloc[12, 0]))[0]
     jv_dict['intensity'] = float(df_header.iloc[27, 0]) / 100 * 100
-    jv_dict['integration_time'] = float(df_header.iloc[9, 0])
-    jv_dict['settling_time'] = float(df_header.iloc[10, 0])
+    jv_dict['integration_time'] = float(df_header.iloc[9, 0])*1000
+    jv_dict['settling_time'] = float(df_header.iloc[10, 0])*1000
     jv_dict['averaging'] = float(df_header.iloc[8, 0])
     # jv_dict['compliance'] = df_header.iloc[5, 1]
     print(df.iloc[1])
