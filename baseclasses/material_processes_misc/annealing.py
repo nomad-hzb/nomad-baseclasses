@@ -41,7 +41,7 @@ class Annealing(ArchiveSection):
         shape=[],
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='s',
+            defaultDisplayUnit='minute',
             props=dict(
                 minValue=0)))
 
