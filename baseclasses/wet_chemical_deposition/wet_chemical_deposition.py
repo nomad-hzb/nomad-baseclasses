@@ -21,10 +21,11 @@ import numpy as np
 from nomad.metainfo import (
     Quantity,
     Reference,
-    SubSection, Section)
+    SubSection, Section
+)
 
 from nomad.datamodel.data import ArchiveSection
-from ..solution import Solution, BasicSolutionProperties
+from ..solution import Solution
 from .. import LayerDeposition
 from ..material_processes_misc import Annealing, Quenching
 from baseclasses.helper.utilities import rewrite_json_recursively
@@ -56,19 +57,14 @@ class PrecursorSolution(ArchiveSection):
                 minValue=0)))
 
     solution_details = SubSection(
-        section_def=BasicSolutionProperties)
+        section_def=Solution)
 
     def normalize(self, archive, logger):
 
         if self.reload_referenced_solution and self.solution:
             self.reload_referenced_solution = False
             rewrite_json_recursively(archive, "reload_referenced_solution", False)
-            self.solution_details = BasicSolutionProperties(
-                solute=self.solution.solute,
-                solvent=self.solution.solvent,
-                other_solution=self.solution.other_solution,
-                solvent_ratio=self.solution.solvent_ratio
-            )
+            self.solution_details = self.solution.m_copy()
 
         if self.solution and self.solution.name:
             if self.solution_volume:
@@ -77,9 +73,16 @@ class PrecursorSolution(ArchiveSection):
             else:
                 self.name = self.solution.name
 
+        if self.solution_details and self.solution_details.name:
+            if self.solution_volume:
+                self.name = self.solution_details.name + \
+                    ' ' + str(self.solution_volume)
+            else:
+                self.name = self.solution_details.name
+
 
 class WetChemicalDeposition(LayerDeposition):
-    '''Spin Coating'''
+    '''Wet Chemical Deposition'''
 
     solution = SubSection(
         section_def=PrecursorSolution, repeats=True)

@@ -91,21 +91,6 @@ class SolutionChemical(ArchiveSection):
                 self.name = self.chemical_2.name
 
 
-class BasicSolutionProperties(ArchiveSection):
-
-    solvent_ratio = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
-
-    solute = SubSection(
-        section_def=SolutionChemical, repeats=True)
-
-    solvent = SubSection(
-        section_def=SolutionChemical, repeats=True)
-
-    other_solution = SubSection(
-        section_def=SectionProxy("OtherSolution"), repeats=True)
-
 
 class OtherSolution(ArchiveSection):
     m_def = Section(label_quantity='name')
@@ -128,7 +113,7 @@ class OtherSolution(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'))
 
     solution_details = SubSection(
-        section_def=BasicSolutionProperties)
+        section_def=SectionProxy("Solution"))
 
     def normalize(self, archive, logger):
 
@@ -136,12 +121,7 @@ class OtherSolution(ArchiveSection):
             self.reload_referenced_solution = False
             # TODO rewrite to FALSE in json for reprocess
             rewrite_json_recursively(archive, "reload_referenced_solution", False)
-            self.solution_details = BasicSolutionProperties(
-                solute=self.solution.solute,
-                solvent=self.solution.solvent,
-                other_solution=self.solution.other_solution,
-                solvent_ratio=self.solution.solvent_ratio
-            )
+            self.solution_details = self.solution.m_copy()
 
         if self.solution and self.solution.name:
             if self.solution_volume:
@@ -149,6 +129,13 @@ class OtherSolution(ArchiveSection):
                     ' ' + str(self.solution_volume)
             else:
                 self.name = self.solution.name
+
+        if self.solution_details and self.solution_details.name:
+            if self.solution_volume:
+                self.name = self.solution_details.name + \
+                    ' ' + str(self.solution_volume)
+            else:
+                self.name = self.solution_details.name
 
 
 class Solution(CompositeSystem):
