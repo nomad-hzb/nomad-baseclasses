@@ -34,10 +34,10 @@ class DipCoatingProperties(ArchiveSection):
     time = Quantity(
         type=np.dtype(
             np.float64),
-        unit=('min'),
+        unit=('minunte'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='min',
+            defaultDisplayUnit='minute',
             props=dict(
                 minValue=0)))
 
