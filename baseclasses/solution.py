@@ -70,10 +70,9 @@ class SolutionChemical(ArchiveSection):
         unit=('mol/ml'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mol/ml'))
 
-    concentration_ml = Quantity(
+    amount_relative = Quantity(
         type=np.dtype(np.float64),
-        unit=('ml/ml'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml/ml'))
+        a_eln=dict(component='NumberEditQuantity'))
 
     def normalize(self, archive, logger):
 
@@ -116,10 +115,9 @@ class OtherSolution(ArchiveSection):
         unit=('ml'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'))
 
-    concentration_ml = Quantity(
+    amount_relative = Quantity(
         type=np.dtype(np.float64),
-        unit=('ml/ml'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml/ml'))
+        a_eln=dict(component='NumberEditQuantity'))
 
     solution_details = SubSection(
         section_def=SectionProxy("Solution"))
