@@ -18,5 +18,6 @@
 
 from .cleaning import Cleaning, SolutionCleaning, PlasmaCleaning, UVCleaning
 from .annealing import Annealing
+from .sintering import Sintering
 from .storage import Storage
 from .quenching import Quenching, SpinCoatingAntiSolvent, SpinCoatingGasQuenching, AntiSolventQuenching, GasQuenching, AirKnifeGasQuenching

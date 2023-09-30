@@ -23,8 +23,8 @@ from nomad.metainfo import (Quantity)
 from nomad.datamodel.data import ArchiveSection
 
 
-class Sintering(ArchiveSection):
-    '''Base class for sintering of a sample'''
+class Annealing(ArchiveSection):
+    '''Base class for annealing of a sample'''
     temperature = Quantity(
         type=np.dtype(
             np.float64),
@@ -45,16 +45,18 @@ class Sintering(ArchiveSection):
             props=dict(
                 minValue=0)))
 
-    ramp = Quantity(
-        type=np.dtype(
-            np.float64),
-        unit=('s'),
-        shape=[],
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='minute',
-            props=dict(
-                minValue=0)))
+    humidity = Quantity(
+        type=np.dtype(np.float64),
+        a_eln=dict(component='NumberEditQuantity'))
+
+    function = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity',
+                   props=dict(
+                       suggestions=[
+                           'Top Annealing',
+                           'Annealing after deposition',
+                       ])))
 
 
 # class AnnealingStandAlone(Annealing,ProcessOnSample):

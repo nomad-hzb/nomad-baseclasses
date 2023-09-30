@@ -27,7 +27,7 @@ from nomad.metainfo import (
 from nomad.datamodel.data import ArchiveSection
 from ..solution import Solution
 from .. import LayerDeposition
-from ..material_processes_misc import Annealing, Quenching
+from ..material_processes_misc import Annealing, Quenching, Sintering
 from baseclasses.helper.utilities import rewrite_json_recursively
 
 
@@ -89,6 +89,8 @@ class WetChemicalDeposition(LayerDeposition):
 
     annealing = SubSection(section_def=Annealing)
     quenching = SubSection(section_def=Quenching)
+
+    sintering = SubSection(section_def=Sintering)
 
     def normalize(self, archive, logger):
         super(WetChemicalDeposition, self).normalize(archive, logger)
