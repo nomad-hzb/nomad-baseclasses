@@ -90,7 +90,7 @@ class WetChemicalDeposition(LayerDeposition):
     annealing = SubSection(section_def=Annealing)
     quenching = SubSection(section_def=Quenching)
 
-    sintering = SubSection(section_def=Sintering)
+    sintering = SubSection(section_def=Sintering, repeats=True)
 
     def normalize(self, archive, logger):
         super(WetChemicalDeposition, self).normalize(archive, logger)
