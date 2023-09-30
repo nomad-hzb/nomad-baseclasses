@@ -158,4 +158,4 @@ def read_uvvis(file_paths, spec_key, reference_key, prefix):
          ref_interp(wavelength[wave_roi]))
     )
 
-    return spec_data, wavelength, reflectance, wave_roi, x_pos, y_pos, spectrums[0]
+    return reflectance, wavelength[wave_roi], x_pos, y_pos, spectrums[0]

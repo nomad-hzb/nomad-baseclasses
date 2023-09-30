@@ -147,4 +147,4 @@ class UVvisMeasurementLibrary(BaseMeasurement):
 
     def normalize(self, archive, logger):
         super(UVvisMeasurementLibrary, self).normalize(archive, logger)
-        self.method = "UVvis"
+        self.method = "UVvis Measurement Mapping"

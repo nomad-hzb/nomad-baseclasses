@@ -68,7 +68,7 @@ class SolutionChemical(ArchiveSection):
     concentration_mol = Quantity(
         type=np.dtype(np.float64),
         unit=('mol/ml'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mol/ml'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mmol/ml'))
 
     amount_relative = Quantity(
         type=np.dtype(np.float64),
@@ -191,6 +191,27 @@ class Solution(CompositeSystem):
 
     def normalize(self, archive, logger):
         super(Solution, self).normalize(archive, logger)
+        elements = []
+        # for solute in self.solute:
+        #     if solute.chemical_2 is not None and solute.chemical_2
+        # if replaced_formula is not None:
+        #     try:
+        #         composition = Composition(replaced_formula)
+        #         int_formula = composition.get_integer_formula_and_factor()[0]
+        #         composition_final = Composition(int_formula)
+        #         clean_formulas_no_brackets = composition_final.get_reduced_composition_and_factor()[
+        #             0]
+        #         composition_final_int = Composition(clean_formulas_no_brackets)
+        #         # hill_formula = composition_final_int.hill_formula
+        #         reduced_formula = composition_final_int.get_reduced_composition_and_factor()[
+        #             0].to_pretty_string()
+        #         # reduced_formula = Composition(hill_formula).reduced_formula
+        #         elements = composition_final_int.chemical_system.split('-')
+        #         return reduced_formula, elements
+
+        #     except ValueError:
+        #         print(
+        #             'Perovskite formula with a cation abbreviation could not be parsed')
 
         # if not archive.results:
         #     archive.results = Results()

@@ -109,32 +109,34 @@ class SingleLibraryMeasurement(ArchiveSection):
 
     position_x = Quantity(
         type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity')
+        unit=('mm'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm')
     )
 
     position_y = Quantity(
         type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity')
+        unit=('mm'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm')
     )
 
-    position_x_relative = Quantity(
-        type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity')
-    )
+    # position_x_relative = Quantity(
+    #     type=np.dtype(np.float64),
+    #     a_eln=dict(component='NumberEditQuantity')
+    # )
 
-    position_y_relative = Quantity(
-        type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity'))
+    # position_y_relative = Quantity(
+    #     type=np.dtype(np.float64),
+    #     a_eln=dict(component='NumberEditQuantity'))
 
-    position_index = Quantity(
-        type=np.dtype(np.int64),
-        a_eln=dict(component='NumberEditQuantity')
-    )
+    # position_index = Quantity(
+    #     type=np.dtype(np.int64),
+    #     a_eln=dict(component='NumberEditQuantity')
+    # )
 
     def normalize(self, archive, logger):
         super(SingleLibraryMeasurement, self).normalize(archive, logger)
-        if self.position_x_relative and self.position_y_relative:
-            self.name = f"{self.position_x_relative},{self.position_y_relative}"
+        if self.position_x and self.position_y:
+            self.name = f"{self.position_x},{self.position_y}"
 
 
 class BaseProcess(Process):
