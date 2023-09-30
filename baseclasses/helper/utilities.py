@@ -128,8 +128,11 @@ def add_key_item(md, key, item, item_entry, indent=0):
         for list_idx, subsection in enumerate(item):
             shift2 = '&nbsp;' * 4
             md += f"{shift}{shift2}**{list_idx+1}.**  \n"
-            for key2, item2 in subsection.items():
-                md = add_key_item(md, key2, item2, getattr(item_entry[list_idx], key2), 8+indent)
+            if isinstance(subsection, dict):
+                for key2, item2 in subsection.items():
+                    md = add_key_item(md, key2, item2, getattr(item_entry[list_idx], key2), 8+indent)
+            else:
+                md = add_key_item(md, key, subsection, subsection, 8+indent)
 
     elif isinstance(item_entry, MProxy):
         md += add_next_md_line(key, item_entry.name, 4+indent)
