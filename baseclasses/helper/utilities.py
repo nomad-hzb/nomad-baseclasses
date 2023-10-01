@@ -20,6 +20,8 @@ import random
 import string
 import chardet
 import json
+from datetime import datetime
+import pytz
 
 from nomad.metainfo import MProxy
 import pandas as pd
@@ -163,6 +165,20 @@ def add_section_markdown(
     return md
 
 
+def convert_datetime(datetime_input, datetime_format=None, utc=True, timezone="Europe/Berlin", seconds=False):
+    if seconds:
+        datetime_object = datetime.fromtimestamp(datetime_input)
+    else:
+        datetime_object = datetime.strptime(
+            datetime_input, datetime_format)
+    if not utc:
+        local = pytz.timezone(timezone)
+        datetime_object = local.localize(datetime_object, is_dst=None)
+        datetime_object = datetime_object.astimezone(pytz.utc)
+    return datetime_object.strftime(
+        "%Y-%m-%d %H:%M:%S.%f")
+
+
 def randStr(chars=string.ascii_uppercase + string.digits, N=6):
     return ''.join(random.choice(chars) for _ in range(N))
 
@@ -208,7 +224,7 @@ def set_sample_reference(archive, entry, search_id):
     if len(search_result.data) == 1:
         data = search_result.data[0]
         upload_id, entry_id = data["upload_id"], data["entry_id"]
-        if "sample" in data["entry_type"].lower():
+        if "sample" in data["entry_type"].lower() or "library" in data["entry_type"].lower():
             entry.samples = [CompositeSystemReference(reference=get_reference(upload_id, entry_id))]
         if "solution" in data["entry_type"].lower() or "ink" in data["entry_type"].lower():
             entry.samples = [CompositeSystemReference(reference=get_reference(upload_id, entry_id))]

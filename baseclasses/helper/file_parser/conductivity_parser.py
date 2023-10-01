@@ -18,4 +18,6 @@ def read_conductivity(file):
     for idx in range(data["Resistance (Ohms)"].shape[0]):
         conductivity_data[idx % nx, idx // nx] = data.loc[idx % nx, idx // nx]["Resistance (Ohms)"]
 
-    return conductivity_data, x_pos, y_pos, {}
+    metadata = pd.read_csv(file, header=None, index_col=[0], nrows=4)
+
+    return conductivity_data, x_pos, y_pos, metadata
