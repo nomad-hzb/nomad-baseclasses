@@ -62,7 +62,6 @@ def rewrite_json(keys_list, archive, value):
         data = json.load(jsonFile)
     tmp = data
     for key in keys_list[:-1]:
-        print(tmp)
         tmp = tmp[key]
     tmp[keys_list[-1]] = value
 

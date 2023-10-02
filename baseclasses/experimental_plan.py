@@ -70,7 +70,7 @@ class Step(ArchiveSection):
 
     
     def normalize(self, archive, logger):
-        if self.batch_processes:
+        if self.process_reference is None and self.batch_processes:
             self.process_reference = self.batch_processes[0]
         if self.process_reference and self.name is None:
             self.name = self.process_reference.name

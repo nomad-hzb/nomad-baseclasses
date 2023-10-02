@@ -35,17 +35,18 @@ def set_value(section, path, value):
     elif isinstance(section, PrecursorSolution):
         section.solution_details = section.solution.m_copy()
         set_value(section[next_key], "/".join(path_split[1:]), value)
-    elif isinstance(section, PubChemPureSubstanceSection) and (next_key in ["anti_solvent_2", "chemcial_2"]):
+    elif isinstance(section[next_key], PubChemPureSubstanceSection) and (next_key in ["anti_solvent_2", "chemcial_2"]):
         setattr(section, next_key, PubChemPureSubstanceSection())
         set_value(section[next_key], "/".join(path_split[1:]), value)
     else:
         set_value(section[next_key], "/".join(path_split[1:]), value)
 
 
-def set_process_parameters(process, parameters):
-    process.name += f" {','.join([p[1] for p in parameters])}"
+def set_process_parameters(process, parameters, i):
+    process.name += f" {','.join([p[2] for p in parameters])}"
     for p in parameters:
-        set_value(process, p[0], p[1])
+        if p[0] == i:
+            set_value(process, p[1], p[2])
 
     return process
 
@@ -68,27 +69,34 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
         plan_obj.load_standard_processes = False
         rewrite_json(["data", "load_standard_processes"], archive, False)
 
+        parameters_before = []
+        for i, step in enumerate(plan_obj.plan):
+            if step.parameters:
+                parameters_before.extend([[(i, p.parameter_path, val) for val in p.parameter_values]
+                                          for p in step.parameters])
+
+        parameters = list(itertools.product(*parameters_before))
+
         number_of_subbatches = plan_obj.number_of_substrates // plan_obj.substrates_per_subbatch
         for i, step in enumerate(plan_obj.plan):
-            if not plan_obj.plan[i].vary_parameters:
-                plan_obj.plan[i].batch_processes = [step.process_reference]
+            if not step.vary_parameters and not step.parameters:
+                plan_obj.plan[i].batch_processes = [step.process_reference.m_resolved().m_copy(deep=True)]
                 continue
 
-            if plan_obj.plan[i].parameters:
-                parameters = list(itertools.product(*[[(p.parameter_path, val) for val in p.parameter_values]
-                                                      for p in plan_obj.plan[i].parameters]))
+            if step.parameters:
+
                 if len(parameters) != number_of_subbatches:
                     raise Exception
                 batch_processes = []
 
                 for j in range(number_of_subbatches):
                     process = step.process_reference.m_resolved().m_copy(deep=True)
-                    batch_processes.append(set_process_parameters(process, parameters[j]))
+                    batch_processes.append(set_process_parameters(process, parameters[j], i))
                 plan_obj.plan[i].batch_processes = batch_processes
 
             else:
                 plan_obj.plan[i].batch_processes = [
-                    step.process_reference] * number_of_subbatches
+                    step.process_reference.m_resolved().m_copy(deep=True)] * number_of_subbatches
 
     # process, sample and batch creation
     if plan_obj.create_samples_and_processes \
