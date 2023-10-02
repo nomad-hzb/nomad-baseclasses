@@ -15,12 +15,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-from nomad.datamodel.metainfo.basesections import CompositeSystemReference
+import numpy as np
+import itertools
+from nomad.datamodel.metainfo.basesections import CompositeSystemReference, PubChemPureSubstanceSection
 from .. import ReadableIdentifiersCustom
 
 from ..helper.utilities import get_reference, create_archive, get_entry_id_from_file_name, add_section_markdown, rewrite_json
 from ..solar_energy import SolarCellProperties
+from ..wet_chemical_deposition import PrecursorSolution
+
+
+def set_value(section, path, value):
+    path_split = path.split("/")
+    next_key = path_split[0]
+    if len(path_split) == 1:
+        setattr(section, next_key, value)
+    elif isinstance(section, list):
+        set_value(section[np.int64(next_key)], "/".join(path_split[1:]), value)
+    elif isinstance(section, PrecursorSolution):
+        section.solution_details = section.solution.m_copy()
+        set_value(section[next_key], "/".join(path_split[1:]), value)
+    elif isinstance(section, PubChemPureSubstanceSection) and (next_key in ["anti_solvent_2", "chemcial_2"]):
+        setattr(section, next_key, PubChemPureSubstanceSection())
+        set_value(section[next_key], "/".join(path_split[1:]), value)
+    else:
+        set_value(section[next_key], "/".join(path_split[1:]), value)
+
+
+def set_process_parameters(process, parameters):
+    process.name += f" {','.join([p[1] for p in parameters])}"
+    for p in parameters:
+        set_value(process, p[0], p[1])
+
+    return process
 
 
 def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
@@ -46,8 +73,22 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
             if not plan_obj.plan[i].vary_parameters:
                 plan_obj.plan[i].batch_processes = [step.process_reference]
                 continue
-            plan_obj.plan[i].batch_processes = [
-                step.process_reference] * number_of_subbatches
+
+            if plan_obj.plan[i].parameters:
+                parameters = list(itertools.product(*[[(p.parameter_path, val) for val in p.parameter_values]
+                                                      for p in plan_obj.plan[i].parameters]))
+                if len(parameters) != number_of_subbatches:
+                    raise Exception
+                batch_processes = []
+
+                for j in range(number_of_subbatches):
+                    process = step.process_reference.m_resolved().m_copy(deep=True)
+                    batch_processes.append(set_process_parameters(process, parameters[j]))
+                plan_obj.plan[i].batch_processes = batch_processes
+
+            else:
+                plan_obj.plan[i].batch_processes = [
+                    step.process_reference] * number_of_subbatches
 
     # process, sample and batch creation
     if plan_obj.create_samples_and_processes \
@@ -155,7 +196,7 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
         markdowner = Markdown()
         md = md.replace("_", "\\_")
         html = markdowner.convert(md)
-        summary_html = "----------start summary----------<br>" + str(html) +\
+        summary_html = "----------start summary----------<br>" + str(html) + \
             "<br>----------end summary----------"
         desc_tmp = plan_obj.description
         if desc_tmp is not None:

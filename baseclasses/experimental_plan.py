@@ -31,6 +31,19 @@ from .customreadable_identifier import ReadableIdentifiersCustom
 from nomad.datamodel.data import ArchiveSection
 
 
+class ParametersVaried(ArchiveSection):
+    m_def = Section(label_quantity='parameter_path')
+
+    parameter_path = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'))
+
+    parameter_values = Quantity(
+        type=str,
+        shape=['*'],
+        a_eln=dict(component='StringEditQuantity'))
+
+
 class Step(ArchiveSection):
     m_def = Section(label_quantity='name')
 
@@ -51,7 +64,11 @@ class Step(ArchiveSection):
         type=Reference(BaseProcess.m_def),
         a_eln=dict(component='ReferenceEditQuantity')
     )
+    
+    parameters = SubSection(
+        section_def=ParametersVaried, repeats=True)
 
+    
     def normalize(self, archive, logger):
         if self.batch_processes:
             self.process_reference = self.batch_processes[0]
