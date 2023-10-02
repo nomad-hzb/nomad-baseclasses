@@ -36,7 +36,8 @@ def set_value(section, path, value):
         section.solution_details = section.solution.m_copy(deep=True)
         set_value(section[next_key], "/".join(path_split[1:]), value)
     elif isinstance(section[next_key], PubChemPureSubstanceSection) and (next_key in ["anti_solvent_2", "chemcial_2"]):
-        setattr(section, next_key, PubChemPureSubstanceSection())
+        pubchem = PubChemPureSubstanceSection(load_data=False)
+        setattr(section, next_key, pubchem)
         set_value(section[next_key], "/".join(path_split[1:]), value)
     else:
         set_value(section[next_key], "/".join(path_split[1:]), value)
