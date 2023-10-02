@@ -33,7 +33,7 @@ def set_value(section, path, value):
     elif isinstance(section, list):
         set_value(section[np.int64(next_key)], "/".join(path_split[1:]), value)
     elif isinstance(section, PrecursorSolution):
-        section.solution_details = section.solution.m_copy()
+        section.solution_details = section.solution.m_copy(deep=True)
         set_value(section[next_key], "/".join(path_split[1:]), value)
     elif isinstance(section[next_key], PubChemPureSubstanceSection) and (next_key in ["anti_solvent_2", "chemcial_2"]):
         setattr(section, next_key, PubChemPureSubstanceSection())
