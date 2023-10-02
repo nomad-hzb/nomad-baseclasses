@@ -159,6 +159,8 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
         # create processes
         md = f"# Batch plan of batch {batch_id.lab_id}\n\n"
         for idx2, plan in enumerate(plan_obj.plan):
+            if plan.parameters:
+                plan.vary_parameters = True
             for idx1, batch_process in enumerate(plan.batch_processes):
                 if not batch_process.present:
                     continue
