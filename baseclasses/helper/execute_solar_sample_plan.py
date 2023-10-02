@@ -75,6 +75,7 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
             if step.parameters:
                 parameters_before.extend([[(i, p.parameter_path, val) for val in p.parameter_values]
                                           for p in step.parameters])
+                step.vary_parameters = True
 
         parameters = list(itertools.product(*parameters_before))
 
