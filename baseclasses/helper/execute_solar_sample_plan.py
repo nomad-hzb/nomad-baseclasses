@@ -171,8 +171,8 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
                 batch_process.name = batch_process.name.replace(
                     "Standard", "").replace("-", "").strip()
                 if plan_obj.substrates_per_subbatch == 1 and plan.vary_parameters:
-                    batch_process.samples = [get_reference(
-                        archive.metadata.upload_id, entry_id)]
+                    batch_process.samples = [CompositeSystemReference(reference=get_reference(
+                        archive.metadata.upload_id, entry_id))]
                 else:
                     batch_process.batch = get_reference(
                         archive.metadata.upload_id, entry_id)
