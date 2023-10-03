@@ -49,6 +49,31 @@ from .solution import Solution
 from .customreadable_identifier import ReadableIdentifiersCustom
 
 
+def get_processes(archive, entry_id):
+    from nomad.search import search
+    from nomad.app.v1.models import MetadataPagination
+    from nomad import files
+    import baseclasses
+    import inspect
+
+    # search for all archives referencing this archive
+    query = {
+        'entry_references.target_entry_id': entry_id,
+    }
+    pagination = MetadataPagination()
+    pagination.page_size = 100
+    search_result = search(owner='all', query=query, pagination=pagination,
+                           user_id=archive.metadata.main_author.user_id)
+    processes = []
+    for res in search_result.data:
+        with files.UploadFiles.get(upload_id=res["upload_id"]).read_archive(entry_id=res["entry_id"]) as archive:
+            entry_id = res["entry_id"]
+            entry_data = archive[entry_id]["data"]
+            if "positon_in_experimental_plan" in entry_data:
+                processes.append((entry_data["positon_in_experimental_plan"], entry_data["name"]))
+    return sorted(processes, key=lambda pair: pair[0])
+
+
 class Batch(Collection):
 
     export_batch_ids = Quantity(
@@ -74,21 +99,20 @@ class Batch(Collection):
 
         if self.export_batch_ids and self.entities:
             self.export_batch_ids = False
-            try:
-                samples = []
-                for sample in self.entities:
-                    sample_id = sample.reference.lab_id if sample.reference is not None else self.lab_id
-                    sample_name = sample.reference.name
-                    samples.append([sample_id, sample_name])
-                import pandas as pd
-                df = pd.DataFrame(samples, columns=[
-                                  "sample_id", "sample_name"])
-                export_file_name = f"list_of_ids_{self.name}.csv"
-                with archive.m_context.raw_file(export_file_name, 'w') as outfile:
-                    df.to_csv(outfile.name)
-                self.csv_export_file = export_file_name
-            except BaseException:
-                pass
+            # try:
+            samples = []
+            for sample in self.entities:
+                sample_id = sample.reference.lab_id if sample.reference is not None else self.lab_id
+                sample_entry_id = sample.reference.m_parent.entry_id
+                samples.append([sample_id] + [p[1] for p in get_processes(archive, sample_entry_id)])
+            import pandas as pd
+            df = pd.DataFrame(samples)
+            export_file_name = f"list_of_ids_{self.name}.csv"
+            with archive.m_context.raw_file(export_file_name, 'w') as outfile:
+                df.to_csv(outfile.name)
+            self.csv_export_file = export_file_name
+            # except BaseException:
+            #     pass
 
 
 class LibrarySample(CompositeSystem):
@@ -310,7 +334,7 @@ class LayerDeposition(BaseProcess):
                         absorber.append(layer_material_name_tmp)
 
                 if layer_type == 'Absorber Layer':
-                    archive.results.properties.optoelectronic.solar_cell.absorber_fabrication \
+                    archive.results.properties.optoelectronic.solar_cell.absorber_fabrication\
                         = [self.method]
         archive.results.properties.optoelectronic.solar_cell.device_stack = device_stack
         archive.results.properties.optoelectronic.solar_cell.hole_transport_layer = hole_transport_layer
