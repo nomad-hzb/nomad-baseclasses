@@ -70,7 +70,7 @@ def get_processes(archive, entry_id):
             entry_id = res["entry_id"]
             entry_data = archive[entry_id]["data"]
             if "positon_in_experimental_plan" in entry_data:
-                processes.append((entry_data["positon_in_experimental_plan"], entry_data["name"]))
+                processes.append((entry_data.get("positon_in_experimental_plan"), entry_data.get("name")))
     return sorted(processes, key=lambda pair: pair[0])
 
 
