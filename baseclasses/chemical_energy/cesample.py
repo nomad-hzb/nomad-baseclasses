@@ -96,6 +96,24 @@ class SampleIDCE(ReadableIdentifiersCustom):
             archive.data.lab_id = self.lab_id
 
 
+class SubstrateProperties(ArchiveSection):
+
+    substrate_type = Quantity(
+        type=str,
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=['glassy carbon', 'ITO on glass', 'Platinum', 'glass', 'silicon wafer'])
+        ))
+
+    substrate_dimension = Quantity(
+        type=str,
+        a_eln=dict(
+            component='StringEditQuantity',
+
+        ))
+
+
 class CESample(CompositeSystem):
 
     origin = Quantity(
@@ -109,6 +127,9 @@ class CESample(CompositeSystem):
         description=(
             'A list of the elements involved'),
         a_eln=dict(component='StringEditQuantity'))
+
+    substrate = SubSection(
+        section_def=SubstrateProperties)
 
     def normalize(self, archive, logger):
         super(CESample, self).normalize(archive, logger)
