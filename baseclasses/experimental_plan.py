@@ -29,6 +29,7 @@ from nomad.datamodel.metainfo.eln import Entity
 from . import BaseProcess, StandardSample
 from .customreadable_identifier import ReadableIdentifiersCustom
 from nomad.datamodel.data import ArchiveSection
+from .wet_chemical_deposition import PrecursorSolution
 
 
 class ParametersVaried(ArchiveSection):
@@ -38,10 +39,30 @@ class ParametersVaried(ArchiveSection):
         type=str,
         a_eln=dict(component='StringEditQuantity'))
 
+    parameter_unit = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'))
+
     parameter_values = Quantity(
         type=str,
         shape=['*'],
         a_eln=dict(component='StringEditQuantity'))
+
+
+def get_unit(section, path):
+    if isinstance(section, MProxy):
+        section.m_resolved()
+    path_split = path.split("/")
+    next_key = path_split[0]
+    if len(path_split) == 1:
+        return str(getattr(getattr(type(section), next_key), "unit"))
+    elif isinstance(section, list):
+        return get_unit(section[np.int64(next_key)], "/".join(path_split[1:]))
+    elif isinstance(section, PrecursorSolution):
+        section.solution_details = section.solution.m_copy(deep=True)
+        return get_unit(section[next_key], "/".join(path_split[1:]))
+    else:
+        return get_unit(section[next_key], "/".join(path_split[1:]))
 
 
 class Step(ArchiveSection):
@@ -64,16 +85,22 @@ class Step(ArchiveSection):
         type=Reference(BaseProcess.m_def),
         a_eln=dict(component='ReferenceEditQuantity')
     )
-    
+
     parameters = SubSection(
         section_def=ParametersVaried, repeats=True)
 
-    
     def normalize(self, archive, logger):
         if self.process_reference is None and self.batch_processes:
             self.process_reference = self.batch_processes[0]
         if self.process_reference and self.name is None:
             self.name = self.process_reference.name
+
+        if self.process_reference:
+            for p in self.parameters:
+                if p.parameter_unit:
+                    continue
+                p.parameter_unit = get_unit(self.process_reference, p.parameter_path)
+            pass
 
 
 class ExperimentalPlan(Entity):
@@ -119,6 +146,9 @@ class ExperimentalPlan(Entity):
     plan = SubSection(
         section_def=Step, repeats=True)
 
+    # solution_manufacturing = SubSection(
+    #     section_def=SolutionManufacturing, repeats=True)
+
     def normalize(self, archive, logger):
         super(ExperimentalPlan, self).normalize(archive, logger)
 
@@ -126,6 +156,7 @@ class ExperimentalPlan(Entity):
             archive.metadata.entry_name = self.name
 
         steps = []
+        # solutions = []
         if self.standard_plan and self.standard_plan.processes and not self.plan:
             number_of_entries = len(self.standard_plan.processes)
             if len(self.plan) < number_of_entries:

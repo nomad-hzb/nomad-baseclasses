@@ -25,15 +25,12 @@ from nomad.metainfo import (
     Reference,
     MEnum, SectionProxy)
 from nomad.datamodel.data import ArchiveSection
-from nomad.datamodel.results import Results, Material
 
 from .chemical import Chemical
 from nomad.datamodel.metainfo.basesections import PubChemPureSubstanceSection
 
 from nomad.datamodel.metainfo.basesections import CompositeSystem
 from .customreadable_identifier import ReadableIdentifiersCustom
-
-from nomad.atomutils import Formula
 
 from baseclasses.helper.utilities import rewrite_json_recursively
 

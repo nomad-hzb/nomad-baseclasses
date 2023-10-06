@@ -90,8 +90,8 @@ class XRF(BaseMeasurement):
         a_eln=dict(component='FileEditQuantity'),
         a_browser=dict(adaptor='RawFileAdaptor'))
 
-    data = SubSection(
-        section_def=XRFData)
+    # data = SubSection(
+    #     section_def=XRFData)
 
     composition = SubSection(
         section_def=XRFComposition, repeats=True)
@@ -117,8 +117,8 @@ class XRFSingleLibraryMeasurement(SingleLibraryMeasurement):
         a_eln=dict(component='FileEditQuantity'),
         a_browser=dict(adaptor='RawFileAdaptor'))
 
-    data = SubSection(
-        section_def=XRFData)
+    # data = SubSection(
+    #     section_def=XRFData)
 
     composition = SubSection(
         section_def=XRFComposition, repeats=True)
@@ -139,6 +139,12 @@ class XRFLibrary(BaseMeasurement):
         type=str,
         a_eln=dict(component='StringEditQuantity'))
 
+    images = Quantity(
+        type=str,
+        shape=["*"],
+        a_eln=dict(component='FileEditQuantity'),
+        a_browser=dict(adaptor='RawFileAdaptor'))
+
     composition_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
@@ -157,5 +163,3 @@ class XRFLibrary(BaseMeasurement):
     def normalize(self, archive, logger):
         super(XRFLibrary, self).normalize(archive, logger)
         self.method = "XRF"
-
-     

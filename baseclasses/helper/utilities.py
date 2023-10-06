@@ -22,7 +22,7 @@ import chardet
 import json
 from datetime import datetime
 import pytz
-
+from tabulate import tabulate
 from nomad.metainfo import MProxy
 import pandas as pd
 
@@ -114,7 +114,6 @@ def add_key_item(md, key, item, item_entry, indent=0):
         "reload_referenced_solution",
         "samples",
         "batch",
-        "name",
         "datetime",
         "lab_id",
             "m_def"]:
@@ -144,6 +143,42 @@ def add_key_item(md, key, item, item_entry, indent=0):
     else:
         md += add_next_md_line(key, item_entry, indent)
     return md
+
+
+def get_as_displayunit(inst, key):
+    try:
+        unit = getattr(type(inst), key).a_eln.defaultDisplayUnit
+        return getattr(inst, key, "     ").to(unit)
+    except Exception as e:
+        return getattr(inst, key, "     ")
+
+
+def get_solution(sol_entry):
+    columns = ["name", "chemical_volume", "chemical_mass", "concentration_mass",
+               "concentration_mol", "amount_relative", "solution_volume"]
+    rows = [columns]
+    for substance in getattr(sol_entry, "solute", []) + getattr(sol_entry, "solvent", []) + getattr(sol_entry, "other_solution", []):
+        rows.append([get_as_displayunit(substance, col) for col in columns])
+
+    return tabulate(rows, headers="firstrow", tablefmt="html").replace('table', 'table border="1"')
+
+
+def get_solutions(list_sol):
+    final_strings = []
+    while len(list_sol) > 0:
+        final_string = ''
+        sol = list_sol.pop(0)
+        list_sol.extend([s["solution_details"] if getattr(s, "solution_details") else getattr(s, "solution")
+                        for s in getattr(sol, "other_solution", [])])
+        sol_table = get_solution(sol)
+        final_string += f"<br><b>{getattr(sol, 'name', [])}</b>:  <br>"
+        params_str = ", ".join([f"{key}={get_as_displayunit(sol, key)}" for key in [
+                               "method", "solvent_ratio", "temperature", "time", "speed"]])
+        final_string += f"{params_str}  <br>"
+        final_string += f"Description: <br> {getattr(sol, 'description', '     ')}  <br>"
+        final_string += sol_table
+        final_strings.append(final_string)
+    return "\n".join(list(set(final_strings)))
 
 
 def add_section_markdown(

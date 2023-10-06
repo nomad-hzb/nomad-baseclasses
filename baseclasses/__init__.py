@@ -45,7 +45,6 @@ from nomad.datamodel.data import ArchiveSection
 from .helper.add_solar_cell import add_solar_cell
 from .helper.utilities import update_archive
 
-from .solution import Solution
 from .customreadable_identifier import ReadableIdentifiersCustom
 
 

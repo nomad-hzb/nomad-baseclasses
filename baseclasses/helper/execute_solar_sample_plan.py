@@ -18,36 +18,47 @@
 import numpy as np
 import itertools
 from nomad.datamodel.metainfo.basesections import CompositeSystemReference, PubChemPureSubstanceSection
+from nomad.units import ureg
 from .. import ReadableIdentifiersCustom
 
-from ..helper.utilities import get_reference, create_archive, get_entry_id_from_file_name, add_section_markdown, rewrite_json
+from ..helper.utilities import get_reference, create_archive, get_entry_id_from_file_name, add_section_markdown, rewrite_json, get_solutions
 from ..solar_energy import SolarCellProperties
 from ..wet_chemical_deposition import PrecursorSolution
+from ..solution_manufacturing import SolutionManufacturing
 
 
-def set_value(section, path, value):
+def set_value(section, path, value, unit):
     path_split = path.split("/")
     next_key = path_split[0]
     if len(path_split) == 1:
-        setattr(section, next_key, value)
+        if unit:
+            setattr(section, next_key, float(value) * ureg(unit))
+        else:
+            setattr(section, next_key, value)
     elif isinstance(section, list):
-        set_value(section[np.int64(next_key)], "/".join(path_split[1:]), value)
+        set_value(section[np.int64(next_key)], "/".join(path_split[1:]), value, unit)
     elif isinstance(section, PrecursorSolution):
         section.solution_details = section.solution.m_copy(deep=True)
-        set_value(section[next_key], "/".join(path_split[1:]), value)
+        set_value(section[next_key], "/".join(path_split[1:]), value, unit)
     elif isinstance(section[next_key], PubChemPureSubstanceSection) and (next_key in ["anti_solvent_2", "chemcial_2"]):
         pubchem = PubChemPureSubstanceSection(load_data=False)
         setattr(section, next_key, pubchem)
-        set_value(section[next_key], "/".join(path_split[1:]), value)
+        set_value(section[next_key], "/".join(path_split[1:]), value, unit)
     else:
-        set_value(section[next_key], "/".join(path_split[1:]), value)
+        set_value(section[next_key], "/".join(path_split[1:]), value, unit)
 
 
 def set_process_parameters(process, parameters, i):
-    process.name += f" {','.join([p[2] for p in parameters])}"
+    names = []
+    for p in parameters:
+        # if p[3]:
+        #     names.append(f"{str(p[2])} {str(p[3])}")
+        # else:
+        names.append(str(p[2]))
+    process.name += f" {','.join(names)}"
     for p in parameters:
         if p[0] == i:
-            set_value(process, p[1], p[2])
+            set_value(process, p[1], p[2], p[3])
 
     return process
 
@@ -73,7 +84,7 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
         parameters_before = []
         for i, step in enumerate(plan_obj.plan):
             if step.parameters:
-                parameters_before.extend([[(i, p.parameter_path, val) for val in p.parameter_values]
+                parameters_before.extend([[(i, p.parameter_path, val, p.parameter_unit) for val in p.parameter_values]
                                           for p in step.parameters])
                 step.vary_parameters = True
 
@@ -86,7 +97,6 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
                 continue
 
             if step.parameters:
-
                 if len(parameters) != number_of_subbatches:
                     raise Exception
                 batch_processes = []
@@ -158,6 +168,7 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
 
         # create processes
         md = f"# Batch plan of batch {batch_id.lab_id}\n\n"
+        solution_list = []
         for idx2, plan in enumerate(plan_obj.plan):
             for idx1, batch_process in enumerate(plan.batch_processes):
                 if not batch_process.present:
@@ -200,13 +211,21 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
                 batch_process.datetime = plan_obj.datetime if plan_obj.datetime else ''
                 create_archive(batch_process, archive, file_name_process)
                 md = add_section_markdown(
-                    md, idx2, idx1, batch_process, file_name_base)
+                    md,  idx2, idx1, batch_process, file_name_base)
+                if "solution" in batch_process:
+                    for s in getattr(batch_process, "solution", []):
+                        if getattr(s, "solution_details"):
+                            solution_list.append(s["solution_details"])
+                        elif getattr(s, "solution"):
+                            solution_list.append(s["solution"])
 
         from markdown2 import Markdown
         markdowner = Markdown()
         md = md.replace("_", "\\_")
+        sol = f"<b> Solutions for batch {batch_id.lab_id}</b><br><br>"
+        sol += get_solutions(solution_list)
         html = markdowner.convert(md)
-        summary_html = "----------start summary----------<br>" + str(html) + \
+        summary_html = "----------start summary----------<br>" + str(sol) + "<br>" + str(html) +\
             "<br>----------end summary----------"
         desc_tmp = plan_obj.description
         if desc_tmp is not None:
@@ -215,9 +234,9 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
             if pos_start > 0 and pos_end > 0:
                 desc_tmp = desc_tmp[:pos_start] + desc_tmp[pos_end + 31:]
 
-        plan_obj.description = desc_tmp + \
+        plan_obj.description = desc_tmp +\
             summary_html if desc_tmp is not None else summary_html
         output = f"batch_plan_{batch_id.lab_id}.html"
         with archive.m_context.raw_file(output, 'w') as outfile:
-            outfile.write(str(html))
+            outfile.write(str(sol) + "<br>" + str(html))
         plan_obj.batch_plan_pdf = output
