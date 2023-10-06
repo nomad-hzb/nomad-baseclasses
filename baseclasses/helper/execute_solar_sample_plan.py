@@ -31,7 +31,7 @@ def set_value(section, path, value, unit):
     path_split = path.split("/")
     next_key = path_split[0]
     if len(path_split) == 1:
-        if unit:
+        if unit and unit != "None":
             q = ureg.Quantity(float(value), ureg(unit))
             setattr(section, next_key,  q)
         else:
