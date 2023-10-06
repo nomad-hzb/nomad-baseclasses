@@ -32,7 +32,8 @@ def set_value(section, path, value, unit):
     next_key = path_split[0]
     if len(path_split) == 1:
         if unit:
-            setattr(section, next_key, float(value) * ureg(unit))
+            q = ureg.Quantity(float(value), ureg(unit))
+            setattr(section, next_key,  q)
         else:
             setattr(section, next_key, value)
     elif isinstance(section, list):
