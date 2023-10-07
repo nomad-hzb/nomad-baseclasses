@@ -137,9 +137,6 @@ class Step(ArchiveSection):
     parameters = SubSection(
         section_def=ParametersVaried, repeats=True)
 
-    parameters_linear = SubSection(
-        section_def=ParametersVaried, repeats=True)
-
     def normalize(self, archive, logger):
         if self.process_reference is None and self.batch_processes:
             self.process_reference = self.batch_processes[0]
@@ -151,7 +148,6 @@ class Step(ArchiveSection):
                 if p.parameter_unit:
                     continue
                 p.parameter_unit = get_unit(self.process_reference, p.parameter_path)
-            pass
 
 
 class ExperimentalPlan(Entity):

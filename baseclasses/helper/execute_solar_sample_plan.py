@@ -52,19 +52,22 @@ def set_value(section, path, value, unit):
 def set_process_parameters(process, parameters, i):
     names = []
     for p in parameters:
-        # if p[3]:
-        #     names.append(f"{str(p[2])} {str(p[3])}")
-        # else:
-        names.append(str(p[2]))
-    process.name += f" {','.join(names)}"
-    for p in parameters:
         if p[0] == i:
+            names.append(str(p[2]))
             set_value(process, p[1], p[2], p[3])
+    process.name += f" {','.join(names)}"
 
-    return process
+
+def log_error(plan_obj, logger, msg):
+    if logger:
+        logger.error(
+            msg, normalizer=plan_obj.__class__.__name__,
+            section='system')
+    else:
+        raise Exception
 
 
-def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
+def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=None):
 
     if plan_obj.standard_plan is not None:
         plan_obj.solar_cell_properties = SolarCellProperties(
@@ -75,6 +78,8 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
     if not (plan_obj.number_of_substrates > 0
             and plan_obj.number_of_substrates % plan_obj.substrates_per_subbatch == 0
             ):
+        log_error(plan_obj, logger,
+                  f"Number of substrates is {plan_obj.number_of_substrates} and substrates per subbatch is {plan_obj.substrates_per_subbatch}, which does not devide!")
         return
 
     # standard process integration
@@ -85,43 +90,55 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
 
         parameters_before = []
         parameters_linear = []
-        parameters = [[]*number_of_subbatches]
+        parameters_single = []
         for i, step in enumerate(plan_obj.plan):
-            if not (step.parameters and step.parameters_linear):
+            if not step.parameters:
                 continue
-            if step.parameters:
-                parameters_before.extend([[(i, p.parameter_path, val, p.parameter_unit) for val in p.parameter_values]
-                                          for p in step.parameters])
-            if step.parameters_linear:
-                parameters_linear.extend([[(i, p.parameter_path, val, p.parameter_unit) for val in p.parameter_values]
-                                          for p in step.parameters_linear])
-            step.vary_parameters = True
+            for parameter in step.parameters:
+                if not parameter.parameter_values:
+                    log_error(plan_obj, logger, f"Parameter {parameter.parameter_path} has no values!")
+                    return
+                if len(parameter.parameter_values) > number_of_subbatches:
+                    log_error(plan_obj, logger, f"Parameter {parameter.parameter_path} has too many values!")
+                    return
+                if len(parameter.parameter_values) == 1:
+                    parameters_single.append(
+                        (i, parameter.parameter_path, parameter.parameter_values[0], parameter.parameter_unit))
+                elif len(parameter.parameter_values) == number_of_subbatches:
+                    step.vary_parameters = True
+                    parameters_linear.append([(i, parameter.parameter_path, val, parameter.parameter_unit)
+                                             for val in parameter.parameter_values])
+                else:
+                    step.vary_parameters = True
+                    parameters_before.append([(i, parameter.parameter_path, val, parameter.parameter_unit)
+                                             for val in parameter.parameter_values])
 
+        parameters = [[] for x in range(number_of_subbatches)]
         if parameters_before:
             parameters = [list(p) for p in list(itertools.product(*parameters_before))]
+            if len(parameters) != number_of_subbatches:
+                log_error(plan_obj, logger, 'Not the correct amount of varied parameters given for tensor product')
+                return
 
         for params in parameters_linear:
-            if len(params) != number_of_subbatches:
-                raise Exception
             for j, p in enumerate(params):
-                print(parameters[j])
                 parameters[j].append(p)
 
         for i, step in enumerate(plan_obj.plan):
-            if not step.vary_parameters and not step.parameters and not step.parameters_linear:
-                plan_obj.plan[i].batch_processes = [step.process_reference.m_resolved().m_copy(deep=True)]
+            if not step.vary_parameters:
+                process = step.process_reference.m_resolved().m_copy(deep=True)
+                set_process_parameters(process, parameters_single, i)
+                plan_obj.plan[i].batch_processes = [process]
                 continue
 
-            if step.parameters or step.parameters_linear:
-                if len(parameters) != number_of_subbatches:
-                    raise Exception
+            if step.parameters:
                 batch_processes = []
-
                 for j in range(number_of_subbatches):
                     process = step.process_reference.m_resolved().m_copy(deep=True)
-                    batch_processes.append(set_process_parameters(process, parameters[j], i))
+                    set_process_parameters(process, parameters[j], i)
+                    set_process_parameters(process, parameters_single, i)
+                    batch_processes.append(process)
                 plan_obj.plan[i].batch_processes = batch_processes
-
             else:
                 plan_obj.plan[i].batch_processes = [
                     step.process_reference.m_resolved().m_copy(deep=True)] * number_of_subbatches
