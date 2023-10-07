@@ -31,13 +31,61 @@ from .customreadable_identifier import ReadableIdentifiersCustom
 from nomad.datamodel.data import ArchiveSection
 from .wet_chemical_deposition import PrecursorSolution
 
+list_path = [
+    "quenching/anti_solvent_2/name",
+    "quenching/anti_solvent_dropping_time",
+    "quenching/anti_solvent_volume",
+    "quenching/anti_solvent_dropping_flow_rate",
+    "quenching/anti_solvent_dropping_height",
+    "annealing/time",
+    "annealing/temperature",
+    "recipe_steps/time",
+    "recipe_steps/speed",
+    "recipe_steps/acceleration",
+    "sintering/time",
+    "sintering/temperature",
+    "sintering/ramp",
+    "solution/0/solution_volume",
+    "solution/0/solution_details/solute/0/concentration_mol",
+    "solution/0/solution_details/solute/0/concentration_mg",
+    "solution/0/solution_details/solute/0/amount_relative",
+    "solution/0/solution_details/solvent/0/concentration_mol",
+    "solution/0/solution_details/solvent/0/concentration_mg",
+    "solution/0/solution_details/solvent/0/amount_relative",
+    "solution/0/solution_details/other_solution/0/solution_volume",
+    "solution/0/solution_details/other_solution/0/amount_relative",
+    "properties/flow_rate",
+    "properties/slot_die_head_width",
+    "properties/slot_die_shim_width",
+    "properties/slot_die_shim_thickness",
+    "properties/slot_die_head_distance_to_thinfilm",
+    "properties/slot_die_head_speed",
+    "properties/temperature",
+    "properties/time",
+    "organic_evaporation/0/chemical_2/name",
+    "organic_evaporation/0/thickness",
+    "organic_evaporation/0/pressure",
+    "organic_evaporation/0/start_rate",
+    "organic_evaporation/0/target_rate",
+    "organic_evaporation/0/time",
+    "inorganic_evaporation/0/chemical_2/name",
+    "inorganic_evaporation/0/thickness",
+    "inorganic_evaporation/0/pressure",
+    "inorganic_evaporation/0/start_rate",
+    "inorganic_evaporation/0/target_rate",
+    "inorganic_evaporation/0/time",
+]
+
 
 class ParametersVaried(ArchiveSection):
     m_def = Section(label_quantity='parameter_path')
 
     parameter_path = Quantity(
         type=str,
-        a_eln=dict(component='StringEditQuantity'))
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=list_path)))
 
     parameter_unit = Quantity(
         type=str,
@@ -87,6 +135,9 @@ class Step(ArchiveSection):
     )
 
     parameters = SubSection(
+        section_def=ParametersVaried, repeats=True)
+
+    parameters_linear = SubSection(
         section_def=ParametersVaried, repeats=True)
 
     def normalize(self, archive, logger):

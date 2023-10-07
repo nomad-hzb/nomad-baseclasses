@@ -81,23 +81,38 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls):
     if plan_obj.load_standard_processes:
         plan_obj.load_standard_processes = False
         rewrite_json(["data", "load_standard_processes"], archive, False)
+        number_of_subbatches = plan_obj.number_of_substrates // plan_obj.substrates_per_subbatch
 
         parameters_before = []
+        parameters_linear = []
+        parameters = [[]*number_of_subbatches]
         for i, step in enumerate(plan_obj.plan):
+            if not (step.parameters and step.parameters_linear):
+                continue
             if step.parameters:
                 parameters_before.extend([[(i, p.parameter_path, val, p.parameter_unit) for val in p.parameter_values]
                                           for p in step.parameters])
-                step.vary_parameters = True
+            if step.parameters_linear:
+                parameters_linear.extend([[(i, p.parameter_path, val, p.parameter_unit) for val in p.parameter_values]
+                                          for p in step.parameters_linear])
+            step.vary_parameters = True
 
-        parameters = list(itertools.product(*parameters_before))
+        if parameters_before:
+            parameters = [list(p) for p in list(itertools.product(*parameters_before))]
 
-        number_of_subbatches = plan_obj.number_of_substrates // plan_obj.substrates_per_subbatch
+        for params in parameters_linear:
+            if len(params) != number_of_subbatches:
+                raise Exception
+            for j, p in enumerate(params):
+                print(parameters[j])
+                parameters[j].append(p)
+
         for i, step in enumerate(plan_obj.plan):
-            if not step.vary_parameters and not step.parameters:
+            if not step.vary_parameters and not step.parameters and not step.parameters_linear:
                 plan_obj.plan[i].batch_processes = [step.process_reference.m_resolved().m_copy(deep=True)]
                 continue
 
-            if step.parameters:
+            if step.parameters or step.parameters_linear:
                 if len(parameters) != number_of_subbatches:
                     raise Exception
                 batch_processes = []
