@@ -147,7 +147,11 @@ class Step(ArchiveSection):
             for p in self.parameters:
                 if p.parameter_unit:
                     continue
-                p.parameter_unit = get_unit(self.process_reference, p.parameter_path)
+                try:
+                    p.parameter_unit = get_unit(self.process_reference, p.parameter_path)
+                except:
+                    logger.error(
+                        f"{p.parameter_path} is not valid, cant find correct unit", normalizer=self.__class__.__name__, section='system')
 
 
 class ExperimentalPlan(Entity):

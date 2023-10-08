@@ -27,10 +27,20 @@ from ..wet_chemical_deposition import PrecursorSolution
 from ..solution_manufacturing import SolutionManufacturing
 
 
+def log_error(plan_obj, logger, msg):
+    if logger:
+        logger.error(
+            msg, normalizer=plan_obj.__class__.__name__,
+            section='system')
+    else:
+        raise Exception
+
+
 def set_value(section, path, value, unit):
     path_split = path.split("/")
     next_key = path_split[0]
     if len(path_split) == 1:
+        getattr(type(section), next_key)  # to raise an error if key is not defined
         if unit and unit != "None":
             q = ureg.Quantity(float(value), ureg(unit))
             setattr(section, next_key,  q)
@@ -49,22 +59,17 @@ def set_value(section, path, value, unit):
         set_value(section[next_key], "/".join(path_split[1:]), value, unit)
 
 
-def set_process_parameters(process, parameters, i):
+def set_process_parameters(process, parameters, i, plan_obj, logger):
     names = []
     for p in parameters:
         if p[0] == i:
             names.append(str(p[2]))
-            set_value(process, p[1], p[2], p[3])
+            try:
+                set_value(process, p[1], p[2], p[3])
+            except:
+                log_error(plan_obj, logger,
+                          f"Could not set {p[1]} to {p[2]} {p[3]}, likely due to a faulty path or unit")
     process.name += f" {','.join(names)}"
-
-
-def log_error(plan_obj, logger, msg):
-    if logger:
-        logger.error(
-            msg, normalizer=plan_obj.__class__.__name__,
-            section='system')
-    else:
-        raise Exception
 
 
 def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=None):
@@ -127,7 +132,7 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=N
         for i, step in enumerate(plan_obj.plan):
             if not step.vary_parameters:
                 process = step.process_reference.m_resolved().m_copy(deep=True)
-                set_process_parameters(process, parameters_single, i)
+                set_process_parameters(process, parameters_single, i, plan_obj, logger)
                 plan_obj.plan[i].batch_processes = [process]
                 continue
 
@@ -135,8 +140,8 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=N
                 batch_processes = []
                 for j in range(number_of_subbatches):
                     process = step.process_reference.m_resolved().m_copy(deep=True)
-                    set_process_parameters(process, parameters[j], i)
-                    set_process_parameters(process, parameters_single, i)
+                    set_process_parameters(process, parameters[j], i, plan_obj, logger)
+                    set_process_parameters(process, parameters_single, i, plan_obj, logger)
                     batch_processes.append(process)
                 plan_obj.plan[i].batch_processes = batch_processes
             else:
