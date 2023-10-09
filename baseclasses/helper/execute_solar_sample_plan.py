@@ -82,7 +82,7 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=N
             architecture=plan_obj.standard_plan.architecture
         )
 
-    if not (plan_obj.number_of_substrates > 0
+    if not (plan_obj.number_of_substrates >= 0
             and plan_obj.number_of_substrates % plan_obj.substrates_per_subbatch == 0
             ):
         log_error(plan_obj, logger,
