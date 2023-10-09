@@ -173,6 +173,12 @@ class ExperimentalPlan(Entity):
         a_eln=dict(component='ButtonEditQuantity')
     )
 
+    plan_is_created = Quantity(
+        type=bool,
+        default=False,
+        a_eln=dict(component='BoolEditQuantity')
+    )
+
     number_of_substrates = Quantity(
         type=np.dtype(np.int64),
         description='The number of substrates in the batch.',

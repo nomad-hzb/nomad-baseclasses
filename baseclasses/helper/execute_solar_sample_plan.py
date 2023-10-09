@@ -73,6 +73,8 @@ def set_process_parameters(process, parameters, i, plan_obj, logger):
 
 
 def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=None):
+    if plan_obj.plan_is_created:
+        log_error(plan_obj, logger, "The experimental plan has already been created. This can not been undone without deleting the files! If you did that uncheck the plan_is_created checkbox.")
 
     if plan_obj.standard_plan is not None:
         plan_obj.solar_cell_properties = SolarCellProperties(
@@ -278,3 +280,5 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=N
         with archive.m_context.raw_file(output, 'w') as outfile:
             outfile.write(str(sol) + "<br>" + str(html))
         plan_obj.batch_plan_pdf = output
+
+        plan_obj.plan_is_created = True
