@@ -21,10 +21,9 @@ from nomad.datamodel.metainfo.basesections import CompositeSystemReference, PubC
 from nomad.units import ureg
 from .. import ReadableIdentifiersCustom
 
-from ..helper.utilities import get_reference, create_archive, get_entry_id_from_file_name, add_section_markdown, rewrite_json, get_solutions
+from ..helper.utilities import get_reference, create_archive, get_entry_id_from_file_name, add_section_markdown, rewrite_json, get_solutions, convert_datetime
 from ..solar_energy import SolarCellProperties
 from ..wet_chemical_deposition import PrecursorSolution
-from ..solution_manufacturing import SolutionManufacturing
 
 
 def log_error(plan_obj, logger, msg):
@@ -44,6 +43,8 @@ def set_value(section, path, value, unit):
         if unit and unit != "None":
             q = ureg.Quantity(float(value), ureg(unit))
             setattr(section, next_key,  q)
+        elif next_key == "datetime":
+            setattr(section, next_key, convert_datetime(value, datetime_format='%d/%m/%Y %H:%M', utc=False))
         else:
             setattr(section, next_key, value)
     elif isinstance(section, list):
@@ -66,7 +67,7 @@ def set_process_parameters(process, parameters, i, plan_obj, logger):
             names.append(str(p[2]))
             try:
                 set_value(process, p[1], p[2], p[3])
-            except:
+            except Exception as e:
                 log_error(plan_obj, logger,
                           f"Could not set {p[1]} to {p[2]} {p[3]}, likely due to a faulty path or unit")
     process.name += f" {','.join(names)}"
