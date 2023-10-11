@@ -59,6 +59,9 @@ class Factor(ArchiveSection):
         if self.step:
             self.label = str(self.step) + ' ' + self.label
 
+        if self.active:
+            self.label = self.label + " active"
+
 
 class DiscreteFactor(Factor):
     m_def = Section(label_quantity='label',
