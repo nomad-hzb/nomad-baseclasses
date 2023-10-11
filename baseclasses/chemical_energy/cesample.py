@@ -81,7 +81,11 @@ class SampleIDCE(ReadableIdentifiersCustom):
         query = {'results.eln.lab_ids': sample_id_tmp}
         search_result_1 = search(owner='all', query=query,
                                  user_id=archive.metadata.main_author.user_id)
-        if self.project_sample_number is None or len(search_result_1.data) != 0:
+
+        if self.project_sample_number is None or (len(search_result_1.data) != 0 and
+                                                  archive.metadata.entry_id not in [
+                                                      d["entry_id"] for d in search_result_1.data]
+                                                  ):
             query = {'results.eln.lab_ids': self.lab_id}
             search_result = search(owner='all', query=query,
                                    user_id=archive.metadata.main_author.user_id)
@@ -127,9 +131,6 @@ class CESample(CompositeSystem):
         description=(
             'A list of the elements involved'),
         a_eln=dict(component='StringEditQuantity'))
-
-    substrate = SubSection(
-        section_def=SubstrateProperties)
 
     def normalize(self, archive, logger):
         super(CESample, self).normalize(archive, logger)
@@ -254,6 +255,9 @@ class CENOMESample(CESample):
     sample_id = SubSection(
         section_def=SampleIDCENOME)
 
+    substrate = SubSection(
+        section_def=SubstrateProperties)
+
     def normalize(self, archive, logger):
         super(CENOMESample, self).normalize(archive, logger)
 
@@ -275,7 +279,7 @@ class SubstanceWithConcentration(ArchiveSection):
         unit=("mmol/l"),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit="mmol/l"))
+            defaultDisplayUnit="mol/l"))
 
     concentration_g_per_l = Quantity(
         type=np.dtype(np.float64), unit=("g/l"),
@@ -309,7 +313,7 @@ class Electrolyte(CESample):
     def normalize(self, archive, logger):
 
         formulas = []
-        if self.solvent is not None:
+        if self.solvent is not None and self.solvent.molecular_formula:
             formulas.append(
                 self.solvent.molecular_formula.strip().replace(
                     ".", ""))

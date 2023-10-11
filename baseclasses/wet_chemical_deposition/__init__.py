@@ -24,3 +24,4 @@ from .vaporization_and_dropcasting import VaporizationAndDropCasting
 from .wet_chemical_deposition import WetChemicalDeposition, PrecursorSolution
 from .crystallization import Crystallization
 from .dip_coating import DipCoating
+from .dropcast import DropCasting

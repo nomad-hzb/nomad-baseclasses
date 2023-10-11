@@ -239,6 +239,8 @@ def create_archive(entity, archive, file_name):
         with archive.m_context.raw_file(file_name, 'w') as outfile:
             json.dump({"data": entity_entry}, outfile)
         archive.m_context.process_updated_raw_file(file_name)
+        return True
+    return False
 
 
 def get_reference(upload_id, entry_id):
@@ -299,3 +301,28 @@ def search_class(archive, entry_type):
     if len(search_result.data) == 1:
         data = search_result.data[0]
         return data
+
+
+def get_processes(archive, entry_id):
+    from nomad.search import search
+    from nomad.app.v1.models import MetadataPagination
+    from nomad import files
+    import baseclasses
+    import inspect
+
+    # search for all archives referencing this archive
+    query = {
+        'entry_references.target_entry_id': entry_id,
+    }
+    pagination = MetadataPagination()
+    pagination.page_size = 100
+    search_result = search(owner='all', query=query, pagination=pagination,
+                           user_id=archive.metadata.main_author.user_id)
+    processes = []
+    for res in search_result.data:
+        with files.UploadFiles.get(upload_id=res["upload_id"]).read_archive(entry_id=res["entry_id"]) as archive:
+            entry_id = res["entry_id"]
+            entry_data = archive[entry_id]["data"]
+            if "positon_in_experimental_plan" in entry_data:
+                processes.append((entry_data.get("positon_in_experimental_plan"), entry_data.get("name")))
+    return sorted(processes, key=lambda pair: pair[0])

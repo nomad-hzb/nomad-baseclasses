@@ -16,81 +16,80 @@
 # limitations under the License.
 #
 
-import numpy as np
+# import numpy as np
 
-from nomad.metainfo import (
-    Quantity,
-    Reference,
-    SubSection)
-from nomad.datamodel.data import ArchiveSection
+# from nomad.metainfo import (
+#     Quantity,
+#     Reference,
+#     SubSection)
+# from nomad.datamodel.data import ArchiveSection
 
-from .. import Deposition
-from ..chemical import Chemical
-
-
-class PMMARemoval(ArchiveSection):
-
-    temperature = Quantity(
-        type=np.dtype(
-            np.float64),
-        unit=('°C'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='°C'))
-
-    solvent = Quantity(
-        type=Reference(Chemical.m_def),
-        shape=['*'],
-        a_eln=dict(component='ReferenceEditQuantity'))
+# from ..chemical import Chemical
 
 
-class WaterBath(Deposition):
+# class PMMARemoval(ArchiveSection):
 
-    type_of_graphene = Quantity(
-        type=str,
-        a_eln=dict(
-            component='EnumEditQuantity',
-            props=dict(
-                suggestions=[
-                    "Graphene on CU",
-                    "Graphene on polymer Film"])))
+#     temperature = Quantity(
+#         type=np.dtype(
+#             np.float64),
+#         unit=('°C'),
+#         a_eln=dict(
+#             component='NumberEditQuantity',
+#             defaultDisplayUnit='°C'))
 
-    etching_time = Quantity(
-        type=np.dtype(
-            np.float64),
-        unit=('minute'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='minute'))
+#     solvent = Quantity(
+#         type=Reference(Chemical.m_def),
+#         shape=['*'],
+#         a_eln=dict(component='ReferenceEditQuantity'))
 
-    wash_volume = Quantity(
-        type=np.dtype(
-            np.float64),
-        unit=('ml'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='ml'))
 
-    flow_rate = Quantity(
-        type=np.dtype(
-            np.float64),
-        unit=('ml/s'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='ml/s'))
+# class WaterBath(Deposition):
 
-    time_in_vaccuum = Quantity(
-        type=np.dtype(
-            np.float64),
-        unit=('minute'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='minute'))
+#     type_of_graphene = Quantity(
+#         type=str,
+#         a_eln=dict(
+#             component='EnumEditQuantity',
+#             props=dict(
+#                 suggestions=[
+#                     "Graphene on CU",
+#                     "Graphene on polymer Film"])))
 
-    pmma_removal = SubSection(section_def=PMMARemoval)
+#     etching_time = Quantity(
+#         type=np.dtype(
+#             np.float64),
+#         unit=('minute'),
+#         a_eln=dict(
+#             component='NumberEditQuantity',
+#             defaultDisplayUnit='minute'))
 
-    def normalize(self, archive, logger):
-        super(WaterBath,
-              self).normalize(archive, logger)
+#     wash_volume = Quantity(
+#         type=np.dtype(
+#             np.float64),
+#         unit=('ml'),
+#         a_eln=dict(
+#             component='NumberEditQuantity',
+#             defaultDisplayUnit='ml'))
 
-        self.method = "Water Bath"
+#     flow_rate = Quantity(
+#         type=np.dtype(
+#             np.float64),
+#         unit=('ml/s'),
+#         a_eln=dict(
+#             component='NumberEditQuantity',
+#             defaultDisplayUnit='ml/s'))
+
+#     time_in_vaccuum = Quantity(
+#         type=np.dtype(
+#             np.float64),
+#         unit=('minute'),
+#         a_eln=dict(
+#             component='NumberEditQuantity',
+#             defaultDisplayUnit='minute'))
+
+#     pmma_removal = SubSection(section_def=PMMARemoval)
+
+#     def normalize(self, archive, logger):
+#         super(WaterBath,
+#               self).normalize(archive, logger)
+
+#         self.method = "Water Bath"

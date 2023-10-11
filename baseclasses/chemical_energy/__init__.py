@@ -24,15 +24,14 @@ from .chronopotentiometry import Chronopotentiometry
 from .chronocoulometry import Chronocoulometry
 from .opencircuitvoltage import OpenCircuitVoltage, OCVProperties
 from .electorchemical_impedance_spectroscopy import ElectrochemicalImpedanceSpectroscopy, EISProperties
-from .dropcast import Dropcast
 from .opticalmicroscopy import OpticalMicorscopy
 from .photocurrent import PhotoCurrent
-from .cesample import CESample, SampleIDCENOME
-from .cesample import CENSLISample, get_next_project_sample_number
+from .cesample import CESample, SampleIDCENOME, SubstrateProperties, Purging
+from .cesample import CENSLISample, get_next_project_sample_number, SubstanceWithConcentration
 from .cesample import CENOMESample, Electrode, Electrolyte, ElectroChemicalCell, ElectroChemicalSetup, Environment
 from .preparation_protocoll import PreparationProtocol
 from .diamondsample import DiamondSample
-from .waterbath import WaterBath
+# from .waterbath import WaterBath
 from .voltammetry import VoltammetryCycle, Voltammetry, VoltammetryCycleWithPlot
 from .potentiostat_measurement import PotentiostatMeasurement, PotentiostatSetup
 from .phasefluorometryoxygen import PhaseFluorometryOxygen

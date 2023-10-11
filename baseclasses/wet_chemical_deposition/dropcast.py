@@ -18,13 +18,13 @@
 
 import numpy as np
 
-from nomad.metainfo import (Quantity)
+from nomad.metainfo import (Quantity, SubSection)
+from nomad.datamodel.data import ArchiveSection
 
-from .. import Deposition
+from . import WetChemicalDeposition
 
 
-class Dropcast(Deposition):
-
+class DropCastingProperties(ArchiveSection):
     suspension_concentration = Quantity(
         type=np.dtype(
             np.float64),
@@ -54,8 +54,14 @@ class Dropcast(Deposition):
             props=dict(suggestions=["N2O flow", "ambient"])
         ))
 
+
+class DropCasting(WetChemicalDeposition):
+
+    properties = SubSection(
+        section_def=DropCastingProperties)
+
     def normalize(self, archive, logger):
-        super(Dropcast,
+        super(DropCasting,
               self).normalize(archive, logger)
 
-        self.method = "Dropcast"
+        self.method = "Drop Casting"

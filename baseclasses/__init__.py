@@ -43,34 +43,9 @@ from nomad.datamodel.data import ArchiveSection
 
 
 from .helper.add_solar_cell import add_solar_cell
-from .helper.utilities import update_archive
+from .helper.utilities import update_archive, get_processes
 
 from .customreadable_identifier import ReadableIdentifiersCustom
-
-
-def get_processes(archive, entry_id):
-    from nomad.search import search
-    from nomad.app.v1.models import MetadataPagination
-    from nomad import files
-    import baseclasses
-    import inspect
-
-    # search for all archives referencing this archive
-    query = {
-        'entry_references.target_entry_id': entry_id,
-    }
-    pagination = MetadataPagination()
-    pagination.page_size = 100
-    search_result = search(owner='all', query=query, pagination=pagination,
-                           user_id=archive.metadata.main_author.user_id)
-    processes = []
-    for res in search_result.data:
-        with files.UploadFiles.get(upload_id=res["upload_id"]).read_archive(entry_id=res["entry_id"]) as archive:
-            entry_id = res["entry_id"]
-            entry_data = archive[entry_id]["data"]
-            if "positon_in_experimental_plan" in entry_data:
-                processes.append((entry_data.get("positon_in_experimental_plan"), entry_data.get("name")))
-    return sorted(processes, key=lambda pair: pair[0])
 
 
 class Batch(Collection):
@@ -195,18 +170,6 @@ class BaseProcess(Process):
         if self.batch:
             self.samples = self.batch.entities
         super(BaseProcess, self).normalize(archive, logger)
-
-
-class Deposition(BaseProcess, ElnWithFormulaBaseSection):
-    function = Quantity(
-        type=str,
-        shape=[],
-        a_eln=dict(
-            component='StringEditQuantity'
-        ))
-
-    def normalize(self, archive, logger):
-        super(Deposition, self).normalize(archive, logger)
 
 
 class StandardSample(Entity):
