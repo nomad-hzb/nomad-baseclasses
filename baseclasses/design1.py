@@ -159,7 +159,7 @@ class Design(Entity):
                     row.extend([f.get(idx)])
                 data.append(row)
 
-            df = pd.DataFrame(data, index=index, columns=columns).sort_values(by=f.index[0], ascending=False, axis=1)
+            df = pd.DataFrame(data, index=index, columns=columns)
             df = df.sort_values(by=df.index[0], ascending=False, axis=1)
             file_name = self.name.replace(" ", "_")+".tsv"
             df.to_csv(os.path.join(path, file_name), sep="\t")
