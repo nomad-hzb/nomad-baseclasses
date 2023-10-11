@@ -158,8 +158,9 @@ class Design(Entity):
                 for f in self.continuous_factors + self.discrete_factors:
                     row.extend([f.get(idx)])
                 data.append(row)
-            print(columns)
-            df = pd.DataFrame(data, index=index, columns=columns)
+
+            df = pd.DataFrame(data, index=index, columns=columns).sort_values(by=f.index[0], ascending=False, axis=1)
+            df = df.sort_values(by=df.index[0], ascending=False, axis=1)
             file_name = self.name.replace(" ", "_")+".tsv"
             df.to_csv(os.path.join(path, file_name), sep="\t")
             self.design_file = file_name
