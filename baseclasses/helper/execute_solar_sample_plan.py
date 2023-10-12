@@ -64,7 +64,7 @@ def set_process_parameters(process, parameters, i, plan_obj, logger):
     names = []
     for p in parameters:
         if p[0] == i:
-            names.append(str(p[2]))
+            names.append(str(p[2]).replace("/", ""))
             try:
                 set_value(process, p[1], p[2], p[3])
             except Exception as e:
