@@ -73,6 +73,106 @@ def set_process_parameters(process, parameters, i, plan_obj, logger):
     process.name += f" {','.join(names)}"
 
 
+def add_sample(plan_obj, archive, idx1, idx2, sample_id, sample_cls):
+    subs = plan_obj.solar_cell_properties.substrate
+    architecture = plan_obj.solar_cell_properties.architecture
+    short_name = plan_obj.batch_id.short_name
+
+    sample_id.short_name = f"{short_name}_{idx1}_{idx2}"
+    # For each sample number, create instance of sample.
+    file_name = f'{plan_obj.batch_id.lab_id}_{idx1}_{idx2}.archive.json'
+    sample = sample_cls(
+        name=f'{plan_obj.name} {plan_obj.batch_id.lab_id}_{idx1}_{idx2}',
+        sample_id=sample_id,
+        datetime=plan_obj.datetime,
+        substrate=subs,
+        architecture=architecture,
+        description=plan_obj.description if plan_obj.description else None)
+    create_archive(sample, archive, file_name)
+    entry_id = get_entry_id_from_file_name(file_name, archive)
+    return entry_id
+
+
+def add_batch(plan_obj, archive,  batch_id, batch_cls, sample_refs, is_subbatch, idx1=None):
+    short_name = plan_obj.batch_id.short_name
+    file_name = f'{plan_obj.batch_id.lab_id}'
+    if is_subbatch:
+        file_name += f"_{idx1}"
+    file_name += '.archive.json'
+    batch_id.short_name = f"{short_name}_{idx1}" if is_subbatch else f"{short_name}"
+    batch = batch_cls(
+        name=f'{plan_obj.name} {plan_obj.batch_id.lab_id}_{idx1}' if is_subbatch else f'{plan_obj.name} {plan_obj.batch_id.lab_id}',
+        datetime=plan_obj.datetime,
+        batch_id=batch_id,
+        entities=[CompositeSystemReference(reference=sample_ref) for sublist in sample_refs for sample_ref in sublist],
+        description=plan_obj.description if plan_obj.description else None)
+    if is_subbatch and plan_obj.substrates_per_subbatch == 1:
+        return
+    create_archive(batch, archive, file_name)
+
+
+def create_documentation(plan_obj, archive, md, solution_list, batch_id):
+    from markdown2 import Markdown
+    markdowner = Markdown()
+    md = md.replace("_", "\\_")
+    sol = f"<b> Solutions for batch {batch_id.lab_id}</b><br><br>"
+    sol += get_solutions(solution_list)
+    html = markdowner.convert(md)
+    summary_html = "----------start summary----------<br>" + str(sol) + "<br>" + str(html) +\
+        "<br>----------end summary----------"
+    desc_tmp = plan_obj.description
+    if desc_tmp is not None:
+        pos_start = desc_tmp.find("----------start summary----------")
+        pos_end = desc_tmp.find("----------end summary----------")
+        if pos_start > 0 and pos_end > 0:
+            desc_tmp = desc_tmp[:pos_start] + desc_tmp[pos_end + 31:]
+
+    plan_obj.description = desc_tmp +\
+        summary_html if desc_tmp is not None else summary_html
+    output = f"batch_plan_{batch_id.lab_id}.html"
+    with archive.m_context.raw_file(output, 'w') as outfile:
+        outfile.write(str(sol) + "<br>" + str(html))
+    plan_obj.batch_plan_pdf = output
+
+
+def add_process(plan_obj, archive, step, process, idx1, idx2):
+    file_name_base = f'{plan_obj.batch_id.lab_id}_{idx1}' if \
+        step.vary_parameters else \
+        f'{plan_obj.batch_id.lab_id}'
+    if plan_obj.substrates_per_subbatch == 1 and step.vary_parameters:
+        file_name_base += "_0"
+    file_name = f"{file_name_base}.archive.json"
+    entry_id = get_entry_id_from_file_name(file_name, archive)
+
+    process.name = process.name.replace(
+        "Standard", "").replace("-", "").strip()
+    if plan_obj.substrates_per_subbatch == 1 and step.vary_parameters:
+        process.samples = [CompositeSystemReference(reference=get_reference(
+            archive.metadata.upload_id, entry_id))]
+    else:
+        process.batch = get_reference(
+            archive.metadata.upload_id, entry_id)
+
+    if "name" in process:
+        name = f'{process.name}'
+    else:
+        name = f'{process.method}'
+
+    if file_name_base not in name:
+        name = f'{name} {file_name_base}'
+
+    # file_name_process = f'{name.replace(" ","_")}_{file_name_base}_{randStr()}.archive.json'
+    file_name_process = f'{idx2+1}_{name.replace("  ","_").replace(" ","_")}.archive.json'
+    process.positon_in_experimental_plan = idx2 + 1
+    entry_id = get_entry_id_from_file_name(
+        file_name_process, archive)
+
+    if not process.datetime:
+        process.datetime = plan_obj.datetime if plan_obj.datetime else ''
+    create_archive(process, archive, file_name_process)
+    return file_name_base
+
+
 def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=None):
     if plan_obj.plan_is_created:
         log_error(plan_obj, logger, "The experimental plan has already been created. This can not been undone without deleting the files! If you did that uncheck the plan_is_created checkbox.")
@@ -90,11 +190,12 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=N
                   f"Number of substrates is {plan_obj.number_of_substrates} and substrates per subbatch is {plan_obj.substrates_per_subbatch}, which does not devide!")
         return
 
+    number_of_subbatches = plan_obj.number_of_substrates // plan_obj.substrates_per_subbatch
+
     # standard process integration
     if plan_obj.load_standard_processes:
         plan_obj.load_standard_processes = False
         rewrite_json(["data", "load_standard_processes"], archive, False)
-        number_of_subbatches = plan_obj.number_of_substrates // plan_obj.substrates_per_subbatch
 
         parameters_before = []
         parameters_linear = []
@@ -158,128 +259,37 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=N
         rewrite_json(["data", "create_samples_and_processes"], archive, False)
 
         batch_id = ReadableIdentifiersCustom(**plan_obj.batch_id.m_to_dict())
-        short_name = plan_obj.batch_id.short_name
         sample_id = ReadableIdentifiersCustom(**batch_id.m_to_dict())
+
         # create samples and batches
         sample_refs = []
-        subs = plan_obj.solar_cell_properties.substrate
-        architecture = plan_obj.solar_cell_properties.architecture
-        number_of_subbatches = plan_obj.number_of_substrates // plan_obj.substrates_per_subbatch
         for idx1 in range(number_of_subbatches):
             sample_refs_subbatch = []
             for idx2 in range(plan_obj.substrates_per_subbatch):
-
-                sample_id.short_name = f"{short_name}_{idx1}_{idx2}"
-                # For each sample number, create instance of sample.
-                file_name = f'{plan_obj.batch_id.lab_id}_{idx1}_{idx2}.archive.json'
-                sample = sample_cls(
-                    name=f'{plan_obj.name} {plan_obj.batch_id.lab_id}_{idx1}_{idx2}',
-                    sample_id=sample_id,
-                    datetime=plan_obj.datetime,
-                    substrate=subs,
-                    architecture=architecture,
-                    description=plan_obj.description if plan_obj.description else None)
-                create_archive(sample, archive, file_name)
-                entry_id = get_entry_id_from_file_name(file_name, archive)
-                # print(get_reference(archive.metadata.upload_id, entry_id))
+                entry_id = add_sample(plan_obj, archive, idx1, idx2, sample_id, sample_cls)
                 sample_refs_subbatch.append(get_reference(
                     archive.metadata.upload_id, entry_id))
             sample_refs.append(sample_refs_subbatch)
-            file_name = f'{plan_obj.batch_id.lab_id}_{idx1}.archive.json'
-            batch_id.short_name = f"{short_name}_{idx1}"
-            subbatch = batch_cls(
-                name=f'{plan_obj.name} {plan_obj.batch_id.lab_id}_{idx1}',
-                datetime=plan_obj.datetime,
-                batch_id=batch_id,
-                entities=[CompositeSystemReference(reference=sample_ref) for sample_ref in sample_refs_subbatch],
-                description=plan_obj.description if plan_obj.description else None)
-            if plan_obj.substrates_per_subbatch > 1:
-                create_archive(subbatch, archive, file_name)
+            add_batch(plan_obj, archive, batch_id, batch_cls, [sample_refs_subbatch], True, idx1)
 
-        file_name = f'{plan_obj.batch_id.lab_id}.archive.json'
-        batch_id.short_name = f"{short_name}"
-        batch = batch_cls(
-            name=f'{plan_obj.name} {plan_obj.batch_id.lab_id}',
-            batch_id=batch_id,
-            datetime=plan_obj.datetime,
-            entities=[CompositeSystemReference(reference=item)
-                      for sublist in sample_refs for item in sublist],
-            description=plan_obj.description if plan_obj.description else None)
-        create_archive(batch, archive, file_name)
+        add_batch(plan_obj, archive, batch_id, batch_cls, sample_refs, False)
 
         # create processes
         md = f"# Batch plan of batch {batch_id.lab_id}\n\n"
         solution_list = []
-        for idx2, plan in enumerate(plan_obj.plan):
-            for idx1, batch_process in enumerate(plan.batch_processes):
+        for idx2, step in enumerate(plan_obj.plan):
+            for idx1, batch_process in enumerate(step.batch_processes):
                 if not batch_process.present:
                     continue
-                file_name_base = f'{plan_obj.batch_id.lab_id}_{idx1}' if \
-                    plan.vary_parameters else \
-                    f'{plan_obj.batch_id.lab_id}'
-                if plan_obj.substrates_per_subbatch == 1 and plan.vary_parameters:
-                    file_name_base += "_0"
-                file_name = f"{file_name_base}.archive.json"
-                entry_id = get_entry_id_from_file_name(file_name, archive)
+                file_name_base = add_process(plan_obj, archive, step, batch_process, idx1, idx2)
+                md = add_section_markdown(md,  idx2, idx1, batch_process, file_name_base)
+                if "solution" not in batch_process:
+                    continue
+                for s in getattr(batch_process, "solution", []):
+                    if getattr(s, "solution_details"):
+                        solution_list.append(s["solution_details"])
+                    elif getattr(s, "solution"):
+                        solution_list.append(s["solution"])
 
-                batch_process.name = batch_process.name.replace(
-                    "Standard", "").replace("-", "").strip()
-                if plan_obj.substrates_per_subbatch == 1 and plan.vary_parameters:
-                    batch_process.samples = [CompositeSystemReference(reference=get_reference(
-                        archive.metadata.upload_id, entry_id))]
-                else:
-                    batch_process.batch = get_reference(
-                        archive.metadata.upload_id, entry_id)
-
-                if "function" in batch_process:
-                    name = f'{batch_process.function}'
-                elif "name" in batch_process:
-                    name = f'{batch_process.name}'
-                else:
-                    name = f'{batch_process.method}'
-
-                if file_name_base not in name:
-                    name = f'{name} {file_name_base}'
-
-                # file_name_process = f'{name.replace(" ","_")}_{file_name_base}_{randStr()}.archive.json'
-                file_name_process = f'{idx2+1}_{name.replace("  ","_").replace(" ","_")}.archive.json'
-                batch_process.positon_in_experimental_plan = idx2 + 1
-                entry_id = get_entry_id_from_file_name(
-                    file_name_process, archive)
-
-                batch_process.description
-                # todo add one second
-                batch_process.datetime = plan_obj.datetime if plan_obj.datetime else ''
-                create_archive(batch_process, archive, file_name_process)
-                md = add_section_markdown(
-                    md,  idx2, idx1, batch_process, file_name_base)
-                if "solution" in batch_process:
-                    for s in getattr(batch_process, "solution", []):
-                        if getattr(s, "solution_details"):
-                            solution_list.append(s["solution_details"])
-                        elif getattr(s, "solution"):
-                            solution_list.append(s["solution"])
-
-        from markdown2 import Markdown
-        markdowner = Markdown()
-        md = md.replace("_", "\\_")
-        sol = f"<b> Solutions for batch {batch_id.lab_id}</b><br><br>"
-        sol += get_solutions(solution_list)
-        html = markdowner.convert(md)
-        summary_html = "----------start summary----------<br>" + str(sol) + "<br>" + str(html) +\
-            "<br>----------end summary----------"
-        desc_tmp = plan_obj.description
-        if desc_tmp is not None:
-            pos_start = desc_tmp.find("----------start summary----------")
-            pos_end = desc_tmp.find("----------end summary----------")
-            if pos_start > 0 and pos_end > 0:
-                desc_tmp = desc_tmp[:pos_start] + desc_tmp[pos_end + 31:]
-
-        plan_obj.description = desc_tmp +\
-            summary_html if desc_tmp is not None else summary_html
-        output = f"batch_plan_{batch_id.lab_id}.html"
-        with archive.m_context.raw_file(output, 'w') as outfile:
-            outfile.write(str(sol) + "<br>" + str(html))
-        plan_obj.batch_plan_pdf = output
-
+        create_documentation(plan_obj, archive, md, solution_list, batch_id)
         plan_obj.plan_is_created = True
