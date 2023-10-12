@@ -177,6 +177,9 @@ class Solution(CompositeSystem):
     solute = SubSection(
         section_def=SolutionChemical, repeats=True)
 
+    additive = SubSection(
+        section_def=SolutionChemical, repeats=True)
+
     solvent = SubSection(
         section_def=SolutionChemical, repeats=True)
 
