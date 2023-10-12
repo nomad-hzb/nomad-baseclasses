@@ -46,6 +46,7 @@ list_path = [
     "sintering/temperature",
     "sintering/ramp",
     "solution/0/solution_volume",
+    "solution/0/solution_details/datetime",
     "solution/0/solution_details/solute/0/concentration_mol",
     "solution/0/solution_details/solute/0/concentration_mg",
     "solution/0/solution_details/solute/0/amount_relative",
@@ -77,6 +78,7 @@ list_path = [
     "inorganic_evaporation/0/start_rate",
     "inorganic_evaporation/0/target_rate",
     "inorganic_evaporation/0/time",
+    "datetime"
 ]
 
 
