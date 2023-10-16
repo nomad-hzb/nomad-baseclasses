@@ -23,7 +23,7 @@ from nomad.metainfo import (
     SubSection,
     Section,
     Reference,
-    MEnum, SectionProxy)
+    MEnum, SectionProxy, Datetime)
 from nomad.datamodel.data import ArchiveSection
 
 from .chemical import Chemical
@@ -142,11 +142,185 @@ class OtherSolution(ArchiveSection):
                 self.name = self.solution_details.name
 
 
+class SolutionPreparation(ArchiveSection):
+
+    atmosphere = Quantity(
+        type=str,
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=['Ar', 'N2', "Air"])
+        ))
+
+
+class SolutionPreparationStandard(SolutionPreparation):
+    method = Quantity(
+        type=MEnum('Shaker', 'Ultrasoncic', 'Waiting', "Stirring"),
+        shape=[],
+        a_eln=dict(
+            component='EnumEditQuantity',
+        ))
+
+    temperature = Quantity(
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
+
+    time = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=('minute'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='minute'))
+
+    speed = Quantity(
+        type=np.dtype(np.float64),
+        unit=('Hz'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='rpm'))
+
+    solvent_ratio = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'))
+
+    oil_bath = Quantity(
+        type=bool,
+        default=False,
+        a_eln=dict(
+            component='BoolEditQuantity',
+        ))
+
+
+class SolutionPreparationStandardWithSonication(SolutionPreparationStandard):
+
+    sonication_time = Quantity(
+        type=np.dtype(np.float64),
+        unit=('second'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='hour'))
+
+
+class MoltenSalt(ArchiveSection):
+    prepared_in = Quantity(
+        type=str,
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=['Glove box', 'Air'])
+        ))
+
+    salts = SubSection(section_def=PubChemPureSubstanceSection, repeats=True)
+
+
+class SolutionPreparationMoltenSalt(SolutionPreparation):
+
+    grinding_duration = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=('second'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='hour'))
+
+    heating_source = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
+    crucible_type = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
+
+    heating_temperature = Quantity(
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
+
+    heating_time = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=('second'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='minute'))
+
+    sample_quantity_after = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=('g'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='g'))
+
+    salt_mixture = SubSection(section_def=MoltenSalt)
+
+
+class SolutionProperties(ArchiveSection):
+    ph_value = Quantity(
+        type=np.dtype(np.int64),
+        a_eln=dict(component='NumberEditQuantity'))
+
+
+class SolutionWasching(ArchiveSection):
+    washing_solvent = SubSection(
+        section_def=PubChemPureSubstanceSection)
+
+    washing_technique = Quantity(
+        type=str,
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=['Filtration', 'Centrifugation'])
+        ))
+
+    number_of_washes = Quantity(
+        type=np.dtype(np.int64),
+        a_eln=dict(
+            component='NumberEditQuantity'))
+
+    centrifuge_speed = Quantity(
+        type=np.dtype(np.float64),
+        unit=('Hz'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='rpm'))
+
+    centrifuge_time = Quantity(
+        type=np.dtype(np.float64),
+        unit=('second'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='minute'))
+
+
+class SolutionStorage(ArchiveSection):
+    start_date = Quantity(
+        type=Datetime,
+        a_eln=dict(component='DateTimeEditQuantity'))
+
+    end_date = Quantity(
+        type=Datetime,
+        a_eln=dict(component='DateTimeEditQuantity'))
+
+    storage_condition = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'),
+    )
+    temperature = Quantity(
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
+
+    atmosphere = Quantity(
+        type=str,
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=['Ar', 'N2', "Air"])
+        ))
+
+    comments = Quantity(
+        type=str,
+        a_eln=dict(component='RichTextEditQuantity'),
+    )
+
+
 class Solution(CompositeSystem):
     '''Base class for a solution'''
 
     method = Quantity(
-        type=MEnum('Shaker', 'Ultrasoncic', 'Waiting'),
+        type=MEnum('Shaker', 'Ultrasoncic', 'Waiting', "Stirring"),
         shape=[],
         a_eln=dict(
             component='EnumEditQuantity',
@@ -174,24 +348,27 @@ class Solution(CompositeSystem):
         unit=('Hz'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='rpm'))
 
-    solute = SubSection(
-        section_def=SolutionChemical, repeats=True)
-
-    additive = SubSection(
-        section_def=SolutionChemical, repeats=True)
-
-    solvent = SubSection(
-        section_def=SolutionChemical, repeats=True)
-
-    other_solution = SubSection(
-        section_def=OtherSolution, repeats=True)
-
-    solution_id = SubSection(
-        section_def=ReadableIdentifiersCustom)
+    solute = SubSection(section_def=SolutionChemical, repeats=True)
+    additive = SubSection(section_def=SolutionChemical, repeats=True)
+    solvent = SubSection(section_def=SolutionChemical, repeats=True)
+    other_solution = SubSection(section_def=OtherSolution, repeats=True)
+    preparation = SubSection(section_def=SolutionPreparation)
+    washing = SubSection(section_def=SolutionWasching)
+    properties = SubSection(section_def=SolutionProperties)
+    storage = SubSection(section_def=SolutionStorage, repeats=True)
+    solution_id = SubSection(section_def=ReadableIdentifiersCustom)
 
     def normalize(self, archive, logger):
         super(Solution, self).normalize(archive, logger)
-        elements = []
+        if (not self.preparation):
+            if self.temperature is not None or self.time is not None or self.speed is not None or self.solvent_ratio is not None:
+                self.preparation = SolutionPreparationStandard(
+                    temperature=self.temperature,
+                    time=self.time,
+                    speed=self.speed,
+                    solvent_ratio=self.solvent_ratio
+                )
+        # elements = []
         # for solute in self.solute:
         #     if solute.chemical_2 is not None and solute.chemical_2
         # if replaced_formula is not None:
