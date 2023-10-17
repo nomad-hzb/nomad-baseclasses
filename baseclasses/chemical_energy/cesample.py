@@ -263,7 +263,17 @@ class CENOMESample(CESample):
 
 
 class Electrode(CESample):
-    pass
+    location = Quantity(
+        type=str,
+        a_eln=dict(
+            component='StringEditQuantity'
+        ))
+
+    producer = Quantity(
+        type=str,
+        a_eln=dict(
+            component='StringEditQuantity'
+        ))
 
 
 class SubstanceWithConcentration(ArchiveSection):
