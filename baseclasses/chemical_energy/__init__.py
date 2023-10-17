@@ -28,7 +28,7 @@ from .opticalmicroscopy import OpticalMicorscopy
 from .photocurrent import PhotoCurrent
 from .cesample import CESample, SampleIDCENOME, SubstrateProperties, Purging
 from .cesample import CENSLISample, get_next_project_sample_number, SubstanceWithConcentration
-from .cesample import CENOMESample, Electrode, Electrolyte, ElectroChemicalCell, ElectroChemicalSetup, Environment
+from .cesample import CENOMESample, Electrode, Electrolyte, ElectroChemicalCell, ElectroChemicalSetup, Environment, Equipment
 from .preparation_protocoll import PreparationProtocol
 from .diamondsample import DiamondSample
 # from .waterbath import WaterBath

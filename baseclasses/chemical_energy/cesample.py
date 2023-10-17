@@ -23,7 +23,7 @@ from nomad.metainfo import (Quantity, SubSection, Section, Reference, Datetime)
 from nomad.datamodel.results import Results, Material
 from nomad.datamodel.data import ArchiveSection
 
-from nomad.datamodel.metainfo.basesections import CompositeSystem, PubChemPureSubstanceSection, CompositeSystemReference
+from nomad.datamodel.metainfo.basesections import CompositeSystem, PubChemPureSubstanceSection, CompositeSystemReference, Entity
 from .. import ReadableIdentifiersCustom
 # from .preparation_protocoll import PreparationProtocol
 
@@ -276,6 +276,20 @@ class Electrode(CESample):
         ))
 
 
+class Equipment(Entity):
+    location = Quantity(
+        type=str,
+        a_eln=dict(
+            component='StringEditQuantity'
+        ))
+
+    producer = Quantity(
+        type=str,
+        a_eln=dict(
+            component='StringEditQuantity'
+        ))
+
+
 class SubstanceWithConcentration(ArchiveSection):
     m_def = Section(label_quantity='name')
     substance = SubSection(
@@ -440,6 +454,10 @@ class ElectroChemicalSetup(CESample):
 
     counter_electrode = Quantity(
         type=Reference(Electrode.m_def),
+        a_eln=dict(component='ReferenceEditQuantity'))
+
+    equipment = Quantity(
+        type=Reference(Equipment.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     def normalize(self, archive, logger):
