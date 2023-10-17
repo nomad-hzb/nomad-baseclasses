@@ -70,6 +70,10 @@ def get_setup():
                "counter_electrode",
                "description"
                ]
+
+    for i in range(5):
+        columns.extend(["equipment" + "_" + str(i)])
+
     return pd.DataFrame(columns=columns)
 
 
