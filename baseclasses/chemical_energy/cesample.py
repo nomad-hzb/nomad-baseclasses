@@ -458,6 +458,7 @@ class ElectroChemicalSetup(CESample):
 
     equipment = Quantity(
         type=Reference(Equipment.m_def),
+        shape=['*'],
         a_eln=dict(component='ReferenceEditQuantity'))
 
     def normalize(self, archive, logger):
