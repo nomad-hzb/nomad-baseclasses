@@ -46,6 +46,7 @@ from .helper.add_solar_cell import add_solar_cell
 from .helper.utilities import update_archive, get_processes
 
 from .customreadable_identifier import ReadableIdentifiersCustom
+from .atmosphere import Atmosphere
 
 
 class Batch(Collection):
@@ -307,6 +308,7 @@ class LayerDeposition(BaseProcess):
 
 
 class BaseMeasurement(Measurement):
+    atmosphere = SubSection(section_def=Atmosphere, repeats=True)
 
     def normalize(self, archive, logger):
         super(BaseMeasurement, self).normalize(archive, logger)
