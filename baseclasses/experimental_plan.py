@@ -113,6 +113,7 @@ def get_unit(section, path):
         return get_unit(section[np.int64(next_key)], "/".join(path_split[1:]))
     elif isinstance(section, PrecursorSolution):
         section.solution_details = section.solution.m_copy(deep=True)
+        section.solution = None
         return get_unit(section[next_key], "/".join(path_split[1:]))
     else:
         return get_unit(section[next_key], "/".join(path_split[1:]))
