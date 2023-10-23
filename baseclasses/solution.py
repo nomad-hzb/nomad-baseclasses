@@ -125,7 +125,8 @@ class OtherSolution(ArchiveSection):
             self.reload_referenced_solution = False
             # TODO rewrite to FALSE in json for reprocess
             rewrite_json_recursively(archive, "reload_referenced_solution", False)
-            self.solution_details = self.solution.m_copy()
+            self.solution_details = self.solution.m_copy(deep=True)
+            self.solution = None
 
         if self.solution and self.solution.name:
             if self.solution_volume:

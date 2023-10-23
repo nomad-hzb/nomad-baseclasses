@@ -64,7 +64,8 @@ class PrecursorSolution(ArchiveSection):
         if self.reload_referenced_solution and self.solution:
             self.reload_referenced_solution = False
             rewrite_json_recursively(archive, "reload_referenced_solution", False)
-            self.solution_details = self.solution.m_copy()
+            self.solution_details = self.solution.m_copy(deep=True)
+            self.solution = None
 
         if self.solution and self.solution.name:
             if self.solution_volume:
