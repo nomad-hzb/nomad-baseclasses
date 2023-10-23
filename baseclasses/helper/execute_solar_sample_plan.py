@@ -293,3 +293,5 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=N
 
         create_documentation(plan_obj, archive, md, solution_list, batch_id)
         plan_obj.plan_is_created = True
+        rewrite_json(["data", "plan_is_created"], archive, True)
+        rewrite_json(["data", "description"], archive, plan_obj.description)
