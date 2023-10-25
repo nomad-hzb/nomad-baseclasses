@@ -15,6 +15,7 @@ from baseclasses.chemical_energy.cyclicvoltammetry import CVProperties
 from baseclasses.chemical_energy.opencircuitvoltage import OCVProperties
 from baseclasses.chemical_energy.electorchemical_impedance_spectroscopy import EISProperties, EISCycle
 from baseclasses.chemical_energy.voltammetry import VoltammetryCycle, VoltammetryCycleWithPlot
+from baseclasses.atmosphere import Atmosphere
 
 
 def get_eis_properties(metadata):
@@ -112,6 +113,16 @@ def get_cc_properties(metadata):
     return properties
 
 
+def get_atmosphere_data(metadata):
+    properties = Atmosphere()
+    properties.ambient_pressure = metadata.get("AIRPRESSURE")
+    if not (properties.ambient_pressure is None):
+        properties.ambient_pressure /= 1000
+    properties.temperature = metadata.get("AIRTEMPERATURE")
+    properties.relative_humidity = metadata.get("AIRHUMIDITY")
+    return properties
+
+
 def get_voltammetry_data(data, cycle):
     assert isinstance(cycle, VoltammetryCycle) or \
         baseclasses.chemical_energy.voltammetry.Voltammetry \
@@ -167,6 +178,7 @@ def get_meta_data(metadata, entry):
         entry.description = metadata.get('NOTES') if metadata.get('NOTES') is not None else None
 
     entry.station = metadata.get('PSTAT')
+    entry.atmosphere = [get_atmosphere_data(metadata)]
 
 
 # def get_cam_properties_data(metadata, data, mainfile, properties):

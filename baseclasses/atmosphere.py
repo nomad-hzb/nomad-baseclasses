@@ -30,7 +30,7 @@ class Atmosphere(ArchiveSection):
         unit=('bar'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='bar',
+            defaultDisplayUnit='mbar',
             props=dict(
                 minValue=0)))
 
