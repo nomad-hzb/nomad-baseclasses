@@ -247,7 +247,7 @@ def get_reference(upload_id, entry_id):
     return f'../uploads/{upload_id}/archive/{entry_id}#data'
 
 
-def set_sample_reference(archive, entry, search_id):
+def search_entry_by_id(archive, entry, search_id):
     from nomad.search import search
     import inspect
     import baseclasses
@@ -259,6 +259,11 @@ def set_sample_reference(archive, entry, search_id):
         owner='all',
         query=query,
         user_id=archive.metadata.main_author.user_id)
+    return search_result
+
+
+def set_sample_reference(archive, entry, search_id):
+    search_result = search_entry_by_id(archive, entry, search_id)
     if len(search_result.data) == 1:
         data = search_result.data[0]
         upload_id, entry_id = data["upload_id"], data["entry_id"]
@@ -266,6 +271,14 @@ def set_sample_reference(archive, entry, search_id):
             entry.samples = [CompositeSystemReference(reference=get_reference(upload_id, entry_id))]
         if "solution" in data["entry_type"].lower() or "ink" in data["entry_type"].lower():
             entry.samples = [CompositeSystemReference(reference=get_reference(upload_id, entry_id))]
+
+
+def get_entry_reference(archive, entry, search_id):
+    search_result = search_entry_by_id(archive, entry, search_id)
+    if len(search_result.data) == 1:
+        data = search_result.data[0]
+        upload_id, entry_id = data["upload_id"], data["entry_id"]
+        return get_reference(upload_id, entry_id)
 
 
 def find_sample_by_id(archive, sample_id):
