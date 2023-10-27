@@ -257,7 +257,7 @@ class LayerDeposition(BaseProcess):
 
                 from .helper.formula_normalizer import PerovskiteFormulaNormalizer
                 formulas = [PerovskiteFormulaNormalizer(
-                    formula.strip()).clean_formula()
+                    formula.replace("x", "").strip()).clean_formula()
                     for formula in layer_material_name.split(",")]
                 try:
                     elements = [f for formula in formulas for f in formula[1]]
