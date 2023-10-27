@@ -184,11 +184,10 @@ class SolutionPreparationStandard(SolutionPreparation):
         type=str,
         a_eln=dict(component='StringEditQuantity'))
 
-    oil_bath = Quantity(
-        type=bool,
-        default=False,
+    bath = Quantity(
+        type=MEnum('Oil bath', 'Ice bath', 'Water bath'),
         a_eln=dict(
-            component='BoolEditQuantity',
+            component='RadioEnumEditQuantity',
         ))
 
 
@@ -248,18 +247,58 @@ class SolutionPreparationMoltenSalt(SolutionPreparation):
             component='NumberEditQuantity',
             defaultDisplayUnit='g'))
 
+    solvent_ratio = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'))
+
     salt_mixture = SubSection(section_def=MoltenSalt)
 
 
 class SolutionProperties(ArchiveSection):
     ph_value = Quantity(
-        type=np.dtype(np.int64),
+        type=np.dtype(np.float64),
         a_eln=dict(component='NumberEditQuantity'))
+
+    final_volume = Quantity(
+        type=np.dtype(np.float64),
+        unit=('ml'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='ml'))
+
+    final_concentration = Quantity(
+        type=np.dtype(np.float64),
+        unit=('mg/ml'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mg/ml'))
+
+
+class WaschingSolvents(ArchiveSection):
+    m_def = Section(label_quantity='solvent_name')
+
+    solvent_name = Quantity(
+        type=str,
+        a_eln=dict(
+            component='StringEditQuantity'
+        ))
+
+    volume = Quantity(
+        type=np.dtype(np.float64),
+        unit=('ml'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='ml'))
+
+    concentration_mol = Quantity(
+        type=np.dtype(np.float64),
+        unit=('mol/l'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mol/l'))
 
 
 class SolutionWasching(ArchiveSection):
-    washing_solvent = SubSection(
-        section_def=PubChemPureSubstanceSection)
 
     washing_technique = Quantity(
         type=str,
@@ -274,6 +313,15 @@ class SolutionWasching(ArchiveSection):
         a_eln=dict(
             component='NumberEditQuantity'))
 
+    washing_solvent = SubSection(
+        section_def=WaschingSolvents, repeats=True)
+
+
+class SolutionWaschingFiltration(SolutionWasching):
+    pass
+
+
+class SolutionWaschingCentrifuge(SolutionWasching):
     centrifuge_speed = Quantity(
         type=np.dtype(np.float64),
         unit=('Hz'),
