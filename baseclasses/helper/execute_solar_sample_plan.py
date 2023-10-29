@@ -74,49 +74,48 @@ def set_process_parameters(process, parameters, i, plan_obj, logger):
     process.name += f" {','.join(names)}"
 
 
-def add_sample(plan_obj, archive, idx1, idx2, sample_id, sample_cls):
+def add_sample(plan_obj, archive, idx1, idx2, sample_cls):
     subs = plan_obj.solar_cell_properties.substrate
     architecture = plan_obj.solar_cell_properties.architecture
-    short_name = plan_obj.batch_id.short_name
 
-    sample_id.short_name = f"{short_name}_{idx1}_{idx2}"
     # For each sample number, create instance of sample.
-    file_name = f'{plan_obj.batch_id.lab_id}_{idx1}_{idx2}.archive.json'
+    sample_id = f'{plan_obj.lab_id}_{idx1}_{idx2}'
+    file_name = f'{sample_id}.archive.json'
     sample = sample_cls(
-        name=f'{plan_obj.name} {plan_obj.batch_id.lab_id}_{idx1}_{idx2}',
-        sample_id=sample_id,
+        name=f'{plan_obj.name} {sample_id}',
+        lab_id=sample_id,
         datetime=plan_obj.datetime,
         substrate=subs,
-        architecture=architecture,
-        description=plan_obj.description if plan_obj.description else None)
+        architecture=architecture)
     create_archive(sample, archive, file_name)
     entry_id = get_entry_id_from_file_name(file_name, archive)
     return entry_id
 
 
-def add_batch(plan_obj, archive,  batch_id, batch_cls, sample_refs, is_subbatch, idx1=None):
-    short_name = plan_obj.batch_id.short_name
-    file_name = f'{plan_obj.batch_id.lab_id}'
+def add_batch(plan_obj, archive, batch_cls, sample_refs, is_subbatch, idx1=None):
+    file_name = f'{plan_obj.lab_id}'
     if is_subbatch:
         file_name += f"_{idx1}"
     file_name += '.archive.json'
-    batch_id.short_name = f"{short_name}_{idx1}" if is_subbatch else f"{short_name}"
+    batch_id = plan_obj.lab_id
+    if is_subbatch:
+        batch_id += "_{idx1}"
     batch = batch_cls(
-        name=f'{plan_obj.name} {plan_obj.batch_id.lab_id}_{idx1}' if is_subbatch else f'{plan_obj.name} {plan_obj.batch_id.lab_id}',
+        name=f'{plan_obj.name} {plan_obj.lab_id}_{idx1}' if is_subbatch else f'{plan_obj.name} {plan_obj.lab_id}',
         datetime=plan_obj.datetime,
-        batch_id=batch_id,
+        lab_id=batch_id,
         entities=[CompositeSystemReference(reference=sample_ref) for sublist in sample_refs for sample_ref in sublist],
-        description=plan_obj.description if plan_obj.description else None)
+        description=plan_obj.description if plan_obj.description and not is_subbatch else None)
     if is_subbatch and plan_obj.substrates_per_subbatch == 1:
         return
     create_archive(batch, archive, file_name)
 
 
-def create_documentation(plan_obj, archive, md, solution_list, batch_id):
+def create_documentation(plan_obj, archive, md, solution_list):
     from markdown2 import Markdown
     markdowner = Markdown()
     md = md.replace("_", "\\_")
-    sol = f"<b> Solutions for batch {batch_id.lab_id}</b><br><br>"
+    sol = f"<b> Solutions for batch {plan_obj.lab_id}</b><br><br>"
     sol += get_solutions(solution_list)
     html = markdowner.convert(md)
     summary_html = "----------start summary----------<br>" + str(sol) + "<br>" + str(html) +\
@@ -130,16 +129,16 @@ def create_documentation(plan_obj, archive, md, solution_list, batch_id):
 
     plan_obj.description = desc_tmp +\
         summary_html if desc_tmp is not None else summary_html
-    output = f"batch_plan_{batch_id.lab_id}.html"
+    output = f"batch_plan_{plan_obj.lab_id}.html"
     with archive.m_context.raw_file(output, 'w') as outfile:
         outfile.write(str(sol) + "<br>" + str(html))
     plan_obj.batch_plan_pdf = output
 
 
 def add_process(plan_obj, archive, step, process, idx1, idx2):
-    file_name_base = f'{plan_obj.batch_id.lab_id}_{idx1}' if \
+    file_name_base = f'{plan_obj.lab_id}_{idx1}' if \
         step.vary_parameters else \
-        f'{plan_obj.batch_id.lab_id}'
+        f'{plan_obj.lab_id}'
     if plan_obj.substrates_per_subbatch == 1 and step.vary_parameters:
         file_name_base += "_0"
     file_name = f"{file_name_base}.archive.json"
@@ -255,28 +254,25 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=N
 
     # process, sample and batch creation
     if plan_obj.create_samples_and_processes \
-            and plan_obj.batch_id and plan_obj.batch_id.lab_id and plan_obj.solar_cell_properties:
+            and plan_obj.lab_id and plan_obj.solar_cell_properties:
         plan_obj.create_samples_and_processes = False
         rewrite_json(["data", "create_samples_and_processes"], archive, False)
-
-        batch_id = ReadableIdentifiersCustom(**plan_obj.batch_id.m_to_dict())
-        sample_id = ReadableIdentifiersCustom(**batch_id.m_to_dict())
 
         # create samples and batches
         sample_refs = []
         for idx1 in range(number_of_subbatches):
             sample_refs_subbatch = []
             for idx2 in range(plan_obj.substrates_per_subbatch):
-                entry_id = add_sample(plan_obj, archive, idx1, idx2, sample_id, sample_cls)
+                entry_id = add_sample(plan_obj, archive, idx1, idx2, sample_cls)
                 sample_refs_subbatch.append(get_reference(
                     archive.metadata.upload_id, entry_id))
             sample_refs.append(sample_refs_subbatch)
-            add_batch(plan_obj, archive, batch_id, batch_cls, [sample_refs_subbatch], True, idx1)
+            add_batch(plan_obj, archive, batch_cls, [sample_refs_subbatch], True, idx1)
 
-        add_batch(plan_obj, archive, batch_id, batch_cls, sample_refs, False)
+        add_batch(plan_obj, archive, batch_cls, sample_refs, False)
 
         # create processes
-        md = f"# Batch plan of batch {batch_id.lab_id}\n\n"
+        md = f"# Batch plan of batch {plan_obj.lab_id}\n\n"
         solution_list = []
         for idx2, step in enumerate(plan_obj.plan):
             for idx1, batch_process in enumerate(step.batch_processes):
@@ -292,7 +288,7 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=N
                     elif getattr(s, "solution"):
                         solution_list.append(s["solution"])
 
-        create_documentation(plan_obj, archive, md, solution_list, batch_id)
+        create_documentation(plan_obj, archive, md, solution_list)
         plan_obj.plan_is_created = True
         rewrite_json(["data", "plan_is_created"], archive, True)
         rewrite_json(["data", "description"], archive, plan_obj.description)
