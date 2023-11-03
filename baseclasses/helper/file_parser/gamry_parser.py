@@ -132,10 +132,6 @@ def get_header_and_data(filename):
         while not re.search(r"(^|Z|VFP|EFM|DISK)CURVE", cur_line[0]):
             if f.tell() == pos:
                 break
-            try:
-                int(cur_line[0])
-            except:
-                print(cur_line, pos)
             pos = f.tell()
             cur_line = f.readline().strip().split("\t")
             if len(cur_line[0]) == 0:
