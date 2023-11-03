@@ -203,8 +203,8 @@ def get_meta_data(metadata, entry):
 #     properties.data = curve_data
 
 
-def get_voltammetry_archive(data, metadata, entry_class):
-    if len(data) > 1:
+def get_voltammetry_archive(data, metadata, entry_class, multiple=False):
+    if len(data) > 1 or multiple:
         if entry_class.cycles is None or len(entry_class.cycles) == 0:
             entry_class.cycles = []
             for curve in data:
@@ -213,7 +213,7 @@ def get_voltammetry_archive(data, metadata, entry_class):
                     curve, cycle)
                 entry_class.cycles.append(cycle)
 
-    if len(data) == 1:
+    if len(data) == 1 and not multiple:
         get_voltammetry_data(
             data[0], entry_class)
 
