@@ -48,9 +48,11 @@ def _read_curve_data(fid, curve_length) -> tuple:
     while not re.search(r"(CURVE|EXPERIMENTABORTED)", cur_line):
         line_count += 1
         curve += cur_line + "\n"
+        if curve_length is not None and curve_length == line_count:
+            break
         pos = fid.tell()
         cur_line = fid.readline().strip()
-        if fid.tell() == pos or (curve_length is not None and curve_length == line_count):
+        if fid.tell() == pos:
             break
     try:
         curve = pd.read_csv(StringIO(curve), delimiter="\t",
@@ -130,14 +132,18 @@ def get_header_and_data(filename):
         while not re.search(r"(^|Z|VFP|EFM|DISK)CURVE", cur_line[0]):
             if f.tell() == pos:
                 break
-
+            try:
+                int(cur_line[0])
+            except:
+                print(cur_line, pos)
             pos = f.tell()
             cur_line = f.readline().strip().split("\t")
             if len(cur_line[0]) == 0:
                 pass
 
             if len(cur_line) > 1:
-                if cur_line[0] in ["OCVCURVE", "RINGCURVE", ] and len(cur_line) > 2:
+
+                if cur_line[0] in ["OCVCURVE", "RINGCURVE"] and len(cur_line) > 2:
                     table_length = get_number(cur_line[2])
                     _header[cur_line[0]] = get_curve(
                         f, _header, _curve_units, table_length)
