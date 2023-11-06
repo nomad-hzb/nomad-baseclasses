@@ -402,7 +402,6 @@ class Solution(CompositeSystem):
     solvent = SubSection(section_def=SolutionChemical, repeats=True)
     other_solution = SubSection(section_def=OtherSolution, repeats=True)
     preparation = SubSection(section_def=SolutionPreparation)
-    washing = SubSection(section_def=SolutionWasching)
     properties = SubSection(section_def=SolutionProperties)
     storage = SubSection(section_def=SolutionStorage, repeats=True)
     solution_id = SubSection(section_def=ReadableIdentifiersCustom)

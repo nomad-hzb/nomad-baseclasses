@@ -34,6 +34,12 @@ class PLDataSimple(ArchiveSection):
             np.float64), shape=['*'])
 
 
+class PLData(PLDataSimple):
+    wavelength = Quantity(
+        type=np.dtype(
+            np.float64), unit=('nm'), shape=['*'])
+
+
 class PLProperties(ArchiveSection):
 
     integration_time = Quantity(
@@ -50,6 +56,30 @@ class PLProperties(ArchiveSection):
         unit=('mm'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm'))
 
+    wavelength_start = Quantity(
+        type=np.dtype(np.float64),
+        unit=('nm'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+
+    wavelength_stop = Quantity(
+        type=np.dtype(np.float64),
+        unit=('nm'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+
+    wavelength_step_size = Quantity(
+        type=np.dtype(np.float64),
+        unit=('nm'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+
+    temperature = Quantity(
+        type=np.dtype(np.float64),
+        unit=('K'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
+
+    lamp = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'))
+
 
 class PLMeasurement(BaseMeasurement):
     '''PL Measurement'''
@@ -61,6 +91,12 @@ class PLMeasurement(BaseMeasurement):
         type=str,
         a_eln=dict(component='FileEditQuantity'),
         a_browser=dict(adaptor='RawFileAdaptor'))
+
+    properties = SubSection(
+        section_def=PLProperties)
+
+    data = SubSection(
+        section_def=PLData)
 
     def normalize(self, archive, logger):
         self.method = "PL Measurement"
