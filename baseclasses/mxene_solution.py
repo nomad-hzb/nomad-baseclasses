@@ -150,7 +150,7 @@ class PreparationStep(ArchiveSection):
         a_eln=dict(component='RichTextEditQuantity'),
     )
     preparation = SubSection(section_def=SolutionPreparation)
-    washing = SubSection(section_def=SolutionWasching)
+    washing = SubSection(section_def=SolutionWasching, repeats=True)
     storage = SubSection(section_def=SolutionStorage, repeats=True)
 
 

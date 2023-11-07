@@ -210,10 +210,13 @@ class MoltenSalt(ArchiveSection):
                 suggestions=['Glove box', 'Air'])
         ))
 
-    salts = SubSection(section_def=PubChemPureSubstanceSection, repeats=True)
-
-
-class SolutionPreparationMoltenSalt(SolutionPreparation):
+    atmosphere = Quantity(
+        type=str,
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=['Ar', 'N2', "Air"])
+        ))
 
     grinding_duration = Quantity(
         type=np.dtype(
@@ -222,6 +225,15 @@ class SolutionPreparationMoltenSalt(SolutionPreparation):
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='hour'))
+
+    solvent_ratio = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'))
+
+    salts = SubSection(section_def=PubChemPureSubstanceSection, repeats=True)
+
+
+class SolutionPreparationMoltenSalt(SolutionPreparation):
 
     heating_source = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
     crucible_type = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
@@ -246,10 +258,6 @@ class SolutionPreparationMoltenSalt(SolutionPreparation):
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='g'))
-
-    solvent_ratio = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
 
     salt_mixture = SubSection(section_def=MoltenSalt)
 
