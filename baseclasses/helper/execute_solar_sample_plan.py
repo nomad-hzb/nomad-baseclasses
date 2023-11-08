@@ -99,7 +99,7 @@ def add_batch(plan_obj, archive, batch_cls, sample_refs, is_subbatch, idx1=None)
     file_name += '.archive.json'
     batch_id = plan_obj.lab_id
     if is_subbatch:
-        batch_id += "_{idx1}"
+        batch_id += f"_{idx1}"
     batch = batch_cls(
         name=f'{plan_obj.name} {plan_obj.lab_id}_{idx1}' if is_subbatch else f'{plan_obj.name} {plan_obj.lab_id}',
         datetime=plan_obj.datetime,
