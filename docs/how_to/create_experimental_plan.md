@@ -35,6 +35,6 @@ Follow the first  steps in [create_entry.md](create_entry.md).
 |6     |HZB_MiGo_20231109_BatchX_3_0|Solution and UV standard cleaning|Sam 2PACz spincoating|CsMAFA perovscite spincoating 4|Evaporation C60, BCP, Cu|
 |7     |HZB_MiGo_20231109_BatchX_3_1|Solution and UV standard cleaning|Sam 2PACz spincoating|CsMAFA perovscite spincoating 4|Evaporation C60, BCP, Cu|
 
-
+This gives you the ids for therespective parameter variation, which you can then copy into your measurement data (see: [upload_measurement.md](upload_measurement.md)
 
 
