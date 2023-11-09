@@ -19,10 +19,11 @@ Follow the first  steps in [create_entry.md](create_entry.md).
 9. If you are happy with the plan click the `CREATE SAMPLES AND PROCESSES` button. This creates all samples, batches and ids and processes.
 10. This also creates an html overview which you can find in `batch_plan_pdf`. You can download it and open and print it with your browser. This is a summary of all what nomad knows about your experimental plan.
 11. Finally, navigate to the explore view (see: [browse_your_upload.md](browse_your_upload.md)) and select `HySprint_Batch` and select the one with the ID defined in the experimental plan.
-    ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/4e2746a8-92be-47f2-8a0e-028f7f77c2e3)
+    ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/4e2746a8-92be-47f2-8a0e-028f7f77c2e3)  
 12. Click the `EXPORT BATCH IDS` button and then download the `csv_export_file`.
-    ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/a892651e-c959-4cb5-b4e2-549a7bcecc86)
-    This looks like this:   
+    ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/a892651e-c959-4cb5-b4e2-549a7bcecc86)  
+    This looks like this:
+  
 |      |0                           |1                                |2                    |3                              |4                       |
 |------|----------------------------|---------------------------------|---------------------|-------------------------------|------------------------|
 |0     |HZB_MiGo_20231109_BatchX_0_0|Solution and UV standard cleaning|Sam 2PACz spincoating|CsMAFA perovscite spincoating 1|Evaporation C60, BCP, Cu|
