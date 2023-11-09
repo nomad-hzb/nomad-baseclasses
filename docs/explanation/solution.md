@@ -1,4 +1,4 @@
-# Solution
+# Solution [CHEBI_75958](http://purl.obolibrary.org/obo/CHEBI_75958)
 
 The plane solution lane looks like this:
 ![grafik](https://github.com/RoteKekse/nomad-hysprint/assets/36420750/436d0e8e-6362-4919-8ae8-81b60f213e56)
