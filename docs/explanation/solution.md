@@ -4,14 +4,14 @@ The plane solution lane looks like this:
 ![grafik](https://github.com/RoteKekse/nomad-hysprint/assets/36420750/436d0e8e-6362-4919-8ae8-81b60f213e56)
 
 You can select:
- - preparation, information on the preparation information needed, 
- - solutes, eg. PbI2
- - solvents, eg. Isoprpanol
- - other solutiion, eg. a similar entry to what you are doing right now
- - additives, similar to solutes, but with a special purpose
- - storage, information on where and for how long the solution was stored
- - properties, some properties, like ph value
- - solution_id, some times a solution is a sample of itself and is characterized in this case
+ - `preparation`, information on the preparation information needed, 
+ - `solutes`, eg. PbI2
+ - `solvents`, eg. Isoprpanol
+ - `other solutiion`, eg. a similar entry to what you are doing right now
+ - `additives`, similar to solutes, but with a special purpose
+ - `storage`, information on where and for how long the solution was stored
+ - `properties`, some properties, like ph value
+ - `solution_id`, some times a solution is a sample of itself and is characterized in this case
 
 ## Preparation
 You can set:
