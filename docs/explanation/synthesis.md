@@ -25,4 +25,4 @@ Me as a lab scientis, I want to produce a solar cell using:
 5. Standard evaporation for C60, BCP as ETLs
 6. Standard evaporation for Cu as a back contact
 
-The experimental planning tool is designed to document these plans efficiently provided that the standard processes exist, see: 
+The experimental planning tool is designed to document these plans efficiently provided that the standard processes exist, see: [create_experimental_plan.md](create_experimental_plan.md), [create_standard_sample.md](create_standard_sample.md) and [create_wet_chemical_deposition.md](create_wet_chemical_deposition.md) for more how tos.
