@@ -1,4 +1,4 @@
-# Create an experimental plan
+[list_of_ids_plan HZB_MiGo_20231109_BatchX.csv](https://github.com/RoteKekse/nomad-baseclasses/files/13306666/list_of_ids_plan.HZB_MiGo_20231109_BatchX.csv)# Create an experimental plan
 The experimental plan is the core tool to document synthesis.
 You should at least have created some processes, eg. `wet chemical depositions` as in [create_wet_chemical_deposition.md](create_wet_chemical_deposition.md), or cleaning or evaporation.
 Or you create a `standard sample` as in [create_standard_sample.md](create_standard_sample.md)
@@ -18,4 +18,22 @@ Follow the first  steps in [create_entry.md](create_entry.md).
 8. Now you can manually change the parameter by navigating into the `batch process`. The `present` checkbox allows you to skip a process for a specif subbatch, just uncheck it if you for example use a buffer layer. `ATTENTION:` all manually changed data will get lost when pressing the `LOAD STANDARD PROCESSES` button again, this will load the template and parameter variation again as specified before.
 9. If you are happy with the plan click the `CREATE SAMPLES AND PROCESSES` button. This creates all samples, batches and ids and processes.
 10. This also creates an html overview which you can find in `batch_plan_pdf`. You can download it and open and print it with your browser. This is a summary of all what nomad knows about your experimental plan.
-11. 
+11. Finally, navigate to the explore view (see: [browse_your_upload.md](browse_your_upload.md)) and select `HySprint_Batch` and select the one with the ID defined in the experimental plan.
+    ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/4e2746a8-92be-47f2-8a0e-028f7f77c2e3)
+12. Click the `EXPORT BATCH IDS` button and then download the `csv_export_file`.
+    ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/a892651e-c959-4cb5-b4e2-549a7bcecc86)
+    This looks like this:   
+|      |0                           |1                                |2                    |3                              |4                       |
+|------|----------------------------|---------------------------------|---------------------|-------------------------------|------------------------|
+|0     |HZB_MiGo_20231109_BatchX_0_0|Solution and UV standard cleaning|Sam 2PACz spincoating|CsMAFA perovscite spincoating 1|Evaporation C60, BCP, Cu|
+|1     |HZB_MiGo_20231109_BatchX_0_1|Solution and UV standard cleaning|Sam 2PACz spincoating|CsMAFA perovscite spincoating 1|Evaporation C60, BCP, Cu|
+|2     |HZB_MiGo_20231109_BatchX_1_0|Solution and UV standard cleaning|Sam 2PACz spincoating|CsMAFA perovscite spincoating 2|Evaporation C60, BCP, Cu|
+|3     |HZB_MiGo_20231109_BatchX_1_1|Solution and UV standard cleaning|Sam 2PACz spincoating|CsMAFA perovscite spincoating 2|Evaporation C60, BCP, Cu|
+|4     |HZB_MiGo_20231109_BatchX_2_0|Solution and UV standard cleaning|Sam 2PACz spincoating|CsMAFA perovscite spincoating 3|Evaporation C60, BCP, Cu|
+|5     |HZB_MiGo_20231109_BatchX_2_1|Solution and UV standard cleaning|Sam 2PACz spincoating|CsMAFA perovscite spincoating 3|Evaporation C60, BCP, Cu|
+|6     |HZB_MiGo_20231109_BatchX_3_0|Solution and UV standard cleaning|Sam 2PACz spincoating|CsMAFA perovscite spincoating 4|Evaporation C60, BCP, Cu|
+|7     |HZB_MiGo_20231109_BatchX_3_1|Solution and UV standard cleaning|Sam 2PACz spincoating|CsMAFA perovscite spincoating 4|Evaporation C60, BCP, Cu|
+
+
+
+
