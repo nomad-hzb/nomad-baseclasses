@@ -7,7 +7,7 @@ characterizations to the finished devices (here JV data) and accessing this data
 Create an experimental plan (see: [create_experimental_plan.md](../how_to/create_experimental_plan.md) for a how to guide). This could then look like this:  
 ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/ba390101-8c28-44ab-a628-724a6d7a7b0e)
 
-In this case we used standard cleaning, and some variations in the deposition techniques.
+In this case we used standard cleaning, and some variations in the deposition techniques, in this case the anti solvent dropping time.
 
 
 ## Measurement
@@ -27,4 +27,5 @@ Open the jupyter hub from nomad, see: [North Tools Nomad](https://nomad-lab.eu/p
 
 ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/adbb3963-44ec-4d54-930f-7592ef55215f)
 
-Here we provide custom functions to join the data in nomad together to plot data from synthesis and measurements together.
+Here we provide custom functions to join the data in nomad together to plot data from synthesis and measurements together. In this way we can group the anti solvent dropping time from
+before together and create box plots over the respective JV data which was measured.
