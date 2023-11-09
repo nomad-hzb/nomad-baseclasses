@@ -1,5 +1,8 @@
 # Wet chemical deposition
 
+This covers `Slot Die Coating`, `Spin Coating`, `Spray Pyrolysis`, `Drop Casting`, `Dip Coating`, and `Inkjet Printing`.
+
+
 They all share this view:  
 ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/74df8b02-eb9f-46e9-ac39-c95beb38ef11)
 
