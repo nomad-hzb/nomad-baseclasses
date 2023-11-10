@@ -139,7 +139,7 @@ def get_header_and_data(filename):
 
             if len(cur_line) > 1:
 
-                if cur_line[0] in ["OCVCURVE", "RINGCURVE"] and len(cur_line) > 2:
+                if cur_line[0] in ["OCVCURVE", "RINGCURVE", "WE2CURVE"] and len(cur_line) > 2:
                     table_length = get_number(cur_line[2])
                     _header[cur_line[0]] = get_curve(
                         f, _header, _curve_units, table_length)
