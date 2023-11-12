@@ -142,6 +142,12 @@ class ConcentrationMXeneSolution(ArchiveSection):
     )
 
 
+class MXeneSolutionProperties(SolutionProperties):
+    mxene_formula = Quantity(
+        type=str,
+        a_eln=dict(component='StringTextEditQuantity'))
+
+
 class PreparationStep(ArchiveSection):
 
     description = Quantity(
@@ -193,7 +199,15 @@ class MXeneSolution(CompositeSystem):
     etching = SubSection(section_def=Etching)
     delamination = SubSection(section_def=Delamination)
     concentration = SubSection(section_def=ConcentrationMXeneSolution)
-    properties = SubSection(section_def=SolutionProperties)
+    properties = SubSection(section_def=MXeneSolutionProperties)
 
     def normalize(self, archive, logger):
         super(MXeneSolution, self).normalize(archive, logger)
+
+        if self.properties and self.properties.mxene_formula:
+            try:
+                from nomad.atomutils import Formula
+                formula = Formula(self.properties.mxene_formula)
+                formula.populate(section=archive.results.material)
+            except Exception as e:
+                logger.warn('could not analyse layer material', exc_info=e)

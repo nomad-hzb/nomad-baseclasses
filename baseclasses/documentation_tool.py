@@ -42,7 +42,8 @@ def get_sample():
                "project_name_long",
                "description",
                "substrate_type",
-               "substrate_dimension"
+               "substrate_dimension",
+               "active_area_cm**2"
                ]
     return pd.DataFrame(columns=columns)
 

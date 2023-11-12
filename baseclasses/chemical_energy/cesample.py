@@ -32,6 +32,7 @@ def get_next_project_sample_number(data, entry_id):
     '''Check the lab ids of a project id for project_sample_number (last digits of lab_id) and returns the next higher one'''
     project_sample_numbers = []
     for entry in data:
+        print(entry)
         lab_ids = entry["results"]["eln"]["lab_ids"]
         if entry["entry_id"] == entry_id and lab_ids[0].split(
                 "_")[-1].isdigit():
@@ -60,6 +61,7 @@ class SampleIDCE(ReadableIdentifiersCustom):
 
     def normalize(self, archive, logger):
         super(SampleIDCE, self).normalize(archive, logger)
+        from nomad.app.v1.models import MetadataPagination
 
         if self.institute and self.short_name and self.owner:
             from unidecode import unidecode
@@ -87,7 +89,9 @@ class SampleIDCE(ReadableIdentifiersCustom):
                                                       d["entry_id"] for d in search_result_1.data]
                                                   ):
             query = {'results.eln.lab_ids': self.lab_id}
-            search_result = search(owner='all', query=query,
+            pagination = MetadataPagination()
+            pagination.page_size = 9999
+            search_result = search(owner='all', query=query, pagination=pagination,
                                    user_id=archive.metadata.main_author.user_id)
             self.project_sample_number = get_next_project_sample_number(
                 search_result.data, archive.metadata.entry_id)
