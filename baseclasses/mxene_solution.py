@@ -145,7 +145,7 @@ class ConcentrationMXeneSolution(ArchiveSection):
 class MXeneSolutionProperties(SolutionProperties):
     mxene_formula = Quantity(
         type=str,
-        a_eln=dict(component='StringTextEditQuantity'))
+        a_eln=dict(component='StringEditQuantity'))
 
 
 class PreparationStep(ArchiveSection):
