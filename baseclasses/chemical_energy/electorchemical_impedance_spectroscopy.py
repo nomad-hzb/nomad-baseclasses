@@ -22,10 +22,10 @@ from nomad.metainfo import (
     Quantity, SubSection, MEnum, Section, Datetime)
 from nomad.datamodel.data import ArchiveSection
 
-from .potentiostat_measurement import PotentiostatMeasurement
+from .potentiostat_measurement import PotentiostatMeasurement, PotentiostatProperties
 
 
-class EISProperties(ArchiveSection):
+class EISProperties(PotentiostatProperties):
 
     dc_voltage = Quantity(
         type=np.dtype(np.float64),
@@ -58,10 +58,6 @@ class EISProperties(ArchiveSection):
         unit=('mV'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mV'))
 
-    sample_area = Quantity(
-        type=np.dtype(np.float64),
-        unit=('cm^2'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'))
 
 
 class EISResults(ArchiveSection):

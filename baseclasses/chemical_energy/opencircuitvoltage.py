@@ -23,9 +23,10 @@ from nomad.metainfo import (Quantity, SubSection)
 from nomad.datamodel.data import ArchiveSection
 
 from .voltammetry import Voltammetry
+from .potentiostat_measurement import PotentiostatProperties
 
 
-class OCVProperties(ArchiveSection):
+class OCVProperties(PotentiostatProperties):
 
     total_time = Quantity(
         type=np.dtype(np.float64),
@@ -44,12 +45,6 @@ class OCVProperties(ArchiveSection):
         unit=('mV/s'),
         shape=[],
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mV/s'))
-
-    sample_area = Quantity(
-        type=np.dtype(np.float64),
-        unit=('cm^2'),
-        shape=[],
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'))
 
 
 class OpenCircuitVoltage(Voltammetry):

@@ -23,9 +23,10 @@ from nomad.metainfo import (
 from nomad.datamodel.data import ArchiveSection
 
 from .voltammetry import Voltammetry, VoltammetryCycle
+from .potentiostat_measurement import PotentiostatProperties
 
 
-class CAProperties(ArchiveSection):
+class CAProperties(PotentiostatProperties):
 
     pre_step_potential = Quantity(
         type=np.dtype(np.float64),
@@ -83,11 +84,6 @@ class CAProperties(ArchiveSection):
         unit=('s'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'))
 
-    sample_area = Quantity(
-        type=np.dtype(np.float64),
-        unit=('cm^2'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'))
-
 
 class CAPropertiesWithData(CAProperties):
     m_def = Section(label_quantity='name',
@@ -127,12 +123,6 @@ class Chronoamperometry(Voltammetry):
     def normalize(self, archive, logger):
         self.method = "Chronoamperometry"
         super(Chronoamperometry, self).normalize(archive, logger)
-
-        if self.properties is not None:
-            if self.properties.sample_area and self.current is not None:
-                self.current_density = self.current / self.properties.sample_area
-            if self.properties.sample_area and self.charge is not None:
-                self.charge_density = self.charge / self.properties.sample_area
 
 
 # class ChronoamperometryMultiple(PotentiostatMeasurement):

@@ -22,6 +22,7 @@ import os
 
 from nomad.metainfo import (Quantity, SubSection, Section)
 from .potentiostat_measurement import PotentiostatMeasurement, VoltammetryCycle
+from nomad.datamodel.data import ArchiveSection
 
 # encoding = "iso-8859-1"
 
@@ -294,3 +295,22 @@ class Voltammetry(PotentiostatMeasurement):
                         cycle.voltage_ref_compensated = (
                             volts) - (current*resistance)
                         cycle.voltage_rhe_uncompensated = volts + shift
+
+            area = None
+            if self.properties is not None and getattr(self.properties, "sample_area", None):
+                area = self.properties.sample_area
+            if self.samples and len(self.samples) == 1 and self.samples[0]["reference"] \
+                    and getattr(self.samples[0]["reference"], "active_area", None):
+                area = self.samples[0]["reference"].active_area
+                self.properties.sample_area = area
+
+            if self.properties is not None and area is not None:
+                if self.current is not None:
+                    self.current_density = self.current / area
+                if self.charge is not None:
+                    self.charge_density = self.charge / area
+
+                if self.cycles is not None:
+                    for cycle in self.cycles:
+                        if cycle.current is not None:
+                            cycle.current_density = cycle.current / area

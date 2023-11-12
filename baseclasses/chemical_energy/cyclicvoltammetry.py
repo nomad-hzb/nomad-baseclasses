@@ -23,9 +23,10 @@ from nomad.metainfo import (Quantity, SubSection, MEnum)
 from nomad.datamodel.data import ArchiveSection
 
 from .voltammetry import Voltammetry
+from .potentiostat_measurement import PotentiostatProperties
 
 
-class CVProperties(ArchiveSection):
+class CVProperties(PotentiostatProperties):
 
     initial_potential = Quantity(
         type=np.dtype(np.float64),
@@ -89,11 +90,6 @@ class CVProperties(ArchiveSection):
         type=np.dtype(np.float64),
         a_eln=dict(component='NumberEditQuantity'))
 
-    sample_area = Quantity(
-        type=np.dtype(np.float64),
-        unit=('cm^2'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'))
-
     open_circuit_potential = Quantity(
         type=np.dtype(np.float64),
         unit=('V'),
@@ -108,11 +104,3 @@ class CyclicVoltammetry(Voltammetry):
     def normalize(self, archive, logger):
         self.method = "Cyclic Voltammetry"
         super(CyclicVoltammetry, self).normalize(archive, logger)
-
-        if self.properties is not None and self.properties.sample_area is not None:
-            if self.current is not None:
-                self.current_density = self.current / self.properties.sample_area
-            if self.cycles is not None:
-                for cycle in self.cycles:
-                    if cycle.current is not None:
-                        cycle.current_density = cycle.current / self.properties.sample_area

@@ -23,9 +23,10 @@ from nomad.metainfo import (
 from nomad.datamodel.data import ArchiveSection
 
 from .voltammetry import Voltammetry
+from .potentiostat_measurement import PotentiostatProperties
 
 
-class CPProperties(ArchiveSection):
+class CPProperties(PotentiostatProperties):
 
     pre_step_current = Quantity(
         type=np.dtype(np.float64),
@@ -71,11 +72,6 @@ class CPProperties(ArchiveSection):
         type=np.dtype(np.float64),
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
-
-    sample_area = Quantity(
-        type=np.dtype(np.float64),
-        unit=('cm^2'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'))
 
 
 class Chronopotentiometry(Voltammetry):

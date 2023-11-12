@@ -29,6 +29,14 @@ from .cesample import Environment, ElectroChemicalSetup
 from nomad.datamodel.data import ArchiveSection
 
 
+class PotentiostatProperties(ArchiveSection):
+
+    sample_area = Quantity(
+        type=np.dtype(np.float64),
+        unit=('cm^2'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'))
+
+
 class VoltammetryCycle(ArchiveSection):
 
     time = Quantity(
@@ -214,6 +222,9 @@ class PotentiostatMeasurement(BaseMeasurement):
 
     setup_parameters = SubSection(
         section_def=PotentiostatSetup)
+
+    properties = SubSection(
+        section_def=PotentiostatProperties)
 
     def normalize(self, archive, logger):
         super(PotentiostatMeasurement, self).normalize(archive, logger)
