@@ -25,6 +25,7 @@ from nomad.metainfo import (
     Reference,
     MEnum, SectionProxy, Datetime)
 from nomad.datamodel.data import ArchiveSection
+from nomad.datamodel.results import Results, Material
 
 from nomad.datamodel.metainfo.basesections import PubChemPureSubstanceSection
 
@@ -203,6 +204,11 @@ class MXeneSolution(CompositeSystem):
 
     def normalize(self, archive, logger):
         super(MXeneSolution, self).normalize(archive, logger)
+
+        if not archive.results:
+            archive.results = Results()
+        if not archive.results.material:
+            archive.results.material = Material()
 
         if self.properties and self.properties.mxene_formula:
             try:
