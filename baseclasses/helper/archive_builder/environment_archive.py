@@ -16,9 +16,23 @@
 # limitations under the License.
 #
 
-from .cleaning import Cleaning, SolutionCleaning, PlasmaCleaning, UVCleaning
-from .annealing import Annealing
-from .sintering import Sintering
-from .storage import Storage
-from .quenching import Quenching, SpinCoatingAntiSolvent, SpinCoatingGasQuenching, AntiSolventQuenching, GasQuenching, AirKnifeGasQuenching
-from .laser_scribing import LaserScribing
+import pandas as pd
+
+
+from baseclasses.assays import (
+    EnvironmentData,
+    TemperatureSensors
+)
+
+
+def get_environment_archive(env_data, env_entry):
+
+    env_entry.data = EnvironmentData(
+        time=env_data["Time [s]"],
+        datetime=pd.to_datetime(env_data["Date"] + env_data["Time"], format='%b %d %Y%H:%M:%S'),
+        humidity=env_data["Humidity[%]"],
+        temperature=env_data['Temperature[°C]'],
+        temperature_sensors=[
+            TemperatureSensors(temperature=env_data[col], name=col)
+            for col in env_data.columns if col.startswith("TH")
+        ])

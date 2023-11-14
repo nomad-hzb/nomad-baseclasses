@@ -424,6 +424,7 @@ class Solution(CompositeSystem):
                     speed=self.speed,
                     solvent_ratio=self.solvent_ratio
                 )
+
         # elements = []
         # for solute in self.solute:
         #     if solute.chemical_2 is not None and solute.chemical_2

@@ -35,6 +35,16 @@ class SputteringProcess(ArchiveSection):
     target_2 = SubSection(
         section_def=PubChemPureSubstanceSection)
 
+    thickness = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=('nm'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='nm',
+            props=dict(
+                minValue=0)))
+
     gas = Quantity(
         type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
@@ -50,16 +60,6 @@ class SputteringProcess(ArchiveSection):
                     '3',
                     '4',
                 ])))
-
-    thickness = Quantity(
-        type=np.dtype(
-            np.float64),
-        unit=('nm'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='nm',
-            props=dict(
-                minValue=0)))
 
     pressure = Quantity(
         type=np.dtype(
