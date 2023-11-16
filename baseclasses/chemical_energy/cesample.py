@@ -318,6 +318,9 @@ class SubstanceWithConcentration(ArchiveSection):
         type=np.dtype(np.float64), unit=("g/l"),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit="g/l"))
 
+    amount_relative = Quantity(
+        type=np.dtype(np.float64),
+        a_eln=dict(component='NumberEditQuantity'))
     # concentration_perw_w = Quantity(
     #     type=np.dtype(np.float64), unit=("g/g"),
     #     a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit="g/g"))

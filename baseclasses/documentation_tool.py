@@ -57,7 +57,7 @@ def get_env(number_of_substances):
                "purging_temperature",
                "purging_time",
                ]
-    substance = ["substance_name", "concentration_M", "concentration_g_per_l"]
+    substance = ["substance_name", "concentration_M", "concentration_g_per_l", "amount_relative"]
     for i in range(number_of_substances):
         columns.extend([s + "_" + str(i) for s in substance])
 
