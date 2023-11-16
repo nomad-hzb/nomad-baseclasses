@@ -136,11 +136,6 @@ class CESample(CompositeSystem):
             'A list of the elements involved'),
         a_eln=dict(component='StringEditQuantity'))
 
-    active_area = Quantity(
-        type=np.dtype(np.float64),
-        unit=('cm^2'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'))
-
     def normalize(self, archive, logger):
         super(CESample, self).normalize(archive, logger)
         if self.chemical_composition_or_formulas:
@@ -299,6 +294,11 @@ class CENOMESample(CESample):
         description=(
             'A description of the components.'),
         a_eln=dict(component='StringEditQuantity'))
+    
+    active_area = Quantity(
+        type=np.dtype(np.float64),
+        unit=('cm^2'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'))
 
     datetime = Quantity(
         type=Datetime,
