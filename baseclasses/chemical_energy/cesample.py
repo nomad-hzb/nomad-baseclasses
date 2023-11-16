@@ -218,6 +218,59 @@ class CENSLISample(CESample):
         super(CENSLISample, self).normalize(archive, logger)
 
 
+class SubstanceWithConcentration(ArchiveSection):
+    m_def = Section(label_quantity='name')
+    substance = SubSection(
+        section_def=PubChemPureSubstanceSection)
+
+    name = Quantity(type=str)
+
+    concentration_mmol_per_l = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=("mmol/l"),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit="mol/l"))
+
+    concentration_g_per_l = Quantity(
+        type=np.dtype(np.float64), unit=("g/l"),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit="g/l"))
+
+    amount_relative = Quantity(
+        type=np.dtype(np.float64),
+        a_eln=dict(component='NumberEditQuantity'))
+    # concentration_perw_w = Quantity(
+    #     type=np.dtype(np.float64), unit=("g/g"),
+    #     a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit="g/g"))
+
+    # concentration_perv_v = Quantity(
+    #     type=np.dtype(np.float64), unit=("l/l"),
+    #     a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit="l/l"))
+
+    def normalize(self, archive, logger):
+
+        if self.substance and self.substance.name:
+            self.name = self.substance.name
+
+
+class CatalystSynthesis(ArchiveSection):
+    method = Quantity(
+        type=str,
+        description=(
+            'The synthesis method.'),
+        a_eln=dict(component='StringEditQuantity'))
+
+    description = Quantity(
+        type=str,
+        description='Any information that cannot be captured in the other fields.',
+        a_eln=dict(component='RichTextEditQuantity'),
+    )
+
+    substances = SubSection(
+        section_def=SubstanceWithConcentration, repeats=True)
+
+
 class CENOMESample(CESample):
 
     # id_of_preparation_protocol = Quantity(
@@ -267,6 +320,9 @@ class CENOMESample(CESample):
     substrate = SubSection(
         section_def=SubstrateProperties)
 
+    synthesis = SubSection(
+        section_def=SubstrateProperties, repeats=True)
+
     def normalize(self, archive, logger):
         super(CENOMESample, self).normalize(archive, logger)
 
@@ -297,42 +353,6 @@ class Equipment(Entity):
         a_eln=dict(
             component='StringEditQuantity'
         ))
-
-
-class SubstanceWithConcentration(ArchiveSection):
-    m_def = Section(label_quantity='name')
-    substance = SubSection(
-        section_def=PubChemPureSubstanceSection)
-
-    name = Quantity(type=str)
-
-    concentration_mmol_per_l = Quantity(
-        type=np.dtype(
-            np.float64),
-        unit=("mmol/l"),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit="mol/l"))
-
-    concentration_g_per_l = Quantity(
-        type=np.dtype(np.float64), unit=("g/l"),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit="g/l"))
-
-    amount_relative = Quantity(
-        type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity'))
-    # concentration_perw_w = Quantity(
-    #     type=np.dtype(np.float64), unit=("g/g"),
-    #     a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit="g/g"))
-
-    # concentration_perv_v = Quantity(
-    #     type=np.dtype(np.float64), unit=("l/l"),
-    #     a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit="l/l"))
-
-    def normalize(self, archive, logger):
-
-        if self.substance and self.substance.name:
-            self.name = self.substance.name
 
 
 class Electrolyte(CESample):

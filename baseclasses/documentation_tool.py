@@ -34,7 +34,7 @@ from baseclasses.helper.utilities import rewrite_json
 from baseclasses.chemical_energy import SampleIDCENOME
 
 
-def get_sample():
+def get_sample(number_of_substances):
     columns = ["id",
                "chemical_composition_or_formula",
                "component_description",
@@ -43,8 +43,13 @@ def get_sample():
                "description",
                "substrate_type",
                "substrate_dimension",
-               "active_area_cm**2"
+               "active_area_cm**2",
+               "synthesis_method",
+               "synthesis_description"
                ]
+    substance = ["substance_name", "concentration_M", "concentration_g_per_l", "amount_relative"]
+    for i in range(number_of_substances):
+        columns.extend([s + "_" + str(i) for s in substance])
     return pd.DataFrame(columns=columns)
 
 
@@ -104,6 +109,12 @@ class DocumentationTool(Entity):
         a_eln=dict(component='NumberEditQuantity')
     )
 
+    number_of_substances_per_synthesis = Quantity(
+        type=np.dtype(np.int64),
+        default=3,
+        a_eln=dict(component='NumberEditQuantity')
+    )
+
     identifier = SubSection(
         section_def=SampleIDCENOME)
 
@@ -117,7 +128,7 @@ class DocumentationTool(Entity):
             with archive.m_context.raw_file(archive.metadata.mainfile) as f:
                 path = os.path.dirname(f.name)
 
-            samples = get_sample()
+            samples = get_sample(self.number_of_substances_per_synthesis)
             envs = get_env(self.number_of_substances_per_env)
             setups = get_setup()
             file_name = self.name.replace(" ", "_")+".xlsx"
