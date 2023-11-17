@@ -124,12 +124,12 @@ def get_header_and_data(filename):
 
     _header = dict()
     _curve_units = dict()
-    _curves = []
+    _curves = {}
 
     pos = 0
     with open(file=filename, mode="r", encoding="utf8", errors="ignore") as f:
         cur_line = f.readline().split("\t")
-        while not re.search(r"(^|Z|VFP|EFM|DISK)CURVE", cur_line[0]):
+        while True:
             if f.tell() == pos:
                 break
             pos = f.tell()
@@ -139,11 +139,21 @@ def get_header_and_data(filename):
 
             if len(cur_line) > 1:
 
-                if cur_line[0] in ["OCVCURVE", "RINGCURVE", "WE2CURVE"] and len(cur_line) > 2:
+                if "CURVE" in cur_line[0] and len(cur_line) > 2:
                     table_length = get_number(cur_line[2])
-                    _header[cur_line[0]] = get_curve(
-                        f, _header, _curve_units, table_length)
+                    _curves[cur_line[0]] = [get_curve(
+                        f, _header, _curve_units, table_length)]
+                elif "CURVE" in cur_line[0]:
+                    curves = []
+                    while True:
+                        curve = get_curve(f, _header, _curve_units)
+                        if curve is None:
+                            break
+                        curves.append(curve)
+                    _curves[''.join((x for x in cur_line[0] if not x.isdigit()))] = curves
                 # data format: key, type, value
+                if cur_line[0].strip() in ["METHOD"]:
+                    _header[cur_line[0]] = cur_line[1]
                 if cur_line[1].strip() in ["LABEL", "PSTAT"]:
                     _header[cur_line[0]] = cur_line[2]
                     if cur_line[0] in ["TITLE"] and len(cur_line) > 3:
@@ -182,20 +192,5 @@ def get_header_and_data(filename):
                     _header[cur_line[0]] = note
 
         header_length = f.tell()
-
-    assert (
-        len(_header) > 0
-    ), "Must read file header before curves can be extracted."
-    curve_count = 0
-
-    with open(file=filename, mode="r", encoding="utf8", errors="ignore") as f:
-        f.seek(header_length)  # skip to end of header
-
-        while True:
-            curve = get_curve(f, _header, _curve_units)
-            if curve is None:
-                break
-            _curves.append(curve)
-            curve_count += 1
 
     return _header, _curves

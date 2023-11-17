@@ -203,6 +203,10 @@ class PotentiostatMeasurement(BaseMeasurement):
     station = Quantity(
         type=str,
         a_eln=dict(component='StringEditQuantity'))
+    
+    function = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'))
 
     environment = Quantity(
         type=Reference(Environment.m_def),

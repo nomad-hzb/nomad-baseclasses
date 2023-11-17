@@ -12,6 +12,7 @@ from baseclasses.chemical_energy.chronoamperometry import CAProperties
 from baseclasses.chemical_energy.chronopotentiometry import CPProperties
 from baseclasses.chemical_energy.chronocoulometry import CCProperties
 from baseclasses.chemical_energy.cyclicvoltammetry import CVProperties
+from baseclasses.chemical_energy.linear_sweep_voltammetry import LSVProperties
 from baseclasses.chemical_energy.opencircuitvoltage import OCVProperties
 from baseclasses.chemical_energy.electorchemical_impedance_spectroscopy import EISProperties, EISCycle
 from baseclasses.chemical_energy.voltammetry import VoltammetryCycle, VoltammetryCycleWithPlot
@@ -55,6 +56,19 @@ def get_cv_properties(metadata):
     properties.scan_rate = metadata.get("SCANRATE")
     properties.step_size = metadata.get("STEPSIZE")
     properties.cycles = metadata.get("CYCLES")
+    properties.sample_area = metadata.get("AREA")
+    return properties
+
+
+def get_lsv_properties(metadata):
+    properties = LSVProperties()
+
+    properties.initial_potential = metadata["VINIT"][0]
+    properties.initial_potential_measured_against = "Eoc" if metadata["VINIT"][1] else "Eref"
+    properties.final_potential = metadata["VFINAL"][0]
+    properties.final_potential_measured_against = "Eoc" if metadata["VFINAL"][1] else "Eref"
+    properties.scan_rate = metadata.get("SCANRATE")
+    properties.step_size = metadata.get("STEPSIZE")
     properties.sample_area = metadata.get("AREA")
     return properties
 
@@ -176,8 +190,12 @@ def get_meta_data(metadata, entry):
 
     if not entry.description:
         entry.description = metadata.get('NOTES') if metadata.get('NOTES') is not None else None
-
-    entry.station = metadata.get('PSTAT')
+    if entry.function.lower().startswith("gen") and 'PSTAT GENERATOR' in metadata:
+        entry.station = metadata.get('PSTAT GENERATOR')
+    elif entry.function.lower().startswith("det") and 'PSTAT COLLECTOR' in metadata:
+        entry.station = metadata.get('PSTAT COLLECTOR')
+    else:
+        entry.station = metadata.get('PSTAT')
     entry.atmosphere = [get_atmosphere_data(metadata)]
 
 
