@@ -221,7 +221,8 @@ def get_meta_data(metadata, entry):
 #     properties.data = curve_data
 
 
-def get_voltammetry_archive(data, metadata, entry_class, multiple=False):
+def get_voltammetry_archive(curve_data, metadata, key, entry_class, multiple=False):
+    data = curve_data[key]
     if len(data) > 1 or multiple:
         if entry_class.cycles is None or len(entry_class.cycles) == 0:
             entry_class.cycles = []
@@ -235,10 +236,9 @@ def get_voltammetry_archive(data, metadata, entry_class, multiple=False):
         get_voltammetry_data(
             data[0], entry_class)
 
-    if "OCVCURVE" in metadata and entry_class.pretreatment is None:
+    if "OCVCURVE" in curve_data and entry_class.pretreatment is None:
         cycle = VoltammetryCycle()
-        get_voltammetry_data(
-            metadata["OCVCURVE"], cycle)
+        get_voltammetry_data(curve_data["OCVCURVE"], cycle)
         entry_class.pretreatment = cycle
 
     get_meta_data(metadata, entry_class)
