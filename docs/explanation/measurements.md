@@ -1,6 +1,6 @@
 # Measurements
 
-In contrast to synthesis, measurements come at least in a file. Depending on the mesaurement software more or less meta data is provided. Here we  focus on two important steps.
+In contrast to synthesis, measurements come at least in a file. Depending on the measurement software more or less meta data is provided. Here we  focus on two important steps.
 
 1. We need to make sure that individual measurements contain relevant metadata, usually this is a quite involved task, ideas are here to convert some measurments into [NeXus](http://www.nexusformat.org/)
    or to develop new standards and then making sure that the measurement software complies to these standards.
