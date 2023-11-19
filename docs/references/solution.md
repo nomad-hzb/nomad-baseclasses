@@ -12,7 +12,7 @@ You can select:
  - `additives`, similar to solutes, but with a special purpose
  - `storage`, information on where and for how long the solution was stored
  - `properties`, some properties, like ph value
- - `solution_id`, some times a solution is a sample of itself and is characterized in this case
+ - `solution_id`, sometimes a solution is a sample of itself and is characterized in this case
 
 ## Preparation
 You can set:
