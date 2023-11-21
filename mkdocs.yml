@@ -18,8 +18,9 @@ nav:
     - Wet Chemical Deposition: references/wet_chemical_deposition.md
   - Tutorials:
     - Solar Cells: tutorial/solar_cells.md
-
-
+plugins:
+  - search
+  - mkdocs-gh-deploy
 theme:
   name: material
   palette:
