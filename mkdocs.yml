@@ -1,0 +1,62 @@
+site_name: NOMAD HZB Base Sections Documentation
+
+nav:
+  - Home: index.md
+  - Explanation:
+    - Measurements: explanation/measurements.md
+    - Synthesis: explanation/synthesis.md
+  - How-To Guides:
+    - Browse Your Upload: how_to/browse_your_upload.md
+    - Create an Entry: how_to/create_entry.md
+    - Create an Experimental Plan: how_to/create_experimental_plan.md
+    - Create a Solution: how_to/create_solution.md
+    - Create a Standard Sample: how_to/create_standard_sample.md
+    - Create Wet Chemical Deposition: how_to/create_wet_chemical_deposition.md
+    - Upload Measurement: how_to/upload_measurement.md
+  - References:
+    - Solution: references/solution.md
+    - Wet Chemical Deposition: references/wet_chemical_deposition.md
+  - Tutorials:
+    - Solar Cells: tutorial/solar_cells.md
+
+
+theme:
+  name: material
+  palette:
+    primary: '#2A4CDF'
+    accent: '#008A67'
+  font:
+    text: 'Titillium Web'
+  logo: assets/nomad-logo.png
+  favicon: assets/favicon.png
+  features:
+    - navigation.instant
+  custom_dir: docs/theme
+# repo_url: https://gitlab.mpcdf.mpg.de/nomad-lab/nomad-FAIR/
+markdown_extensions:
+  - attr_list
+  - md_in_html
+  - admonition
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - toc:
+      permalink: True
+  - pymdownx.arithmatex:
+      generic: true
+  - attr_list
+  - mkdocs-click
+  - pymdownx.extra
+extra:
+  generator: false
+  homepage: https://nomad-lab.eu
+use_directory_urls: false
+extra_css:
+  - stylesheets/extra.css
+# extra_javascript:
+#   - javascript.js
+#   - https://polyfill.io/v3/polyfill.min.js?features=es6
+#   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
