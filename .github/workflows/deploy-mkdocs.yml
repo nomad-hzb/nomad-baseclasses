@@ -16,5 +16,6 @@ jobs:
       run: |
         pip install mkdocs
         pip install mkdocs-material  # Include this line if you are using the Material for MkDocs theme
+        pip install mkdocs-click
     - name: Build and deploy
       run: mkdocs gh-deploy --force
