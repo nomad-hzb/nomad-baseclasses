@@ -82,6 +82,21 @@ class PrecursorSolution(ArchiveSection):
                 self.name = self.solution_details.name
 
 
+def copy_solutions(sol):
+    if not sol.solution:
+        return
+    if sol.solution_details:
+        return
+
+    sol.solution_details = sol.solution.m_copy(deep=True)
+    sol.solution = None
+
+    if not sol.solution_details.other_solution:
+        return
+    for sol_other in sol.solution_details.other_solution:
+        copy_solutions(sol_other)
+
+
 class WetChemicalDeposition(LayerDeposition):
     '''Wet Chemical Deposition'''
 
@@ -95,3 +110,7 @@ class WetChemicalDeposition(LayerDeposition):
 
     def normalize(self, archive, logger):
         super(WetChemicalDeposition, self).normalize(archive, logger)
+
+        if self.samples and self.solution:
+            for wc_sol in self.solution:
+                copy_solutions(wc_sol)
