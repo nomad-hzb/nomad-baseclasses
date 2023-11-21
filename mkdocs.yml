@@ -20,7 +20,6 @@ nav:
     - Solar Cells: tutorial/solar_cells.md
 plugins:
   - search
-  - mkdocs-gh-deploy
 theme:
   name: material
   palette:
