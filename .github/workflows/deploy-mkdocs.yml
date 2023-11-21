@@ -1,4 +1,5 @@
-name: Deploy MkDocs to GitHub Pageson:
+name: Deploy MkDocs to GitHub Pages
+on:
   push:
     branches:
       - main
