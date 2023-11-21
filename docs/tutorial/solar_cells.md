@@ -1,6 +1,6 @@
 # Tutorial on solar cells
 
-This tutorial covers the efficient documentation of the synthesis of a batch of solarcells follwoing a standard protocol with some parameter variation, linking 
+This tutorial covers the efficient documentation of the synthesis of a batch of solarcells following a standard protocol with some parameter variation, linking 
 characterizations to the finished devices (here JV data) and accessing this data through python using jupyter and nomads API.
 
 ## Synthesis
@@ -18,7 +18,7 @@ in the first subbatch.
 When you drag and drop your measurement file, nomad processes the file and creates a nomad JV entry:  
 ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/295fa750-bac7-469a-bde5-b292081a31d0)
 
-After that you can browse your upload [browse_your_upload.md](../how_to/browse_your_upload.md). You can select the `Solar cell` view/app, whcih could look like this:  
+After that you can browse your upload [browse_your_upload.md](../how_to/browse_your_upload.md). You can select the `Solar cell` view/app, which could look like this:  
 ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/5710f364-6d89-438e-a5d5-3a98ac14d2fa)
 
 

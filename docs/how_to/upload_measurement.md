@@ -15,4 +15,4 @@ as possible techniques see also [Hysprint Parser](https://github.com/RoteKekse/n
 If you drag and drop these files (multiple at once possible) in your upload:   
 ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/495fdb2e-4dad-42f0-853c-fef3a6a4cd03)
 
-It automatically creates the respective nomad entry (eg. `HySprint_JVmeasurement`), links it to the corresponding sampleand puts the note int he comment.
+It automatically creates the respective nomad entry (eg. `HySprint_JVmeasurement`), links it to the corresponding sample and puts the note int he comment.

@@ -1,6 +1,6 @@
 # Create Standard Sample
 
-A standard sample is a collection of processes and information whcih can serve as a baseline in an experimental plan.
+A standard sample is a collection of processes and information which can serve as a baseline in an experimental plan.
 
 First create some template processes, eg: `wet chemical depositions` as in [create_wet_chemical_deposition.md](create_wet_chemical_deposition.md), or cleaning or evaporation
 
