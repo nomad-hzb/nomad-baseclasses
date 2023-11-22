@@ -133,6 +133,16 @@ class AirKnifeGasQuenching(GasQuenching):
             props=dict(
                 minValue=0)))
 
+    air_knife_time = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=('s'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='s',
+            props=dict(
+                minValue=0)))
+
 
 class SpinCoatingGasQuenching(GasQuenching):
     pass
