@@ -97,6 +97,7 @@ class AirKnifeGasQuenching(GasQuenching):
         type=np.dtype(
             np.float64),
         unit=('mbar'),
+        description=('The pressure of the air knife gas.'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='mbar',
@@ -107,6 +108,7 @@ class AirKnifeGasQuenching(GasQuenching):
         type=np.dtype(
             np.float64),
         unit=('mm/s'),
+        description=('The speed of the air knife moving over the sample.'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='mm/s',
@@ -117,6 +119,7 @@ class AirKnifeGasQuenching(GasQuenching):
         type=np.dtype(
             np.float64),
         unit=('degree'),
+        description=('The angle of the air knife with respect to the sample, ie. 90° is straight above the sample.'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='degree',
@@ -126,6 +129,7 @@ class AirKnifeGasQuenching(GasQuenching):
     air_knife_distance_to_thin_film = Quantity(
         type=np.dtype(
             np.float64),
+        description=('The distance of the air knife to the thin film.'),
         unit=('um'),
         a_eln=dict(
             component='NumberEditQuantity',
@@ -136,6 +140,7 @@ class AirKnifeGasQuenching(GasQuenching):
     air_knife_time = Quantity(
         type=np.dtype(
             np.float64),
+        description=('The time the air knife is on.'),
         unit=('s'),
         a_eln=dict(
             component='NumberEditQuantity',
