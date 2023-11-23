@@ -44,6 +44,7 @@ def get_sample(number_of_substances):
                "substrate_type",
                "substrate_dimension",
                "active_area_cm**2",
+               "mass_coverage_ug_cm**2",
                "synthesis_method",
                "synthesis_description"
                ]
@@ -105,13 +106,13 @@ class DocumentationTool(Entity):
 
     number_of_substances_per_env = Quantity(
         type=np.dtype(np.int64),
-        default=3,
+        default=5,
         a_eln=dict(component='NumberEditQuantity')
     )
 
     number_of_substances_per_synthesis = Quantity(
         type=np.dtype(np.int64),
-        default=3,
+        default=5,
         a_eln=dict(component='NumberEditQuantity')
     )
 
