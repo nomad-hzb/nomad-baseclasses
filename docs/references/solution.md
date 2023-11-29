@@ -8,7 +8,7 @@ You can select:
  - `preparation`, information on the preparation information needed, 
  - `solutes`, eg. PbI2
  - `solvents`, eg. Isoprpanol
- - `other solutiion`, eg. a similar entry to what you are doing right now
+ - `other solution`, eg. a similar entry to what you are doing right now
  - `additives`, similar to solutes, but with a special purpose
  - `storage`, information on where and for how long the solution was stored
  - `properties`, some properties, like ph value
