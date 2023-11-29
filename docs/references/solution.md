@@ -49,4 +49,4 @@ You can select:
 ## Properties
 ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/0b744311-6f80-4192-a6b7-503a48a8ae78)  
 This includes:
-- `ph Value`, `final volume` and `final concentration
+- `ph Value`, `final volume` and `final concentration`
