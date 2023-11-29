@@ -4,26 +4,38 @@ You should at least have created some processes, eg. `wet chemical depositions` 
 Or you create a `standard sample` as in [create_standard_sample.md](create_standard_sample.md)
 
 Follow the first  steps in [create_entry.md](create_entry.md).
-1. Select `HySprint_ExperimentalPlan` as a `built-in schema`
+
+1. Select `HySprint_ExperimentalPlan` as a `built-in schema`.
+
 2. If you have select a `standard sample` by reference (click pen symbol) and click `save`. This loads the process and information from the `standard sample`in to the experimental plan.
    ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/f9ffca61-443e-4cbc-abec-ab2a9729e754)
+
 3. Enter the `number of substrates` and the `substrates per subbatch`. It is important that the number `substrates per subbatch` devides the number `number of substrates`. In a parameter variation there is room for `number of substrates` devided by `substrates per subbatch` different variations. So if you hae 8 substrates and 2 substrates per subbatch you have 8/2=4 different parameter variations. Each variation will be applied to the whole subbatch.
+
 4. You can now manual change or create the information in `solar cell properties` and `plan`. `plan` captures the steps planned for the synthesis by reference, if you added a `standard sample` you can change the references.
-5. Parameter variation: for each step you can add some parameter variation. Select a `step` and then add the subsection `parameters` or click the `vary parameters`checkbox. If you added a `parameters`subsection select a parameter from the drop down menue, eg, `quenching/anti_solvent_dropping_time`  
-   ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/50f193c5-d622-4b26-a875-6997ed3b335d)  
-   The unit is filled automatically but can be changed
-7. Once you entered all variations click the `LOAD STANDARD PROCESSES` button. This copies the information from the template from the reference (or from the `standard sample`) and the parameters subsection into the step
+
+5. Parameter variation: for each step you can add some parameter variation. Select a `step` and then add the subsection `parameters` or click the `vary parameters`checkbox. If you added a `parameters`subsection select a parameter from the drop down menue, eg, `quenching/anti_solvent_dropping_time`.
+   ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/50f193c5-d622-4b26-a875-6997ed3b335d)
+   The unit is filled automatically but can be changed.
+
+6. Once you entered all variations click the `LOAD STANDARD PROCESSES` button. This copies the information from the template from the reference (or from the `standard sample`) and the parameters subsection into the step
    ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/95818665-3e7c-4f2e-b713-bf2ff0939382)
    As you see, there are now 8/2=4 `batch processes`.
-8. Now you can manually change the parameter by navigating into the `batch process`. The `present` checkbox allows you to skip a process for a specific subbatch, just uncheck it if you for example use a buffer layer. `ATTENTION:` all manually changed data will get lost when pressing the `LOAD STANDARD PROCESSES` button again, this will load the template and parameter variation again as specified before.
-9. If you are happy with the plan click the `CREATE SAMPLES AND PROCESSES` button. This creates all samples, batches, ids and processes.
-10. This also creates an html overview which you can find in `batch_plan_pdf`. You can download it and open and print it with your browser. This is a summary of all what nomad knows about your experimental plan.
-11. Finally, navigate to the explore view (see: [browse_your_upload.md](browse_your_upload.md)) and select `HySprint_Batch` and select the one with the ID defined in the experimental plan.
-    ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/4e2746a8-92be-47f2-8a0e-028f7f77c2e3)  
-12. Click the `EXPORT BATCH IDS` button and then download the `csv_export_file`.
-    ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/a892651e-c959-4cb5-b4e2-549a7bcecc86)  
-    This looks like this:
-  
+
+7. Now you can manually change the parameter by navigating into the `batch process`. The `present` checkbox allows you to skip a process for a specific subbatch, just uncheck it if you for example use a buffer layer. `ATTENTION:` all manually changed data will get lost when pressing the `LOAD STANDARD PROCESSES` button again, this will load the template and parameter variation again as specified before.
+
+8. If you are happy with the plan click the `CREATE SAMPLES AND PROCESSES` button. This creates all samples, batches, ids and processes.
+
+9.  This also creates an html overview which you can find in `batch_plan_pdf`. You can download it and open and print it with your browser. This is a summary of all what nomad knows about your experimental plan.
+
+10. Finally, navigate to the explore view (see: [browse_your_upload.md](browse_your_upload.md)) and select `HySprint_Batch` and select the one with the ID defined in the experimental plan.
+    ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/4e2746a8-92be-47f2-8a0e-028f7f77c2e3)
+
+11. Click the `EXPORT BATCH IDS` button and then download the `csv_export_file`.
+    ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/a892651e-c959-4cb5-b4e2-549a7bcecc86)
+
+This looks like this:
+
 |      |0                           |1                                |2                    |3                              |4                       |
 |------|----------------------------|---------------------------------|---------------------|-------------------------------|------------------------|
 |0     |HZB_MiGo_20231109_BatchX_0_0|Solution and UV standard cleaning|Sam 2PACz spincoating|CsMAFA perovscite spincoating 1|Evaporation C60, BCP, Cu|
