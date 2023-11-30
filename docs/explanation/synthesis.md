@@ -16,7 +16,7 @@ I want to produce a solar cell using:
 4. Standard evaporation of C60 and BCP as ETLs
 5. Standard evaporation of Cu as a back contact
 
-As variable parameters I want Ethanol and Anisole as anti-solvents and exploring 5, 10 ,15 ,20 ,25 seconds as the dropping time in each of them.
+As variable parameters I want Ethanol and Anisole as anti-solvents and exploring 5, 10, 15, 20, 25 seconds as the dropping time in each of them.
 
 ### Example 2
 
