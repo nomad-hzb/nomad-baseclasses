@@ -7,11 +7,11 @@ characterizations to the finished devices (here JV data) and accessing this data
 Create an experimental plan (see: [create_experimental_plan.md](../how_to/create_experimental_plan.md) for a how to guide). This could then look like this:  
 ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/ba390101-8c28-44ab-a628-724a6d7a7b0e)
 
-In this case we used standard cleaning, and some variations in the deposition techniques, in this case the anti solvent dropping time.
+In this case we used standard cleaning, and some variations in the deposition techniques, in this case the anti-solvent dropping time.
 
 
 ## Measurement
-Then after measureing the devices you can name the files based on the ids given from your snythesis, eg. `HZB_MiGo_20231005_Batch1_0_0.1.1.jv.txt` 
+Then after measuring the devices you can name the files based on the ids given from your synthesis, eg. `HZB_MiGo_20231005_Batch1_0_0.1.1.jv.txt` 
 (see: [upload_measurement.md](../how_to/upload_measurement.md). Note that the id is build from the id from the experimental plan in the synthesis, this sample is the first sample
 in the first subbatch.
 
