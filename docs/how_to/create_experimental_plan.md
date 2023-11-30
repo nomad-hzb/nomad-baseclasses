@@ -6,7 +6,7 @@ Or you create a `standard sample` as in [create_standard_sample.md](create_stand
 
 Follow the first  steps in [create_entry.md](create_entry.md).
 1. Select `HySprint_ExperimentalPlan` as a `built-in schema`
-2. If you have select a `standard sample` by reference (click pen symbol) and click `save`. This loads the process and information from the `standard sample`in to the experimental plan.
+2. If you have select a `standard sample` by reference (click pen symbol) and click `save`. This loads the process and information from the `standard sample` into the experimental plan.
    ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/f9ffca61-443e-4cbc-abec-ab2a9729e754)
 3. Enter the `number of substrates` and the `substrates per subbatch`. It is important that the number `substrates per subbatch` devides the number `number of substrates`. In a parameter variation there is room for `number of substrates` devided by `substrates per subbatch` different variations. So if you hae 8 substrates and 2 substrates per subbatch you have 8/2=4 different parameter variations. Each variation will be applied to the whole subbatch.
 4. You can now manual change or create the information in `solar cell properties` and `plan`. `plan` captures the steps planned for the synthesis by reference, if you added a `standard sample` you can change the references.
