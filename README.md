@@ -2,6 +2,10 @@
 
 This is a nomad plugin, see [NOMAD Plugins](https://nomad-lab/prod/v1/staging/docs/plugins.html) on how to use them.
 
+## Documentation
+see [docs](https://rotekekse.github.io/nomad-baseclasses/)
+
+## Examples
 At the heart of this plugin are deposition techniques as they are used  in perovskite solar cells, characterizations of these solar cells and electro chemical techniques using instruments such as a potentionstat.
 
 The `baseclasses` folder contains several nomad schemas for different techniques as they are use at Helmoltz-Zentrum Berlin (HZB). See `docs`for some further explanations.

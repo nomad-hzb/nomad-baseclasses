@@ -299,6 +299,11 @@ class CENOMESample(CESample):
         type=np.dtype(np.float64),
         unit=('cm^2'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'))
+    
+    mass_coverage = Quantity(
+        type=np.dtype(np.float64),
+        unit=('ug/cm^2'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ug/cm^2'))
 
     datetime = Quantity(
         type=Datetime,

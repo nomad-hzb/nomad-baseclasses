@@ -1,10 +1,11 @@
-[list_of_ids_plan HZB_MiGo_20231109_BatchX.csv](https://github.com/RoteKekse/nomad-baseclasses/files/13306666/list_of_ids_plan.HZB_MiGo_20231109_BatchX.csv)# Create an experimental plan
+[list_of_ids_plan HZB_MiGo_20231109_BatchX.csv](https://github.com/RoteKekse/nomad-baseclasses/files/13306666/list_of_ids_plan.HZB_MiGo_20231109_BatchX.csv)
+# Create an experimental plan
 The experimental plan is the core tool to document synthesis.
 You should at least have created some processes, eg. `wet chemical depositions` as in [create_wet_chemical_deposition.md](create_wet_chemical_deposition.md), or cleaning or evaporation.
 Or you create a `standard sample` as in [create_standard_sample.md](create_standard_sample.md)
 
 Follow the first  steps in [create_entry.md](create_entry.md).
-
+ 
 1. Select `HySprint_ExperimentalPlan` as a `built-in schema`.
 
 2. If you have select a `standard sample` by reference (click pen symbol) and click `save`. This loads the process and information from the `standard sample`in to the experimental plan.
@@ -36,7 +37,7 @@ Follow the first  steps in [create_entry.md](create_entry.md).
 
 This looks like this:
 
-|      |0                           |1                                |2                    |3                              |4                       |
+      |0                           |1                                |2                    |3                              |4                       |
 |------|----------------------------|---------------------------------|---------------------|-------------------------------|------------------------|
 |0     |HZB_MiGo_20231109_BatchX_0_0|Solution and UV standard cleaning|Sam 2PACz spincoating|CsMAFA perovscite spincoating 1|Evaporation C60, BCP, Cu|
 |1     |HZB_MiGo_20231109_BatchX_0_1|Solution and UV standard cleaning|Sam 2PACz spincoating|CsMAFA perovscite spincoating 1|Evaporation C60, BCP, Cu|
