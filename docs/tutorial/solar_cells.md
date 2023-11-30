@@ -28,5 +28,5 @@ Open the jupyter hub from nomad, see: [North Tools Nomad](https://nomad-lab.eu/p
 ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/1beb8ef9-679f-40eb-a90d-a5a464d235a2)
 
 
-Here we provide custom functions to join the data in nomad together to plot data from synthesis and measurements together. In this way we can group the anti solvent dropping time from
+Here we provide custom functions to join the data in nomad together to plot data from synthesis and measurements together. In this way we can group the anti-solvent dropping time from
 before together and create box plots over the respective JV data which was measured.
