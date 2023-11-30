@@ -12,7 +12,7 @@ Follow the first  steps in [create_entry.md](create_entry.md).
 4. You can now manually change or create the information in `solar cell properties` and `plan`. `plan` captures the steps planned for the synthesis by reference, if you added a `standard sample` you can change the references.
 5. Parameter variation: for each step you can add some parameter variation. Select a `step` and then add the subsection `parameters` or click the `vary parameters`checkbox. If you added a `parameters`subsection select a parameter from the drop down menue, eg, `quenching/anti_solvent_dropping_time`  
    ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/50f193c5-d622-4b26-a875-6997ed3b335d)  
-   The unit is filled automatically but can be changed
+   The unit is added automatically but can be changed
 7. Once you entered all variations click the `LOAD STANDARD PROCESSES` button. This copies the information from the template from the reference (or from the `standard sample`) and the parameters subsection into the step
    ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/95818665-3e7c-4f2e-b713-bf2ff0939382)
    As you see, there are now 8/2=4 `batch processes`.
