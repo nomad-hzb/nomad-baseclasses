@@ -5,7 +5,7 @@ The plane solution lane looks like this:
 
 
 You can select:
- - `preparation`, information on the preparation information needed, 
+ - `preparation`, information on the preparation information needed
  - `solutes`, eg. PbI2
  - `solvents`, eg. Isoprpanol
  - `other solution`, eg. a similar entry to what you are doing right now
