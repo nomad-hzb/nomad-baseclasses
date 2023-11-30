@@ -18,7 +18,7 @@ Follow the first  steps in [create_entry.md](create_entry.md).
    As you see, there are now 8/2=4 `batch processes`.
 8. Now you can manually change the parameter by navigating into the `batch process`. The `present` checkbox allows you to skip a process for a specific subbatch, just uncheck it if you for example use a buffer layer. `ATTENTION:` all manually changed data will get lost when pressing the `LOAD STANDARD PROCESSES` button again, this will load the template and parameter variation again as specified before.
 9. If you are happy with the plan click the `CREATE SAMPLES AND PROCESSES` button. This creates all samples, batches, ids and processes.
-10. This also creates an html overview which you can find in `batch_plan_pdf`. You can download it and open and print it with your browser. This is a summary of all what nomad knows about your experimental plan.
+10. This also creates an html overview which you can find in `batch_plan_pdf`. You can download it and open and print it with your browser. This is a summary of everything nomad knows about your experimental plan.
 11. Finally, navigate to the explore view (see: [browse_your_upload.md](browse_your_upload.md)) and select `HySprint_Batch` and select the one with the ID defined in the experimental plan.
     ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/4e2746a8-92be-47f2-8a0e-028f7f77c2e3)  
 12. Click the `EXPORT BATCH IDS` button and then download the `csv_export_file`.
