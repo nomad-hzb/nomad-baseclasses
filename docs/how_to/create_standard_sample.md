@@ -2,7 +2,7 @@
 
 A standard sample is a collection of processes and information which can serve as a baseline in an experimental plan.
 
-First create some template processes, eg: `wet chemical depositions` as in [create_wet_chemical_deposition.md](create_wet_chemical_deposition.md), or cleaning or evaporation
+First, create some template processes, eg: `wet chemical depositions` as in [create_wet_chemical_deposition.md](create_wet_chemical_deposition.md), or cleaning or evaporation
 
 Then follow the first  steps in [create_entry.md](create_entry.md).
 1. Select HySprint_StandardSample as a `built-in schema`  

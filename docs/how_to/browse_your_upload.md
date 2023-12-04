@@ -3,7 +3,7 @@
 The easiest way to browse your upload is:
 
 1. Go to your upload.
-2. Click the magniefier symbol and select `HZB ELN` or something similar.
+2. Click the magnifier symbol and select `HZB ELN` or something similar.
   ![Bildschirmfoto vom 2023-11-09 11-10-22](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/ce3170f8-9434-43c2-abb8-1a47211b38cb)
 3. This then jumps to the explore view with your upload fixed:  
    ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/23f816f7-4c3a-474a-bcd4-582ead17ce8f)

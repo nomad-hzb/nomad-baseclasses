@@ -7,11 +7,11 @@ characterizations to the finished devices (here JV data) and accessing this data
 Create an experimental plan (see: [create_experimental_plan.md](../how_to/create_experimental_plan.md) for a how to guide). This could then look like this:  
 ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/ba390101-8c28-44ab-a628-724a6d7a7b0e)
 
-In this case we used standard cleaning, and some variations in the deposition techniques, in this case the anti solvent dropping time.
+In this case we used standard cleaning, and some variations in the deposition techniques, in this case the anti-solvent dropping time.
 
 
 ## Measurement
-Then after measureing the devices you can name the files based on the ids given from your snythesis, eg. `HZB_MiGo_20231005_Batch1_0_0.1.1.jv.txt` 
+Then after measuring the devices you can name the files based on the ids given from your synthesis, eg. `HZB_MiGo_20231005_Batch1_0_0.1.1.jv.txt` 
 (see: [upload_measurement.md](../how_to/upload_measurement.md). Note that the id is build from the id from the experimental plan in the synthesis, this sample is the first sample
 in the first subbatch.
 
@@ -28,5 +28,5 @@ Open the jupyter hub from nomad, see: [North Tools Nomad](https://nomad-lab.eu/p
 ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/1beb8ef9-679f-40eb-a90d-a5a464d235a2)
 
 
-Here we provide custom functions to join the data in nomad together to plot data from synthesis and measurements together. In this way we can group the anti solvent dropping time from
+Here we provide custom functions to join the data in nomad together to plot data from synthesis and measurements together. In this way we can group the anti-solvent dropping time from
 before together and create box plots over the respective JV data which was measured.
