@@ -16,9 +16,18 @@
 # limitations under the License.
 #
 
+from .. import BaseMeasurement
+from nomad.metainfo import (Quantity)
 
-from .physical_vapur_deposition import PVDeposition
-from .plasma_enhanced_physical_vapour_deposition import PECVDeposition, PECVDProcess
-from .evaporation import Evaporations
-from .sputtering import Sputtering, SputteringProcess
-from .atomic_layer_deposition import AtomicLayerDeposition
+
+class TGA(BaseMeasurement):
+    '''Thermogravimetric analysis'''
+
+    data_file = Quantity(
+        type=str,
+        a_eln=dict(component='FileEditQuantity'),
+        a_browser=dict(adaptor='RawFileAdaptor'))
+
+    def normalize(self, archive, logger):
+        super(TGA, self).normalize(archive, logger)
+        self.method = "Thermogravimetric analysis"

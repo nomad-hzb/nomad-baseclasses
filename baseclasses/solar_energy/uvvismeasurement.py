@@ -29,7 +29,7 @@ from nomad.metainfo import (
     Datetime)
 from nomad.datamodel.data import ArchiveSection
 
-from .. import BaseMeasurement, SingleLibraryMeasurement
+from .. import BaseMeasurement, SingleLibraryMeasurement, LibraryMeasurement
 
 
 class UVvisDataSimple(ArchiveSection):
@@ -119,16 +119,11 @@ class UVvisSingleLibraryMeasurement(SingleLibraryMeasurement):
         section_def=UVvisDataSimple)
 
 
-class UVvisMeasurementLibrary(BaseMeasurement):
+class UVvisMeasurementLibrary(LibraryMeasurement):
     '''UV vis Measurement'''
 
     m_def = Section(
         a_eln=dict(hide=['certified_values', 'certification_institute']))
-
-    data_file = Quantity(
-        type=str,
-        a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
 
     reference_file = Quantity(
         type=str,

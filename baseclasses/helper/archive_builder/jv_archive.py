@@ -20,7 +20,7 @@ import os
 
 from nomad.units import ureg
 
-from baseclasses.solar_energy.jvmeasurement import SolarCellJVCurveCustom
+from baseclasses.solar_energy.jvmeasurement import SolarCellJVCurveCustom, SolarCellJVCurveDarkCustom
 
 
 def get_jv_archive(jv_dict, mainfile, jvm):
@@ -33,36 +33,45 @@ def get_jv_archive(jv_dict, mainfile, jvm):
     jvm.averaging = jv_dict['averaging'] if 'averaging' in jv_dict else None
     jvm.compliance = jv_dict['compliance'] if 'compliance' in jv_dict else None
     jvm.jv_curve = []
-
+    light_idx = 0
     for curve_idx, curve in enumerate(jv_dict['jv_curve']):
-        jv_set = SolarCellJVCurveCustom(
-            cell_name=curve['name'],
-            voltage=curve['voltage'],
-            current_density=curve['current_density'],
-            light_intensity=jv_dict['intensity'] if 'intensity' in jv_dict else None,
-            open_circuit_voltage=round(
-                jv_dict['V_oc'][curve_idx],
-                8) * ureg('V'),
-            short_circuit_current_density=round(
-                jv_dict['J_sc'][curve_idx],
-                8) * ureg('mA/cm^2'),
-            fill_factor=round(
-                jv_dict['Fill_factor'][curve_idx],
-                8) * 0.01,
-            efficiency=round(
-                jv_dict['Efficiency'][curve_idx],
-                8),
-            potential_at_maximum_power_point=round(
-                jv_dict['U_MPP'][curve_idx],
-                8) * ureg('V'),
-            current_density_at_maximun_power_point=round(
-                jv_dict['J_MPP'][curve_idx],
-                8) * ureg('mA/cm^2'),
-            series_resistance=round(
-                    jv_dict['R_ser'][curve_idx],
-                    8) * ureg('ohm*cm^2'),
-            shunt_resistance=round(
-                        jv_dict['R_par'][curve_idx],
+        if curve.get("dark"):
+            jv_set = SolarCellJVCurveDarkCustom(
+                cell_name=curve['name'],
+                voltage=curve['voltage'],
+                current_density=curve['current_density'],
+                dark=True,
+            )
+        else:
+            jv_set = SolarCellJVCurveCustom(
+                cell_name=curve['name'],
+                voltage=curve['voltage'],
+                current_density=curve['current_density'],
+                light_intensity=jv_dict['intensity'] if 'intensity' in jv_dict else None,
+                open_circuit_voltage=round(
+                    jv_dict['V_oc'][light_idx],
+                    8) * ureg('V'),
+                short_circuit_current_density=round(
+                    jv_dict['J_sc'][light_idx],
+                    8) * ureg('mA/cm^2'),
+                fill_factor=round(
+                    jv_dict['Fill_factor'][light_idx],
+                    8) * 0.01,
+                efficiency=round(
+                    jv_dict['Efficiency'][light_idx],
+                    8),
+                potential_at_maximum_power_point=round(
+                    jv_dict['U_MPP'][light_idx],
+                    8) * ureg('V'),
+                current_density_at_maximun_power_point=round(
+                    jv_dict['J_MPP'][light_idx],
+                    8) * ureg('mA/cm^2'),
+                series_resistance=round(
+                        jv_dict['R_ser'][light_idx],
                         8) * ureg('ohm*cm^2'),
-        )
+                shunt_resistance=round(
+                            jv_dict['R_par'][light_idx],
+                            8) * ureg('ohm*cm^2')
+            )
+            light_idx += 1
         jvm.jv_curve.append(jv_set)

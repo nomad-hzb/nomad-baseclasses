@@ -24,7 +24,7 @@ from nomad.metainfo import (
     SubSection)
 from nomad.datamodel.data import ArchiveSection
 
-from .. import BaseMeasurement
+from .. import BaseMeasurement, LibraryMeasurement
 
 
 class XRRData(ArchiveSection):
@@ -112,7 +112,7 @@ class XRRFittedData(XRRData):
 
 
 class XRR(BaseMeasurement):
-    '''UV vis Measurement'''
+    '''XRR Measurement'''
 
     m_def = Section(
         a_eln=dict(hide=['certified_values', 'certification_institute']))
@@ -123,12 +123,23 @@ class XRR(BaseMeasurement):
         a_eln=dict(component='FileEditQuantity'),
         a_browser=dict(adaptor='RawFileAdaptor'))
 
-    measurement = SubSection(
+    data = SubSection(
         section_def=XRRData)
 
-    fitted_data = SubSection(
-        section_def=XRRFittedData, repeats=True)
+    # fitted_data = SubSection(
+    #     section_def=XRRFittedData, repeats=True)
 
     def normalize(self, archive, logger):
         self.method = "XRR"
         super(XRR, self).normalize(archive, logger)
+
+
+class XRRLibrary(LibraryMeasurement):
+    '''XRR Measurement'''
+
+    m_def = Section(
+        a_eln=dict(hide=['certified_values', 'certification_institute']))
+
+    def normalize(self, archive, logger):
+        super(XRRLibrary, self).normalize(archive, logger)
+        self.method = "XRR"

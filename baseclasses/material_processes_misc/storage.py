@@ -25,6 +25,7 @@ from nomad.metainfo import (
 from .. import BaseProcess
 
 
+
 class Storage(BaseProcess):
     '''Base class for storage of a sample'''
     start_date = Quantity(

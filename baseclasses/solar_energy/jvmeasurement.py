@@ -38,6 +38,24 @@ class SolarCellJVCurveCustom(SolarCellJVCurve):
                 'certified_values',
                 'certification_institute']))
 
+    dark = Quantity(
+        type=bool,
+        default=False,
+        a_eln=dict(component='BoolEditQuantity')
+    )
+
+
+class SolarCellJVCurveDarkCustom(SolarCellJVCurveCustom):
+    m_def = Section(
+        label_quantity='cell_name',
+        a_eln=dict(
+            hide=[
+                'data_file',
+                'certified_values',
+                'certification_institute', 'light_intensity', 'open_circuit_voltage', 'short_circuit_current_density',
+                'fill_factor', 'efficiency', 'potential_at_maximum_power_point',
+                'current_density_at_maximun_power_point', 'series_resistance', 'shunt_resistance']))
+
 
 class JVMeasurement(BaseMeasurement):
 
@@ -116,7 +134,7 @@ class JVMeasurement(BaseMeasurement):
         max_idx = -1
         eff = -1
         for i, curve in enumerate(self.jv_curve):
-            if curve.efficiency is not None and curve.efficiency > eff:
+            if curve.efficiency is not None and curve.efficiency > eff and not curve.dark:
                 eff = curve.efficiency
                 max_idx = i
         if max_idx >= 0:

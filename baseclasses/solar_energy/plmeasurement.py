@@ -19,7 +19,7 @@ import numpy as np
 from nomad.metainfo import (
     Quantity,
     Section, SubSection)
-from .. import BaseMeasurement, SingleLibraryMeasurement
+from .. import BaseMeasurement, SingleLibraryMeasurement, LibraryMeasurement
 from nomad.datamodel.data import ArchiveSection
 
 
@@ -115,16 +115,11 @@ class PLSingleLibraryMeasurement(SingleLibraryMeasurement):
         section_def=PLDataSimple)
 
 
-class PLMeasurementLibrary(BaseMeasurement):
-    '''UV vis Measurement'''
+class PLMeasurementLibrary(LibraryMeasurement):
+    '''PL Measurement'''
 
     m_def = Section(
         a_eln=dict(hide=['certified_values', 'certification_institute']))
-
-    data_file = Quantity(
-        type=str,
-        a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
 
     reference_file = Quantity(
         type=str,

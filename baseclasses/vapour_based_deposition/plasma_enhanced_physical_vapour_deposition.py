@@ -244,38 +244,6 @@ class PECVDeposition(LayerDeposition):
 
     def normalize(self, archive, logger):
 
-        process = PECVDProcess()
-        if self.process is not None:
-            process = self.process
-        if self.recipe is not None and os.path.splitext(self.recipe)[
-                1] == ".set":
-            from ..helper.parse_files_pecvd_pvcomb import parse_recipe
-            with archive.m_context.raw_file(self.recipe) as f:
-                parse_recipe(f, process)
-
-        if self.logs is not None:
-            logs = []
-            for log in self.logs:
-                if os.path.splitext(log)[1] == ".log":
-                    from ..helper.parse_files_pecvd_pvcomb import parse_log
-                    with archive.m_context.raw_file(log) as f:
-                        if process.time:
-                            data = parse_log(
-                                f,
-                                process,
-                                np.int64(0.9 * process.time),
-                                np.int64(0.05 * process.time))
-                        else:
-                            data = parse_log(f, process)
-                        data.name = log
-                        logs.append(data)
-            process.log_data = logs
-        self.process = process
-
-        if self.process is not None and self.process.gases and self.layer_material_name is None:
-            formulas = [gas.gas_str.strip() for gas in self.process.gases]
-            self.layer_material_name = ",".join(formulas)
-
         super(PECVDeposition, self).normalize(archive, logger)
 
         self.method = "Plasma Enhanced Chemical Vapour Deposition"

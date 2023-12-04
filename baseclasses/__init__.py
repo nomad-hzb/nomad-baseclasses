@@ -24,7 +24,7 @@ from nomad.metainfo import (
     Reference,
     Section,
     SectionProxy,
-    SubSection)
+    SubSection, MEnum)
 
 from nomad.datamodel.metainfo.eln import (
     ElnWithFormulaBaseSection)
@@ -33,7 +33,7 @@ from nomad.datamodel.metainfo.basesections import (
     CompositeSystem,
     Collection,
     Process,
-    Measurement,
+    Measurement, Experiment, ExperimentStep,
     Entity,
     CompositeSystemReference
 )
@@ -90,15 +90,91 @@ class Batch(Collection):
             #     pass
 
 
-class LibrarySample(CompositeSystem):
+class SampleReference(CompositeSystemReference):
+    sample_type = Quantity(
+        type=MEnum('Sample', 'Library'),
+        shape=[],
+        a_eln=dict(
+            component='EnumEditQuantity',
+        ))
 
-    grid_information = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity')
+    create_sample = Quantity(
+        type=bool,
+        default=False,
+        a_eln=dict(component='ButtonEditQuantity')
     )
 
-    library_id = SubSection(
-        section_def=ReadableIdentifiersCustom)
+
+class ExperimentalStepData(ArchiveSection):
+    data_folder = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'))
+
+    data_files = Quantity(
+        type=str,
+        shape=["*"],
+        a_eln=dict(component='FileEditQuantity'),
+        a_browser=dict(adaptor='RawFileAdaptor'))
+
+
+class SingleSampleExperimentStep(ExperimentStep):
+    m_def = Section(label_quantity='name',
+                    a_eln=dict(
+                        hide=["lab_id"],
+                        properties=dict(
+                            order=[
+                                "name",
+                                "method", "method_type", "create_experimental_step", "activity"
+                            ])))
+
+    method = Quantity(
+        type=str,
+        shape=[],
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=['XRR', 'XRD', 'XRF', 'Ellipsometry', 'Sputtering', 'SEM_Merlin', 'Measurement', 'Synthesis', 'Dektak', 'TGA', "PECVD"])
+        ))
+
+    method_type = Quantity(
+        type=MEnum('Single', 'X-Y'),
+        shape=[],
+        a_eln=dict(
+            component='EnumEditQuantity',
+        ))
+
+    create_experimental_step = Quantity(
+        type=bool,
+        default=False,
+        a_eln=dict(component='ButtonEditQuantity')
+    )
+
+    with_last_step = Quantity(
+        type=bool,
+        default=False,
+        a_eln=dict(component='BoolEditQuantity')
+    )
+
+    # data = SubSection(
+    #     section_def=ExperimentalStepData)
+
+
+class SingleSampleExperiment(Experiment):
+
+    sample = SubSection(
+        section_def=SampleReference,
+        description='''
+        The samples as that have undergone the process.
+        '''
+    )
+
+    steps = SubSection(
+        section_def=SingleSampleExperimentStep,
+        description='''
+        An ordered list of all the dependant steps that make up this Experiment.
+        ''',
+        repeats=True
+    )
 
 
 class SingleLibraryMeasurement(ArchiveSection):
@@ -118,6 +194,12 @@ class SingleLibraryMeasurement(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm')
     )
 
+    data_file = Quantity(
+        type=str,
+        shape=['*'],
+        a_eln=dict(component='FileEditQuantity'),
+        a_browser=dict(adaptor='RawFileAdaptor'))
+
     # position_x_relative = Quantity(
     #     type=np.dtype(np.float64),
     #     a_eln=dict(component='NumberEditQuantity')
@@ -136,6 +218,17 @@ class SingleLibraryMeasurement(ArchiveSection):
         super(SingleLibraryMeasurement, self).normalize(archive, logger)
         if self.position_x and self.position_y:
             self.name = f"{self.position_x},{self.position_y}"
+
+
+class LibrarySample(CompositeSystem):
+
+    grid_information = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity')
+    )
+
+    library_id = SubSection(
+        section_def=ReadableIdentifiersCustom)
 
 
 class BaseProcess(Process):
@@ -313,6 +406,23 @@ class BaseMeasurement(Measurement):
     def normalize(self, archive, logger):
         super(BaseMeasurement, self).normalize(archive, logger)
 
+
+class LibraryMeasurement(BaseMeasurement):
+
+    data_folder = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'))
+
+    data_file = Quantity(
+        type=str,
+        a_eln=dict(component='FileEditQuantity'),
+        a_browser=dict(adaptor='RawFileAdaptor'))
+
+    measurements = SubSection(
+        section_def=SingleLibraryMeasurement, repeats=True)
+
+    def normalize(self, archive, logger):
+        super(LibraryMeasurement, self).normalize(archive, logger)
 
 # class MeasurementOnBatch(Measurement):
 

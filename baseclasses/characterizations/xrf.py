@@ -24,7 +24,7 @@ from nomad.metainfo import (
     SubSection)
 from nomad.datamodel.data import ArchiveSection
 
-from .. import BaseMeasurement, SingleLibraryMeasurement
+from .. import BaseMeasurement, SingleLibraryMeasurement, LibraryMeasurement
 
 
 class XRFData(ArchiveSection):
@@ -112,11 +112,6 @@ class XRFSingleLibraryMeasurement(SingleLibraryMeasurement):
                         ]))
                     )
 
-    data_file = Quantity(
-        type=str,
-        a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
-
     # data = SubSection(
     #     section_def=XRFData)
 
@@ -129,15 +124,11 @@ class XRFSingleLibraryMeasurement(SingleLibraryMeasurement):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
 
 
-class XRFLibrary(BaseMeasurement):
+class XRFLibrary(LibraryMeasurement):
     '''UV vis Measurement'''
 
     m_def = Section(
         a_eln=dict(hide=['certified_values', 'certification_institute']))
-
-    data_folder = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
 
     images = Quantity(
         type=str,

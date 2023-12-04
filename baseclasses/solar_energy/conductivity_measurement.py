@@ -29,7 +29,7 @@ from nomad.metainfo import (
     Datetime)
 from nomad.datamodel.data import ArchiveSection
 
-from .. import BaseMeasurement, SingleLibraryMeasurement
+from .. import BaseMeasurement, SingleLibraryMeasurement, LibraryMeasurement
 
 
 class ConductivityProperties(ArchiveSection):
@@ -50,16 +50,11 @@ class ConductivitySingleLibraryMeasurement(SingleLibraryMeasurement):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ohm'))
 
 
-class ConductivityMeasurementLibrary(BaseMeasurement):
+class ConductivityMeasurementLibrary(LibraryMeasurement):
     '''UV vis Measurement'''
 
     m_def = Section(
         a_eln=dict(hide=['certified_values', 'certification_institute']))
-
-    data_file = Quantity(
-        type=str,
-        a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
 
     # properties = SubSection(
     #     section_def=ConductivityProperties)

@@ -24,7 +24,7 @@ from nomad.metainfo import (
     SubSection)
 from nomad.datamodel.data import ArchiveSection
 
-from .. import BaseMeasurement
+from .. import BaseMeasurement, LibraryMeasurement
 
 
 class XRDData(ArchiveSection):
@@ -123,4 +123,15 @@ class XRD(BaseMeasurement):
 
     def normalize(self, archive, logger):
         super(XRD, self).normalize(archive, logger)
+        self.method = "XRD"
+
+
+class XRDLibrary(LibraryMeasurement):
+    '''XRD Measurement'''
+
+    m_def = Section(
+        a_eln=dict(hide=['certified_values', 'certification_institute']))
+
+    def normalize(self, archive, logger):
+        super(XRDLibrary, self).normalize(archive, logger)
         self.method = "XRD"

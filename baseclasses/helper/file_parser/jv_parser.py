@@ -138,8 +138,6 @@ def get_jv_data_iris(filename, encoding='utf-8'):
             engine='python')
         df_curves = df_curves.dropna(how='all', axis=1)
 
-    print(df.head(5))
-
     df_header.replace([np.inf, -np.inf, np.nan], 0, inplace=True)
     df.replace([np.inf, -np.inf, np.nan], 0, inplace=True)
 
@@ -150,7 +148,6 @@ def get_jv_data_iris(filename, encoding='utf-8'):
     jv_dict['settling_time'] = float(df_header.iloc[10, 0])*1000
     jv_dict['averaging'] = float(df_header.iloc[8, 0])
     # jv_dict['compliance'] = df_header.iloc[5, 1]
-    print(df.iloc[1])
     jv_dict['J_sc'] = list(abs(df.iloc[1].astype(np.float64)))
     jv_dict['V_oc'] = list(df.iloc[0].astype(np.float64))
     jv_dict['Fill_factor'] = list(df.iloc[2].astype(np.float64))
@@ -162,8 +159,10 @@ def get_jv_data_iris(filename, encoding='utf-8'):
     jv_dict['R_par'] = list(df.iloc[8].astype(np.float64))
 
     jv_dict['jv_curve'] = []
+
     for column in range(0, len(df_curves.columns) // 2):
         jv_dict['jv_curve'].append({'name': "_".join(df_curves.columns[2*column].split("_")[-3:]),
+                                    'dark': True if "dark" in df_curves.columns[2*column].lower() else False,
                                     'voltage': df_curves[df_curves.columns[2*column]].values,
                                     'current_density': df_curves[df_curves.columns[2*column+1]].values})
 
