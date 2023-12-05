@@ -354,6 +354,7 @@ class LayerDeposition(BaseProcess):
                     for formula in layer_material_name.split(",")]
                 try:
                     elements = [f for formula in formulas for f in formula[1]]
+                    print(elements)
                     elements_final.extend(list(set(elements)))
                     lm_tmp = ",".join([formulas[i][0] for i, _ in enumerate(formulas)]
                                       ) if isinstance(formulas, list) else None

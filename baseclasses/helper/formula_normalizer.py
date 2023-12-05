@@ -195,6 +195,7 @@ class PerovskiteFormulaNormalizer():
         if replaced_formula is not None:
             try:
                 composition = Composition(replaced_formula)
+                print(composition)
                 int_formula = composition.get_integer_formula_and_factor()[0]
                 composition_final = Composition(int_formula)
                 clean_formulas_no_brackets = composition_final.get_reduced_composition_and_factor()[

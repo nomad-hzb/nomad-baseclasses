@@ -104,13 +104,13 @@ def get_ca_properties(metadata, cc=False):
 def get_cp_properties(metadata, cc=False):
     properties = CPProperties()
 
-    properties.pre_step_current = metadata.get("IPRESTEP") * ureg('mA')
+    properties.pre_step_current = metadata.get("IPRESTEP") * ureg('mA') if metadata.get("IPRESTEP") else None
     properties.pre_step_delay_time = metadata.get("TPRESTEP")
 
-    properties.step_1_current = metadata.get("ISTEP1") * ureg('mA')
+    properties.step_1_current = metadata.get("ISTEP1") * ureg('mA') if metadata.get("ISTEP1") else None
     properties.step_1_time = metadata.get("TSTEP1")
 
-    properties.step_2_current = metadata.get("ISTEP2") * ureg('mA')
+    properties.step_2_current = metadata.get("ISTEP2") * ureg('mA') if metadata.get("ISTEP2") else None
     properties.step_2_time = metadata.get("TSTEP2")
 
     properties.lower_limit_potential = metadata.get("VLIMITLOWER")
