@@ -215,33 +215,40 @@ class Voltammetry(PotentiostatMeasurement):
     )
 
     def export_cycle(self, archive,  name):
-
+        cycles = [self]
+        if getattr(self, "cycles"):
+            cycles = self.cycles
         self.export_data_to_csv = False
-        df = pd.DataFrame()
-        if self.time is not None:
-            df["time"] = self.time
-        if self.current is not None:
-            df["current"] = self.current
-        if self.voltage is not None:
-            df["voltage"] = self.voltage
-        if self.control is not None:
-            df["control"] = self.control
-        if self.charge is not None:
-            df["charge"] = self.charge
-        if self.current_density is not None:
-            df["current_density"] = self.current_density
-        if self.charge_density is not None:
-            df["charge_density"] = self.charge_density
-        if self.voltage_rhe_uncompensated is not None:
-            df["voltage_rhe_uncompensated"] = self.voltage_rhe_uncompensated
-        if self.voltage_ref_compensated is not None:
-            df["voltage_ref_compensated"] = self.voltage_ref_compensated
-        if self.voltage_rhe_compensated is not None:
-            df["voltage_rhe_compensated"] = self.voltage_rhe_compensated
+        df_list = []
+        for idx, cycle in enumerate(cycles):
+            df = pd.DataFrame()
+            if cycle.time is not None:
+                df["time"] = cycle.time
+            if cycle.current is not None:
+                df["current"] = cycle.current
+            if cycle.voltage is not None:
+                df["voltage"] = cycle.voltage
+            if cycle.control is not None:
+                df["control"] = cycle.control
+            if cycle.charge is not None:
+                df["charge"] = cycle.charge
+            if cycle.current_density is not None:
+                df["current_density"] = cycle.current_density
+            if getattr(cycle, "charge_density", None) is not None:
+                df["charge_density"] = cycle.charge_density
+            if cycle.voltage_rhe_uncompensated is not None:
+                df["voltage_rhe_uncompensated"] = cycle.voltage_rhe_uncompensated
+            if cycle.voltage_ref_compensated is not None:
+                df["voltage_ref_compensated"] = cycle.voltage_ref_compensated
+            if cycle.voltage_rhe_compensated is not None:
+                df["voltage_rhe_compensated"] = cycle.voltage_rhe_compensated
+            df_list.append(df)
+
+        df_final = pd.concat(df_list, keys=[idx for idx in range(len(cycles))])
         name = name.replace("#", "")
         export_name = f"{name}.csv"
         with archive.m_context.raw_file(export_name, 'w') as outfile:
-            df.to_csv(outfile.name)
+            df_final.to_csv(outfile.name)
         self.export_file = export_name
 
     def derive_n_values(self):

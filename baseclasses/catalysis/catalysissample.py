@@ -77,7 +77,7 @@ class CatalysisLibrary(LibrarySample):
 
     def normalize(self, archive, logger):
         super(
-            CatalysisSample,
+            CatalysisLibrary,
             self).normalize(
             archive,
             logger)
