@@ -1,4 +1,6 @@
 site_name: NOMAD HZB Base Sections Documentation
+repo_url: https://github.com/RoteKekse/nomad-baseclasses
+edit_uri: ""
 
 nav:
   - Home: index.md
