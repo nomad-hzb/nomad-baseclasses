@@ -17,11 +17,10 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (Quantity, Reference, SubSection, Section)
 from nomad.datamodel.data import ArchiveSection
-
 from nomad.datamodel.metainfo.basesections import PubChemPureSubstanceSection
+from nomad.metainfo import (Quantity, Reference, SubSection, Section)
+
 from .. import LayerDeposition
 from ..chemical import Chemical
 
@@ -84,7 +83,7 @@ class EvaporationSources(ArchiveSection):
     #     diff = self.mass_after_weighing - self.mass_before_weighing
 
 
-class PerovsciteEvaporation(ArchiveSection):
+class PerovskiteEvaporation(ArchiveSection):
     evaporation_sources = SubSection(
         section_def=EvaporationSources, repeats=True)
 
@@ -212,7 +211,7 @@ class Evaporations(LayerDeposition):
     inorganic_evaporation = SubSection(
         section_def=InorganicEvaporation, repeats=True)
 
-    perovscite_evaporation = SubSection(
+    perovskite_evaporation = SubSection(
         section_def=InorganicEvaporation, repeats=True)
 
     def normalize(self, archive, logger):
