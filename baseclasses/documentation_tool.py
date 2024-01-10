@@ -31,7 +31,7 @@ from nomad.datamodel.metainfo.eln import Entity
 
 from baseclasses.helper.utilities import rewrite_json
 
-from baseclasses.chemical_energy import SampleIDCENOME
+from baseclasses.chemical_energy import SampleIDCENOME, export_lab_id
 
 
 def get_sample(number_of_substances):
@@ -140,3 +140,5 @@ class DocumentationTool(Entity):
             self.data_file = file_name
 
         self.method = "Documentation"
+
+        export_lab_id(archive, self.lab_id)

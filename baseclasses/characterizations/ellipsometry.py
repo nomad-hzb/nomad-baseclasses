@@ -16,8 +16,6 @@
 # limitations under the License.
 #
 
-import numpy as np
-
 from nomad.metainfo import (
     Quantity,
     Section,
@@ -29,9 +27,6 @@ from .. import BaseMeasurement, LibraryMeasurement
 
 class Ellipsometry(BaseMeasurement):
     '''Ellipsometry'''
-
-    m_def = Section(
-        a_eln=dict(hide=['certified_values', 'certification_institute']))
 
     data_file = Quantity(
         type=str,
