@@ -123,8 +123,8 @@ class XRR(BaseMeasurement):
         a_eln=dict(component='FileEditQuantity'),
         a_browser=dict(adaptor='RawFileAdaptor'))
 
-    data = SubSection(
-        section_def=XRRData)
+    # data = SubSection(
+    #     section_def=XRRData)
 
     # fitted_data = SubSection(
     #     section_def=XRRFittedData, repeats=True)
