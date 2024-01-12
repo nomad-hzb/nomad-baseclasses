@@ -5,7 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="07c10a1e-515f-45cc-967b-f7165a6a2774" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/baseclasses/characterizations/xrr.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseclasses/characterizations/xrr.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseclasses/material_processes_misc/annealing.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseclasses/material_processes_misc/annealing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseclasses/material_processes_misc/cleaning.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseclasses/material_processes_misc/cleaning.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseclasses/material_processes_misc/quenching.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseclasses/material_processes_misc/quenching.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseclasses/material_processes_misc/sintering.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseclasses/material_processes_misc/sintering.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseclasses/material_processes_misc/storage.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseclasses/material_processes_misc/storage.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseclasses/vapour_based_deposition/atomic_layer_deposition.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseclasses/vapour_based_deposition/atomic_layer_deposition.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseclasses/vapour_based_deposition/evaporation.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseclasses/vapour_based_deposition/evaporation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseclasses/vapour_based_deposition/physical_vapur_deposition.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseclasses/vapour_based_deposition/physical_vapur_deposition.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseclasses/vapour_based_deposition/plasma_enhanced_physical_vapour_deposition.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseclasses/vapour_based_deposition/plasma_enhanced_physical_vapour_deposition.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseclasses/vapour_based_deposition/sputtering.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseclasses/vapour_based_deposition/sputtering.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseclasses/wet_chemical_deposition/dip_coating.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseclasses/wet_chemical_deposition/dip_coating.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseclasses/wet_chemical_deposition/dropcast.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseclasses/wet_chemical_deposition/dropcast.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseclasses/wet_chemical_deposition/inkjet_printing.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseclasses/wet_chemical_deposition/inkjet_printing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseclasses/wet_chemical_deposition/slot_die_coating.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseclasses/wet_chemical_deposition/slot_die_coating.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseclasses/wet_chemical_deposition/spin_coating.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseclasses/wet_chemical_deposition/spin_coating.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseclasses/wet_chemical_deposition/spray_pyrolysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseclasses/wet_chemical_deposition/spray_pyrolysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseclasses/wet_chemical_deposition/vaporization_and_dropcasting.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseclasses/wet_chemical_deposition/vaporization_and_dropcasting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/baseclasses/wet_chemical_deposition/wet_chemical_deposition.py" beforeDir="false" afterPath="$PROJECT_DIR$/baseclasses/wet_chemical_deposition/wet_chemical_deposition.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

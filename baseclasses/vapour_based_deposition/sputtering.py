@@ -19,7 +19,7 @@
 import numpy as np
 
 from nomad.datamodel.data import ArchiveSection
-from nomad.metainfo import (Quantity, Reference, SubSection)
+from nomad.metainfo import (Quantity, Reference, SubSection, Section)
 
 from ..chemical import Chemical
 from .. import LayerDeposition
@@ -29,13 +29,19 @@ from nomad.datamodel.metainfo.basesections import PubChemPureSubstanceSection
 class SputteringProcess(ArchiveSection):
 
     target = Quantity(
+        #Link to ontology class 'pvd source'
+        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002035'],
         type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     target_2 = SubSection(
+        #Link to ontology class 'pvd source'
+        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002035'],
         section_def=PubChemPureSubstanceSection)
 
     thickness = Quantity(
+        #Link to ontology class 'thickness'
+        links = ['http://purl.obolibrary.org/obo/PATO_0000915'],
         type=np.dtype(
             np.float64),
         unit=('nm'),
@@ -46,10 +52,14 @@ class SputteringProcess(ArchiveSection):
                 minValue=0)))
 
     gas = Quantity(
+        #Link to ontology class 'chemical substance'
+        links = ['http://purl.obolibrary.org/obo/CHEBI_59999'],
         type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     source = Quantity(
+        #Link to ontology class 'pvd source'
+        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002035'],
         type=str,
         a_eln=dict(
             component='EnumEditQuantity',
@@ -62,6 +72,8 @@ class SputteringProcess(ArchiveSection):
                 ])))
 
     pressure = Quantity(
+        #Link to ontology class 'pressure' and 'pressure setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0001025','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005040'],
         type=np.dtype(
             np.float64),
         unit=('mbar'),
@@ -72,6 +84,8 @@ class SputteringProcess(ArchiveSection):
                 minValue=0)))
 
     capman_pressure = Quantity(
+        #Link to ontology class 'pressure' and 'pressure setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0001025','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005040'],
         type=np.dtype(
             np.float64),
         unit=('mmmHg'),
@@ -82,11 +96,15 @@ class SputteringProcess(ArchiveSection):
                 minValue=0)))
 
     temperature = Quantity(
+        #Link to ontology class 'temperature' and 'temperature setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0000146','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002071'],
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
 
     burn_in_time = Quantity(
+        #Link to ontology class 'time' and 'time setting datum' (missing class)
+        links = ['http://purl.obolibrary.org/obo/PATO_0000165','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005085'],
         type=np.dtype(
             np.float64),
         unit=('s'),
@@ -97,6 +115,8 @@ class SputteringProcess(ArchiveSection):
                 minValue=0)))
 
     deposition_time = Quantity(
+        #Link to ontology class 'time' and 'time setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0000165','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005085'],
         type=np.dtype(
             np.float64),
         unit=('s'),
@@ -107,6 +127,8 @@ class SputteringProcess(ArchiveSection):
                 minValue=0)))
 
     power = Quantity(
+        #Link to ontology class 'power' and 'power setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0001024','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002104'],
         type=np.dtype(
             np.float64),
         unit=('W'),
@@ -123,6 +145,8 @@ class SputteringProcess(ArchiveSection):
             defaultDisplayUnit='V'))
 
     gas_flow_rate = Quantity(
+        #Link to ontology class 'gas flow rate' and 'gas flow rate setting datum'
+        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002114','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002108'],
         type=np.dtype(
             np.float64),
         unit=('cm**3/minute'),
@@ -133,6 +157,10 @@ class SputteringProcess(ArchiveSection):
 
 class Sputtering(LayerDeposition):
     '''Base class for evaporation of a sample'''
+    m_def = Section(
+        #Link to ontology class 'sputter deposition'
+        links = ['http://purl.obolibrary.org/obo/CHMO_0001364'],
+    )
 
     processes = SubSection(
         section_def=SputteringProcess, repeats=True)

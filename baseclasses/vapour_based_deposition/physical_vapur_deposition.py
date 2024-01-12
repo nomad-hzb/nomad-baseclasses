@@ -18,7 +18,7 @@
 
 import numpy as np
 
-from nomad.metainfo import (Quantity, Reference, SubSection)
+from nomad.metainfo import (Quantity, Reference, SubSection, Section)
 from nomad.datamodel.data import ArchiveSection
 
 from ..chemical import Chemical
@@ -29,14 +29,20 @@ from .. import LayerDeposition
 class PVDProcess(ArchiveSection):
 
     target = Quantity(
+        #Link to ontology class 'pvd source'
+        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002035'],
         type=Reference(Chemical.m_def),
         shape=['*'],
         a_eln=dict(component='ReferenceEditQuantity'))
 
     target_2 = SubSection(
+        #Link to ontology class 'pvd source'
+        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002035'],
         section_def=PubChemPureSubstanceSection, repeats=True)
 
     power = Quantity(
+        #Link to ontology class 'power' and 'power setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0001024','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002104'],
         type=np.dtype(
             np.float64),
         unit=('W'),
@@ -47,6 +53,8 @@ class PVDProcess(ArchiveSection):
                 minValue=0)))
 
     pressure = Quantity(
+        #Link to ontology class 'total pressure'
+        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00001094'],
         type=np.dtype(
             np.float64),
         unit=('ubar'),
@@ -57,6 +65,8 @@ class PVDProcess(ArchiveSection):
                 minValue=0)))
 
     time = Quantity(
+        #Link to ontology class 'time' and 'time setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0000165', 'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005085'],
         type=np.dtype(
             np.float64),
         unit=('s'),
@@ -67,11 +77,15 @@ class PVDProcess(ArchiveSection):
                 minValue=0)))
 
     rotation_speed = Quantity(
+        #Link to ontology class 'Rotation speed' and 'rotation speed setting datum'
+        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002026','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002005'],
         type=np.dtype(np.float64),
         unit=('1/s'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='1/s'))
 
     temperature = Quantity(
+        #Link to ontology class 'temperature' and 'temperature setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0000146','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002111'],
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
@@ -87,6 +101,10 @@ class PVDProcess(ArchiveSection):
 
 class PVDeposition(LayerDeposition):
     '''Base class for evaporation of a sample'''
+    m_def = Section(
+        #Link to ontology class 'physical vapour deposition'
+        links = ['http://purl.obolibrary.org/obo/CHMO_0001356'],
+    )
 
     process = SubSection(
         section_def=PVDProcess)

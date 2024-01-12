@@ -26,6 +26,8 @@ from nomad.datamodel.data import ArchiveSection
 class Sintering(ArchiveSection):
     '''Base class for sintering of a sample'''
     temperature = Quantity(
+        #Link to ontology class 'temperature' and 'temperature setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0000146','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002111'],
         type=np.dtype(
             np.float64),
         unit=('°C'),
@@ -35,6 +37,8 @@ class Sintering(ArchiveSection):
             defaultDisplayUnit='°C'))
 
     time = Quantity(
+        #Link to ontology class 'time' and 'time setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0000165','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005085'],
         type=np.dtype(
             np.float64),
         unit=('s'),

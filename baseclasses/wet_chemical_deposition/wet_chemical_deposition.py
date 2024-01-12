@@ -33,7 +33,10 @@ from baseclasses.helper.utilities import rewrite_json_recursively
 
 class PrecursorSolution(ArchiveSection):
 
-    m_def = Section(label_quantity='name')
+    m_def = Section(
+        # Link to ontology class 'precursor solution'
+        links=['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00001081'],
+        label_quantity='name')
     name = Quantity(type=str)
 
     reload_referenced_solution = Quantity(
@@ -43,10 +46,15 @@ class PrecursorSolution(ArchiveSection):
     )
 
     solution = Quantity(
+        # Link to ontology class 'Solution'
+        links=['http://purl.obolibrary.org/obo/CHEBI_75958'],
         type=Reference(Solution.m_def),
         a_eln=dict(component='ReferenceEditQuantity', label="Solution Reference"))
 
     solution_volume = Quantity(
+        # Link to ontology class 'volume' and 'volume setting datum'
+        links=['http://purl.obolibrary.org/obo/PATO_0000918',
+               'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002158'],
         type=np.dtype(
             np.float64),
         unit=('ml'),
@@ -99,12 +107,24 @@ def copy_solutions(sol):
 
 class WetChemicalDeposition(LayerDeposition):
     '''Wet Chemical Deposition'''
+    m_def = Section(
+        # Link to ontology class 'wet chemical deposition'
+        links=['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002051']
+    )
 
     solution = SubSection(
+        # Link to relation 'has specified input'
+        links=['http://purl.obolibrary.org/obo/OBI_0000293'],
         section_def=PrecursorSolution, repeats=True)
 
-    annealing = SubSection(section_def=Annealing)
-    quenching = SubSection(section_def=Quenching)
+    annealing = SubSection(
+        # Link to relation 'has part'
+        links=['http://purl.obolibrary.org/obo/RO_0001019'],
+        section_def=Annealing)
+    quenching = SubSection(
+        # Link to relation 'has part'
+        links=['http://purl.obolibrary.org/obo/RO_0001019'],
+        section_def=Quenching)
 
     sintering = SubSection(section_def=Sintering, repeats=True)
 

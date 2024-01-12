@@ -41,6 +41,8 @@ class LogData(ArchiveSection):
     name = Quantity(type=str)
 
     power_mean = Quantity(
+        #Link to ontology class 'power'
+        links = ['http://purl.obolibrary.org/obo/PATO_0001024'],
         type=np.dtype(
             np.float64),
         unit=('W'),
@@ -51,6 +53,8 @@ class LogData(ArchiveSection):
                 minValue=0)))
 
     power_var = Quantity(
+        #Link to ontology class 'power'
+        links = ['http://purl.obolibrary.org/obo/PATO_0001024'],
         type=np.dtype(
             np.float64),
         unit=('W'),
@@ -61,6 +65,8 @@ class LogData(ArchiveSection):
                 minValue=0)))
 
     pressure_mean = Quantity(
+        #Link to ontology class 'pressure'
+        links = ['http://purl.obolibrary.org/obo/PATO_0001025'],
         type=np.dtype(
             np.float64),
         unit=('mbar'),
@@ -71,6 +77,8 @@ class LogData(ArchiveSection):
                 minValue=0)))
 
     pressure_var = Quantity(
+        #Link to ontology class 'pressure'
+        links = ['http://purl.obolibrary.org/obo/PATO_0001025'],
         type=np.dtype(
             np.float64),
         unit=('mbar'),
@@ -81,16 +89,22 @@ class LogData(ArchiveSection):
                 minValue=0)))
 
     temperature_mean = Quantity(
+        #Link to ontology class 'temperature'
+        links = ['http://purl.obolibrary.org/obo/PATO_0000146'],
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
 
     temperature_var = Quantity(
+        #Link to ontology class 'temperature'
+        links = ['http://purl.obolibrary.org/obo/PATO_0000146'],
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
 
     power = Quantity(
+        #Link to ontology class 'power' and 'power setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0001024','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002104'],
         type=np.dtype(
             np.float64),
         shape=['*'],
@@ -107,6 +121,8 @@ class LogData(ArchiveSection):
             }])
 
     pressure = Quantity(
+        #Link to ontology class 'pressure' and 'pressure setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0001025','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005040'],
         type=np.dtype(
             np.float64),
         shape=['*'],
@@ -123,12 +139,16 @@ class LogData(ArchiveSection):
             }])
 
     time = Quantity(
+        #Link to ontology class 'time' and 'time setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0000165','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005085'],
         type=np.dtype(
             np.float64),
         shape=['*'],
         unit=('s'))
 
     temperature = Quantity(
+        #Link to ontology class 'temperature', Link to ontology class 'temperature setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0000146','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002071'],
         type=np.dtype(np.float64),
         shape=['*'],
         unit=('°C'),
@@ -158,6 +178,8 @@ class GasFlow(ArchiveSection):
         a_eln=dict(component='StringEditQuantity'))
 
     gas_flow_rate = Quantity(
+        #Link to ontology class 'gas flow rate' and 'gas flow rate setting datum'
+        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002114','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002108'],
         type=np.dtype(
             np.float64),
         unit=('cm**3/minute'),
@@ -178,6 +200,8 @@ class GasFlow(ArchiveSection):
 class PECVDProcess(ArchiveSection):
 
     power = Quantity(
+        #Link to ontology class 'power' and 'power setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0001024','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002104'],
         type=np.dtype(
             np.float64),
         unit=('W'),
@@ -188,6 +212,8 @@ class PECVDProcess(ArchiveSection):
                 minValue=0)))
 
     pressure = Quantity(
+        #Link to ontology class 'pressure' and 'pressure setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0001025','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005040'],
         type=np.dtype(
             np.float64),
         unit=('ubar'),
@@ -198,6 +224,8 @@ class PECVDProcess(ArchiveSection):
                 minValue=0)))
 
     time = Quantity(
+        #Link to ontology class 'time' and 'time setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0000165','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005085'],
         type=np.dtype(
             np.float64),
         unit=('s'),
@@ -208,11 +236,15 @@ class PECVDProcess(ArchiveSection):
                 minValue=0)))
 
     temperature = Quantity(
+        #Link to ontology class 'temperature' and 'temperature setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0000146','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002071'],
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
 
     plate_spacing = Quantity(
+        #Link to ontology class 'plate spacing'
+        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002004'],
         type=np.dtype(
             np.float64), unit=('mm'), a_eln=dict(
             component='NumberEditQuantity', defaultDisplayUnit='mm'), props=dict(

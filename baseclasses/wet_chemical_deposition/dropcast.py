@@ -18,7 +18,7 @@
 
 import numpy as np
 
-from nomad.metainfo import (Quantity, SubSection)
+from nomad.metainfo import (Quantity, SubSection, Section)
 from nomad.datamodel.data import ArchiveSection
 
 from . import WetChemicalDeposition
@@ -32,6 +32,8 @@ class DropCastingProperties(ArchiveSection):
             component='NumberEditQuantity'))
 
     dropcast_amount = Quantity(
+        #Link to ontology class 'volume' and 'volume setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0000918', 'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002158'],
         type=np.dtype(
             np.float64),
         unit=('ml'),
@@ -40,6 +42,8 @@ class DropCastingProperties(ArchiveSection):
             defaultDisplayUnit='ml'))
 
     temperature = Quantity(
+        #Link to ontology class 'temperature' and 'temperature setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0000146', 'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002111'],
         type=np.dtype(
             np.float64),
         unit=('°C'),
@@ -48,6 +52,8 @@ class DropCastingProperties(ArchiveSection):
             defaultDisplayUnit='°C'))
 
     atmosphere = Quantity(
+        #Link to ontology class 'atmosphere'
+        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00001012'],
         type=str,
         a_eln=dict(
             component='EnumEditQuantity',
@@ -56,6 +62,10 @@ class DropCastingProperties(ArchiveSection):
 
 
 class DropCasting(WetChemicalDeposition):
+    m_def = Section(
+        #Link to ontology class 'Drop casting'
+        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002059'],
+    )
 
     properties = SubSection(
         section_def=DropCastingProperties)

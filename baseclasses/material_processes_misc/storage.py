@@ -37,13 +37,19 @@ class Storage(BaseProcess):
         a_eln=dict(component='DateTimeEditQuantity'))
 
     duration = Quantity(
+        #Link to ontology class 'duration', Link to ontology class 'duration setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0001309', 'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002006'],
         type=str)
 
     start_humidity = Quantity(
+        #Link to ontology class 'humidity'
+        links = ['http://purl.obolibrary.org/obo/PATO_0015009'],
         type=np.dtype(np.float64),
         a_eln=dict(component='NumberEditQuantity'))
 
     end_humidity = Quantity(
+        #Link to ontology class 'humidity'
+        links = ['http://purl.obolibrary.org/obo/PATO_0015009'],
         type=np.dtype(np.float64),
         a_eln=dict(component='NumberEditQuantity'))
 
