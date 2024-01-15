@@ -35,7 +35,8 @@ def get_voltammetry_data(data, cycle_class):
         cycle_class.voltage = np.array(
             data["Ewe/V"]) if "Ewe/V" in data.columns else np.array(data["<Ewe>/V"])
         cycle_class.control = np.array(
-            data["control/V"]) if "control/V" in data.columns else None
+            data["control/V"]) if "control/V" in data.columns \
+            else (np.array(data["<Ece>/V"]) if "<Ece>/V" in data.columns else None)
 
 
 def get_cv_properties(metadata):
