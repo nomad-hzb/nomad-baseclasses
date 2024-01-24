@@ -8,16 +8,16 @@ from nomad.metainfo import (
 
 class DataWithStatistics(ArchiveSection):
     mean = Quantity(
-        type=np.dtype(np.float64))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity'))
 
     variance = Quantity(
-        type=np.dtype(np.float64))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity'))
 
     minimum = Quantity(
-        type=np.dtype(np.float64))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity'))
 
     maximum = Quantity(
-        type=np.dtype(np.float64))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity'))
 
     data = Quantity(
         type=np.dtype(np.float64),
