@@ -9,7 +9,7 @@ Name your file:
 eg:
 `HZB_MiGo_20231109_BatchX_3_0.after_3_days.jv.txt`
 
-The first part is the id, then you can put some individual note, then there is the type currently at `HySprint` we have `eqe`, `jv`, `pl`, `hy`, `spv` 
+The first part is the id, then you can put some individual note, then there is the type currently at `HySprint` we have `eqe`, `jv`, `pl`, `hy`, `spv`, `uvvis` 
 as possible techniques see also [Hysprint Parser](https://github.com/RoteKekse/nomad-hysprint-parser).
 
 If you drag and drop these files (multiple at once possible) in your upload:   
