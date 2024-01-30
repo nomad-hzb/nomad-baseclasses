@@ -1,1 +1,1 @@
-from .nkdata_analysis import nkDataAnalysis, nkDataAnalysisResult, InputData
+from .nkdata_analysis import NKData, NKDataResult

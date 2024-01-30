@@ -30,6 +30,10 @@ from nomad.datamodel.metainfo.basesections import (
     CompositeSystemReference
 )
 
+from ase.formula import Formula as ASEFormula
+
+def get_elements_from_formula(formula):
+    return list(ASEFormula(formula).count().keys())
 
 def traverse_dictionary(entry_dict, key, value):
 
