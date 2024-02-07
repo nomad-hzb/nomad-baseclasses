@@ -133,7 +133,7 @@ class SingleSampleExperimentStep(ExperimentStep):
         a_eln=dict(
             component='EnumEditQuantity',
             props=dict(
-                suggestions=['XRR', 'XRD', 'XRF', 'Ellipsometry', 'Sputtering', 'SEM_Merlin', 'Measurement', 'Synthesis', 'Dektak', 'TGA', "PECVD"])
+                suggestions=['XRR', 'XRD', 'XRF', 'Ellipsometry', 'Sputtering', 'SEM_Merlin', 'Measurement', 'Synthesis', 'Dektak', 'TGA', "PECVD", "Catalytic_Reaction"])
         ))
 
     method_type = Quantity(
