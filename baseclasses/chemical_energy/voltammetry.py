@@ -304,11 +304,8 @@ class Voltammetry(PotentiostatMeasurement):
                         cycle.voltage_rhe_uncompensated = volts + shift
 
             area = None
-            try:
-                if self.properties is not None and getattr(self.properties, "sample_area", False):
-                    area = self.properties.sample_area
-            except:
-                pass
+            if self.properties is not None and getattr(self.properties, "sample_area", None):
+                area = self.properties.sample_area
             if self.samples and len(self.samples) == 1 and self.samples[0]["reference"] \
                     and getattr(self.samples[0]["reference"], "active_area", None):
                 area = self.samples[0]["reference"].active_area
