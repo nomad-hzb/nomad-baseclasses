@@ -30,19 +30,19 @@ class PVDProcess(ArchiveSection):
 
     target = Quantity(
         #Link to ontology class 'pvd source'
-        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002035'],
+        links = ['https://purl.archive.org/tfsco/TFSCO_00002035'],
         type=Reference(Chemical.m_def),
         shape=['*'],
         a_eln=dict(component='ReferenceEditQuantity'))
 
     target_2 = SubSection(
         #Link to ontology class 'pvd source'
-        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002035'],
+        links = ['https://purl.archive.org/tfsco/TFSCO_00002035'],
         section_def=PubChemPureSubstanceSection, repeats=True)
 
     power = Quantity(
         #Link to ontology class 'power' and 'power setting datum'
-        links = ['http://purl.obolibrary.org/obo/PATO_0001024','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002104'],
+        links = ['http://purl.obolibrary.org/obo/PATO_0001024','https://purl.archive.org/tfsco/TFSCO_00002104'],
         type=np.dtype(
             np.float64),
         unit=('W'),
@@ -54,7 +54,7 @@ class PVDProcess(ArchiveSection):
 
     pressure = Quantity(
         #Link to ontology class 'total pressure'
-        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00001094'],
+        links = ['https://purl.archive.org/tfsco/TFSCO_00001094'],
         type=np.dtype(
             np.float64),
         unit=('ubar'),
@@ -66,7 +66,7 @@ class PVDProcess(ArchiveSection):
 
     time = Quantity(
         #Link to ontology class 'time' and 'time setting datum'
-        links = ['http://purl.obolibrary.org/obo/PATO_0000165', 'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005085'],
+        links = ['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
         type=np.dtype(
             np.float64),
         unit=('s'),
@@ -78,14 +78,14 @@ class PVDProcess(ArchiveSection):
 
     rotation_speed = Quantity(
         #Link to ontology class 'Rotation speed' and 'rotation speed setting datum'
-        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002026','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002005'],
+        links = ['https://purl.archive.org/tfsco/TFSCO_00002026','https://purl.archive.org/tfsco/TFSCO_00002005'],
         type=np.dtype(np.float64),
         unit=('1/s'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='1/s'))
 
     temperature = Quantity(
         #Link to ontology class 'temperature' and 'temperature setting datum'
-        links = ['http://purl.obolibrary.org/obo/PATO_0000146','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002111'],
+        links = ['http://purl.obolibrary.org/obo/PATO_0000146','https://purl.archive.org/tfsco/TFSCO_00002111'],
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
