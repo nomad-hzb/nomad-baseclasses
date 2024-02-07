@@ -18,7 +18,7 @@
 
 import numpy as np
 
-from nomad.metainfo import (Quantity, Reference, SubSection, Section)
+from nomad.metainfo import (Quantity, Reference, SubSection)
 from nomad.datamodel.data import ArchiveSection
 
 from ..chemical import Chemical

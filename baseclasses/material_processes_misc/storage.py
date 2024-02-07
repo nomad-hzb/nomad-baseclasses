@@ -38,7 +38,7 @@ class Storage(BaseProcess):
 
     duration = Quantity(
         #Link to ontology class 'duration', Link to ontology class 'duration setting datum'
-        links = ['http://purl.obolibrary.org/obo/PATO_0001309', 'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002006'],
+        links = ['http://purl.obolibrary.org/obo/PATO_0001309', 'https://purl.archive.org/tfsco/TFSCO_00002006'],
         type=str)
 
     start_humidity = Quantity(
