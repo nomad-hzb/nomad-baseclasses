@@ -62,7 +62,7 @@ class ALDProperties(ArchiveSection):
 
     temperature = Quantity(
         #Link to ontology class 'temperature', Link to ontology class 'temperature setting datum'
-        links = ['http://purl.obolibrary.org/obo/PATO_0000146','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002111'],
+        links = ['http://purl.obolibrary.org/obo/PATO_0000146','https://purl.archive.org/tfsco/TFSCO_00002111'],
         type=np.dtype(
             np.float64),
         unit=('°C'),
@@ -73,7 +73,7 @@ class ALDProperties(ArchiveSection):
 
     rate = Quantity(
         #Link to ontology class 'thinfilm deposition rate', Link to ontology class 'thinfilm deposition rate setting datum'
-        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002110'],
+        links = ['https://purl.archive.org/tfsco/TFSCO_00002110'],
         type=np.dtype(
             np.float64),
         unit=('angstrom/s'),
@@ -83,7 +83,7 @@ class ALDProperties(ArchiveSection):
 
     time = Quantity(
         #Link to ontology class 'time', Link to ontology class 'time setting datum'
-        links = ['http://purl.obolibrary.org/obo/PATO_0000165', 'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005085'],
+        links = ['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
         type=np.dtype(
             np.float64),
         unit=('s'),

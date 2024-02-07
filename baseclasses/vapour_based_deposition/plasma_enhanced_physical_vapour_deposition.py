@@ -104,7 +104,7 @@ class LogData(ArchiveSection):
 
     power = Quantity(
         #Link to ontology class 'power' and 'power setting datum'
-        links = ['http://purl.obolibrary.org/obo/PATO_0001024','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002104'],
+        links = ['http://purl.obolibrary.org/obo/PATO_0001024','https://purl.archive.org/tfsco/TFSCO_00002104'],
         type=np.dtype(
             np.float64),
         shape=['*'],
@@ -122,7 +122,7 @@ class LogData(ArchiveSection):
 
     pressure = Quantity(
         #Link to ontology class 'pressure' and 'pressure setting datum'
-        links = ['http://purl.obolibrary.org/obo/PATO_0001025','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005040'],
+        links = ['http://purl.obolibrary.org/obo/PATO_0001025','https://purl.archive.org/tfsco/TFSCO_00005040'],
         type=np.dtype(
             np.float64),
         shape=['*'],
@@ -140,7 +140,7 @@ class LogData(ArchiveSection):
 
     time = Quantity(
         #Link to ontology class 'time' and 'time setting datum'
-        links = ['http://purl.obolibrary.org/obo/PATO_0000165','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005085'],
+        links = ['http://purl.obolibrary.org/obo/PATO_0000165','https://purl.archive.org/tfsco/TFSCO_00005085'],
         type=np.dtype(
             np.float64),
         shape=['*'],
@@ -148,7 +148,7 @@ class LogData(ArchiveSection):
 
     temperature = Quantity(
         #Link to ontology class 'temperature', Link to ontology class 'temperature setting datum'
-        links = ['http://purl.obolibrary.org/obo/PATO_0000146','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002071'],
+        links = ['http://purl.obolibrary.org/obo/PATO_0000146','https://purl.archive.org/tfsco/TFSCO_00002071'],
         type=np.dtype(np.float64),
         shape=['*'],
         unit=('°C'),
@@ -179,7 +179,7 @@ class GasFlow(ArchiveSection):
 
     gas_flow_rate = Quantity(
         #Link to ontology class 'gas flow rate' and 'gas flow rate setting datum'
-        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002114','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002108'],
+        links = ['https://purl.archive.org/tfsco/TFSCO_00002114','https://purl.archive.org/tfsco/TFSCO_00002108'],
         type=np.dtype(
             np.float64),
         unit=('cm**3/minute'),
@@ -201,7 +201,7 @@ class PECVDProcess(ArchiveSection):
 
     power = Quantity(
         #Link to ontology class 'power' and 'power setting datum'
-        links = ['http://purl.obolibrary.org/obo/PATO_0001024','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002104'],
+        links = ['http://purl.obolibrary.org/obo/PATO_0001024','https://purl.archive.org/tfsco/TFSCO_00002104'],
         type=np.dtype(
             np.float64),
         unit=('W'),
@@ -213,7 +213,7 @@ class PECVDProcess(ArchiveSection):
 
     pressure = Quantity(
         #Link to ontology class 'pressure' and 'pressure setting datum'
-        links = ['http://purl.obolibrary.org/obo/PATO_0001025','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005040'],
+        links = ['http://purl.obolibrary.org/obo/PATO_0001025','https://purl.archive.org/tfsco/TFSCO_00005040'],
         type=np.dtype(
             np.float64),
         unit=('ubar'),
@@ -225,7 +225,7 @@ class PECVDProcess(ArchiveSection):
 
     time = Quantity(
         #Link to ontology class 'time' and 'time setting datum'
-        links = ['http://purl.obolibrary.org/obo/PATO_0000165','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005085'],
+        links = ['http://purl.obolibrary.org/obo/PATO_0000165','https://purl.archive.org/tfsco/TFSCO_00005085'],
         type=np.dtype(
             np.float64),
         unit=('s'),
@@ -237,14 +237,14 @@ class PECVDProcess(ArchiveSection):
 
     temperature = Quantity(
         #Link to ontology class 'temperature' and 'temperature setting datum'
-        links = ['http://purl.obolibrary.org/obo/PATO_0000146','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002071'],
+        links = ['http://purl.obolibrary.org/obo/PATO_0000146','https://purl.archive.org/tfsco/TFSCO_00002071'],
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
 
     plate_spacing = Quantity(
         #Link to ontology class 'plate spacing'
-        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002004'],
+        links = ['https://purl.archive.org/tfsco/TFSCO_00002004'],
         type=np.dtype(
             np.float64), unit=('mm'), a_eln=dict(
             component='NumberEditQuantity', defaultDisplayUnit='mm'), props=dict(

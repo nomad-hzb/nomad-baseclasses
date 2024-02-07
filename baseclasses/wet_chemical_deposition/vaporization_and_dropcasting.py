@@ -31,14 +31,14 @@ class VaporizationProperties(ArchiveSection):
 
     temperature = Quantity(
         #Link to ontology class 'temperature' and 'temperature setting datum'
-        links = ['http://purl.obolibrary.org/obo/PATO_0000146', 'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002111'],
+        links = ['http://purl.obolibrary.org/obo/PATO_0000146', 'https://purl.archive.org/tfsco/TFSCO_00002111'],
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
 
     initial_time = Quantity(
         #Link to ontology class 'time' and 'time setting datum'
-        links = ['http://purl.obolibrary.org/obo/PATO_0000165', 'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005085'],
+        links = ['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
         type=Datetime,
         a_eln=dict(component='DateTimeEditQuantity'))
 
@@ -47,7 +47,7 @@ class VaporizationAndDropCasting(WetChemicalDeposition):
     '''Base class for spin coating of a sample'''
     m_def = Section(
         #Link to ontology class 'Drop casting'
-        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002059']
+        links = ['https://purl.archive.org/tfsco/TFSCO_00002059']
 
     )
 
