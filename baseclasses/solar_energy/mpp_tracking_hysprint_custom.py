@@ -27,7 +27,7 @@ from nomad.metainfo import (
 
 from baseclasses import BaseMeasurement
 from nomad.datamodel.data import ArchiveSection
-from nomad.datamodel.metainfo.basesections import CompositeSystem
+from nomad.datamodel.metainfo.basesections import CompositeSystem, CompositeSystemReference
 
 
 class ProcessedEfficiency(ArchiveSection):
@@ -126,7 +126,7 @@ class PixelData(ProcessedEfficiency):
         section_def=JVData, repeats=True)
 
 
-class SampleData(ArchiveSection):
+class SampleData(CompositeSystemReference):
     m_def = Section(label_quantity='name',
                     a_plot=[
                         {
@@ -184,20 +184,20 @@ class SampleData(ArchiveSection):
                                     "fixedrange": False}},
                         }])
 
-    name = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity')
-    )
+    # name = Quantity(
+    #     type=str,
+    #     a_eln=dict(component='StringEditQuantity')
+    # )
 
     parameter = Quantity(
         type=str,
         a_eln=dict(component='StringEditQuantity')
     )
 
-    samples = Quantity(
-        type=Reference(CompositeSystem.m_def),
-        shape=['*'],
-        a_eln=dict(component='ReferenceEditQuantity'))
+    # samples = Quantity(
+    #     type=Reference(CompositeSystem.m_def),
+    #     shape=['*'],
+    #     a_eln=dict(component='ReferenceEditQuantity'))
 
     time = Quantity(
         type=np.dtype(np.float64),
