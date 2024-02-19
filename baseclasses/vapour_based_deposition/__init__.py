@@ -19,6 +19,6 @@
 
 from .physical_vapur_deposition import PVDeposition
 from .plasma_enhanced_physical_vapour_deposition import PECVDeposition, PECVDProcess
-from .evaporation import Evaporations
+from .evaporation import Evaporations, Evaporation
 from .sputtering import Sputtering, SputteringProcess
 from .atomic_layer_deposition import AtomicLayerDeposition
