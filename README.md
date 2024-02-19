@@ -14,4 +14,4 @@ They can be used to derive application plugins and parsers as here:
 - [HZB Electro Catalysis](https://github.com/RoteKekse/nomad-chemical-energy)
 - [KIT Solar Cells](https://github.com/RoteKekse/nomad-perotf)
 
-See [NOMAD Schemas](https://nomad-lab.eu/prod/v1/staging/docs/schemas/basics.html) on documentation how to create nomad schemas. We would recommend to write plugins in Python whcih allows to write custom parser for your lab data.
+See [NOMAD Schemas](https://nomad-lab.eu/prod/v1/staging/docs/howto/customization/basics.html) on documentation how to create nomad schemas. We would recommend to write plugins in Python whcih allows to write custom parser for your lab data.
