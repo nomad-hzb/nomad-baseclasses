@@ -20,7 +20,7 @@ from .. import BaseMeasurement
 class NKDataResult(AnalysisResult):
     n_data = SubSection(
         section_def=DataWithStatistics,
-        description='The n data.',
+        description='The n data.'
     )
 
     k_data = SubSection(
@@ -53,8 +53,9 @@ class NKDataResult(AnalysisResult):
                         "fixedrange": False},
                     'xaxis': {
                         "fixedrange": False}},
-            }
-        ])
+        }
+        ],
+        a_eln=dict(overview=True))
 
     def normalize(self, archive, logger):
         self.n_data.normalize(archive, logger)
@@ -91,7 +92,6 @@ class NKData(Entity):
             label='Measurement Reference',
         ),
     )
-
 
     data = SubSection(
         section_def=NKDataResult,
