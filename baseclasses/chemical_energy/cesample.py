@@ -294,12 +294,12 @@ class CENOMESample(CESample):
         description=(
             'A description of the components.'),
         a_eln=dict(component='StringEditQuantity'))
-    
+
     active_area = Quantity(
         type=np.dtype(np.float64),
         unit=('cm^2'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'))
-    
+
     mass_coverage = Quantity(
         type=np.dtype(np.float64),
         unit=('ug/cm^2'),
@@ -326,7 +326,7 @@ class CENOMESample(CESample):
         section_def=SubstrateProperties)
 
     synthesis = SubSection(
-        section_def=SubstrateProperties, repeats=True)
+        section_def=CatalystSynthesis, repeats=True)
 
     def normalize(self, archive, logger):
         super(CENOMESample, self).normalize(archive, logger)
