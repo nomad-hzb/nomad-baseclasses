@@ -33,7 +33,7 @@ def get_nk_archive(nk_data):
     k_data_format = nk_data.columns[2].strip()
     k_data = np.array(nk_data[k_data_format])
     if k_data_format.lower() == "alpha":
-        k_data = k_data*ureg(f"1/cm")*energy_data / (4*np.pi)
+        k_data = 1e-4 / (4*np.pi) * energy_data * (k_data*ureg("1/um"))
 
     return NKDataResult(
         wavelength=energy_data,
