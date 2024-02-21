@@ -156,7 +156,7 @@ class Step(ArchiveSection):
                 try:
                     p.parameter_unit = get_unit(self.process_reference, p.parameter_path)
                 except:
-                    logger.error(
+                    logger.warning(
                         f"{p.parameter_path} is not valid, cant find correct unit", normalizer=self.__class__.__name__, section='system')
 
 
