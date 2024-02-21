@@ -22,6 +22,9 @@ from nomad.metainfo import (SubSection, Quantity)
 
 from nomad.datamodel.metainfo.eln import SolarCellEQE
 from .. import BaseMeasurement
+from ..helper.file_parser.eqe_parser import fit_urbach_tail, calculate_jsc, calculate_bandgap, calculate_j0rad, calculate_voc_rad
+from nomad.units import ureg
+from ..helper.add_solar_cell import add_solar_cell, add_band_gap
 
 
 class SolarCellEQECustom(SolarCellEQE):
@@ -33,12 +36,39 @@ class SolarCellEQECustom(SolarCellEQE):
         """,
         a_eln=dict(component='NumberEditQuantity'))
 
+    def normalize(self, archive, logger):
+        if self.photon_energy_array is not None and self.eqe_array is not None:
+            self.bandgap_eqe = calculate_bandgap(self.photon_energy_array, self.eqe_array)
+            self.integrated_jsc = calculate_jsc(self.photon_energy_array, self.eqe_array) * ureg('A/m**2')
+            try:
+                self.integrated_j0rad = calculate_j0rad(self.photon_energy_array, self.eqe_array) * ureg('A/m**2')
+                self.voc_rad = calculate_voc_rad(self.photon_energy_array, self.eqe_array)
+            except ValueError:
+                print('Urbach energy is > 0.026 eV (~kB*T for T = 300K).\n')
+            urbach_enery, *_, urbach_energy_fit_std_dev, _ = fit_urbach_tail(self.photon_energy_array, self.eqe_array)
+            if urbach_enery <= 0.0 or urbach_enery >= 0.5:
+                print('Failed to estimate a reasonable Urbach Energy')
+            else:
+                self.urbach_energy, self.urbach_energy_fit_std_dev = urbach_enery, urbach_energy_fit_std_dev
+            self.urbach_energy, _, _, _, self.urbach_energy_fit_std_dev, _ = fit_urbach_tail(
+                self.photon_energy_array, self.eqe_array)
+
+        if self.photon_energy_array is not None:
+            self.wavelength_array = self.photon_energy_array.to('nm', 'sp')  # pylint: disable=E1101
+            self.raw_wavelength_array = self.raw_photon_energy_array.to('nm', 'sp')  # pylint: disable=E1101
+
+        add_solar_cell(archive)
+        add_band_gap(archive, self.bandgap_eqe)
+
 
 class EQEMeasurement(BaseMeasurement):
     '''Eqe Measurement'''
     eqe_data = SubSection(
         section_def=SolarCellEQECustom,
         repeats=True)
+
+    data = SubSection(
+        section_def=SolarCellEQECustom)
 
     def normalize(self, archive, logger):
         self.method = "EQE Measurement"
