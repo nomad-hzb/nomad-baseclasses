@@ -85,9 +85,12 @@ def collectJVMeasurement(entry, entry_id, entry_data):
 
 
 def collectEQEMeasurement(entry, entry_id, entry_data):
-    band_gap = [eqe["bandgap_eqe"]
-                if "bandgap_eqe" in eqe else np.nan for eqe in entry_data["eqe_data"]]
-
+    band_gap = []
+    if "eqe_data" in entry_data:
+        band_gap = [eqe["bandgap_eqe"]
+                    if "bandgap_eqe" in eqe else np.nan for eqe in entry_data["eqe_data"]]
+    if "data" in entry_data and "bandgap_eqe" in entry_data["data"]:
+        band_gap.append(entry_data["data"]["bandgap_eqe"])
     entry[entry_id].update({
         "band_gap": band_gap
     })
