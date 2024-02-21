@@ -17,6 +17,10 @@
 # limitations under the License.
 #
 
+from nomad.datamodel.metainfo.common import ProvenanceTracker
+from nomad.datamodel.results import (BandGapDeprecated, BandGap, BandStructureElectronic,
+                                     ElectronicProperties, OptoelectronicProperties,
+                                     Properties, Results, SolarCell)
 import numpy as np
 
 from nomad.units import ureg
@@ -35,15 +39,20 @@ def add_solar_cell(archive):
         archive.results.properties.optoelectronic.solar_cell = SolarCell()
 
 
+# from nomad.datamodel.metainfo.plot import PlotSection
+
+
 def add_band_gap(archive, band_gap):
     '''Adds a band gap value (in eV) with the additional section structure for solar
     cell data.eV=
     '''
     if band_gap is not None:
-        band_gap = BandGap(value=np.float64(band_gap) * ureg('eV'))
-        band_structure = BandStructureElectronic(band_gap=[band_gap])
-        electronic = ElectronicProperties(
-            band_structure_electronic=[band_structure])
+        bg = BandGapDeprecated(value=np.float64(band_gap) * ureg('eV'))
+        band_gap = BandGap(value=np.float64(band_gap) * ureg('eV'),
+                           provenance=ProvenanceTracker(label='solar_cell_database'))  # TODO: check label
+        band_structure = BandStructureElectronic(band_gap=[bg])  # TODO: to be removed after reparsing
+        electronic = ElectronicProperties(band_structure_electronic=[band_structure],
+                                          band_gap=[band_gap])
         archive.results.properties.electronic = electronic
 
 

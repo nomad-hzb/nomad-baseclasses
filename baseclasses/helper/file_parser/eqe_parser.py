@@ -249,7 +249,7 @@ def calculate_bandgap(photon_energy, intensity):
     '''
     intensity = savgol_filter(intensity, 51, 4, mode='nearest')
     deqe_interp = np.diff(intensity) / np.diff(np.flip(-photon_energy))
-    bandgap = intensity[deqe_interp.argmax()]
+    bandgap = photon_energy[deqe_interp.argmax()]
     # print('Bandgap: ' + str(bandgap) + ' eV')
     return bandgap
 
