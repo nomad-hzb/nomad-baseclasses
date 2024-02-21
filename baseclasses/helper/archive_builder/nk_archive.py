@@ -21,18 +21,19 @@ from baseclasses.data_transformations.nkdata_analysis import NKDataResult
 from nomad.units import ureg
 import numpy as np
 
+
 def get_nk_archive(nk_data):
     energy_unit = nk_data.columns[0].strip()
     energy_data = np.array(nk_data[energy_unit])
     if energy_unit.lower() == 'ev':
-        energy_data  = 1239.84193 / energy_data
+        energy_data = 1239.84193 / energy_data
         energy_unit = "nm"
-    energy_data = energy_data *  ureg(energy_unit)
+    energy_data = energy_data * ureg(energy_unit)
 
     k_data_format = nk_data.columns[2].strip()
     k_data = np.array(nk_data[k_data_format])
     if k_data_format.lower() == "alpha":
-        k_data = k_data*ureg(f"1/um")*energy_data / (4*np.pi)
+        k_data = k_data*ureg(f"1/cm")*energy_data / (4*np.pi)
 
     return NKDataResult(
         wavelength=energy_data,
