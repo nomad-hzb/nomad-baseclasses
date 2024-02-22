@@ -47,6 +47,7 @@ from .helper.utilities import update_archive, get_processes
 
 from .customreadable_identifier import ReadableIdentifiersCustom
 from .atmosphere import Atmosphere
+import hdf5plugin
 
 
 class Batch(Collection):
@@ -416,6 +417,7 @@ class LibraryMeasurement(BaseMeasurement):
 
     data_file = Quantity(
         type=str,
+        shape=["*"],
         a_eln=dict(component='FileEditQuantity'),
         a_browser=dict(adaptor='RawFileAdaptor'))
 
