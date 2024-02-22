@@ -21,7 +21,7 @@ import numpy as np
 from nomad.metainfo import (
     Quantity,
     Reference,
-    SubSection)
+    SubSection, Section)
 from nomad.datamodel.data import ArchiveSection
 
 from ..solution import Solution
@@ -32,8 +32,9 @@ from ..material_processes_misc import Annealing, AirKnifeGasQuenching
 class SlotDieCoatingProperties(ArchiveSection):
 
     flow_rate = Quantity(
-        #Link to ontology class 'slot die coating flow rate' and 'slot die coating flow rate setting datum'
-        links = ['https://purl.archive.org/tfsco/TFSCO_00005039', 'https://purl.archive.org/tfsco/TFSCO_00005048'],
+        # Link to ontology class 'flow rate' and 'flow rate setting datum'
+        links=['https://purl.archive.org/tfsco/TFSCO_00005039',
+               'https://purl.archive.org/tfsco/TFSCO_00005048'],
         type=np.dtype(
             np.float64),
         unit=('ml/minute'),
@@ -42,8 +43,9 @@ class SlotDieCoatingProperties(ArchiveSection):
             defaultDisplayUnit='ml/minute', props=dict(minValue=0)))
 
     slot_die_head_width = Quantity(
-        #Link to ontology class 'slot die head width' and 'slot die head width setting datum'
-        links = ['https://purl.archive.org/tfsco/TFSCO_00005038', 'https://purl.archive.org/tfsco/TFSCO_00005047'],
+        # Link to ontology class 'slot die head width' and 'slot die head width setting datum'
+        links=['https://purl.archive.org/tfsco/TFSCO_00005038',
+               'https://purl.archive.org/tfsco/TFSCO_00005047'],
         type=np.dtype(
             np.float64),
         unit=('mm'),
@@ -54,8 +56,9 @@ class SlotDieCoatingProperties(ArchiveSection):
                 minValue=0)))
 
     slot_die_shim_width = Quantity(
-        #Link to ontology class 'slot die shim width' and 'slot die chim width setting datum'
-        links = ['https://purl.archive.org/tfsco/TFSCO_00005035', 'https://purl.archive.org/tfsco/TFSCO_00005045'],
+        # Link to ontology class 'slot die shim width' and 'slot die chim width setting datum'
+        links=['https://purl.archive.org/tfsco/TFSCO_00005035',
+               'https://purl.archive.org/tfsco/TFSCO_00005045'],
         type=np.dtype(
             np.float64),
         unit=('mm'),
@@ -66,8 +69,9 @@ class SlotDieCoatingProperties(ArchiveSection):
                 minValue=0)))
 
     slot_die_shim_thickness = Quantity(
-        #Link to ontology class 'slot die shim thickness' and 'slot die shim thickness setting datum'
-        links = ['https://purl.archive.org/tfsco/TFSCO_00005036', 'https://purl.archive.org/tfsco/TFSCO_00005046'],
+        # Link to ontology class 'slot die shim thickness' and 'slot die shim thickness setting datum'
+        links=['https://purl.archive.org/tfsco/TFSCO_00005036',
+               'https://purl.archive.org/tfsco/TFSCO_00005046'],
         type=np.dtype(
             np.float64),
         unit=('mm'),
@@ -78,8 +82,9 @@ class SlotDieCoatingProperties(ArchiveSection):
                 minValue=0)))
 
     slot_die_head_distance_to_thinfilm = Quantity(
-        #Link to ontology class 'slot die head distance to thinfilm' and 'slot die head distane to thinfilm setting datum'
-        links = ['https://purl.archive.org/tfsco/TFSCO_00005034', 'https://purl.archive.org/tfsco/TFSCO_00005044'],
+        # Link to ontology class 'slot die head distance to thinfilm' and 'slot die head distane to thinfilm setting datum'
+        links=['https://purl.archive.org/tfsco/TFSCO_00005034',
+               'https://purl.archive.org/tfsco/TFSCO_00005044'],
         type=np.dtype(
             np.float64),
         unit=('mm'),
@@ -88,9 +93,11 @@ class SlotDieCoatingProperties(ArchiveSection):
             defaultDisplayUnit='mm',
             props=dict(
                 minValue=0)))
+
     slot_die_head_speed = Quantity(
-        #Link to ontology class 'slot die head speed' and 'slot die head speed setting datum'
-        links = ['https://purl.archive.org/tfsco/TFSCO_00005033', 'https://purl.archive.org/tfsco/TFSCO_00005042'],
+        # Link to ontology class 'slot die head speed' and 'slot die head speed setting datum'
+        links=['https://purl.archive.org/tfsco/TFSCO_00005033',
+               'https://purl.archive.org/tfsco/TFSCO_00005033'],
         type=np.dtype(
             np.float64),
         unit=('mm/s'),
@@ -101,8 +108,9 @@ class SlotDieCoatingProperties(ArchiveSection):
                 minValue=0)))
 
     temperature = Quantity(
-        #Link to ontology class 'temperature' and 'temperature setting datum'
-        links = ['http://purl.obolibrary.org/obo/PATO_0000146', 'https://purl.archive.org/tfsco/TFSCO_00002111'],
+        # Link to ontology class 'temperature' and 'temperature setting datum'
+        links=['http://purl.obolibrary.org/obo/PATO_0000146',
+               'https://purl.archive.org/tfsco/TFSCO_00002111'],
         type=np.dtype(
             np.float64),
         unit=('°C'),
@@ -116,8 +124,8 @@ class SlotDieCoatingProperties(ArchiveSection):
 class SlotDieCoating(WetChemicalDeposition):
     '''Spin Coating'''
     m_def = Section(
-        #Link to ontology class 'slot die coating'
-        links = ['https://purl.archive.org/tfsco/TFSCO_00000075']
+        # Link to ontology class 'slot die coating'
+        links=['https://purl.archive.org/tfsco/TFSCO_00000075']
     )
 
     properties = SubSection(section_def=SlotDieCoatingProperties)

@@ -21,7 +21,7 @@ import numpy as np
 from nomad.metainfo import (
     Quantity,
     Reference,
-    SubSection)
+    SubSection, Section)
 
 from nomad.datamodel.data import ArchiveSection
 
@@ -32,15 +32,17 @@ from ..material_processes_misc import Annealing
 class SprayPyrolysisProperties(ArchiveSection):
 
     temperature = Quantity(
-        #Link to ontology class 'temperature' and 'temperature setting datum'
-        links = ['http://purl.obolibrary.org/obo/PATO_0000146', 'https://purl.archive.org/tfsco/TFSCO_00002111'],
+        # Link to ontology class 'temperature' and 'temperature setting datum'
+        links=['http://purl.obolibrary.org/obo/PATO_0000146',
+               'https://purl.archive.org/tfsco/TFSCO_00002111'],
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
 
     time = Quantity(
-        #Link to ontology class 'time' and 'time setting datum'
-        links = ['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
+        # Link to ontology class 'time' and 'time setting datum'
+        links=['http://purl.obolibrary.org/obo/PATO_0000165',
+               'https://purl.archive.org/tfsco/TFSCO_00005085'],
         type=np.dtype(np.float64),
         unit=('minute'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='minute'))
@@ -49,8 +51,8 @@ class SprayPyrolysisProperties(ArchiveSection):
 class SprayPyrolysis(WetChemicalDeposition):
     '''Base class for spray pyrolysis of a sample'''
     m_def = Section(
-        #Link to ontology class 'Spray pyrolysis'
-        links = ['http://purl.obolibrary.org/obo/CHMO_0001516']
+        # Link to ontology class 'Spray pyrolysis'
+        links=['http://purl.obolibrary.org/obo/CHMO_0001516']
     )
 
     properties = SubSection(section_def=SprayPyrolysisProperties)

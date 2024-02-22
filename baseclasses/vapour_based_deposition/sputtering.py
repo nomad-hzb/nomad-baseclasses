@@ -159,7 +159,7 @@ class Sputtering(LayerDeposition):
     '''Base class for evaporation of a sample'''
     m_def = Section(
         #Link to ontology class 'sputter deposition'
-        links = ['http://purl.obolibrary.org/obo/CHMO_0001364']
+        links = ['http://purl.obolibrary.org/obo/CHMO_0001364'],
     )
 
     processes = SubSection(

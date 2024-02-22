@@ -81,8 +81,14 @@ class SolutionCleaning(CleaningTechnique):
 
 class UVCleaning(CleaningTechnique):
     '''Base class for cleaning of a sample'''
+    m_def = Section(
+        #Link to ontology class 'uv cleaning'
+        links = ['https://purl.archive.org/tfsco/TFSCO_00001043'],
+    )
 
     pressure = Quantity(
+        #Link to ontology class 'presssure', Link to ontology class 'pressure setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0001025','https://purl.archive.org/tfsco/TFSCO_00005040'],
         type=np.dtype(
             np.float64),
         unit=('mbar'),
@@ -95,8 +101,14 @@ class UVCleaning(CleaningTechnique):
 
 class PlasmaCleaning(CleaningTechnique):
     '''Base class for cleaning of a sample'''
+    m_def = Section(
+        #Link to ontology class 'plasma cleaning'
+        links = ['https://purl.archive.org/tfsco/TFSCO_00001044'],
+    )
 
     pressure = Quantity(
+        #Link to ontology class 'presssure', Link to ontology class 'pressure setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0001025','https://purl.archive.org/tfsco/TFSCO_00005040'],
         type=np.dtype(
             np.float64),
         unit=('mbar'),
@@ -107,6 +119,8 @@ class PlasmaCleaning(CleaningTechnique):
                 minValue=0)))
 
     power = Quantity(
+        #Link to ontology class 'power', Link to ontology class 'power setting datum'
+        links = ['http://purl.obolibrary.org/obo/PATO_0001024','https://purl.archive.org/tfsco/TFSCO_00002104'],
         type=np.dtype(
             np.float64),
         unit=('W'),
@@ -117,6 +131,8 @@ class PlasmaCleaning(CleaningTechnique):
                 minValue=0)))
 
     plasma_type = Quantity(
+        #Link to ontology class 'plasma'
+        links = ['https://purl.archive.org/tfsco/TFSCO_00005019'],
         type=str,
         shape=[],
         a_eln=dict(
@@ -128,6 +144,8 @@ class PlasmaCleaning(CleaningTechnique):
 
 class Cleaning(BaseProcess):
     m_def = Section(
+        #Link to ontology class 'cleaning'
+        links = ['https://purl.archive.org/tfsco/TFSCO_00000068'],
         a_eln=dict(
             hide=[
                 'lab_id', 'user', 'author']))
