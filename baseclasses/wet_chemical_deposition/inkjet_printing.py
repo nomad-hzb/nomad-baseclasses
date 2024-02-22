@@ -22,7 +22,7 @@ from nomad.metainfo import (
     Quantity,
     SubSection,
     Reference,
-    MEnum)
+    MEnum,Section)
 from nomad.datamodel.data import ArchiveSection
 
 from ..solution import Solution
