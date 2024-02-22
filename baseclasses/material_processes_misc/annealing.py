@@ -27,11 +27,11 @@ class Annealing(ArchiveSection):
     '''Base class for annealing of a sample'''
     m_def = Section(
         #Link to class 'annealing'
-        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00001033']
+        links = ['https://purl.archive.org/tfsco/TFSCO_00001033']
     )
     temperature = Quantity(
          #Link to ontology class 'annealing temperature' and 'annealing temperature setting datum'
-        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002001','http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002073'],
+        links = ['https://purl.archive.org/tfsco/TFSCO_00002001','https://purl.archive.org/tfsco/TFSCO_00002073'],
         type=np.dtype(
             np.float64),
         unit=('°C'),
@@ -42,7 +42,7 @@ class Annealing(ArchiveSection):
 
     time = Quantity(
         #Link to ontology class 'time' and 'time setting datum'
-        links = ['http://purl.obolibrary.org/obo/PATO_0000165', 'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005085'],
+        links = ['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
         type=np.dtype(
             np.float64),
         unit=('s'),

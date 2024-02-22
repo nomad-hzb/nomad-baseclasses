@@ -33,8 +33,8 @@ class SlotDieCoatingProperties(ArchiveSection):
 
     flow_rate = Quantity(
         # Link to ontology class 'flow rate' and 'flow rate setting datum'
-        links=['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005039',
-               'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005048'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00005039',
+               'https://purl.archive.org/tfsco/TFSCO_00005048'],
         type=np.dtype(
             np.float64),
         unit=('ml/minute'),
@@ -44,8 +44,8 @@ class SlotDieCoatingProperties(ArchiveSection):
 
     slot_die_head_width = Quantity(
         # Link to ontology class 'slot die head width' and 'slot die head width setting datum'
-        links=['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005038',
-               'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005047'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00005038',
+               'https://purl.archive.org/tfsco/TFSCO_00005047'],
         type=np.dtype(
             np.float64),
         unit=('mm'),
@@ -57,8 +57,8 @@ class SlotDieCoatingProperties(ArchiveSection):
 
     slot_die_shim_width = Quantity(
         # Link to ontology class 'slot die shim width' and 'slot die chim width setting datum'
-        links=['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005035',
-               'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005045'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00005035',
+               'https://purl.archive.org/tfsco/TFSCO_00005045'],
         type=np.dtype(
             np.float64),
         unit=('mm'),
@@ -70,8 +70,8 @@ class SlotDieCoatingProperties(ArchiveSection):
 
     slot_die_shim_thickness = Quantity(
         # Link to ontology class 'slot die shim thickness' and 'slot die shim thickness setting datum'
-        links=['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005036',
-               'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005046'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00005036',
+               'https://purl.archive.org/tfsco/TFSCO_00005046'],
         type=np.dtype(
             np.float64),
         unit=('mm'),
@@ -83,8 +83,8 @@ class SlotDieCoatingProperties(ArchiveSection):
 
     slot_die_head_distance_to_thinfilm = Quantity(
         # Link to ontology class 'slot die head distance to thinfilm' and 'slot die head distane to thinfilm setting datum'
-        links=['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005034',
-               'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005044'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00005034',
+               'https://purl.archive.org/tfsco/TFSCO_00005044'],
         type=np.dtype(
             np.float64),
         unit=('mm'),
@@ -96,8 +96,8 @@ class SlotDieCoatingProperties(ArchiveSection):
 
     slot_die_head_speed = Quantity(
         # Link to ontology class 'slot die head speed' and 'slot die head speed setting datum'
-        links=['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005033',
-               'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005033'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00005033',
+               'https://purl.archive.org/tfsco/TFSCO_00005033'],
         type=np.dtype(
             np.float64),
         unit=('mm/s'),
@@ -110,7 +110,7 @@ class SlotDieCoatingProperties(ArchiveSection):
     temperature = Quantity(
         # Link to ontology class 'temperature' and 'temperature setting datum'
         links=['http://purl.obolibrary.org/obo/PATO_0000146',
-               'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002111'],
+               'https://purl.archive.org/tfsco/TFSCO_00002111'],
         type=np.dtype(
             np.float64),
         unit=('°C'),
@@ -125,7 +125,7 @@ class SlotDieCoating(WetChemicalDeposition):
     '''Spin Coating'''
     m_def = Section(
         # Link to ontology class 'slot die coating'
-        links=['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00000075']
+        links=['https://purl.archive.org/tfsco/TFSCO_00000075']
     )
 
     properties = SubSection(section_def=SlotDieCoatingProperties)

@@ -34,7 +34,7 @@ class SprayPyrolysisProperties(ArchiveSection):
     temperature = Quantity(
         # Link to ontology class 'temperature' and 'temperature setting datum'
         links=['http://purl.obolibrary.org/obo/PATO_0000146',
-               'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002111'],
+               'https://purl.archive.org/tfsco/TFSCO_00002111'],
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
@@ -42,7 +42,7 @@ class SprayPyrolysisProperties(ArchiveSection):
     time = Quantity(
         # Link to ontology class 'time' and 'time setting datum'
         links=['http://purl.obolibrary.org/obo/PATO_0000165',
-               'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00005085'],
+               'https://purl.archive.org/tfsco/TFSCO_00005085'],
         type=np.dtype(np.float64),
         unit=('minute'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='minute'))

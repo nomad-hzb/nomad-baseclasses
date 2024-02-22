@@ -35,7 +35,7 @@ class PrecursorSolution(ArchiveSection):
 
     m_def = Section(
         # Link to ontology class 'precursor solution'
-        links=['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00001081'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00001081'],
         label_quantity='name')
     name = Quantity(type=str)
 
@@ -54,7 +54,7 @@ class PrecursorSolution(ArchiveSection):
     solution_volume = Quantity(
         # Link to ontology class 'volume' and 'volume setting datum'
         links=['http://purl.obolibrary.org/obo/PATO_0000918',
-               'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002158'],
+               'https://purl.archive.org/tfsco/TFSCO_00002158'],
         type=np.dtype(
             np.float64),
         unit=('ml'),
@@ -109,7 +109,7 @@ class WetChemicalDeposition(LayerDeposition):
     '''Wet Chemical Deposition'''
     m_def = Section(
         # Link to ontology class 'wet chemical deposition'
-        links=['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002051']
+        links=['https://purl.archive.org/tfsco/TFSCO_00002051']
     )
 
     solution = SubSection(

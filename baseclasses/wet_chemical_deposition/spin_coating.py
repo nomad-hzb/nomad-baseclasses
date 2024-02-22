@@ -38,7 +38,7 @@ class SpinCoatingRecipeSteps(ArchiveSection):
 
     time = Quantity(
         #Link to ontology class 'process time' and 'process time setting datum'
-        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00001063', 'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002072'],
+        links = ['https://purl.archive.org/tfsco/TFSCO_00001063', 'https://purl.archive.org/tfsco/TFSCO_00002072'],
         type=np.dtype(
             np.float64),
         unit=('s'),
@@ -50,7 +50,7 @@ class SpinCoatingRecipeSteps(ArchiveSection):
 
     speed = Quantity(
         #Link to ontology class 'rotation speed' and 'rotation speed setting datum'
-        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002026', 'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002005'],
+        links = ['https://purl.archive.org/tfsco/TFSCO_00002026', 'https://purl.archive.org/tfsco/TFSCO_00002005'],
         type=np.dtype(
             np.float64),
         unit=('rpm'),
@@ -62,7 +62,7 @@ class SpinCoatingRecipeSteps(ArchiveSection):
 
     acceleration = Quantity(
         #Link to ontology class 'rotation acceleration' and 'rotation acceleration setting datum'
-        links = ['http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002049', 'http://www.semanticweb.org/ot2661/ontologies/2022/8/TFSCO#TFSCO_00002002'],
+        links = ['https://purl.archive.org/tfsco/TFSCO_00002049', 'https://purl.archive.org/tfsco/TFSCO_00002002'],
         type=np.dtype(
             np.float64),
         unit=('rpm/s'),
