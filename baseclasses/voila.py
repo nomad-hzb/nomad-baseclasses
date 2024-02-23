@@ -22,13 +22,9 @@ class VoilaNotebook(Entity):
 
     notebook_file = Quantity(
         type=str,
-        a_eln=dict(
-            component='FileEditQuantity'))
+        a_eln=dict(component='FileEditQuantity'),
+        a_browser=dict(adaptor='RawFileAdaptor'))
 
-    voila_url = Quantity(
-        type=str,
-        a_eln=dict(
-            component='URLEditQuantity'))
 
     def normalize(self, archive, logger):
         super(
@@ -36,3 +32,7 @@ class VoilaNotebook(Entity):
             self).normalize(
             archive,
             logger)
+
+        if self.notebook_file and os.path.splitext(self.notebook_file)[-1] != ".ipynb":
+            pass
+            #logger.error('Please upload a jupyter notebook file (.ipynb).')
