@@ -15,6 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import os
+
 from nomad.metainfo import (Quantity)
 from nomad.datamodel.metainfo.eln import Entity
 
@@ -34,5 +36,4 @@ class VoilaNotebook(Entity):
             logger)
 
         if self.notebook_file and os.path.splitext(self.notebook_file)[-1] != ".ipynb":
-            pass
-            #logger.error('Please upload a jupyter notebook file (.ipynb).')
+            logger.error('Please upload a jupyter notebook file (.ipynb).')
