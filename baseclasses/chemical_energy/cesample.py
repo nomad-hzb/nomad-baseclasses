@@ -23,23 +23,41 @@ from nomad.metainfo import (Quantity, SubSection, Section, Reference, Datetime)
 from nomad.datamodel.results import Results, Material
 from nomad.datamodel.data import ArchiveSection
 
-from nomad.datamodel.metainfo.basesections import CompositeSystem, PubChemPureSubstanceSection, CompositeSystemReference, Entity
+from nomad.datamodel.metainfo.basesections import CompositeSystem, PubChemPureSubstanceSection, \
+    CompositeSystemReference, Entity
 from .. import ReadableIdentifiersCustom
 # from .preparation_protocoll import PreparationProtocol
+from nomad.datamodel.results import (
+    Results,
+    ELN
+)
+
+
+def export_lab_id(archive, lab_id):
+    if not archive.results:
+        archive.results = Results(eln=ELN())
+    if not archive.results.eln:
+        archive.results.eln = ELN()
+    if lab_id:
+        archive.results.eln.lab_ids = []
+        archive.results.eln.lab_ids = [lab_id, "_".join(lab_id.split("_")[:-1])]
+
+
+def correct_lab_id(lab_id):
+    return lab_id.split("_")[-1].isdigit() and len(lab_id.split("_")[-1]) == 4
 
 
 def get_next_project_sample_number(data, entry_id):
     '''Check the lab ids of a project id for project_sample_number (last digits of lab_id) and returns the next higher one'''
     project_sample_numbers = []
     for entry in data:
-        print(entry)
         lab_ids = entry["results"]["eln"]["lab_ids"]
         if entry["entry_id"] == entry_id and lab_ids[0].split(
-                "_")[-1].isdigit():
+                "_")[-1].isdigit() and correct_lab_id(lab_ids[0]):
             return int(lab_ids[0].split("_")[-1])
         project_sample_numbers.extend([int(lab_id.split(
-            "_")[-1]) for lab_id in lab_ids if lab_id.split("_")[-1].isdigit()])
-    return max(project_sample_numbers) + 1 if project_sample_numbers else 0
+            "_")[-1]) for lab_id in lab_ids if correct_lab_id(lab_id)])
+    return max(project_sample_numbers) + 1 if project_sample_numbers else 1
 
 
 class SampleIDCE(ReadableIdentifiersCustom):
@@ -87,7 +105,7 @@ class SampleIDCE(ReadableIdentifiersCustom):
         if self.project_sample_number is None or (len(search_result_1.data) != 0 and
                                                   archive.metadata.entry_id not in [
                                                       d["entry_id"] for d in search_result_1.data]
-                                                  ):
+        ):
             query = {'results.eln.lab_ids': self.lab_id}
             pagination = MetadataPagination()
             pagination.page_size = 9999
@@ -104,8 +122,75 @@ class SampleIDCE(ReadableIdentifiersCustom):
             archive.data.lab_id = self.lab_id
 
 
-class SubstrateProperties(ArchiveSection):
+def build_initial_id(institute, owner, datetime=None):
+    from unidecode import unidecode
+    first_name, last_name = owner, ''
+    if ' ' in owner:
+        first_name, last_name = owner.split(' ', 1)
+    first_name = unidecode(first_name.strip())
+    last_name = unidecode(last_name.strip())
+    owner = ''.join([first_name[:2], last_name[:2]])
+    sample_id_list = [institute,
+                      owner]
+    if datetime:
+        sample_id_list.append(datetime.strftime('%y%m%d'))
+    return '_'.join(sample_id_list)
 
+
+def create_id(archive, lab_id_base):
+    from nomad.search import search
+    from nomad.app.v1.models import MetadataPagination
+
+    query = {'results.eln.lab_ids': lab_id_base}
+    pagination = MetadataPagination()
+    pagination.page_size = 9999
+    search_result = search(owner='all', query=query, pagination=pagination,
+                           user_id=archive.metadata.main_author.user_id)
+    project_sample_number = get_next_project_sample_number(search_result.data, archive.metadata.entry_id)
+
+    if lab_id_base is not None and project_sample_number is not None:
+        lab_id = f"{lab_id_base}_{project_sample_number:04d}"
+        if not archive.data.lab_id:
+            archive.data.lab_id = lab_id
+
+
+class SampleIDCE2(ReadableIdentifiersCustom):
+    m_def = Section(
+        a_eln=dict(
+            hide=["sample_owner", "sample_short_name", "sample_id", "short_name"]
+        ))
+
+    def normalize(self, archive, logger):
+
+        if archive.data.lab_id:
+            return
+
+        if self.institute and self.owner:
+            self.lab_id = build_initial_id(self.institute, self.owner)
+
+        create_id(archive, self.lab_id)
+
+
+class SampleIDCE2date(ReadableIdentifiersCustom):
+    m_def = Section(
+        a_eln=dict(
+            hide=["sample_owner", "sample_short_name", "sample_id", "short_name"]
+        ))
+
+    def normalize(self, archive, logger):
+        if archive.data.lab_id:
+            return
+        if not self.datetime:
+            from datetime import date
+            self.datetime = date.today()
+
+        if self.institute and self.owner and self.datetime:
+            self.lab_id = build_initial_id(self.institute, self.owner, self.datetime)
+
+        create_id(archive, self.lab_id)
+
+
+class SubstrateProperties(ArchiveSection):
     substrate_type = Quantity(
         type=str,
         a_eln=dict(
@@ -123,7 +208,6 @@ class SubstrateProperties(ArchiveSection):
 
 
 class CESample(CompositeSystem):
-
     origin = Quantity(
         type=str,
         a_eln=dict(
@@ -165,10 +249,10 @@ class CESample(CompositeSystem):
                 material.chemical_formula_descriptive = self.chemical_composition_or_formulas
 
 
-class SampleIDCENOME(SampleIDCE):
+class SampleIDCENOMEdate(SampleIDCE2date):
     m_def = Section(
         a_eln=dict(
-            hide=["sample_owner", "sample_short_name", "sample_id"]
+            hide=["sample_owner", "sample_short_name", "sample_id", "short_name"]
         ))
 
     institute = Quantity(
@@ -179,9 +263,7 @@ class SampleIDCENOME(SampleIDCE):
             component='EnumEditQuantity',
             props=dict(
                 suggestions=[
-                    'CE-NOME',
-                    'CE-NOME Berlin',
-                    'CE-NOME Göttingen'])))
+                    'CE-NOME'])))
 
     owner = Quantity(
         type=str,
@@ -198,14 +280,50 @@ class SampleIDCENOME(SampleIDCE):
                     'Patricia Padonou',
                     'Marcel Risch',
                     'Younes Mousazade',
-                    'Jia Du'])))
+                    'Jia Du', 'Maddalena Zoli', 'Frederik Stender'])))
+
+    def normalize(self, archive, logger):
+        super(SampleIDCENOMEdate, self).normalize(archive, logger)
+
+
+class SampleIDCENOME(SampleIDCE2):
+    m_def = Section(
+        a_eln=dict(
+            hide=["sample_owner", "sample_short_name", "sample_id", "short_name", "datetime"]
+        ))
+
+    institute = Quantity(
+        type=str,
+        description='Alias/short name of the home institute of the owner, i.e. *HZB*.',
+        default='CE-NOME',
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=[
+                    'CE-NOME'])))
+
+    owner = Quantity(
+        type=str,
+        description='Alias/short name of the home institute of the owner, i.e. *HZB*.',
+        default='Marcel Risch',
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=[
+                    'Joaquín Morales Santelices',
+                    'Denis Antipin',
+                    'Giacomo Zuliani',
+                    'Omeshwari Bisen',
+                    'Patricia Padonou',
+                    'Marcel Risch',
+                    'Younes Mousazade',
+                    'Jia Du', 'Maddalena Zoli', 'Frederik Stender'])))
 
     def normalize(self, archive, logger):
         super(SampleIDCENOME, self).normalize(archive, logger)
 
 
 class CENSLISample(CESample):
-
     sample_id = SubSection(
         section_def=SampleIDCE)
 
@@ -235,6 +353,7 @@ class SubstanceWithConcentration(ArchiveSection):
     amount_relative = Quantity(
         type=np.dtype(np.float64),
         a_eln=dict(component='NumberEditQuantity'))
+
     # concentration_perw_w = Quantity(
     #     type=np.dtype(np.float64), unit=("g/g"),
     #     a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit="g/g"))
@@ -244,7 +363,6 @@ class SubstanceWithConcentration(ArchiveSection):
     #     a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit="l/l"))
 
     def normalize(self, archive, logger):
-
         if self.substance and self.substance.name:
             self.name = self.substance.name
 
@@ -267,7 +385,6 @@ class CatalystSynthesis(ArchiveSection):
 
 
 class CENOMESample(CESample):
-
     # id_of_preparation_protocol = Quantity(
     #     type=Reference(PreparationProtocol.m_def),
     #     a_eln=dict(component='ReferenceEditQuantity'))
@@ -320,7 +437,7 @@ class CENOMESample(CESample):
             label="Comment"))
 
     sample_id = SubSection(
-        section_def=SampleIDCENOME)
+        section_def=SampleIDCENOMEdate)
 
     substrate = SubSection(
         section_def=SubstrateProperties)
@@ -330,6 +447,7 @@ class CENOMESample(CESample):
 
     def normalize(self, archive, logger):
         super(CENOMESample, self).normalize(archive, logger)
+        export_lab_id(archive, self.lab_id)
 
 
 class Electrode(CESample):
@@ -380,7 +498,8 @@ class Electrolyte(CESample):
                     ".", ""))
         if self.substances is not None:
             formulas.extend([subs.substance.molecular_formula.strip().replace(
-                ".", "") for subs in self.substances if subs.substance is not None and subs.substance.molecular_formula is not None])
+                ".", "") for subs in self.substances if
+                subs.substance is not None and subs.substance.molecular_formula is not None])
         self.chemical_composition_or_formulas = ','.join(formulas)
         super(Electrolyte, self).normalize(archive, logger)
 
@@ -408,12 +527,15 @@ class EnvironmentReference(CompositeSystemReference):
 
 
 class Environment(Electrolyte):
-
     purging = SubSection(
         section_def=Purging)
 
     other_environments = SubSection(
         section_def=EnvironmentReference, repeats=True)
+
+    def normalize(self, archive, logger):
+        super(Environment, self).normalize(archive, logger)
+        export_lab_id(archive, self.lab_id)
 
 
 class ElectroChemicalCell(CESample):
@@ -476,7 +598,6 @@ class ElectroChemicalCell(CESample):
 
 
 class ElectroChemicalSetup(CESample):
-
     setup = Quantity(
         type=str,
         a_eln=dict(
@@ -522,3 +643,4 @@ class ElectroChemicalSetup(CESample):
             self.chemical_composition_or_formulas = self.chemical_composition_or_formulas[1:]
 
         super(ElectroChemicalSetup, self).normalize(archive, logger)
+        export_lab_id(archive, self.lab_id)
