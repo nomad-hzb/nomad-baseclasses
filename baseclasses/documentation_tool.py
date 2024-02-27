@@ -259,7 +259,7 @@ class DocumentationTool(Entity):
             file_name = self.name.replace(" ", "_")+".xlsx"
             jupyter_string_copy = jupyter_string.replace("docs.xlsx", file_name)
             jupyter_file_name = file_name + ".ipynb"
-            with open(jupyter_file_name, "w") as f:
+            with archive.m_context.raw_file(jupyter_file_name, "w") as f:
                 f.write(jupyter_string_copy)
                 self.adding_tool = jupyter_file_name
 
