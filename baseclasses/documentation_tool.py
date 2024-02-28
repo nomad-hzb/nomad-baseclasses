@@ -223,12 +223,6 @@ class DocumentationTool(Entity):
         a_browser=dict(adaptor='RawFileAdaptor')
     )
 
-    create_template = Quantity(
-        type=bool,
-        default=False,
-        a_eln=dict(component='ButtonEditQuantity')
-    )
-
     create_entries = Quantity(
         type=bool,
         default=False,
@@ -237,13 +231,13 @@ class DocumentationTool(Entity):
 
     number_of_substances_per_env = Quantity(
         type=np.dtype(np.int64),
-        default=5,
+        default=6,
         a_eln=dict(component='NumberEditQuantity')
     )
 
     number_of_substances_per_synthesis = Quantity(
         type=np.dtype(np.int64),
-        default=5,
+        default=6,
         a_eln=dict(component='NumberEditQuantity')
     )
 
@@ -253,9 +247,7 @@ class DocumentationTool(Entity):
     def normalize(self, archive, logger):
         super(DocumentationTool, self).normalize(archive, logger)
 
-        if self.create_template and not self.data_file:
-            self.create_template = False
-            rewrite_json(["data", "create_template"], archive, False)
+        if not self.data_file:
 
             with archive.m_context.raw_file(archive.metadata.mainfile) as f:
                 path = os.path.dirname(f.name)

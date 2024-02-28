@@ -32,8 +32,10 @@ from nomad.datamodel.metainfo.basesections import (
 
 from ase.formula import Formula as ASEFormula
 
+
 def get_elements_from_formula(formula):
     return list(ASEFormula(formula).count().keys())
+
 
 def traverse_dictionary(entry_dict, key, value):
 
@@ -236,13 +238,13 @@ def update_archive(entity, archive, file_name):
         json.dump({"data": entity_entry}, outfile)
 
 
-def create_archive(entity, archive, file_name):
+def create_archive(entity, archive, file_name, overwrite=False):
     import json
-    if not archive.m_context.raw_path_exists(file_name):
+    if not archive.m_context.raw_path_exists(file_name) or overwrite:
         entity_entry = entity.m_to_dict(with_root_def=True)
         with archive.m_context.raw_file(file_name, 'w') as outfile:
             json.dump({"data": entity_entry}, outfile)
-        archive.m_context.process_updated_raw_file(file_name)
+        archive.m_context.process_updated_raw_file(file_name, allow_modify=overwrite)
         return True
     return False
 
