@@ -120,6 +120,11 @@ class PLMeasurementLibrary(LibraryMeasurement):
 
     m_def = Section(
         a_eln=dict(hide=['certified_values', 'certification_institute']))
+    
+    data_file = Quantity(
+        type=str,
+        a_eln=dict(component='FileEditQuantity'),
+        a_browser=dict(adaptor='RawFileAdaptor'))
 
     reference_file = Quantity(
         type=str,

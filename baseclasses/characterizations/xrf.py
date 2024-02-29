@@ -129,6 +129,15 @@ class XRFLibrary(LibraryMeasurement):
 
     m_def = Section(
         a_eln=dict(hide=['certified_values', 'certification_institute']))
+    
+    data_folder = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'))
+    
+    data_file = Quantity(
+        type=str,
+        a_eln=dict(component='FileEditQuantity'),
+        a_browser=dict(adaptor='RawFileAdaptor'))
 
     images = Quantity(
         type=str,

@@ -58,6 +58,11 @@ class ConductivityMeasurementLibrary(LibraryMeasurement):
 
     # properties = SubSection(
     #     section_def=ConductivityProperties)
+    
+    data_file = Quantity(
+        type=str,
+        a_eln=dict(component='FileEditQuantity'),
+        a_browser=dict(adaptor='RawFileAdaptor'))
 
     measurements = SubSection(
         section_def=ConductivitySingleLibraryMeasurement, repeats=True)

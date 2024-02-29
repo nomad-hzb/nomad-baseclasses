@@ -411,16 +411,6 @@ class BaseMeasurement(Measurement):
 
 class LibraryMeasurement(BaseMeasurement):
 
-    data_folder = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
-
-    data_file = Quantity(
-        type=str,
-        shape=["*"],
-        a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
-
     measurements = SubSection(
         section_def=SingleLibraryMeasurement, repeats=True)
 
