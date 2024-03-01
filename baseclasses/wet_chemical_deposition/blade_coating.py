@@ -16,13 +16,26 @@
 # limitations under the License.
 #
 
-from .spray_pyrolysis import SprayPyrolysis
-from .spin_coating import SpinCoating, SpinCoatingRecipe
-from .inkjet_printing import LP50InkjetPrinting
-from .slot_die_coating import SlotDieCoating
-from .vaporization_and_dropcasting import VaporizationAndDropCasting
-from .wet_chemical_deposition import WetChemicalDeposition, PrecursorSolution
-from .crystallization import Crystallization
-from .dip_coating import DipCoating
-from .blade_coating import BladeCoating
-from .dropcast import DropCasting
+import numpy as np
+
+from nomad.metainfo import (
+    Quantity,
+    Section,
+    SubSection,
+    Reference)
+from nomad.datamodel.data import ArchiveSection
+
+
+from .wet_chemical_deposition import WetChemicalDeposition
+
+
+class BladeCoating(WetChemicalDeposition):
+    '''Base class for spin coating of a sample'''
+    m_def = Section(
+        # Link to ontology class 'blade coating'
+        # links = ['http://purl.obolibrary.org/obo/CHMO_0001471'],
+    )
+
+    def normalize(self, archive, logger):
+        super(BladeCoating, self).normalize(archive, logger)
+        self.method = "Blade Coating"
