@@ -295,21 +295,19 @@ class MPPTrackingHsprintCustom(BaseMeasurement):
             if sample.parameter is None:
                 continue
             parameter = sample.parameter
-
             for pixel in sample.pixels:
 
                 if pixel.include_for_average:
                     df = pd.DataFrame()
-                    df["time"] = np.floor(
-                        pixel.time * self.averaging_grouping_minutes) / \
-                        self.averaging_grouping_minutes
+                    df["time"] = pixel.time
                     df["efficiency"] = pixel.efficiency
+                    df.dropna(inplace=True)
                     df.set_index("time")
                     if parameter in averages:
-                        averages[parameter] = averages[parameter].merge(
-                            df, on="time")
+                        averages[parameter] = pd.merge_asof(averages[parameter], df, on="time", direction="nearest")
                     else:
                         averages.update({parameter: df})
+
         self.best_pixels = best_pixels
 
         avgs = []
