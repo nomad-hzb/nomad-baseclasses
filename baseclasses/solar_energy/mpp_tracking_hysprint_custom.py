@@ -285,7 +285,7 @@ class MPPTrackingHsprintCustom(BaseMeasurement):
             for pixel in sample.pixels:
 
                 if pixel.best_pixel:
-                    pixel_entry = PixelData(
+                    pixel_entry = ProcessedEfficiency(
                         name=f"{sample.name} {pixel.name}",
                         time=pixel.time,
                         efficiency=pixel.efficiency
