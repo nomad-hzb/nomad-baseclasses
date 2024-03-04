@@ -176,6 +176,7 @@ def add_process(plan_obj, archive, step, process, idx1, idx2):
 def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=None):
     if plan_obj.plan_is_created:
         log_error(plan_obj, logger, "The experimental plan has already been created. This can not been undone without deleting the files! If you did that uncheck the plan_is_created checkbox.")
+        return
 
     if plan_obj.standard_plan is not None:
         plan_obj.solar_cell_properties = SolarCellProperties(
