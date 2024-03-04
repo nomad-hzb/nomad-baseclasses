@@ -87,7 +87,7 @@ def add_sample(plan_obj, archive, idx1, idx2, sample_cls):
         datetime=plan_obj.datetime,
         substrate=subs,
         architecture=architecture)
-    create_archive(sample, archive, file_name)
+    create_archive(sample, archive, file_name, overwrite=True)
     entry_id = get_entry_id_from_file_name(file_name, archive)
     return entry_id
 
@@ -108,7 +108,7 @@ def add_batch(plan_obj, archive, batch_cls, sample_refs, is_subbatch, idx1=None)
         description=plan_obj.description if plan_obj.description and not is_subbatch else None)
     if is_subbatch and plan_obj.substrates_per_subbatch == 1:
         return
-    create_archive(batch, archive, file_name)
+    create_archive(batch, archive, file_name, overwrite=True)
 
 
 def create_documentation(plan_obj, archive, md, solution_list):
@@ -169,7 +169,7 @@ def add_process(plan_obj, archive, step, process, idx1, idx2):
 
     if not process.datetime:
         process.datetime = plan_obj.datetime if plan_obj.datetime else ''
-    create_archive(process, archive, file_name_process)
+    create_archive(process, archive, file_name_process, overwrite=True)
     return file_name_base
 
 
