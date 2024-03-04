@@ -37,3 +37,4 @@ from .voltammetry import VoltammetryCycle, Voltammetry, VoltammetryCycleWithPlot
 from .potentiostat_measurement import PotentiostatMeasurement, PotentiostatSetup
 from .phasefluorometryoxygen import PhaseFluorometryOxygen
 from .pumpratemeasurement import PumpRateMeasurement
+from .potentiometry_gaschromatography import PotentiometryGasChromatographyMeasurement
