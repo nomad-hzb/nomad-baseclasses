@@ -16,68 +16,205 @@
 # limitations under the License.
 #
 
-import os
+import numpy as np
 
-from nomad.metainfo import (Quantity, SubSection, Datetime)
+from nomad.metainfo import (Quantity, SubSection, Datetime, MEnum)
+from nomad.datamodel.data import ArchiveSection
 
 from .. import BaseMeasurement
 
-from nomad.datamodel.data import ArchiveSection
-
 
 class ExperimentalProperties(ArchiveSection):
-    # TODO add tab2 from table
+
+    experimental_setup_id = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity', label='Experimental Setup id'))
+
+    experiment_id = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity', label='Experiment id'))
+
+    user_id = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity', label='User id'))
+
+    # TODO find possible values
+    cell_type = Quantity(
+        type=MEnum('', ''),
+        shape=[],
+        a_eln=dict(component='EnumEditQuantity'))
+
+    has_reference_electrode = Quantity(
+        type=bool,
+        default=True,
+        a_eln=dict(component='BoolEditQuantity')
+    )
+
+    # TODO find possible values
+    reference_electrode_type = Quantity(
+        type=MEnum('', ''),
+        shape=[],
+        a_eln=dict(component='EnumEditQuantity'))
+
+    cathode_geometric_area = Quantity(
+        type=np.dtype(np.float64),
+        unit=('cm^2'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'))
+
+    cathode_id = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity', label='Cathode id'))
+
+    anode_id = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity', label='Anode id'))
+
+    # TODO find possible values
+    membrane_type = Quantity(
+        type=MEnum('', ''),
+        shape=[],
+        a_eln=dict(component='EnumEditQuantity'))
+
+    membrane_thickness = Quantity(
+        type=np.dtype(np.float64),
+        unit=('um'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='um', props=dict(minValue=0)))
+
+    gasket_thickness = Quantity(
+        type=np.dtype(np.float64),
+        unit=('um'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='um', props=dict(minValue=0)))
+
+    # TODO find possible values
+    anolyte_type = Quantity(
+        type=MEnum('', ''),
+        shape=[],
+        a_eln=dict(component='EnumEditQuantity'))
+
+    anolyte_concentration = Quantity(
+        type=np.dtype(np.float64),
+        unit=('mol/L'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mol/L'))
+
+    anolyte_flow_rate = Quantity(
+        type=np.dtype(np.float64),
+        unit=('ml/minute'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='ml/minute',
+            props=dict(minValue=0)
+        ))
+
+    anolyte_volume = Quantity(
+        type=np.dtype(np.float64),
+        unit=('ml'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'))
+
+    has_humidifier = Quantity(
+        type=bool,
+        default=True,
+        a_eln=dict(component='BoolEditQuantity')
+    )
+
+    humidifier_temperature = Quantity(
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
+
+    water_trap_volume = Quantity(
+        type=np.dtype(np.float64),
+        unit=('ml'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'))
+
+    # TODO find possible values
+    feed_gas = Quantity(
+        type=MEnum('', ''),
+        shape=[],
+        a_eln=dict(component='EnumEditQuantity'))
+
+    feed_gas_flow_rate = Quantity(
+        type=np.dtype(np.float64),
+        unit=('ml/minute'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='ml/minute',
+            props=dict(minValue=0)
+        ))
+
+    bleedline_flow_rate = Quantity(
+        type=np.dtype(np.float64),
+        unit=('ml/minute'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='ml/minute',
+            props=dict(minValue=0)
+        ))
+
+    nitrogen_start_value = Quantity(
+        type=np.dtype(np.float64),
+        unit=('ppm'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ppm'))
+
+    remarks = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'))
+
+    # TODO name
+    chronoanalysis_method = Quantity(
+        type=MEnum('Chronoamperometry (CA)', 'Chronopotentiometry (CP)'),
+        shape=[],
+        a_eln=dict(component='EnumEditQuantity'))
 
 class GasChromatographyOutput(ArchiveSection):
-    # TODO FID (Flammenionisationsdetektor) als name nutzen? oder diese info aus tabelle verwerfen?
-    # TODO experiment name?
+    # TODO i decided to combine FID (Flame ionization detector) and TCD (thermal conductivity detector). Is this ok?
+    # TODO also i wonder if i can model it like this in general since one experiment name includes data for up to 4 gas types
 
-    # TODO can i combine to columns to datetime?
+    experiment_name = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'))
+
+    # TODO can i combine two columns to datetime?
     datetime = Quantity(
         type=Datetime,
         shape=['*'])
 
-    # TODO how to model next 4 entries for CO, CH4, C2H4, C2H6
     gas_type = Quantity(
-        type=MEnum('CO', 'CH4', 'C2H4', 'C2H6'),
+        type=MEnum('CO', 'CH4', 'C2H4', 'C2H6', 'H2', 'N2'),
         shape=[],
-        a_eln=dict(
-            component='EnumEditQuantity',
-        ))
+        a_eln=dict(component='EnumEditQuantity',))
 
-    # TODO meaning and unit of (Retentionszeit) rt =
+    retention_time = Quantity(
+        type=np.dtype(np.float64),
+        unit=('minute'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='minute'))
+    # TODO check unit and maybe use rt as name
 
-    # TODO unit (scheint Peakarea zu sein) area =
+    area = Quantity(
+        type=np.dtype(np.float64),
+        unit=('mm^2'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm**2'))
+    # TODO check unit and maybe use peak_area as name
 
-    ppm = Quantity (
+    ppm = Quantity(
         type=np.dtype(np.float64),
         unit=('ppm'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='ppm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ppm'))
 
 class PotentiostatOutput(ArchiveSection):
     time = Quantity(
         type=Datetime,
         shape=['*'])
 
-    name = Quantity(
+    current = Quantity(
         type=np.dtype(np.float64),
-        unit='<I>/mA',
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='<I>/mA'
-        ))
-    # TODO change name and probably also unit
+        unit='mA',
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA'))
 
-    name2 = Quantity(
+    working_electrode_potential = Quantity(
         type=np.dtype(np.float64),
-        unit='Ewe/V',
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='Ewe/V'
-        ))
-    # TODO change name and probably also unit
+        unit='V',
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
+    # TODO ewe=working electrode potential
 
 class ThermocoupleOutput(ArchiveSection):
     # TODO is sample rate 100 important here?
@@ -95,16 +232,12 @@ class ThermocoupleOutput(ArchiveSection):
     temperature_cathode = Quantity(
         type=np.dtype(np.float64),
         unit=('°C'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='°C'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
 
     temperature_anode = Quantity(
         type=np.dtype(np.float64),
         unit=('°C'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='°C'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
 
     #TODO chn 1 events?
 
@@ -123,39 +256,33 @@ class Results(ArchiveSection):
     cell_voltage = Quantity(
         type=np.dtype(np.float64),
         unit=('V'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='V'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
         # TODO check unit
 
     nitrogen = Quantity (
         type=np.dtype(np.float64),
         unit=('ppm'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='ppm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ppm'))
 
     total_flow_rate = Quantity(
-        type = np.dtype(
+        type=np.dtype(
             np.float64),
-        unit = ('ml/minute'),
-        a_eln = dict(
+        unit=('ml/minute'),
+        a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='ml/minute', props=dict(minValue=0)))
+            defaultDisplayUnit='ml/minute',
+            props=dict(minValue=0)
+        ))
 
     temperature_cathode = Quantity(
         type=np.dtype(np.float64),
         unit=('°C'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='°C'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
 
     temperature_anode = Quantity(
         type=np.dtype(np.float64),
         unit=('°C'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='°C'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
 
     pressure = Quantity(
         type=np.dtype(np.float64),
@@ -165,9 +292,7 @@ class Results(ArchiveSection):
     co = Quantity (
         type=np.dtype(np.float64),
         unit=('ppm'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='ppm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ppm'))
 
     co_i = Quantity(
         type=np.dtype(np.float64),
@@ -183,9 +308,7 @@ class Results(ArchiveSection):
     ch4 = Quantity(
         type=np.dtype(np.float64),
         unit=('ppm'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='ppm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ppm'))
 
     ch4_i = Quantity(
         type=np.dtype(np.float64),
@@ -201,9 +324,7 @@ class Results(ArchiveSection):
     c2h4 = Quantity(
         type=np.dtype(np.float64),
         unit=('ppm'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='ppm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ppm'))
 
     c2h4_i = Quantity(
         type=np.dtype(np.float64),
@@ -219,9 +340,7 @@ class Results(ArchiveSection):
     h2 = Quantity(
         type=np.dtype(np.float64),
         unit=('ppm'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='ppm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ppm'))
 
     h2_i = Quantity(
         type=np.dtype(np.float64),
@@ -247,10 +366,17 @@ class PotentioGasChromaMeasurement(BaseMeasurement):
     properties = SubSection(
         section_def=ExperimentalProperties)
 
+    gaschromatography = SubSection(
+        section_def=GasChromatographyOutput)
+
+    potentiometry = SubSection(
+        section_def=PotentiostatOutput)
+
+    thermocouple = SubSection(
+        section_def=ThermocoupleOutput)
+
     results = SubSection(
         section_def=Results)
 
     def normalize(self, archive, logger):
         super(PotentioGasChromaMeasurement, self).normalize(archive, logger)
-
-
