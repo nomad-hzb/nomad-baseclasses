@@ -40,7 +40,7 @@ class ExperimentalProperties(ArchiveSection):
 
     # TODO find possible values
     cell_type = Quantity(
-        type=MEnum('', ''),
+        type=MEnum('', 'x'),
         shape=[],
         a_eln=dict(component='EnumEditQuantity'))
 
@@ -52,7 +52,7 @@ class ExperimentalProperties(ArchiveSection):
 
     # TODO find possible values
     reference_electrode_type = Quantity(
-        type=MEnum('', ''),
+        type=MEnum('', 'x'),
         shape=[],
         a_eln=dict(component='EnumEditQuantity'))
 
@@ -71,7 +71,7 @@ class ExperimentalProperties(ArchiveSection):
 
     # TODO find possible values
     membrane_type = Quantity(
-        type=MEnum('', ''),
+        type=MEnum('', 'x'),
         shape=[],
         a_eln=dict(component='EnumEditQuantity'))
 
@@ -87,7 +87,7 @@ class ExperimentalProperties(ArchiveSection):
 
     # TODO find possible values
     anolyte_type = Quantity(
-        type=MEnum('', ''),
+        type=MEnum('', 'x'),
         shape=[],
         a_eln=dict(component='EnumEditQuantity'))
 
@@ -128,7 +128,7 @@ class ExperimentalProperties(ArchiveSection):
 
     # TODO find possible values
     feed_gas = Quantity(
-        type=MEnum('', ''),
+        type=MEnum('', 'x'),
         shape=[],
         a_eln=dict(component='EnumEditQuantity'))
 
@@ -159,7 +159,6 @@ class ExperimentalProperties(ArchiveSection):
         type=str,
         a_eln=dict(component='StringEditQuantity'))
 
-    # TODO name
     chronoanalysis_method = Quantity(
         type=MEnum('Chronoamperometry (CA)', 'Chronopotentiometry (CP)'),
         shape=[],
@@ -187,13 +186,11 @@ class GasChromatographyOutput(ArchiveSection):
         type=np.dtype(np.float64),
         unit=('minute'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='minute'))
-    # TODO check unit and maybe use rt as name
 
     area = Quantity(
         type=np.dtype(np.float64),
-        unit=('mm^2'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm**2'))
-    # TODO check unit and maybe use peak_area as name
+        unit=('pA*minute'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='pA*minute'))
 
     ppm = Quantity(
         type=np.dtype(np.float64),
@@ -214,7 +211,6 @@ class PotentiostatOutput(ArchiveSection):
         type=np.dtype(np.float64),
         unit='V',
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
-    # TODO ewe=working electrode potential
 
 class ThermocoupleOutput(ArchiveSection):
     # TODO is sample rate 100 important here?
@@ -238,10 +234,6 @@ class ThermocoupleOutput(ArchiveSection):
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
-
-    #TODO chn 1 events?
-
-
 
 class Results(ArchiveSection):
     #TODO class name?
@@ -360,8 +352,7 @@ class Results(ArchiveSection):
     # TODO unit? seems to be always negative...
 
 
-class PotentioGasChromaMeasurement(BaseMeasurement):
-# TODO class name?
+class PotentiometryGasChromatographyMeasurement(BaseMeasurement):
 
     properties = SubSection(
         section_def=ExperimentalProperties)
@@ -379,4 +370,4 @@ class PotentioGasChromaMeasurement(BaseMeasurement):
         section_def=Results)
 
     def normalize(self, archive, logger):
-        super(PotentioGasChromaMeasurement, self).normalize(archive, logger)
+        super(PotentiometryGasChromatographyMeasurement, self).normalize(archive, logger)
