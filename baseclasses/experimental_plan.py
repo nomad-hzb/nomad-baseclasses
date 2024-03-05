@@ -217,6 +217,8 @@ class ExperimentalPlan(Entity):
             archive.results.eln.lab_ids = []
         super(ExperimentalPlan, self).normalize(archive, logger)
 
+        if self.batch_id:
+            self.lab_id = self.batch_id.lab_id
         if archive.data == self and self.name:
             archive.metadata.entry_name = self.name
 
