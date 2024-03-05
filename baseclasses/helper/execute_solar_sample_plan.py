@@ -187,7 +187,6 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=N
         return
 
     if plan_obj.standard_plan is not None:
-        set_false(plan_obj, archive)
         plan_obj.solar_cell_properties = SolarCellProperties(
             substrate=plan_obj.standard_plan.substrate,
             architecture=plan_obj.standard_plan.architecture
@@ -300,3 +299,5 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=N
         plan_obj.plan_is_created = True
         rewrite_json(["data", "plan_is_created"], archive, True)
         rewrite_json(["data", "description"], archive, plan_obj.description)
+
+    set_false(plan_obj, archive)
