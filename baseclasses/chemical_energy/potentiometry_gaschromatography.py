@@ -25,7 +25,6 @@ from .. import BaseMeasurement
 
 
 class ExperimentalProperties(ArchiveSection):
-
     experimental_setup_id = Quantity(
         type=str,
         a_eln=dict(component='StringEditQuantity', label='Experimental Setup id'))
@@ -164,9 +163,8 @@ class ExperimentalProperties(ArchiveSection):
         shape=[],
         a_eln=dict(component='EnumEditQuantity'))
 
+
 class GasChromatographyOutput(ArchiveSection):
-    # TODO i decided to combine FID (Flame ionization detector) and TCD (thermal conductivity detector). Is this ok?
-    # TODO also i wonder if i can model it like this in general since one experiment name includes data for up to 4 gas types
 
     experiment_name = Quantity(
         type=str,
@@ -180,7 +178,7 @@ class GasChromatographyOutput(ArchiveSection):
     gas_type = Quantity(
         type=MEnum('CO', 'CH4', 'C2H4', 'C2H6', 'H2', 'N2'),
         shape=[],
-        a_eln=dict(component='EnumEditQuantity',))
+        a_eln=dict(component='EnumEditQuantity'))
 
     retention_time = Quantity(
         type=np.dtype(np.float64),
@@ -196,6 +194,7 @@ class GasChromatographyOutput(ArchiveSection):
         type=np.dtype(np.float64),
         description='Specified in ppm',
         shape=['*'])
+
 
 class PotentiostatOutput(ArchiveSection):
     datetime = Quantity(
@@ -222,14 +221,16 @@ class PotentiostatOutput(ArchiveSection):
         type=np.dtype(
             np.float64), shape=['*'], unit='V', a_plot=[
             {
-                "label": "Working Electrode Potential (Ewe)", 'x': 'time', 'y': 'working_electrode_potential', 'layout': {
-                'yaxis': {
-                    "fixedrange": False}, 'xaxis': {
-                    "fixedrange": False}}, "config": {
+                "label": "Working Electrode Potential (Ewe)", 'x': 'time', 'y': 'working_electrode_potential',
+                'layout': {
+                    'yaxis': {
+                        "fixedrange": False}, 'xaxis': {
+                        "fixedrange": False}}, "config": {
                 "editable": True, "scrollZoom": True}}])
 
+
 class ThermocoupleOutput(ArchiveSection):
-    # TODO is sample rate 100 important here? maybe add time in s?
+
     time = Quantity(
         type=np.dtype(np.float64),
         shape=['*'],
@@ -240,12 +241,11 @@ class ThermocoupleOutput(ArchiveSection):
         type=Datetime,
         shape=['*'])
 
-    # TODO unit is barg but barg is not defined in pint
     pressure = Quantity(
         type=np.dtype(
             np.float64), shape=['*'], unit='bar', a_plot=[
             {
-                "label": "Pressure", 'x': 'time', 'y': 'pressure', 'layout': {
+                "label": "Pressure (in barg)", 'x': 'time', 'y': 'pressure', 'layout': {
                 'yaxis': {
                     "fixedrange": False}, 'xaxis': {
                     "fixedrange": False}}, "config": {
@@ -271,35 +271,50 @@ class ThermocoupleOutput(ArchiveSection):
                     "fixedrange": False}}, "config": {
                 "editable": True, "scrollZoom": True}}])
 
-class GasFeResults(ArchiveSection):
-    # TODO class name
 
-    # names = co, ch4, c2h4, h2
+class GasFEResults(ArchiveSection):
+    # TODO model class like this or combine it with gaschromatography class?
 
-    ppm = Quantity(
-        type=np.dtype(np.float64),
-        shape=['*'],
-        description='Specified in ppm')
-    # TODO reference to GasChromatographyOutput?
+    gas_type = Quantity(
+        type=MEnum('CO', 'CH4', 'C2H4', 'H2'),
+        shape=[],
+        a_eln=dict(component='EnumEditQuantity'))
 
-    i = Quantity(
+    current = Quantity(
         type=np.dtype(np.float64),
         shape=['*'],
         unit='mA')
 
-    fe = Quantity(
+    faradaic_efficiency = Quantity(
         type=np.dtype(np.float64),
-        description='Specified in %',
+        description='Faradaic efficiency specified in %',
         shape=['*'])
-    # TODO unit? seems to be always negative...
+
+    mean_fe = Quantity(
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity'))
+
+    variance_fe = Quantity(
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity'))
+
+    minimum_fe = Quantity(
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity'))
+
+    maximum_fe = Quantity(
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity'))
+
+    def normalize(self, archive, logger):
+        self.mean_fe = np.mean(self.faradaic_efficiency)
+        self.minimum_fe = np.min(self.faradaic_efficiency)
+        self.maximum_fe = np.max(self.faradaic_efficiency)
+        self.variance_fe = np.var(self.faradaic_efficiency)
 
 
-
-class Results(ArchiveSection):
+class PotentiometryGasChromatographyResults(ArchiveSection):
 
     total_flow_rate = Quantity(
         type=np.dtype(
             np.float64),
+        shape=['*'],
         unit=('ml/minute'),
         a_eln=dict(
             component='NumberEditQuantity',
@@ -308,13 +323,12 @@ class Results(ArchiveSection):
         ))
 
     gas_results = SubSection(
-        section_def=GasFeResults, repeats=True)
+        section_def=GasFEResults, repeats=True)
 
     total_fe = Quantity(
         type=np.dtype(np.float64),
         shape=['*'],
-        description='Specified in %')
-    # TODO unit? seems to be always negative...
+        description='Total faradaic efficiency specified in %')
 
 
 class PotentiometryGasChromatographyMeasurement(BaseMeasurement):
@@ -332,7 +346,7 @@ class PotentiometryGasChromatographyMeasurement(BaseMeasurement):
         section_def=ThermocoupleOutput)
 
     results = SubSection(
-        section_def=Results)
+        section_def=PotentiometryGasChromatographyResults)
 
     def normalize(self, archive, logger):
         super(PotentiometryGasChromatographyMeasurement, self).normalize(archive, logger)
