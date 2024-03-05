@@ -213,6 +213,8 @@ class ExperimentalPlan(Entity):
     #     section_def=SolutionManufacturing, repeats=True)
 
     def normalize(self, archive, logger):
+        if archive.results and archive.results.eln and archive.results.eln and archive.results.eln.lab_ids:
+            archive.results.eln.lab_ids = []
         super(ExperimentalPlan, self).normalize(archive, logger)
 
         if archive.data == self and self.name:
