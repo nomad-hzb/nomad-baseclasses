@@ -114,16 +114,16 @@ class WetChemicalDeposition(LayerDeposition):
 
     solution = SubSection(
         # Link to relation 'has specified input'
-        links=['http://purl.obolibrary.org/obo/OBI_0000293'],
+        links=['http://purl.obolibrary.org/obo/OBI_0000293','http://purl.obolibrary.org/obo/CHEBI_75958'],
         section_def=PrecursorSolution, repeats=True)
 
     annealing = SubSection(
         # Link to relation 'has part'
-        links=['http://purl.obolibrary.org/obo/RO_0001019'],
+        links=['http://purl.obolibrary.org/obo/RO_0001019','https://purl.archive.org/tfsco/TFSCO_00001033'],
         section_def=Annealing)
     quenching = SubSection(
         # Link to relation 'has part'
-        links=['http://purl.obolibrary.org/obo/RO_0001019'],
+        links=['http://purl.obolibrary.org/obo/RO_0001019','http://purl.obolibrary.org/obo/CHMO_0002917'],
         section_def=Quenching)
 
     sintering = SubSection(section_def=Sintering, repeats=True)
