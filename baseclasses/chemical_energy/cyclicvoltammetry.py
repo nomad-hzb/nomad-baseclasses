@@ -29,6 +29,7 @@ from .potentiostat_measurement import PotentiostatProperties
 class CVProperties(PotentiostatProperties):
 
     initial_potential = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007216'],
         type=np.dtype(np.float64),
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
@@ -65,6 +66,7 @@ class CVProperties(PotentiostatProperties):
         ))
 
     final_potential = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007217'],
         type=np.dtype(np.float64),
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
@@ -77,6 +79,7 @@ class CVProperties(PotentiostatProperties):
         ))
 
     scan_rate = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007213'],
         type=np.dtype(np.float64),
         unit=('mV/s'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mV/s'))
@@ -99,6 +102,7 @@ class CVProperties(PotentiostatProperties):
 class CyclicVoltammetry(Voltammetry):
 
     properties = SubSection(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000082'],
         section_def=CVProperties)
 
     def normalize(self, archive, logger):
