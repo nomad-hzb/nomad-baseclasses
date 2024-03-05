@@ -152,8 +152,8 @@ class ExperimentalProperties(ArchiveSection):
 
     nitrogen_start_value = Quantity(
         type=np.dtype(np.float64),
-        unit=('ppm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ppm'))
+        description='Specified in ppm',
+        a_eln=dict(component='NumberEditQuantity'))
 
     remarks = Quantity(
         type=str,
@@ -184,77 +184,118 @@ class GasChromatographyOutput(ArchiveSection):
 
     retention_time = Quantity(
         type=np.dtype(np.float64),
-        unit=('minute'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='minute'))
+        shape=['*'],
+        unit='minute')
 
     area = Quantity(
         type=np.dtype(np.float64),
-        unit=('pA*minute'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='pA*minute'))
+        shape=['*'],
+        unit='pA*minute')
 
     ppm = Quantity(
         type=np.dtype(np.float64),
-        unit=('ppm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ppm'))
-
-class PotentiostatOutput(ArchiveSection):
-    time = Quantity(
-        type=Datetime,
+        description='Specified in ppm',
         shape=['*'])
 
-    current = Quantity(
+class PotentiostatOutput(ArchiveSection):
+    datetime = Quantity(
+        type=Datetime,
+        shape=['*'])
+    # TODO maybe remove this because there is also time in s
+
+    time = Quantity(
         type=np.dtype(np.float64),
-        unit='mA',
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA'))
+        shape=['*'],
+        unit='s')
+
+    current = Quantity(
+        type=np.dtype(
+            np.float64), shape=['*'], unit='mA', a_plot=[
+            {
+                "label": "Current", 'x': 'time', 'y': 'current', 'layout': {
+                'yaxis': {
+                    "fixedrange": False}, 'xaxis': {
+                    "fixedrange": False}}, "config": {
+                "editable": True, "scrollZoom": True}}])
 
     working_electrode_potential = Quantity(
-        type=np.dtype(np.float64),
-        unit='V',
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
+        type=np.dtype(
+            np.float64), shape=['*'], unit='V', a_plot=[
+            {
+                "label": "Working Electrode Potential (Ewe)", 'x': 'time', 'y': 'working_electrode_potential', 'layout': {
+                'yaxis': {
+                    "fixedrange": False}, 'xaxis': {
+                    "fixedrange": False}}, "config": {
+                "editable": True, "scrollZoom": True}}])
 
 class ThermocoupleOutput(ArchiveSection):
-    # TODO is sample rate 100 important here?
+    # TODO is sample rate 100 important here? maybe add time in s?
+    time = Quantity(
+        type=np.dtype(np.float64),
+        shape=['*'],
+        unit='s')
 
     # TODO can i combine two columns in datetime?
     datetime = Quantity(
         type=Datetime,
         shape=['*'])
 
+    # TODO unit is barg but barg is not defined in pint
     pressure = Quantity(
-        type=np.dtype(np.float64),
-        unit=('barg'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='barg'))
+        type=np.dtype(
+            np.float64), shape=['*'], unit='bar', a_plot=[
+            {
+                "label": "Pressure", 'x': 'time', 'y': 'pressure', 'layout': {
+                'yaxis': {
+                    "fixedrange": False}, 'xaxis': {
+                    "fixedrange": False}}, "config": {
+                "editable": True, "scrollZoom": True}}])
 
     temperature_cathode = Quantity(
-        type=np.dtype(np.float64),
-        unit=('°C'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
+        type=np.dtype(
+            np.float64), shape=['*'], unit='°C', a_plot=[
+            {
+                "label": "Temperature Cathode", 'x': 'time', 'y': 'temperature_cathode', 'layout': {
+                'yaxis': {
+                    "fixedrange": False}, 'xaxis': {
+                    "fixedrange": False}}, "config": {
+                "editable": True, "scrollZoom": True}}])
 
     temperature_anode = Quantity(
+        type=np.dtype(
+            np.float64), shape=['*'], unit='°C', a_plot=[
+            {
+                "label": "Temperature Anode", 'x': 'time', 'y': 'temperature_anode', 'layout': {
+                'yaxis': {
+                    "fixedrange": False}, 'xaxis': {
+                    "fixedrange": False}}, "config": {
+                "editable": True, "scrollZoom": True}}])
+
+class GasFeResults(ArchiveSection):
+    # TODO class name
+
+    # names = co, ch4, c2h4, h2
+
+    ppm = Quantity(
         type=np.dtype(np.float64),
-        unit=('°C'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
+        shape=['*'],
+        description='Specified in ppm')
+    # TODO reference to GasChromatographyOutput?
+
+    i = Quantity(
+        type=np.dtype(np.float64),
+        shape=['*'],
+        unit='mA')
+
+    fe = Quantity(
+        type=np.dtype(np.float64),
+        description='Specified in %',
+        shape=['*'])
+    # TODO unit? seems to be always negative...
+
+
 
 class Results(ArchiveSection):
-    #TODO class name?
-
-    # injName ?? / experiment_name TODO
-
-    current = Quantity(
-        type=np.dtype(np.float64),
-        unit=('mA'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA'))
-
-    cell_voltage = Quantity(
-        type=np.dtype(np.float64),
-        unit=('V'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
-        # TODO check unit
-
-    nitrogen = Quantity (
-        type=np.dtype(np.float64),
-        unit=('ppm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ppm'))
 
     total_flow_rate = Quantity(
         type=np.dtype(
@@ -266,89 +307,13 @@ class Results(ArchiveSection):
             props=dict(minValue=0)
         ))
 
-    temperature_cathode = Quantity(
-        type=np.dtype(np.float64),
-        unit=('°C'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
-
-    temperature_anode = Quantity(
-        type=np.dtype(np.float64),
-        unit=('°C'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
-
-    pressure = Quantity(
-        type=np.dtype(np.float64),
-        unit=('barg'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='barg'))
-
-    co = Quantity (
-        type=np.dtype(np.float64),
-        unit=('ppm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ppm'))
-
-    co_i = Quantity(
-        type=np.dtype(np.float64),
-        unit=('mA'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA'))
-
-    co_fe = Quantity(
-        type=np.dtype(np.float64),
-        unit=('%'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='%'))
-    # TODO unit? seems to be always negative...
-
-    ch4 = Quantity(
-        type=np.dtype(np.float64),
-        unit=('ppm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ppm'))
-
-    ch4_i = Quantity(
-        type=np.dtype(np.float64),
-        unit=('mA'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA'))
-
-    ch4_fe = Quantity(
-        type=np.dtype(np.float64),
-        unit=('%'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='%'))
-    # TODO unit? seems to be always negative...
-
-    c2h4 = Quantity(
-        type=np.dtype(np.float64),
-        unit=('ppm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ppm'))
-
-    c2h4_i = Quantity(
-        type=np.dtype(np.float64),
-        unit=('mA'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA'))
-
-    c2h4_fe = Quantity(
-        type=np.dtype(np.float64),
-        unit=('%'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='%'))
-    # TODO unit? seems to be always negative...
-
-    h2 = Quantity(
-        type=np.dtype(np.float64),
-        unit=('ppm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ppm'))
-
-    h2_i = Quantity(
-        type=np.dtype(np.float64),
-        unit=('mA'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA'))
-
-    h2_fe = Quantity(
-        type=np.dtype(np.float64),
-        unit=('%'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='%'))
-    # TODO unit? seems to be always negative...
+    gas_results = SubSection(
+        section_def=GasFeResults, repeats=True)
 
     total_fe = Quantity(
         type=np.dtype(np.float64),
-        unit=('%'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='%'))
+        shape=['*'],
+        description='Specified in %')
     # TODO unit? seems to be always negative...
 
 
@@ -357,8 +322,8 @@ class PotentiometryGasChromatographyMeasurement(BaseMeasurement):
     properties = SubSection(
         section_def=ExperimentalProperties)
 
-    gaschromatography = SubSection(
-        section_def=GasChromatographyOutput)
+    gaschromatographies = SubSection(
+        section_def=GasChromatographyOutput, repeats=True)
 
     potentiometry = SubSection(
         section_def=PotentiostatOutput)
