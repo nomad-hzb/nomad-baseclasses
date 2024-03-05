@@ -173,12 +173,21 @@ def add_process(plan_obj, archive, step, process, idx1, idx2):
     return file_name_base
 
 
+def set_false(plan_obj, archive):
+    plan_obj.load_standard_processes = False
+    rewrite_json(["data", "load_standard_processes"], archive, False)
+    plan_obj.create_samples_and_processes = False
+    rewrite_json(["data", "create_samples_and_processes"], archive, False)
+
+
 def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=None):
     if plan_obj.plan_is_created:
+        set_false(plan_obj, archive)
         log_error(plan_obj, logger, "The experimental plan has already been created. This can not been undone without deleting the files! If you did that uncheck the plan_is_created checkbox.")
         return
 
     if plan_obj.standard_plan is not None:
+        set_false(plan_obj, archive)
         plan_obj.solar_cell_properties = SolarCellProperties(
             substrate=plan_obj.standard_plan.substrate,
             architecture=plan_obj.standard_plan.architecture
@@ -187,6 +196,7 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=N
     if not (plan_obj.number_of_substrates >= 0
             and plan_obj.number_of_substrates % plan_obj.substrates_per_subbatch == 0
             ):
+        set_false(plan_obj, archive)
         log_error(plan_obj, logger,
                   f"Number of substrates is {plan_obj.number_of_substrates} and substrates per subbatch is {plan_obj.substrates_per_subbatch}, which does not devide!")
         return
@@ -195,9 +205,7 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=N
 
     # standard process integration
     if plan_obj.load_standard_processes:
-        plan_obj.load_standard_processes = False
-        rewrite_json(["data", "load_standard_processes"], archive, False)
-
+        set_false(plan_obj, archive)
         parameters_before = []
         parameters_linear = []
         parameters_single = []
@@ -256,8 +264,7 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=N
     # process, sample and batch creation
     if plan_obj.create_samples_and_processes \
             and plan_obj.lab_id and plan_obj.solar_cell_properties:
-        plan_obj.create_samples_and_processes = False
-        rewrite_json(["data", "create_samples_and_processes"], archive, False)
+        set_false(plan_obj, archive)
 
         # create samples and batches
         sample_refs = []
