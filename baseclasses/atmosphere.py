@@ -19,6 +19,8 @@ class Atmosphere(ArchiveSection):
         a_eln=dict(component='DateTimeEditQuantity'))
 
     temperature = Quantity(
+        links=['http://purl.obolibrary.org/obo/PATO_0000146',
+               'https://purl.archive.org/tfsco/TFSCO_00002111'],
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(
@@ -26,6 +28,8 @@ class Atmosphere(ArchiveSection):
             defaultDisplayUnit='°C'))
 
     ambient_pressure = Quantity(
+        links=['http://purl.obolibrary.org/obo/PATO_0001025',
+               'https://purl.archive.org/tfsco/TFSCO_00005040'],
         type=np.dtype(np.float64),
         unit=('bar'),
         a_eln=dict(
@@ -35,5 +39,6 @@ class Atmosphere(ArchiveSection):
                 minValue=0)))
 
     relative_humidity = Quantity(
+        links=['http://purl.obolibrary.org/obo/PATO_0015009'],
         type=np.dtype(np.float64),
         a_eln=dict(component='NumberEditQuantity'))

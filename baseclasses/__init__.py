@@ -163,6 +163,7 @@ class SingleSampleExperimentStep(ExperimentStep):
 class SingleSampleExperiment(Experiment):
 
     sample = SubSection(
+        links=['https://purl.archive.org/tfsco/TFSCO_00005000'],
         section_def=SampleReference,
         description='''
         The samples as that have undergone the process.
@@ -184,12 +185,14 @@ class SingleLibraryMeasurement(ArchiveSection):
         type=str)
 
     position_x = Quantity(
+        links=['http://purl.obolibrary.org/obo/PATO_0000140'],
         type=np.dtype(np.float64),
         unit=('mm'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm')
     )
 
     position_y = Quantity(
+        links=['http://purl.obolibrary.org/obo/PATO_0000140'],
         type=np.dtype(np.float64),
         unit=('mm'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm')
@@ -276,6 +279,7 @@ class BaseProcess(Process):
 class StandardSample(Entity):
 
     processes = Quantity(
+        links=['http://purl.obolibrary.org/obo/BFO_0000015'],
         type=Reference(BaseProcess.m_def),
         shape=['*'],
         a_eln=dict(component='ReferenceEditQuantity'))
@@ -294,6 +298,7 @@ class LayerProperties(ArchiveSection):
     m_def = Section(label_quantity='layer_material_name')
 
     layer_type = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00000007'],
         type=str,
         shape=[],
         a_eln=dict(
@@ -329,9 +334,11 @@ class LayerProperties(ArchiveSection):
 
 
 class LayerDeposition(BaseProcess):
-    m_def = Section(label_quantity='layer')
+    m_def = Section(links=['https://purl.archive.org/tfsco/TFSCO_00000067'],
+                    label_quantity='layer')
 
-    layer = SubSection(section_def=LayerProperties, repeats=True)
+    layer = SubSection(links=['https://purl.archive.org/tfsco/TFSCO_00000007'],
+                       section_def=LayerProperties, repeats=True)
 
     def normalize(self, archive, logger):
         super(LayerDeposition, self).normalize(archive, logger)
@@ -409,7 +416,8 @@ class LayerDeposition(BaseProcess):
 
 
 class BaseMeasurement(Measurement):
-    atmosphere = SubSection(section_def=Atmosphere, repeats=True)
+    atmosphere = SubSection(links=['https://purl.archive.org/tfsco/TFSCO_00001012'],
+                            section_def=Atmosphere, repeats=True)
 
     def normalize(self, archive, logger):
         super(BaseMeasurement, self).normalize(archive, logger)
@@ -418,6 +426,7 @@ class BaseMeasurement(Measurement):
 class LibraryMeasurement(BaseMeasurement):
 
     measurements = SubSection(
+        links=['http://purl.obolibrary.org/obo/OBI_0000070'],
         section_def=SingleLibraryMeasurement, repeats=True)
 
     def normalize(self, archive, logger):
