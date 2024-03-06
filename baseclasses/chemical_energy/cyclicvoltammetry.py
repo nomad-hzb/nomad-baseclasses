@@ -19,7 +19,7 @@
 import os
 import numpy as np
 
-from nomad.metainfo import (Quantity, SubSection, MEnum)
+from nomad.metainfo import (Quantity, SubSection, MEnum, Section)
 from nomad.datamodel.data import ArchiveSection
 
 from .voltammetry import Voltammetry
@@ -101,8 +101,11 @@ class CVProperties(PotentiostatProperties):
 
 class CyclicVoltammetry(Voltammetry):
 
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000082']
+    )
+
     properties = SubSection(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0000082'],
         section_def=CVProperties)
 
     def normalize(self, archive, logger):
