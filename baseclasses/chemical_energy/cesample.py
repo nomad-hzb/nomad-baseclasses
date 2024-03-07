@@ -18,7 +18,7 @@
 
 import numpy as np
 
-from nomad.metainfo import (Quantity, SubSection, Section, Reference, Datetime)
+from nomad.metainfo import (Quantity, SubSection, Section, Reference, Datetime, MEnum)
 
 from nomad.datamodel.results import Results, Material
 from nomad.datamodel.data import ArchiveSection
@@ -285,6 +285,39 @@ class SampleIDCENOMEdate(SampleIDCE2date):
     def normalize(self, archive, logger):
         super(SampleIDCENOMEdate, self).normalize(archive, logger)
 
+class SampleIDCENECCdate(SampleIDCE2date):
+    m_def = Section(
+        a_eln=dict(
+            hide=["sample_owner", "sample_short_name", "sample_id", "short_name"]
+        ))
+
+    institute = Quantity(
+        type=str,
+        description='Alias/short name of the home institute of the owner, i.e. *HZB*.',
+        default='CE-NECC',
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=[
+                    'CE-NECC'])))
+
+    owner = Quantity(
+        type=str,
+        default='Matthew Mayer',
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=[
+                    'Matthew Mayer',
+                    'Siddharth Gupta',
+                    'Christina Roukounaki',
+                    'Gumaa El-Nagar',
+                    'Uttam Gupta',
+                    ])))
+
+    def normalize(self, archive, logger):
+        super(SampleIDCENECCdate, self).normalize(archive, logger)
+
 
 class SampleIDCENOME(SampleIDCE2):
     m_def = Section(
@@ -447,6 +480,93 @@ class CENOMESample(CESample):
 
     def normalize(self, archive, logger):
         super(CENOMESample, self).normalize(archive, logger)
+        export_lab_id(archive, self.lab_id)
+
+class CENECCElectrode(CESample):
+    # TODO class name maybe CENECCSample or something with 'catalyst detail'
+
+    # TODO maybe add one of the next two
+    date_of_disposal = Quantity(
+        type=Datetime,
+        description='The date where the sample was disposed',
+        a_eln=dict(component='DateTimeEditQuantity'))
+
+    datetime = Quantity(
+        type=Datetime,
+        description='The date and time associated with this section.',
+        a_eln=dict(
+            component='DateTimeEditQuantity',
+            label="Date of preparation/purchase"))
+
+    # TODO is there way to get descriptions or keys from enum in normalize?
+    recipe_type = Quantity(
+        type=MEnum(['Cathode Recipe', 'Anode Recipe'], m_descriptions={'Cathode Recipe': 'CR', 'Anode Recipe': 'AR'}),
+        a_eln=dict(
+            component='EnumEditQuantity',
+        ))
+
+    recipe_id = Quantity(
+        type=str,
+        shape=[],
+        description='Please provide recipe type, element and deposition method to automatically set this ID.',
+        a_eln=dict(component='StringEditQuantity'))
+
+    element = Quantity(
+        type=str,
+        shape=[],
+        a_eln=dict(component='StringEditQuantity'))
+
+    # TODO is there way to get descriptions or keys from enum in normalize?
+    deposition_method = Quantity(
+        type=MEnum(SD='Spray Dep', UN='Ultrasonic Nozzle', DC='Dropcast'),
+        shape=[],
+        a_eln=dict(
+            component='EnumEditQuantity',
+        ))
+
+    deposition_temperature = Quantity(
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
+
+    n2_deposition_pressure = Quantity(
+        type=np.dtype(np.float64),
+        unit=('bar'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='bar'))
+
+    mass_loading = Quantity(
+        type=np.dtype(np.float64),
+        unit=('mg/cm^2'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mg/cm^2'))
+
+    description = Quantity(
+        type=str,
+        description='Any information that cannot be captured in the other fields.',
+        a_eln=dict(
+            component='RichTextEditQuantity',
+            label="Remarks"))
+
+    # TODO maybe rename to sample_id
+    # TODO originally in the excel the recipe id should be included in this id
+    electrode_id = SubSection(
+        section_def=SampleIDCENECCdate)
+
+    # TODO check if substrate_type and substrate_dimension is all that necc group wants (right now one empty field in excel)
+    substrate = SubSection(
+        section_def=SubstrateProperties)
+
+    solvents_and_ionomer = SubSection(
+        section_def=CatalystSynthesis, repeats=True)
+
+    def normalize(self, archive, logger):
+        if self.recipe_type is not None and self.element is not None and self.deposition_method is not None:
+            # TODO add real ID number at the end (see create_id(archive, lab_id_base))
+            recipe_id_list = [
+                self.recipe_type,
+                self.element,
+                self.deposition_method]
+            self.recipe_id = '_'.join(recipe_id_list)
+        super(CENECCElectrode, self).normalize(archive, logger)
         export_lab_id(archive, self.lab_id)
 
 
