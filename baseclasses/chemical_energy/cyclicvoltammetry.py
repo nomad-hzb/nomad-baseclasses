@@ -42,6 +42,7 @@ class CVProperties(PotentiostatProperties):
         ))
 
     limit_potential_1 = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007216'],
         type=np.dtype(np.float64),
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
@@ -54,6 +55,7 @@ class CVProperties(PotentiostatProperties):
         ))
 
     limit_potential_2 = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007216'],
         type=np.dtype(np.float64),
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
@@ -94,6 +96,7 @@ class CVProperties(PotentiostatProperties):
         a_eln=dict(component='NumberEditQuantity'))
 
     open_circuit_potential = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(np.float64),
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
