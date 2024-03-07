@@ -45,6 +45,7 @@ class SolutionCleaning(CleaningTechnique):
         type=str
     )
     solvent = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007246'],
         type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
