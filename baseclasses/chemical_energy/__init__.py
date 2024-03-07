@@ -30,6 +30,7 @@ from .photocurrent import PhotoCurrent
 from .cesample import CESample, SampleIDCENOME, SubstrateProperties, Purging, export_lab_id
 from .cesample import CENSLISample, get_next_project_sample_number, SubstanceWithConcentration
 from .cesample import CENOMESample, Electrode, Electrolyte, ElectroChemicalCell, ElectroChemicalSetup, Environment, Equipment, CatalystSynthesis
+from .cesample import CENECCElectrode
 from .preparation_protocoll import PreparationProtocol
 from .diamondsample import DiamondSample
 # from .waterbath import WaterBath
