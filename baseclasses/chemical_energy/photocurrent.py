@@ -34,12 +34,14 @@ class PhotoCurrentProperties(ArchiveSection):
         ))
 
     ref_electrode = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007204'],
         type=str,
         a_eln=dict(
             component='StringEditQuantity',
         ))
 
     counter_electrode = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007203'],
         type=str,
         a_eln=dict(
             component='StringEditQuantity',
@@ -52,6 +54,7 @@ class PhotoCurrentProperties(ArchiveSection):
         ))
 
     electrolyte_concentration = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007244'],
         type=np.dtype(np.float64),
         unit='mol',
 
@@ -156,6 +159,7 @@ class PhotoCurrent(BaseMeasurement):
                     "scrollZoom": True}}])
 
     voltage = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(np.float64),
         shape=['n_values'],
         unit='V',
