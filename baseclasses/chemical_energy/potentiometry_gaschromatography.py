@@ -33,10 +33,6 @@ class ExperimentalProperties(ArchiveSection):
         type=str,
         a_eln=dict(component='StringEditQuantity', label='Experiment id'))
 
-    user_id = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity', label='User id'))
-
     # TODO find possible values
     cell_type = Quantity(
         type=MEnum('', 'x'),
@@ -59,14 +55,6 @@ class ExperimentalProperties(ArchiveSection):
         type=np.dtype(np.float64),
         unit=('cm^2'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'))
-
-    cathode_id = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity', label='Cathode id'))
-
-    anode_id = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity', label='Anode id'))
 
     # TODO find possible values
     membrane_type = Quantity(
