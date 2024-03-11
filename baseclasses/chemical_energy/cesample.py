@@ -497,12 +497,7 @@ class CENOMESample(CESample):
 
 class CENECCElectrode(CESample):
     # TODO class name maybe CENECCSample or something with 'catalyst detail'
-
-    # TODO maybe add one of the next two
-    date_of_disposal = Quantity(
-        type=Datetime,
-        description='The date where the sample was disposed',
-        a_eln=dict(component='DateTimeEditQuantity'))
+    # TODO is it ok to combine cathode and electrode like this?
 
     datetime = Quantity(
         type=Datetime,
