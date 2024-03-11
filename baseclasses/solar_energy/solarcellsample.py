@@ -174,7 +174,7 @@ def getLayerForStack(layer):
 
 
 def addLayerDepositionToStack(archive, process):
-    for layer in process["layer"]:
+    for layer in process.get("layer", []):
         layer_name = getLayerForStack(layer)
         archive.results.properties.optoelectronic.solar_cell.device_stack.append(layer_name)
 
