@@ -240,13 +240,17 @@ class ExperimentalPlan(Entity):
 
         if self.plan:
             plan = [s for s in self.plan]
+            new_step = False
             for i, step in enumerate(plan):
                 if not step.add_step:
                     continue
                 plan.insert(i+1, Step())
+                new_step = True
+                break
             for step in self.plan:
                 step.add_step = False
             self.plan = plan
-            entity_entry = self.m_to_dict(with_root_def=True)
-            with archive.m_context.raw_file(archive.metadata.mainfile, 'w') as outfile:
-                json.dump({"data": entity_entry}, outfile)
+            if new_step:
+                entity_entry = self.m_to_dict(with_root_def=True)
+                with archive.m_context.raw_file(archive.metadata.mainfile, 'w') as outfile:
+                    json.dump({"data": entity_entry}, outfile)
