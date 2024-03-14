@@ -38,11 +38,10 @@ def get_elements_from_formula(formula):
 
 
 def traverse_dictionary(entry_dict, key, value):
-
     for k, v in entry_dict.items():
-        if isinstance(value, dict):
+        if isinstance(v, dict):
             traverse_dictionary(v, key, value)
-        elif isinstance(value, list):
+        elif isinstance(v, list):
             for entry in v:
                 traverse_dictionary(entry, key, value)
         elif k == key:

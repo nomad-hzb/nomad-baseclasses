@@ -17,7 +17,7 @@
 #
 
 import numpy as np
-
+import json
 from nomad.metainfo import (
     Quantity,
     SubSection,
@@ -121,6 +121,11 @@ def get_unit(section, path):
 
 class Step(ArchiveSection):
     m_def = Section(label_quantity='name')
+    add_step = Quantity(
+        type=bool,
+        default=False,
+        a_eln=dict(component='ButtonEditQuantity')
+    )
 
     name = Quantity(
         type=str,
@@ -232,3 +237,16 @@ class ExperimentalPlan(Entity):
                 self.plan = steps
 
         self.method = "Experimental Plan"
+
+        if self.plan:
+            plan = [s for s in self.plan]
+            for i, step in enumerate(plan):
+                if not step.add_step:
+                    continue
+                plan.insert(i+1, Step())
+            for step in self.plan:
+                step.add_step = False
+            self.plan = plan
+            entity_entry = self.m_to_dict(with_root_def=True)
+            with archive.m_context.raw_file(archive.metadata.mainfile, 'w') as outfile:
+                json.dump({"data": entity_entry}, outfile)
