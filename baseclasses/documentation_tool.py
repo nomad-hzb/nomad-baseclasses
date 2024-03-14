@@ -51,7 +51,7 @@ jupyter_string = '''
     "import os\\n",
     "import time \\n",
     "import sys\\n",
-    "\\n",
+    "from datetime import date\\n",
     "sys.path.insert(1, '../python-scripts-c6fxKDJrSsWp1xCxON1Y7g')\\n",
     "from api_calls import *\\n",
     "\\n",
@@ -64,6 +64,7 @@ jupyter_string = '''
     "button_env = widgets.Button(description=\\"Add Environment\\")\\n",
     "button_setup = widgets.Button(description=\\"Add Setup\\")\\n",
     "button_create = widgets.Button(description=\\"Create Entries\\")\\n",
+    "date_picker = widgets.DatePicker(value=date.today(),disabled=False)\\n",
     "out = widgets.Output()\\n",
     "out2 = widgets.Output()\\n",
     "samples = pd.DataFrame()\\n",
@@ -82,8 +83,8 @@ jupyter_string = '''
     "        envs.loc[len(envs)] = pd.Series(dtype='float64')\\n",
     "        setups.loc[len(setups)] = pd.Series(dtype='float64')\\n",
     "    grid_options = {\\n",
-    "        'columnDefs' : [{'headername':c,'field': c} for c in samples.columns],\\n",
-    "        'enableColResize': True,\\n",
+    "        'columnDefs' : [{'headerName':c,'field': c} for c in samples.columns],\\n",
+    "        'defaultColDef': {'editable': True},   \\n",
     "        'rowSelection': 'multiple',\\n",
     "        'enableRangeSelection': True,\\n",
     "    }\\n",
@@ -139,6 +140,8 @@ jupyter_string = '''
     "    with out2:\\n",
     "        print(\\"creating entries (can take some time)\\")\\n",
     "    entry_metadata = get_entry_meta_data(url, token, entry_id)\\n",
+    "    set_value_in_archive(url, token, entry_metadata, \"datetime\", date_picker.value.strftime(\"%Y-%m-%d %H:%M:%S.%f\"))\\n",
+    "    time.sleep(1.0)\\n",
     "    set_value_in_archive(url, token, entry_metadata, \\"create_entries\\", True)\\n",
     "    \\n",
     "    while(True):\\n",
@@ -156,7 +159,8 @@ jupyter_string = '''
     "button_env.on_click(on_button_env_clicked)\\n",
     "button_setup.on_click(on_button_setup_clicked)\\n",
     "button_create.on_click(on_create_clicked)\\n",
-    "widgets.VBox([button_sample, button_env, button_setup, out, button_create, out2])"
+    "display(widgets.HBox([button_sample, button_env, button_setup, date_picker]))\\n",
+    "display(widgets.VBox([out, button_create, out2]))"
    ]
   }
  ],
