@@ -33,7 +33,7 @@ from baseclasses.helper.utilities import rewrite_json
 
 from baseclasses.chemical_energy import SampleIDCENOME, export_lab_id
 
-jupyter_string = r'''
+jupyter_string = '''
 {
  "cells": [
   {
@@ -140,7 +140,7 @@ jupyter_string = r'''
     "    with out2:\\n",
     "        print('creating entries (can take some time)')\\n",
     "    entry_metadata = get_entry_meta_data(url, token, entry_id)\\n",
-    "    set_value_in_archive(url, token, entry_metadata, \"datetime\", date_picker.value.strftime(\"%Y-%m-%d %H:%M:%S.%f\"))\\n",
+    "    set_value_in_archive(url, token, entry_metadata, 'datetime', date_picker.value.strftime('%Y-%m-%d %H:%M:%S.%f'))\\n",
     "    time.sleep(1.0)\\n",
     "    set_value_in_archive(url, token, entry_metadata, 'create_entries', True)\\n",
     "    \\n",
