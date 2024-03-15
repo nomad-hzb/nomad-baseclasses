@@ -96,66 +96,35 @@ x_offset = 0
 y_offset = 0
 
 
-def _read_file_uvvis(file_path: str) -> Tuple[dict, pd.DataFrame]:
+def _read_file_uvvis(file_path: str):
     with open(file_path, 'r+') as file_handle:
         header = {}
-        line = file_handle.readline()
-        while line.startswith("#"):
-            key_value = line[2:-1].split(": ")
-            header[key_value[0]] = key_value[1]
-            line = file_handle.readline()
-        wavelengths = np.array(line[:-1].split('\t')[1:])
-        df = pd.read_csv(file_handle, names=wavelengths, index_col=0, delimiter='\t')
+        line_split = file_handle.readline().split(";")
+        while len(line_split) == 2:
+            key = line_split[0].strip().strip('"')
+            value = line_split[1].strip().strip('"')
+            header[key] = value
+            line_split = file_handle.readline().split(";")
+        line_split = file_handle.readline().split(";")
+        wavelengths = np.array(line_split[-1].strip().split(","))
+        columns = ["x", "y", "z", "integration_time"]
+        columns.extend(wavelengths)
+        df = pd.read_csv(file_handle, names=columns, delimiter=';|,', engine='python')
     return header, df.dropna(axis=1)
 
 
-def read_uvvis(file_paths, spec_key, reference_key, prefix):
-    ref_interp = interp1d([0, 2000], [1, 1])
+def read_uvvis(data_file, reference_file, dark_file):
+
     # Read MeasurementFile
-    spectrums = None
-    reference = None
-    for file_path in file_paths:
-        if file_path.endswith(spec_key):
-            if spectrums is not None:
-                raise
-            spectrums = _read_file_uvvis(file_path)
-        elif file_path.endswith(reference_key):
-            if reference is not None:
-                raise
-            reference = _read_file_uvvis(file_path)
-    if spectrums is None:
+    spectrums = _read_file_uvvis(data_file)
+    reference = _read_file_uvvis(reference_file)
+    dark = _read_file_uvvis(dark_file)
+
+    if spectrums is None or reference is None or dark is None:
         raise
-    elif reference is None:
-        raise
-    wavelength = np.array(reference[1].columns.values, dtype=float)  # Array to hold the wavelengths
+    spectrum_data = spectrums[1]
+    spectrum_data[spectrums[1].columns[4:]] = (
+        spectrums[1][spectrums[1].columns[4:]] - dark[1][dark[1].columns[4:]].values) / \
+        (reference[1][reference[1].columns[4:]].values - dark[1][dark[1].columns[4:]].values)
 
-    x = []
-    y = []  # Lists to hold the measurement positions
-    # the index column has a format of "X=3.9;Y=4.0". x and y will be extracted for each line
-    for index in spectrums[1].index:
-        xy = index.split(';')
-        x.append(np.float64(xy[0].split('mm')[0]) + x_offset)
-        y.append(np.float64(xy[1].split('mm')[0]) + y_offset)
-    x = np.array(x)
-    y = np.array(y)  # convert into a numpy array to prepare for usage in DataArray
-    # The measurement is conducted by keeping y const and moving x step by step along the sample.
-    # Then y moves one step and x starts from the beginning. All these values will be stored in x and y.
-    # For the dims of the DataArray we only want the x and y positions once.
-    ny = y.argmax() + 1
-    nx = x.shape[0] // ny  # number of x and y-positions
-    y_pos = y[0:ny]  # x-positions are the first nx values in x
-    x_pos = np.array([x[ny * idx] for idx in range(nx)])  # y-positions are every nx-th value in y
-
-    spec_data = np.zeros((nx, ny, wavelength.shape[0]))
-    for idx in range(spectrums[1].shape[0]):
-        spec_data[idx % nx, idx // nx, :] = spectrums[1].values[idx, :]
-
-    wave_roi = np.where(wavelength > 420)[0][:-6]
-    reflection_reduced = spec_data[:, :, wave_roi]
-    reflectance = (
-        (reflection_reduced - reference[1].loc[f'{prefix}_dark_ref'].values[wave_roi]) /
-        ((reference[1].loc[f'{prefix}_bright_ref'].values[wave_roi] - reference[1].loc[f'{prefix}_dark_ref'].values[wave_roi]) /
-         ref_interp(wavelength[wave_roi]))
-    )
-
-    return reflectance, wavelength[wave_roi], x_pos, y_pos, spectrums[0]
+    return spectrums[0], spectrum_data

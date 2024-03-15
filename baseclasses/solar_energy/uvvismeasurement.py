@@ -134,6 +134,11 @@ class UVvisMeasurementLibrary(LibraryMeasurement):
         type=str,
         a_eln=dict(component='FileEditQuantity'),
         a_browser=dict(adaptor='RawFileAdaptor'))
+    
+    dark_file = Quantity(
+        type=str,
+        a_eln=dict(component='FileEditQuantity'),
+        a_browser=dict(adaptor='RawFileAdaptor'))
 
     wavelength = Quantity(
         type=np.dtype(

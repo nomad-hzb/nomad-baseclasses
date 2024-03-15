@@ -195,6 +195,12 @@ class SingleLibraryMeasurement(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm')
     )
 
+    position_z = Quantity(
+        type=np.dtype(np.float64),
+        unit=('mm'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm')
+    )
+
     data_file = Quantity(
         type=str,
         shape=['*'],

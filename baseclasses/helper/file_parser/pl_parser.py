@@ -79,3 +79,20 @@ def get_pl_data(filename, encoding='utf-8'):
     if filedata.startswith("Labels"):
         return get_pl_data_iris(filename, encoding), "IRIS HZBGloveBoxes"
     return None, None
+
+
+def read_file_pl_unold(file_path: str):
+    with open(file_path, 'r+') as file_handle:
+        header = {}
+        line_split = file_handle.readline().split(";")
+        while len(line_split) == 2:
+            key = line_split[0].strip().strip('"')
+            value = line_split[1].strip().strip('"')
+            header[key] = value
+            line_split = file_handle.readline().split(";")
+        line_split = file_handle.readline().split(";")
+        wavelengths = np.array(line_split[-1].strip().split(","))
+        columns = ["x", "y", "z", "neutral_density", "power_transmitted", "int_time_PL_sample"]
+        columns.extend(wavelengths)
+        df = pd.read_csv(file_handle, names=columns, delimiter=';|,', engine='python')
+    return header, df.dropna(axis=1)

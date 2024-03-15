@@ -46,6 +46,10 @@ class XRFComposition(ArchiveSection):
     name = Quantity(
         type=str,
         a_eln=dict(component='StringEditQuantity'))
+    
+    layer = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'))
 
     amount = Quantity(
         type=np.dtype(np.float64),

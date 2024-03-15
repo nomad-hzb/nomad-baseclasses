@@ -81,6 +81,33 @@ class PLProperties(ArchiveSection):
         a_eln=dict(component='StringEditQuantity'))
 
 
+class PLPropertiesLibrary(ArchiveSection):
+
+    integration_time = Quantity(
+        type=np.dtype(np.float64),
+        unit=('s'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'))
+
+    number_of_averages = Quantity(
+        type=np.dtype(np.int64),
+        a_eln=dict(component='NumberEditQuantity'))
+
+    spot_size = Quantity(
+        type=np.dtype(np.float64),
+        unit=('mm'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm'))
+
+    long_pass_filter = Quantity(
+        type=np.dtype(np.float64),
+        unit=('nm'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+
+    laser_wavelength = Quantity(
+        type=np.dtype(np.float64),
+        unit=('nm'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+
+
 class PLMeasurement(BaseMeasurement):
     '''PL Measurement'''
 
@@ -120,7 +147,7 @@ class PLMeasurementLibrary(LibraryMeasurement):
 
     m_def = Section(
         a_eln=dict(hide=['certified_values', 'certification_institute']))
-    
+
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
@@ -136,7 +163,7 @@ class PLMeasurementLibrary(LibraryMeasurement):
             np.float64), unit=('nm'), shape=['*'])
 
     properties = SubSection(
-        section_def=PLProperties)
+        section_def=PLPropertiesLibrary)
 
     measurements = SubSection(
         section_def=PLSingleLibraryMeasurement, repeats=True)

@@ -19,7 +19,7 @@
 from .jvmeasurement import JVMeasurement
 from .mpp_tracking import MPPTracking
 from .mpp_tracking_hysprint_custom import MPPTrackingHsprintCustom, SampleData, JVData, PixelData
-from .plmeasurement import PLMeasurement, PLMeasurementLibrary, PLSingleLibraryMeasurement, PLProperties, PLDataSimple
+from .plmeasurement import PLMeasurement, PLMeasurementLibrary, PLSingleLibraryMeasurement, PLProperties, PLDataSimple, PLPropertiesLibrary, PLData
 from .plimaging import PLImaging
 from .uvvismeasurement import UVvisMeasurement, UVvisData, UVvisDataSimple, UVvisMeasurementLibrary, UVvisSingleLibraryMeasurement, UVvisProperties
 from .eqemeasurement import EQEMeasurement, SolarCellEQECustom

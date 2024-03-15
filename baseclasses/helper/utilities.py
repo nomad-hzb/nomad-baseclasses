@@ -267,6 +267,15 @@ def search_entry_by_id(archive, entry, search_id):
     return search_result
 
 
+def log_error(class_obj, logger, msg):
+    if logger:
+        logger.error(
+            msg, normalizer=class_obj.__class__.__name__,
+            section='system')
+    else:
+        raise Exception
+
+
 def set_sample_reference(archive, entry, search_id):
     search_result = search_entry_by_id(archive, entry, search_id)
     if len(search_result.data) == 1:
