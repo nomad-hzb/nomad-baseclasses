@@ -19,7 +19,7 @@
 import os
 import numpy as np
 
-from nomad.metainfo import (Quantity, SubSection, MEnum, Section)
+from nomad.metainfo import (Quantity, SubSection, MEnum)
 from nomad.datamodel.data import ArchiveSection
 
 from .voltammetry import Voltammetry
@@ -29,7 +29,6 @@ from .potentiostat_measurement import PotentiostatProperties
 class CVProperties(PotentiostatProperties):
 
     initial_potential = Quantity(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007216'],
         type=np.dtype(np.float64),
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
@@ -42,7 +41,6 @@ class CVProperties(PotentiostatProperties):
         ))
 
     limit_potential_1 = Quantity(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007216'],
         type=np.dtype(np.float64),
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
@@ -55,7 +53,6 @@ class CVProperties(PotentiostatProperties):
         ))
 
     limit_potential_2 = Quantity(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007216'],
         type=np.dtype(np.float64),
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
@@ -68,7 +65,6 @@ class CVProperties(PotentiostatProperties):
         ))
 
     final_potential = Quantity(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007217'],
         type=np.dtype(np.float64),
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
@@ -81,7 +77,6 @@ class CVProperties(PotentiostatProperties):
         ))
 
     scan_rate = Quantity(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007213'],
         type=np.dtype(np.float64),
         unit=('mV/s'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mV/s'))
@@ -96,17 +91,12 @@ class CVProperties(PotentiostatProperties):
         a_eln=dict(component='NumberEditQuantity'))
 
     open_circuit_potential = Quantity(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(np.float64),
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
 
 
 class CyclicVoltammetry(Voltammetry):
-
-    m_def = Section(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0000082']
-    )
 
     properties = SubSection(
         section_def=CVProperties)
