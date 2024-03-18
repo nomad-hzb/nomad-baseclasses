@@ -95,4 +95,9 @@ def read_file_pl_unold(file_path: str):
         columns = ["x", "y", "z", "neutral_density", "power_transmitted", "int_time_PL_sample"]
         columns.extend(wavelengths)
         df = pd.read_csv(file_handle, names=columns, delimiter=';|,', engine='python')
+        df = df.round(3)
+    cut_off_wavelength = 420
+    columns = ["x", "y", "z", "neutral_density", "power_transmitted", "int_time_PL_sample"]
+    columns.extend(df.columns[6:][np.array(df.columns[6:], dtype=np.float64) > cut_off_wavelength])
+    df = df[columns]
     return header, df.dropna(axis=1)

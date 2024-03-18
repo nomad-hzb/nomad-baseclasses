@@ -96,7 +96,7 @@ x_offset = 0
 y_offset = 0
 
 
-def _read_file_uvvis(file_path: str):
+def _read_file_uvvis(file_path: str, columns):
     with open(file_path, 'r+') as file_handle:
         header = {}
         line_split = file_handle.readline().split(";")
@@ -107,7 +107,6 @@ def _read_file_uvvis(file_path: str):
             line_split = file_handle.readline().split(";")
         line_split = file_handle.readline().split(";")
         wavelengths = np.array(line_split[-1].strip().split(","))
-        columns = ["x", "y", "z", "integration_time"]
         columns.extend(wavelengths)
         df = pd.read_csv(file_handle, names=columns, delimiter=';|,', engine='python')
     return header, df.dropna(axis=1)
@@ -116,9 +115,10 @@ def _read_file_uvvis(file_path: str):
 def read_uvvis(data_file, reference_file, dark_file):
 
     # Read MeasurementFile
-    spectrums = _read_file_uvvis(data_file)
-    reference = _read_file_uvvis(reference_file)
-    dark = _read_file_uvvis(dark_file)
+    columns = ["x", "y", "z", "integration_time"]
+    spectrums = _read_file_uvvis(data_file, columns.copy())
+    reference = _read_file_uvvis(reference_file, columns.copy())
+    dark = _read_file_uvvis(dark_file, columns.copy())
 
     if spectrums is None or reference is None or dark is None:
         raise
@@ -126,5 +126,9 @@ def read_uvvis(data_file, reference_file, dark_file):
     spectrum_data[spectrums[1].columns[4:]] = (
         spectrums[1][spectrums[1].columns[4:]] - dark[1][dark[1].columns[4:]].values) / \
         (reference[1][reference[1].columns[4:]].values - dark[1][dark[1].columns[4:]].values)
-
+    spectrum_data = spectrum_data.round(3)
+    cut_off_wavelength = 420
+    columns.extend(spectrum_data.columns[4:][np.array(
+        spectrum_data.columns[4:], dtype=np.float64) > cut_off_wavelength])
+    spectrum_data = spectrum_data[columns]
     return spectrums[0], spectrum_data

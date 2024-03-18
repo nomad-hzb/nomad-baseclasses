@@ -29,4 +29,4 @@ from .xrr import XRR, XRRData, XRRFittedData, XRRLibrary
 from .xrd import XRD, XRDData, XRDLibrary
 from .xps import XPS, XPSLibrary
 from .tga import TGA
-from .xrf import XRFLibrary, XRFSingleLibraryMeasurement, XRFProperties, XRFComposition, XRFData, XRF
+from .xrf import XRFLibrary, XRFSingleLibraryMeasurement, XRFProperties, XRFComposition, XRFData, XRF, XRFLayer

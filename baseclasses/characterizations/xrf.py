@@ -46,14 +46,27 @@ class XRFComposition(ArchiveSection):
     name = Quantity(
         type=str,
         a_eln=dict(component='StringEditQuantity'))
-    
-    layer = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
 
     amount = Quantity(
         type=np.dtype(np.float64),
         a_eln=dict(component='NumberEditQuantity'))
+
+
+class XRFLayer(ArchiveSection):
+    m_def = Section(
+        label_quantity='layer')
+
+    layer = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'))
+
+    thickness = Quantity(
+        type=np.dtype(np.float64),
+        unit=('nm'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+
+    composition = SubSection(
+        section_def=XRFComposition, repeats=True)
 
 
 class XRFProperties(ArchiveSection):
@@ -119,13 +132,8 @@ class XRFSingleLibraryMeasurement(SingleLibraryMeasurement):
     # data = SubSection(
     #     section_def=XRFData)
 
-    composition = SubSection(
-        section_def=XRFComposition, repeats=True)
-
-    thickness = Quantity(
-        type=np.dtype(np.float64),
-        unit=('nm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+    layer = SubSection(
+        section_def=XRFLayer, repeats=True)
 
 
 class XRFLibrary(LibraryMeasurement):
@@ -133,11 +141,11 @@ class XRFLibrary(LibraryMeasurement):
 
     m_def = Section(
         a_eln=dict(hide=['certified_values', 'certification_institute']))
-    
+
     data_folder = Quantity(
         type=str,
         a_eln=dict(component='StringEditQuantity'))
-    
+
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),

@@ -153,10 +153,10 @@ class PLMeasurementLibrary(LibraryMeasurement):
         a_eln=dict(component='FileEditQuantity'),
         a_browser=dict(adaptor='RawFileAdaptor'))
 
-    reference_file = Quantity(
-        type=str,
-        a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+    # reference_file = Quantity(
+    #     type=str,
+    #     a_eln=dict(component='FileEditQuantity'),
+    #     a_browser=dict(adaptor='RawFileAdaptor'))
 
     wavelength = Quantity(
         type=np.dtype(
