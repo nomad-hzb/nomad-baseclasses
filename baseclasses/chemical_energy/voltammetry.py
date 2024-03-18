@@ -77,7 +77,6 @@ class Voltammetry(PotentiostatMeasurement):
         a_browser=dict(adaptor='RawFileAdaptor'))
 
     voltage_shift = Quantity(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(np.float64), default=0,
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
@@ -103,7 +102,6 @@ class Voltammetry(PotentiostatMeasurement):
                     "editable": True, "scrollZoom": True}}])
 
     voltage = Quantity(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(
             np.float64), shape=['n_values'], unit='V', a_plot=[
             {
