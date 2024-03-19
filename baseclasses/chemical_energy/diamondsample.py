@@ -50,6 +50,7 @@ class DiamondProperties(ArchiveSection):
         ))
 
     doping = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000015'],
         type=str,
         a_eln=dict(
             component='EnumEditQuantity',

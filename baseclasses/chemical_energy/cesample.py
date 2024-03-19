@@ -32,8 +32,6 @@ from nomad.datamodel.results import (
     ELN
 )
 
-from ..helper.utilities import log_error
-
 
 def export_lab_id(archive, lab_id):
     if not archive.results:
@@ -107,7 +105,7 @@ class SampleIDCE(ReadableIdentifiersCustom):
         if self.project_sample_number is None or (len(search_result_1.data) != 0 and
                                                   archive.metadata.entry_id not in [
                                                       d["entry_id"] for d in search_result_1.data]
-                                                  ):
+        ):
             query = {'results.eln.lab_ids': self.lab_id}
             pagination = MetadataPagination()
             pagination.page_size = 9999
@@ -202,6 +200,7 @@ class SubstrateProperties(ArchiveSection):
         ))
 
     substrate_dimension = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000033'],
         type=str,
         a_eln=dict(
             component='StringEditQuantity',
@@ -232,26 +231,23 @@ class CESample(CompositeSystem):
             material = archive.results.material
             from ase import Atoms
             from pymatgen.core import Composition
-            try:
-                formulas = [
-                    Atoms(Composition(formula.strip()
-                                      ).get_integer_formula_and_factor()[0])
-                    for formula in self.chemical_composition_or_formulas.split(",") if formula]
-                elements = []
-                for f in formulas:
-                    elements.extend(f.get_chemical_symbols())
-                material.elements = []
-                material.elements = list(set(elements))
-                if len(formulas) == 1:
-                    formula = formulas[0]
-                    material.chemical_formula_hill = formula.get_chemical_formula(
-                        mode='hill')
-                    material.chemical_formula_reduced = formula.get_chemical_formula(
-                        mode='reduce')
-                    material.chemical_formula_descriptive = self.chemical_composition_or_formulas
-            except Exception as e:
-                log_error(self, logger,
-                          f"chemical_composition_or_formulas no correct elements : {self.chemical_composition_or_formulas}")
+
+            formulas = [
+                Atoms(Composition(formula.strip()
+                                  ).get_integer_formula_and_factor()[0])
+                for formula in self.chemical_composition_or_formulas.split(",") if formula]
+            elements = []
+            for f in formulas:
+                elements.extend(f.get_chemical_symbols())
+            material.elements = []
+            material.elements = list(set(elements))
+            if len(formulas) == 1:
+                formula = formulas[0]
+                material.chemical_formula_hill = formula.get_chemical_formula(
+                    mode='hill')
+                material.chemical_formula_reduced = formula.get_chemical_formula(
+                    mode='reduce')
+                material.chemical_formula_descriptive = self.chemical_composition_or_formulas
 
 
 class SampleIDCENOMEdate(SampleIDCE2date):
@@ -344,6 +340,7 @@ class SubstanceWithConcentration(ArchiveSection):
     name = Quantity(type=str)
 
     concentration_mmol_per_l = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007244'],
         type=np.dtype(
             np.float64),
         unit=("mmol/l"),
@@ -352,6 +349,7 @@ class SubstanceWithConcentration(ArchiveSection):
             defaultDisplayUnit="mol/l"))
 
     concentration_g_per_l = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007244'],
         type=np.dtype(np.float64), unit=("g/l"),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit="g/l"))
 
@@ -386,6 +384,7 @@ class CatalystSynthesis(ArchiveSection):
     )
 
     substances = SubSection(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000062'],
         section_def=SubstanceWithConcentration, repeats=True)
 
 
@@ -460,10 +459,10 @@ class CENOMESample(CESample):
 
 
 class Electrode(CESample):
-
-    m_def = Section(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007201'])
     
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007201'],
+    )
     location = Quantity(
         type=str,
         a_eln=dict(
@@ -478,7 +477,7 @@ class Electrode(CESample):
 
 
 class Equipment(Entity):
-
+        
     m_def = Section(
         links=['https://w3id.org/nfdi4cat/voc4cat_0000061'])
 
@@ -529,11 +528,7 @@ class Electrolyte(CESample):
 
 
 class Purging(ArchiveSection):
-
-    m_def = Section(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007225'],
-    )
-    
+    m_def = Section(links=['https://w3id.org/nfdi4cat/voc4cat_0007225'])
     gas = SubSection(
         section_def=PubChemPureSubstanceSection)
 
@@ -573,18 +568,22 @@ class Environment(Electrolyte):
 
 class ElectroChemicalCell(CESample):
     working_electrode = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007202'],
         type=Reference(CESample.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     reference_electrode = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007204'],
         type=Reference(Electrode.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     counter_electrode = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007203'],
         type=Reference(Electrode.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     electrolyte = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007224'],
         type=Reference(Electrolyte.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
@@ -632,6 +631,7 @@ class ElectroChemicalCell(CESample):
 
 class ElectroChemicalSetup(CESample):
     setup = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007250'],
         type=str,
         a_eln=dict(
             component='EnumEditQuantity',
@@ -640,14 +640,17 @@ class ElectroChemicalSetup(CESample):
         ))
 
     reference_electrode = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007204'],
         type=Reference(Electrode.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     counter_electrode = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007203'],
         type=Reference(Electrode.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     equipment = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007250'],
         type=Reference(Equipment.m_def),
         shape=['*'],
         a_eln=dict(component='ReferenceEditQuantity'))

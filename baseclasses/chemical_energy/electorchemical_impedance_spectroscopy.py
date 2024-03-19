@@ -28,6 +28,7 @@ from .potentiostat_measurement import PotentiostatMeasurement, PotentiostatPrope
 class EISProperties(PotentiostatProperties):
 
     dc_voltage = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(np.float64),
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
@@ -40,11 +41,12 @@ class EISProperties(PotentiostatProperties):
         ))
 
     initial_frequency = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007241'],
         type=np.dtype(np.float64),
         unit=('Hz'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='Hz'))
-
     final_frequency = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007242'],
         type=np.dtype(np.float64),
         unit=('Hz'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='Hz'))
@@ -54,6 +56,7 @@ class EISProperties(PotentiostatProperties):
         a_eln=dict(component='NumberEditQuantity'))
 
     ac_voltage = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(np.float64),
         unit=('mV'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mV'))
@@ -76,6 +79,7 @@ class EISCycle(ArchiveSection):
         unit='s')
 
     frequency = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007239'],
         type=np.dtype(
             np.float64), shape=['n_values'], unit='Hz', a_plot=[
             {
@@ -170,6 +174,10 @@ class EISPropertiesWithData(EISProperties):
 
 class ElectrochemicalImpedanceSpectroscopy(PotentiostatMeasurement):
 
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007209']
+    )
+
     metadata_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
@@ -181,6 +189,7 @@ class ElectrochemicalImpedanceSpectroscopy(PotentiostatMeasurement):
         unit='s')
 
     frequency = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007239'],
         type=np.dtype(
             np.float64), shape=['n_values'], unit='Hz', a_plot=[
             {
@@ -253,6 +262,10 @@ class ElectrochemicalImpedanceSpectroscopy(PotentiostatMeasurement):
 
 
 class ElectrochemicalImpedanceSpectroscopyMultiple(PotentiostatMeasurement):
+
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007209']
+    )
 
     measurements = SubSection(
         section_def=EISPropertiesWithData, repeats=True)
