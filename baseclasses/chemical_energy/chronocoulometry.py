@@ -18,7 +18,7 @@
 
 import numpy as np
 
-from nomad.metainfo import (Quantity, SubSection)
+from nomad.metainfo import (Quantity, SubSection, Section)
 
 from .voltammetry import Voltammetry
 from .chronoamperometry import CAProperties
@@ -33,6 +33,10 @@ class CCProperties(CAProperties):
 
 
 class Chronocoulometry(Voltammetry):
+
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007212']
+    )
 
     properties = SubSection(
         section_def=CCProperties)

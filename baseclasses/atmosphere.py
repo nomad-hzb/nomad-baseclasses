@@ -8,11 +8,15 @@ Created on Fri Oct 20 18:20:02 2023
 
 import numpy as np
 
-from nomad.metainfo import Quantity, Datetime
+from nomad.metainfo import Quantity, Datetime, Section
 from nomad.datamodel.data import ArchiveSection
 
 
 class Atmosphere(ArchiveSection):
+
+    m_def = Section(
+        links=['https://purl.archive.org/tfsco/TFSCO_00001012'],
+    )
 
     datetime = Quantity(
         type=Datetime,

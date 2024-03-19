@@ -289,7 +289,8 @@ class StandardSample(Entity):
 
 
 class LayerProperties(ArchiveSection):
-    m_def = Section(label_quantity='layer_material_name')
+    m_def = Section(links=['https://purl.archive.org/tfsco/TFSCO_00000007'],
+                     label_quantity='layer_material_name')
 
     layer_type = Quantity(
         links=['https://purl.archive.org/tfsco/TFSCO_00000007'],
@@ -331,7 +332,7 @@ class LayerDeposition(BaseProcess):
     m_def = Section(links=['https://purl.archive.org/tfsco/TFSCO_00000067'],
                     label_quantity='layer')
 
-    layer = SubSection(links=['https://purl.archive.org/tfsco/TFSCO_00000007'],
+    layer = SubSection(links=['http://purl.obolibrary.org/obo/RO_0002234'],
                        section_def=LayerProperties, repeats=True)
 
     def normalize(self, archive, logger):
@@ -410,7 +411,11 @@ class LayerDeposition(BaseProcess):
 
 
 class BaseMeasurement(Measurement):
-    atmosphere = SubSection(links=['https://purl.archive.org/tfsco/TFSCO_00001012'],
+
+    m_def = Section(
+        links=['http://purl.obolibrary.org/obo/OBI_0000070']
+    )
+    atmosphere = SubSection(links=['http://purl.obolibrary.org/obo/RO_0000057'],
                             section_def=Atmosphere, repeats=True)
 
     def normalize(self, archive, logger):
