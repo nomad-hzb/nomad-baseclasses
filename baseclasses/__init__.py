@@ -338,53 +338,48 @@ class LayerDeposition(BaseProcess):
     m_def = Section(links=['https://purl.archive.org/tfsco/TFSCO_00000067'],
                     label_quantity='layer')
 
-
-<< << << < HEAD
     layer = SubSection(links=['http://purl.obolibrary.org/obo/RO_0002234'],
-== == ===
-    layer=SubSection(links=['https://purl.archive.org/tfsco/TFSCO_00000007'],
->>>>>> > 075c653(added links)
                        section_def=LayerProperties, repeats=True)
 
     def normalize(self, archive, logger):
         super(LayerDeposition, self).normalize(archive, logger)
 
         if not archive.results:
-            archive.results=Results()
+            archive.results = Results()
         if not archive.results.material:
-            archive.results.material=Material()
+            archive.results.material = Material()
 
         if self.layer is None:
             return
-        device_stack=[]
-        hole_transport_layer=[]
-        electron_transport_layer=[]
-        back_contact=[]
-        absorber=[]
-        elements_final=[]
+        device_stack = []
+        hole_transport_layer = []
+        electron_transport_layer = []
+        back_contact = []
+        absorber = []
+        elements_final = []
         add_solar_cell(archive)
         for layer in self.layer:
-            layer_material_name=layer.layer_material_name
+            layer_material_name = layer.layer_material_name
             if layer_material_name:
-                layer.layer_material=''
+                layer.layer_material = ''
 
                 from .helper.formula_normalizer import PerovskiteFormulaNormalizer
-                formulas=[PerovskiteFormulaNormalizer(
+                formulas = [PerovskiteFormulaNormalizer(
                     formula.replace("x", "").strip()).clean_formula()
                     for formula in layer_material_name.split(",")]
                 try:
-                    elements=[f for formula in formulas for f in formula[1]]
+                    elements = [f for formula in formulas for f in formula[1]]
                     print(elements)
                     elements_final.extend(list(set(elements)))
-                    lm_tmp=",".join([formulas[i][0] for i, _ in enumerate(formulas)]
+                    lm_tmp = ",".join([formulas[i][0] for i, _ in enumerate(formulas)]
                                       ) if isinstance(formulas, list) else None
-                    layer.layer_material=lm_tmp
+                    layer.layer_material = lm_tmp
 
                 except BaseException as e:
                     print(e)
 
             # from nomad.atomutils import Formula
-            layer_material=layer.layer_material
+            layer_material = layer.layer_material
             # if layer_material:
             #     try:
             #         formula = Formula(layer_material)
@@ -392,12 +387,12 @@ class LayerDeposition(BaseProcess):
             #     except Exception as e:
             #         logger.warn('could not analyse layer material', exc_info=e)
 
-            layer_type=layer.layer_type
+            layer_type = layer.layer_type
             if layer_type:
 
                 if layer_material or layer_material_name:
 
-                    layer_material_name_tmp=layer_material_name if layer_material_name else layer_material
+                    layer_material_name_tmp = layer_material_name if layer_material_name else layer_material
 
                     if layer_type:
                         device_stack.append(layer_material_name_tmp)
@@ -412,25 +407,35 @@ class LayerDeposition(BaseProcess):
 
                 if layer_type == 'Absorber Layer':
                     archive.results.properties.optoelectronic.solar_cell.absorber_fabrication\
-                        =[self.method]
-        archive.results.properties.optoelectronic.solar_cell.device_stack=device_stack
-        archive.results.properties.optoelectronic.solar_cell.hole_transport_layer=hole_transport_layer
-        archive.results.properties.optoelectronic.solar_cell.electron_transport_layer=electron_transport_layer
-        archive.results.properties.optoelectronic.solar_cell.back_contact=back_contact
-        archive.results.properties.optoelectronic.solar_cell.absorber=absorber
-        archive.results.material.elements=elements_final
+                        = [self.method]
+        archive.results.properties.optoelectronic.solar_cell.device_stack = device_stack
+        archive.results.properties.optoelectronic.solar_cell.hole_transport_layer = hole_transport_layer
+        archive.results.properties.optoelectronic.solar_cell.electron_transport_layer = electron_transport_layer
+        archive.results.properties.optoelectronic.solar_cell.back_contact = back_contact
+        archive.results.properties.optoelectronic.solar_cell.absorber = absorber
+        archive.results.material.elements = elements_final
 
 
 class BaseMeasurement(Measurement):
+
+
 << << << < HEAD
+<< << << < HEAD
+
+    m_def = Section(
+        links=['http://purl.obolibrary.org/obo/OBI_0000070']
+    )
+    atmosphere = SubSection(links=['http://purl.obolibrary.org/obo/RO_0000057'],
+== == == =
+    atmosphere=SubSection(links=['https://purl.archive.org/tfsco/TFSCO_00001012'],
+>>>>>> > 075c653(added links)
+== == == =
 
     m_def=Section(
         links=['http://purl.obolibrary.org/obo/OBI_0000070']
     )
     atmosphere=SubSection(links=['http://purl.obolibrary.org/obo/RO_0000057'],
-== == ===
-    atmosphere=SubSection(links=['https://purl.archive.org/tfsco/TFSCO_00001012'],
->>>>>> > 075c653(added links)
+>>>>>> > 4fd9b35(fixed errors from review/PR)
                             section_def=Atmosphere, repeats=True)
 
     def normalize(self, archive, logger):
