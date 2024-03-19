@@ -32,6 +32,8 @@ from nomad.datamodel.results import (
     ELN
 )
 
+from ..helper.utilities import log_error
+
 
 def export_lab_id(archive, lab_id):
     if not archive.results:
@@ -105,7 +107,7 @@ class SampleIDCE(ReadableIdentifiersCustom):
         if self.project_sample_number is None or (len(search_result_1.data) != 0 and
                                                   archive.metadata.entry_id not in [
                                                       d["entry_id"] for d in search_result_1.data]
-        ):
+                                                  ):
             query = {'results.eln.lab_ids': self.lab_id}
             pagination = MetadataPagination()
             pagination.page_size = 9999
@@ -231,23 +233,26 @@ class CESample(CompositeSystem):
             material = archive.results.material
             from ase import Atoms
             from pymatgen.core import Composition
-
-            formulas = [
-                Atoms(Composition(formula.strip()
-                                  ).get_integer_formula_and_factor()[0])
-                for formula in self.chemical_composition_or_formulas.split(",") if formula]
-            elements = []
-            for f in formulas:
-                elements.extend(f.get_chemical_symbols())
-            material.elements = []
-            material.elements = list(set(elements))
-            if len(formulas) == 1:
-                formula = formulas[0]
-                material.chemical_formula_hill = formula.get_chemical_formula(
-                    mode='hill')
-                material.chemical_formula_reduced = formula.get_chemical_formula(
-                    mode='reduce')
-                material.chemical_formula_descriptive = self.chemical_composition_or_formulas
+            try:
+                formulas = [
+                    Atoms(Composition(formula.strip()
+                                      ).get_integer_formula_and_factor()[0])
+                    for formula in self.chemical_composition_or_formulas.split(",") if formula]
+                elements = []
+                for f in formulas:
+                    elements.extend(f.get_chemical_symbols())
+                material.elements = []
+                material.elements = list(set(elements))
+                if len(formulas) == 1:
+                    formula = formulas[0]
+                    material.chemical_formula_hill = formula.get_chemical_formula(
+                        mode='hill')
+                    material.chemical_formula_reduced = formula.get_chemical_formula(
+                        mode='reduce')
+                    material.chemical_formula_descriptive = self.chemical_composition_or_formulas
+            except Exception as e:
+                log_error(self, logger,
+                          f"chemical_composition_or_formulas no correct elements : {self.chemical_composition_or_formulas}")
 
 
 class SampleIDCENOMEdate(SampleIDCE2date):
