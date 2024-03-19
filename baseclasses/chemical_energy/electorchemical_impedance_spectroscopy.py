@@ -45,7 +45,7 @@ class EISProperties(PotentiostatProperties):
         type=np.dtype(np.float64),
         unit=('Hz'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='Hz'))
-    
+
     final_frequency = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007242'],
         type=np.dtype(np.float64),
