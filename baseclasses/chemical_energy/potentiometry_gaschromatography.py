@@ -23,6 +23,21 @@ from nomad.datamodel.data import ArchiveSection
 
 from .. import BaseMeasurement
 
+class NECCFeedGas(ArchiveSection):
+
+    name = Quantity(
+        type=MEnum('CO2', 'CO', 'H2'),
+        shape=[],
+        a_eln=dict(component='EnumEditQuantity'))
+
+    flow_rate = Quantity(
+        type=np.dtype(np.float64),
+        unit=('ml/minute'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='ml/minute',
+            props=dict(minValue=0)
+        ))
 
 class NECCExperimentalProperties(ArchiveSection):
 
@@ -34,24 +49,39 @@ class NECCExperimentalProperties(ArchiveSection):
     fill_in_default = Quantity(
         type=bool,
         default=False,
-        description='Check this box and press the save button to load default entries.',
+        description='Check this box and press the save button to load default entries. '
+                    'Attention: Already entered values will be overwritten.',
         a_eln=dict(component='BoolEditQuantity'))
 
     cell_type = Quantity(
-        type=MEnum('Zero-Gap', 'Catholyte Flow', 'H-Cell'),
+        type=str,
         shape=[],
-        a_eln=dict(component='EnumEditQuantity'))
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=[
+                    'Zero-Gap',
+                    'Catholyte Flow',
+                    'H-Cell'
+                ])))
 
     has_reference_electrode = Quantity(
         type=bool,
         default=False,
         a_eln=dict(component='BoolEditQuantity'))
 
-    # TODO how to save N/A; if has_reference_electrode is false reference_electrode_type is N/A
     reference_electrode_type = Quantity(
-        type=MEnum('Ag/AgCl', 'Hg/HgO',	'N/A'),
+        type=str,
         shape=[],
-        a_eln=dict(component='EnumEditQuantity'))
+        description='If has reference electrode is not checked, this reference electrode type must be N/A.',
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=[
+                    'Ag/AgCl',
+                    'Hg/HgO',
+                    'N/A'
+                ])))
 
     cathode_geometric_area = Quantity(
         type=np.dtype(np.float64),
@@ -59,14 +89,28 @@ class NECCExperimentalProperties(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'))
 
     membrane_type = Quantity(
-        type=MEnum('AEM', 'CEM'),
+        type=str,
         shape=[],
-        a_eln=dict(component='EnumEditQuantity'))
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=[
+                    'AEM',
+                    'CEM'
+                ])))
 
     membrane_name = Quantity(
-        type=MEnum('PiperION', 'SustainION', 'Fumasep', 'Nafion'),
+        type=str,
         shape=[],
-        a_eln=dict(component='EnumEditQuantity'))
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=[
+                    'PiperION',
+                    'SustainION',
+                    'Fumasep',
+                    'Nafion'
+                ])))
 
     membrane_thickness = Quantity(
         type=np.dtype(np.float64),
@@ -79,9 +123,15 @@ class NECCExperimentalProperties(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='um', props=dict(minValue=0)))
 
     anolyte_type = Quantity(
-        type=MEnum('KOH', 'KHCO3'),
+        type=str,
         shape=[],
-        a_eln=dict(component='EnumEditQuantity'))
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=[
+                    'KOH',
+                    'KHCO3'
+                ])))
 
     anolyte_concentration = Quantity(
         type=np.dtype(np.float64),
@@ -118,20 +168,8 @@ class NECCExperimentalProperties(ArchiveSection):
         unit=('ml'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'))
 
-    #TODO 2 possible feed gases
-    feed_gas = Quantity(
-        type=MEnum('CO2', 'CO', 'H2'),
-        shape=[],
-        a_eln=dict(component='EnumEditQuantity'))
-
-    feed_gas_flow_rate = Quantity(
-        type=np.dtype(np.float64),
-        unit=('ml/minute'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='ml/minute',
-            props=dict(minValue=0)
-        ))
+    feed_gases = SubSection(
+        section_def=NECCFeedGas, repeats=True)
 
     bleedline_flow_rate = Quantity(
         type=np.dtype(np.float64),
@@ -163,8 +201,11 @@ class NECCExperimentalProperties(ArchiveSection):
 
     def normalize(self, archive, logger):
 
-        #TODO only apply defaults to empty fields?
+        if self.has_reference_electrode is False:
+            self.reference_electrode_type = 'N/A'
+
         if self.fill_in_default:
+            self.fill_in_default = False
             self.cell_type = 'Zero-Gap'
             self.has_reference_electrode = False
             self.reference_electrode_type = 'N/A'
@@ -180,8 +221,7 @@ class NECCExperimentalProperties(ArchiveSection):
             self.has_humidifier = True
             self.humidifier_temperature = 25
             self.water_trap_volume = 10
-            self.feed_gas = 'CO2'
-            self.feed_gas_flow_rate = 60
+            self.feed_gases = [NECCFeedGas(name='CO2', flow_rate=60)]
             self.bleedline_flow_rate = 20
             self.chronoanalysis_method = 'Chronopotentiometry (CP)'
 
@@ -218,6 +258,7 @@ class GasChromatographyOutput(ArchiveSection):
 
 
 class PotentiostatOutput(ArchiveSection):
+
     datetime = Quantity(
         type=Datetime,
         shape=['*'])
@@ -257,7 +298,6 @@ class ThermocoupleOutput(ArchiveSection):
         shape=['*'],
         unit='s')
 
-    # TODO can i combine two columns in datetime?
     datetime = Quantity(
         type=Datetime,
         shape=['*'])
@@ -294,7 +334,6 @@ class ThermocoupleOutput(ArchiveSection):
 
 
 class GasFEResults(ArchiveSection):
-    # TODO model class like this or combine it with gaschromatography class?
 
     gas_type = Quantity(
         type=MEnum('CO', 'CH4', 'C2H4', 'H2'),
@@ -309,7 +348,14 @@ class GasFEResults(ArchiveSection):
     faradaic_efficiency = Quantity(
         type=np.dtype(np.float64),
         description='Faradaic efficiency specified in %',
-        shape=['*'])
+        shape=['*'],
+        a_plot=[
+            {
+                "label": "FE over time", 'x': 'time', 'y': 'faradaic_efficiency', 'layout': {
+                'yaxis': {
+                    "fixedrange": False}, 'xaxis': {
+                    "fixedrange": False}}, "config": {
+                "editable": True, "scrollZoom": True}}])
 
     mean_fe = Quantity(
         type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity'))
