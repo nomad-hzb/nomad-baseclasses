@@ -22,7 +22,7 @@
 
 import pandas as pd
 
-from baseclasses.chemical_energy import GasFEResults
+from baseclasses.chemical_energy import NECCFeedGas, GasFEResults
 
 def read_potentiostat_data(file):
     data = pd.read_excel(file, sheet_name='Raw Data', header=1)
@@ -112,13 +112,20 @@ def read_properties(file):
         'has_humidifier': data.loc['Humidifier (y/n)', 1] == 'y',
         'humidifier_temperature': data.loc['Humidifier Temperature', 1],
         'water_trap_volume': data.loc['Water trap volume', 1],
-        # TODO 2 possible feed gases
-        'feed_gas': data.loc['Feed gas 1', 1],
-        'feed_gas_flow_rate': data.loc['Feed gas flow rate (ml/min)', 1].iat[0],
         'bleedline_flow_rate': data.loc['Bleedline flow rate', 1],
         'nitrogen_start_value': data.loc['Nitrogen start value', 1],
         'remarks': data.loc['Remarks', 1],
         'chronoanalysis_method': 'Chronoamperometry (CA)' if data.loc['CP/CA', 1] == 'CA' else 'Chronopotentiometry (CP)',
     }
+
+    experimental_properties_dict = {key: value for key, value in experimental_properties_dict.items() if not pd.isna(value)}
+
+    feed_gases = []
+    if not pd.isna(data.loc['Feed gas 1', 1] and data.loc['Feed gas flow rate (ml/min)', 1].iat[0]):
+        feed_gases.append(NECCFeedGas(name=data.loc['Feed gas 1', 1], flow_rate=data.loc['Feed gas flow rate (ml/min)', 1].iat[0]))
+    if not pd.isna(data.loc['Feed gas 2', 1] and data.loc['Feed gas flow rate (ml/min)', 1].iat[1]):
+        feed_gases.append(NECCFeedGas(name=data.loc['Feed gas 2', 1], flow_rate=data.loc['Feed gas flow rate (ml/min)', 1].iat[1]))
+
+    experimental_properties_dict.update({'feed_gases': feed_gases})
 
     return experimental_properties_dict
