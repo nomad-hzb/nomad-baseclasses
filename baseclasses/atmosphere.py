@@ -15,7 +15,7 @@ from nomad.datamodel.data import ArchiveSection
 class Atmosphere(ArchiveSection):
 
     m_def = Section(
-        links=['https://purl.archive.org/tfsco/TFSCO_00001012'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00001012']
     )
 
     datetime = Quantity(
