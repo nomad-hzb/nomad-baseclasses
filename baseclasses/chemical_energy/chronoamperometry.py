@@ -29,6 +29,7 @@ from .potentiostat_measurement import PotentiostatProperties
 class CAProperties(PotentiostatProperties):
 
     pre_step_potential = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(np.float64),
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
@@ -46,6 +47,7 @@ class CAProperties(PotentiostatProperties):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'))
 
     step_1_potential = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(np.float64),
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
@@ -63,6 +65,7 @@ class CAProperties(PotentiostatProperties):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'))
 
     step_2_potential = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(np.float64),
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
@@ -116,6 +119,10 @@ class CAPropertiesWithData(CAProperties):
 
 
 class Chronoamperometry(Voltammetry):
+
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007207']
+    )
 
     properties = SubSection(
         section_def=CAProperties)

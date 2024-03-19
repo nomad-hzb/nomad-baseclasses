@@ -71,17 +71,23 @@ class VoltammetryCycleWithPlot(VoltammetryCycle):
 
 class Voltammetry(PotentiostatMeasurement):
 
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007237'],
+    )
+
     metadata_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
         a_browser=dict(adaptor='RawFileAdaptor'))
 
     voltage_shift = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(np.float64), default=0,
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
 
     resistance = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007222'],
         type=np.dtype(np.float64), default=0,
         unit=('ohm'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ohm'))
@@ -92,6 +98,7 @@ class Voltammetry(PotentiostatMeasurement):
         unit='s')
 
     current = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007220'],
         type=np.dtype(
             np.float64), shape=['n_values'], unit='mA', a_plot=[
             {
@@ -102,6 +109,7 @@ class Voltammetry(PotentiostatMeasurement):
                     "editable": True, "scrollZoom": True}}])
 
     voltage = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(
             np.float64), shape=['n_values'], unit='V', a_plot=[
             {
@@ -122,6 +130,7 @@ class Voltammetry(PotentiostatMeasurement):
                     "editable": True, "scrollZoom": True}}])
 
     charge = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007252'],
         type=np.dtype(
             np.float64), shape=['n_values'], unit='mC', a_plot=[
             {
@@ -132,6 +141,7 @@ class Voltammetry(PotentiostatMeasurement):
                     "editable": True, "scrollZoom": True}}])
 
     current_density = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007221'],
         type=np.dtype(
             np.float64),
         shape=['n_values'],
@@ -151,6 +161,7 @@ class Voltammetry(PotentiostatMeasurement):
                     "scrollZoom": True}}])
 
     charge_density = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007253'],
         type=np.dtype(
             np.float64),
         shape=['n_values'],
@@ -170,6 +181,7 @@ class Voltammetry(PotentiostatMeasurement):
                     "scrollZoom": True}}])
 
     voltage_rhe_uncompensated = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(
             np.float64), shape=['n_values'], unit='V', a_plot=[
             {
@@ -180,6 +192,7 @@ class Voltammetry(PotentiostatMeasurement):
                     "editable": True, "scrollZoom": True}}])
 
     voltage_ref_compensated = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(
             np.float64), shape=['n_values'], unit='V', a_plot=[
             {
@@ -190,6 +203,7 @@ class Voltammetry(PotentiostatMeasurement):
                     "editable": True, "scrollZoom": True}}])
 
     voltage_rhe_compensated = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(
             np.float64), shape=['n_values'], unit='V', a_plot=[
             {
@@ -200,6 +214,7 @@ class Voltammetry(PotentiostatMeasurement):
                     "editable": True, "scrollZoom": True}}])
 
     cycles = SubSection(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007228'],
         section_def=VoltammetryCycleWithPlot, repeats=True)
 
     export_data_to_csv = Quantity(
