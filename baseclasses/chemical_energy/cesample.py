@@ -530,33 +530,24 @@ class Electrolyte(CESample):
 
 class Purging(ArchiveSection):
 
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007225'],
+    )
 
-<< << << < HEAD
-m_def = Section(
-    links=['https://w3id.org/nfdi4cat/voc4cat_0007225'],
-)
+    gas = SubSection(
+        section_def=PubChemPureSubstanceSection)
 
-== == == =
+    temperature = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007227'],
+        type=np.dtype(np.float64),
+        unit="°C",
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
 
-m_def = Section(
-    links=['https://w3id.org/nfdi4cat/voc4cat_0007225'],
-)
-
->>>>>> > 4fd9b35(fixed errors from review/PR)
-gas = SubSection(
-    section_def=PubChemPureSubstanceSection)
-
-temperature = Quantity(
-    links=['https://w3id.org/nfdi4cat/voc4cat_0007227'],
-    type=np.dtype(np.float64),
-    unit="°C",
-    a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
-
-time = Quantity(
-    links=['https://w3id.org/nfdi4cat/voc4cat_0000112'],
-    type=np.dtype(np.float64),
-    unit="minute",
-    a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='minute'))
+    time = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000112'],
+        type=np.dtype(np.float64),
+        unit="minute",
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='minute'))
 
 
 class EnvironmentReference(CompositeSystemReference):
