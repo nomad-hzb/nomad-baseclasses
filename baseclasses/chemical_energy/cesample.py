@@ -202,6 +202,7 @@ class SubstrateProperties(ArchiveSection):
         ))
 
     substrate_dimension = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000033'],
         type=str,
         a_eln=dict(
             component='StringEditQuantity',
@@ -344,6 +345,7 @@ class SubstanceWithConcentration(ArchiveSection):
     name = Quantity(type=str)
 
     concentration_mmol_per_l = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007244'],
         type=np.dtype(
             np.float64),
         unit=("mmol/l"),
@@ -352,6 +354,7 @@ class SubstanceWithConcentration(ArchiveSection):
             defaultDisplayUnit="mol/l"))
 
     concentration_g_per_l = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007244'],
         type=np.dtype(np.float64), unit=("g/l"),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit="g/l"))
 
@@ -386,6 +389,7 @@ class CatalystSynthesis(ArchiveSection):
     )
 
     substances = SubSection(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000062'],
         section_def=SubstanceWithConcentration, repeats=True)
 
 
@@ -459,7 +463,10 @@ class CENOMESample(CESample):
         export_lab_id(archive, self.lab_id)
 
 
-class Electrode(CESample):
+class Electrode(CESample):    
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007201'],
+    )
 
     m_def = Section(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007201'])
@@ -478,7 +485,6 @@ class Electrode(CESample):
 
 
 class Equipment(Entity):
-
     m_def = Section(
         links=['https://w3id.org/nfdi4cat/voc4cat_0000061'])
 
@@ -529,11 +535,10 @@ class Electrolyte(CESample):
 
 
 class Purging(ArchiveSection):
-
     m_def = Section(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007225'],
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007225']
     )
-
+    
     gas = SubSection(
         section_def=PubChemPureSubstanceSection)
 
@@ -573,18 +578,22 @@ class Environment(Electrolyte):
 
 class ElectroChemicalCell(CESample):
     working_electrode = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007202'],
         type=Reference(CESample.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     reference_electrode = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007204'],
         type=Reference(Electrode.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     counter_electrode = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007203'],
         type=Reference(Electrode.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     electrolyte = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007224'],
         type=Reference(Electrolyte.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
@@ -632,6 +641,7 @@ class ElectroChemicalCell(CESample):
 
 class ElectroChemicalSetup(CESample):
     setup = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007250'],
         type=str,
         a_eln=dict(
             component='EnumEditQuantity',
@@ -640,14 +650,17 @@ class ElectroChemicalSetup(CESample):
         ))
 
     reference_electrode = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007204'],
         type=Reference(Electrode.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     counter_electrode = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007203'],
         type=Reference(Electrode.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     equipment = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007250'],
         type=Reference(Equipment.m_def),
         shape=['*'],
         a_eln=dict(component='ReferenceEditQuantity'))

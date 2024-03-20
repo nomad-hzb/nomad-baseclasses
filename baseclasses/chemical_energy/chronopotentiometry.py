@@ -19,7 +19,7 @@
 import numpy as np
 
 from nomad.metainfo import (
-    Quantity, SubSection)
+    Quantity, SubSection, Section)
 from nomad.datamodel.data import ArchiveSection
 
 from .voltammetry import Voltammetry
@@ -29,6 +29,7 @@ from .potentiostat_measurement import PotentiostatProperties
 class CPProperties(PotentiostatProperties):
 
     pre_step_current = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007220'],
         type=np.dtype(np.float64),
         unit=('A'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='A'))
@@ -39,6 +40,7 @@ class CPProperties(PotentiostatProperties):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'))
 
     step_1_current = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007220'],
         type=np.dtype(np.float64),
         unit=('A'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='A'))
@@ -49,6 +51,7 @@ class CPProperties(PotentiostatProperties):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'))
 
     step_2_current = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007220'],
         type=np.dtype(np.float64),
         unit=('A'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='A'))
@@ -64,17 +67,23 @@ class CPProperties(PotentiostatProperties):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'))
 
     lower_limit_potential = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007214'],
         type=np.dtype(np.float64),
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
 
     upper_limit_potential = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007215'],
         type=np.dtype(np.float64),
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
 
 
 class Chronopotentiometry(Voltammetry):
+
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007208'],
+    )
 
     properties = SubSection(
         section_def=CPProperties)

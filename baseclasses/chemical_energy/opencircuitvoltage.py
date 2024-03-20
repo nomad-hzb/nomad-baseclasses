@@ -19,7 +19,7 @@
 import os
 import numpy as np
 
-from nomad.metainfo import (Quantity, SubSection)
+from nomad.metainfo import (Quantity, SubSection, Section)
 from nomad.datamodel.data import ArchiveSection
 
 from .voltammetry import Voltammetry
@@ -48,6 +48,10 @@ class OCVProperties(PotentiostatProperties):
 
 
 class OpenCircuitVoltage(Voltammetry):
+    
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007210']
+    )
 
     properties = SubSection(
         section_def=OCVProperties)

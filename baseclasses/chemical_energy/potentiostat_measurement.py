@@ -21,7 +21,7 @@ import os
 import pandas as pd
 
 from nomad.metainfo import (
-    Quantity, Reference, SubSection, SectionProxy)
+    Quantity, Reference, Section, SubSection, SectionProxy)
 
 from .. import BaseMeasurement
 from .cesample import Environment, ElectroChemicalSetup
@@ -32,6 +32,7 @@ from nomad.datamodel.data import ArchiveSection
 class PotentiostatProperties(ArchiveSection):
 
     sample_area = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000037'],
         type=np.dtype(np.float64),
         unit=('cm^2'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'))
@@ -45,6 +46,7 @@ class VoltammetryCycle(ArchiveSection):
         unit='s')
 
     current = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007220'],
         type=np.dtype(
             np.float64), shape=['*'], unit='mA', a_plot=[
             {
@@ -55,6 +57,7 @@ class VoltammetryCycle(ArchiveSection):
                     "editable": True, "scrollZoom": True}}])
 
     voltage = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(
             np.float64), shape=['*'], unit='V', a_plot=[
             {
@@ -75,6 +78,7 @@ class VoltammetryCycle(ArchiveSection):
                     "editable": True, "scrollZoom": True}}])
 
     charge = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007252'],
         type=np.dtype(
             np.float64), shape=['n_values'], unit='mC', a_plot=[
             {
@@ -85,6 +89,7 @@ class VoltammetryCycle(ArchiveSection):
                     "editable": True, "scrollZoom": True}}])
 
     current_density = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007221'],
         type=np.dtype(
             np.float64),
         shape=['n_values'],
@@ -104,6 +109,7 @@ class VoltammetryCycle(ArchiveSection):
                     "scrollZoom": True}}])
 
     voltage_rhe_uncompensated = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(
             np.float64), shape=['n_values'], unit='V', a_plot=[
             {
@@ -114,6 +120,7 @@ class VoltammetryCycle(ArchiveSection):
                     "editable": True, "scrollZoom": True}}])
 
     voltage_ref_compensated = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(
             np.float64), shape=['n_values'], unit='V', a_plot=[
             {
@@ -124,6 +131,7 @@ class VoltammetryCycle(ArchiveSection):
                     "editable": True, "scrollZoom": True}}])
 
     voltage_rhe_compensated = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(
             np.float64), shape=['n_values'], unit='V', a_plot=[
             {
@@ -183,6 +191,7 @@ class PotentiostatSetup(ArchiveSection):
                    defaultDisplayUnit='mL/minute'))
 
     flow_cell_pressure = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000118'],
         type=np.dtype(np.float64),
         unit=('bar'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='bar'))
@@ -194,6 +203,10 @@ class PotentiostatSetup(ArchiveSection):
 
 
 class PotentiostatMeasurement(BaseMeasurement):
+
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007206'],
+    )
 
     data_file = Quantity(
         type=str,
@@ -209,10 +222,12 @@ class PotentiostatMeasurement(BaseMeasurement):
         a_eln=dict(component='StringEditQuantity'))
 
     environment = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007223'],
         type=Reference(Environment.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     setup = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007230'],
         type=Reference(ElectroChemicalSetup.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
@@ -222,6 +237,7 @@ class PotentiostatMeasurement(BaseMeasurement):
         a_eln=dict(component='ReferenceEditQuantity'))
 
     pretreatment = SubSection(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000122'],
         section_def=VoltammetryCycle)
 
     setup_parameters = SubSection(

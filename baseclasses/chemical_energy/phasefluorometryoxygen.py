@@ -37,10 +37,12 @@ class PhaseFluorometryOxygen(BaseMeasurement):
         a_eln=dict(component='ReferenceEditQuantity'))
 
     environment = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007223'],
         type=Reference(Environment.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     setup = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007230'],
         type=Reference(ElectroChemicalSetup.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
