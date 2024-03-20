@@ -296,7 +296,7 @@ class StandardSample(Entity):
 
 class LayerProperties(ArchiveSection):
     m_def = Section(links=['https://purl.archive.org/tfsco/TFSCO_00000007'],
-                     label_quantity='layer_material_name')
+                    label_quantity='layer_material_name')
 
     layer_type = Quantity(
         links=['https://purl.archive.org/tfsco/TFSCO_00000007'],
@@ -418,24 +418,11 @@ class LayerDeposition(BaseProcess):
 
 class BaseMeasurement(Measurement):
 
-
-<< << << < HEAD
-<< << << < HEAD
-
     m_def = Section(
         links=['http://purl.obolibrary.org/obo/OBI_0000070']
     )
-    atmosphere = SubSection(links=['http://purl.obolibrary.org/obo/RO_0000057'],
-== == == =
-    atmosphere=SubSection(links=['https://purl.archive.org/tfsco/TFSCO_00001012'],
->>>>>> > 075c653(added links)
-== == == =
 
-    m_def=Section(
-        links=['http://purl.obolibrary.org/obo/OBI_0000070']
-    )
-    atmosphere=SubSection(links=['http://purl.obolibrary.org/obo/RO_0000057'],
->>>>>> > 4fd9b35(fixed errors from review/PR)
+    atmosphere = SubSection(links=['http://purl.obolibrary.org/obo/RO_0000057'],
                             section_def=Atmosphere, repeats=True)
 
     def normalize(self, archive, logger):
@@ -444,7 +431,7 @@ class BaseMeasurement(Measurement):
 
 class LibraryMeasurement(BaseMeasurement):
 
-    measurements=SubSection(
+    measurements = SubSection(
         links=['http://purl.obolibrary.org/obo/OBI_0000070'],
         section_def=SingleLibraryMeasurement, repeats=True)
 
