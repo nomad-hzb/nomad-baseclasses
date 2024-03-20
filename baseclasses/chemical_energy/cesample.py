@@ -463,11 +463,14 @@ class CENOMESample(CESample):
         export_lab_id(archive, self.lab_id)
 
 
-class Electrode(CESample):
-    
+class Electrode(CESample):    
     m_def = Section(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007201'],
     )
+
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007201'])
+
     location = Quantity(
         type=str,
         a_eln=dict(
@@ -482,7 +485,6 @@ class Electrode(CESample):
 
 
 class Equipment(Entity):
-        
     m_def = Section(
         links=['https://w3id.org/nfdi4cat/voc4cat_0000061'])
 
@@ -533,7 +535,10 @@ class Electrolyte(CESample):
 
 
 class Purging(ArchiveSection):
-    m_def = Section(links=['https://w3id.org/nfdi4cat/voc4cat_0007225'])
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007225']
+    )
+    
     gas = SubSection(
         section_def=PubChemPureSubstanceSection)
 
