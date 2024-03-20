@@ -43,9 +43,9 @@ class XRFComposition(ArchiveSection):
     m_def = Section(
         label_quantity='name')
 
-    name = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
+    # name = Quantity(
+    #     type=str,
+    #     a_eln=dict(component='StringEditQuantity'))
 
     amount = Quantity(
         type=np.dtype(np.float64),
@@ -165,6 +165,10 @@ class XRFLibrary(LibraryMeasurement):
     energy = Quantity(
         type=np.dtype(
             np.float64), unit=('nm'), shape=['*'])
+
+    material_names = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'))
 
     properties = SubSection(
         section_def=XRFProperties)
