@@ -54,24 +54,29 @@ class SolutionChemicalNew(ArchiveSection):
     name = Quantity(type=str)
 
     chemical = SubSection(
+        links=['http://purl.obolibrary.org/obo/CHEBI_59999'],
         section_def=PubChemPureSubstanceSection)
 
     chemical_volume = Quantity(
+        links=['http://purl.obolibrary.org/obo/PATO_0000918','https://purl.archive.org/tfsco/TFSCO_00002158'],
         type=np.dtype(np.float64),
         unit=('ml'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'))
 
     chemical_mass = Quantity(
+        links=['http://purl.obolibrary.org/obo/PATO_0000125','https://purl.archive.org/tfsco/TFSCO_00005020'],
         type=np.dtype(np.float64),
         unit=('mg'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mg'))
 
     concentration_mass = Quantity(
+        links=['http://purl.obolibrary.org/obo/PATO_0000033'],
         type=np.dtype(np.float64),
         unit=('mg/ml'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mg/ml'))
 
     concentration_mol = Quantity(
+        links=['http://purl.obolibrary.org/obo/PATO_0000033'],
         type=np.dtype(np.float64),
         unit=('mol/l'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mol/l'))
@@ -120,6 +125,7 @@ class MAXPhasePrecursor(SolutionChemicalNew):
 
 class ConcentrationMXeneSolution(ArchiveSection):
     quantity_of_colloidal_solution = Quantity(
+        links=['http://purl.obolibrary.org/obo/PATO_0000918','https://purl.archive.org/tfsco/TFSCO_00002158'],
         type=np.dtype(np.float64),
         unit=('ml'),
         a_eln=dict(
@@ -127,11 +133,13 @@ class ConcentrationMXeneSolution(ArchiveSection):
             defaultDisplayUnit='ml'))
 
     centrifuge_speed = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00002026','https://purl.archive.org/tfsco/TFSCO_00002005'],
         type=np.dtype(np.float64),
         unit=('Hz'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='rpm'))
 
     centrifuge_time = Quantity(
+        links=['http://purl.obolibrary.org/obo/PATO_0000165','https://purl.archive.org/tfsco/TFSCO_00005085'],
         type=np.dtype(np.float64),
         unit=('second'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='hr'))
@@ -145,6 +153,7 @@ class ConcentrationMXeneSolution(ArchiveSection):
 
 class MXeneSolutionProperties(SolutionProperties):
     mxene_formula = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00001088'],
         type=str,
         a_eln=dict(component='StringEditQuantity'))
 
@@ -157,12 +166,17 @@ class PreparationStep(ArchiveSection):
         a_eln=dict(component='RichTextEditQuantity'),
     )
     preparation = SubSection(section_def=SolutionPreparation)
-    washing = SubSection(section_def=SolutionWasching, repeats=True)
-    storage = SubSection(section_def=SolutionStorage, repeats=True)
+    washing = SubSection(
+        links=['https://purl.archive.org/tfsco/TFSCO_00000068'],
+        section_def=SolutionWasching, repeats=True)
+    storage = SubSection(
+        links=['http://purl.obolibrary.org/obo/OBI_0302893'],
+        section_def=SolutionStorage, repeats=True)
 
 
 class Etching(PreparationStep):
     m_def = Section(
+        links=['http://purl.obolibrary.org/obo/CHMO_0001558'],
         a_eln=dict(
             properties=dict(
                 order=[
@@ -189,17 +203,25 @@ class Delamination(PreparationStep):
                 ],
             )))
 
-    solute = SubSection(section_def=SolutionChemicalNew, repeats=True)
-    solvent = SubSection(section_def=SolutionChemicalNew, repeats=True)
+    solute = SubSection(
+        links=['https://purl.archive.org/tfsco/TFSCO_00001078'],
+        section_def=SolutionChemicalNew, repeats=True)
+    solvent = SubSection(
+        links=['https://purl.archive.org/tfsco/TFSCO_00000026'],
+        section_def=SolutionChemicalNew, repeats=True)
 
 
 class MXeneSolution(CompositeSystem):
     '''Base class for a solution'''
 
     MAX_phase = SubSection(section_def=MAXPhasePrecursor)
-    etching = SubSection(section_def=Etching)
+    etching = SubSection(
+        links=['http://purl.obolibrary.org/obo/CHMO_0001558'],
+        section_def=Etching)
     delamination = SubSection(section_def=Delamination)
-    concentration = SubSection(section_def=ConcentrationMXeneSolution)
+    concentration = SubSection(
+        links=['http://purl.obolibrary.org/obo/PATO_0000033'],
+        section_def=ConcentrationMXeneSolution)
     properties = SubSection(section_def=MXeneSolutionProperties)
 
     def normalize(self, archive, logger):

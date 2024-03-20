@@ -418,11 +418,13 @@ class CENOMESample(CESample):
         a_eln=dict(component='StringEditQuantity'))
 
     active_area = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007258'],
         type=np.dtype(np.float64),
         unit=('cm^2'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'))
 
     mass_coverage = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007245'],
         type=np.dtype(np.float64),
         unit=('ug/cm^2'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ug/cm^2'))
@@ -445,9 +447,11 @@ class CENOMESample(CESample):
         section_def=SampleIDCENOMEdate)
 
     substrate = SubSection(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000024'],
         section_def=SubstrateProperties)
 
     synthesis = SubSection(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000045'],
         section_def=CatalystSynthesis, repeats=True)
 
     def normalize(self, archive, logger):
@@ -456,6 +460,10 @@ class CENOMESample(CESample):
 
 
 class Electrode(CESample):
+
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007201'])
+
     location = Quantity(
         type=str,
         a_eln=dict(
@@ -470,6 +478,10 @@ class Electrode(CESample):
 
 
 class Equipment(Entity):
+
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000061'])
+
     location = Quantity(
         type=str,
         a_eln=dict(
@@ -484,14 +496,21 @@ class Equipment(Entity):
 
 
 class Electrolyte(CESample):
+
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007224']
+    )
+
     ph_value = Quantity(
         type=np.dtype(np.float64),
         a_eln=dict(component='NumberEditQuantity', label="pH Value"))
 
     solvent = SubSection(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007246'],
         section_def=PubChemPureSubstanceSection)
 
     substances = SubSection(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000062'],
         section_def=SubstanceWithConcentration, repeats=True)
 
     def normalize(self, archive, logger):
@@ -510,15 +529,22 @@ class Electrolyte(CESample):
 
 
 class Purging(ArchiveSection):
+
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007225'],
+    )
+
     gas = SubSection(
         section_def=PubChemPureSubstanceSection)
 
     temperature = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007227'],
         type=np.dtype(np.float64),
         unit="°C",
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
 
     time = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000112'],
         type=np.dtype(np.float64),
         unit="minute",
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='minute'))
@@ -533,9 +559,11 @@ class EnvironmentReference(CompositeSystemReference):
 
 class Environment(Electrolyte):
     purging = SubSection(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007225'],
         section_def=Purging)
 
     other_environments = SubSection(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007223'],
         section_def=EnvironmentReference, repeats=True)
 
     def normalize(self, archive, logger):

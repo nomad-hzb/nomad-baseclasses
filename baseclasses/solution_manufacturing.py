@@ -18,6 +18,7 @@ class SolutionManufacturing(Activity):
         hide=["ending_time", "batch", "lab_id", "steps", "instruments"]))
 
     solutions = Quantity(
+        links=['http://purl.obolibrary.org/obo/CHEBI_75958'],
         type=Reference(PrecursorSolution.m_def),
         shape=['*'],
         a_eln=dict(component='ReferenceEditQuantity'))
