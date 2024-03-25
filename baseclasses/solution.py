@@ -50,27 +50,27 @@ class SolutionChemical(ArchiveSection):
         section_def=PubChemPureSubstanceSection)
 
     chemical_volume = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000918','https://purl.archive.org/tfsco/TFSCO_00002158'],
+        links=['http://purl.obolibrary.org/obo/PATO_0000918', 'https://purl.archive.org/tfsco/TFSCO_00002158'],
         type=np.dtype(np.float64),
-        unit=('ml'),
+        # unit=('ml'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'))
 
     chemical_mass = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000125','https://purl.archive.org/tfsco/TFSCO_00005020'],
+        links=['http://purl.obolibrary.org/obo/PATO_0000125', 'https://purl.archive.org/tfsco/TFSCO_00005020'],
         type=np.dtype(np.float64),
-        unit=('mg'),
+        # unit=('mg'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mg'))
 
     concentration_mass = Quantity(
         links=['http://purl.obolibrary.org/obo/PATO_0000033'],
         type=np.dtype(np.float64),
-        unit=('mg/ml'),
+        # unit=('mg/ml'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mg/ml'))
 
     concentration_mol = Quantity(
         links=['http://purl.obolibrary.org/obo/PATO_0000033'],
         type=np.dtype(np.float64),
-        unit=('mol/ml'),
+        # unit=('mol/ml'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mmol/ml'))
 
     amount_relative = Quantity(
@@ -117,7 +117,7 @@ class OtherSolution(ArchiveSection):
         a_eln=dict(component='ReferenceEditQuantity', label="Solution Reference"))
 
     solution_volume = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000918','https://purl.archive.org/tfsco/TFSCO_00002158'],
+        links=['http://purl.obolibrary.org/obo/PATO_0000918', 'https://purl.archive.org/tfsco/TFSCO_00002158'],
         type=np.dtype(np.float64),
         unit=('ml'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'))
@@ -174,13 +174,13 @@ class SolutionPreparationStandard(SolutionPreparation):
         ))
 
     temperature = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000146','https://purl.archive.org/tfsco/TFSCO_00002111'],
+        links=['http://purl.obolibrary.org/obo/PATO_0000146', 'https://purl.archive.org/tfsco/TFSCO_00002111'],
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
 
     time = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000165','https://purl.archive.org/tfsco/TFSCO_00005085'],
+        links=['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
         type=np.dtype(
             np.float64),
         unit=('minute'),
@@ -189,7 +189,7 @@ class SolutionPreparationStandard(SolutionPreparation):
             defaultDisplayUnit='minute'))
 
     speed = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000008','https://purl.archive.org/tfsco/TFSCO_00005043'],
+        links=['http://purl.obolibrary.org/obo/PATO_0000008', 'https://purl.archive.org/tfsco/TFSCO_00005043'],
         type=np.dtype(np.float64),
         unit=('Hz'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='rpm'))
@@ -208,7 +208,7 @@ class SolutionPreparationStandard(SolutionPreparation):
 class SolutionPreparationStandardWithSonication(SolutionPreparationStandard):
 
     sonication_time = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000165','https://purl.archive.org/tfsco/TFSCO_00005085'],
+        links=['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
         type=np.dtype(np.float64),
         unit=('second'),
         a_eln=dict(
@@ -235,7 +235,7 @@ class MoltenSalt(ArchiveSection):
         ))
 
     grinding_duration = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0001309','https://purl.archive.org/tfsco/TFSCO_00002006'],
+        links=['http://purl.obolibrary.org/obo/PATO_0001309', 'https://purl.archive.org/tfsco/TFSCO_00002006'],
         type=np.dtype(
             np.float64),
         unit=('second'),
@@ -256,13 +256,13 @@ class SolutionPreparationMoltenSalt(SolutionPreparation):
     crucible_type = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
     heating_temperature = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000146','https://purl.archive.org/tfsco/TFSCO_00002111'],
+        links=['http://purl.obolibrary.org/obo/PATO_0000146', 'https://purl.archive.org/tfsco/TFSCO_00002111'],
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
 
     heating_time = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000165','https://purl.archive.org/tfsco/TFSCO_00005085'],
+        links=['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
         type=np.dtype(
             np.float64),
         unit=('second'),
@@ -271,7 +271,7 @@ class SolutionPreparationMoltenSalt(SolutionPreparation):
             defaultDisplayUnit='minute'))
 
     sample_quantity_after = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000125','http://purl.obolibrary.org/obo/IAO_0000414'],
+        links=['http://purl.obolibrary.org/obo/PATO_0000125', 'http://purl.obolibrary.org/obo/IAO_0000414'],
         type=np.dtype(
             np.float64),
         unit=('g'),
@@ -288,7 +288,7 @@ class SolutionProperties(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity'))
 
     final_volume = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000918','https://purl.archive.org/tfsco/TFSCO_00003000'],
+        links=['http://purl.obolibrary.org/obo/PATO_0000918', 'https://purl.archive.org/tfsco/TFSCO_00003000'],
         type=np.dtype(np.float64),
         unit=('ml'),
         a_eln=dict(
@@ -314,7 +314,7 @@ class WaschingSolvents(ArchiveSection):
         ))
 
     volume = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000918','https://purl.archive.org/tfsco/TFSCO_00002158'],
+        links=['http://purl.obolibrary.org/obo/PATO_0000918', 'https://purl.archive.org/tfsco/TFSCO_00002158'],
         type=np.dtype(np.float64),
         unit=('ml'),
         a_eln=dict(
@@ -356,13 +356,13 @@ class SolutionWaschingFiltration(SolutionWasching):
 
 class SolutionWaschingCentrifuge(SolutionWasching):
     centrifuge_speed = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00002026','https://purl.archive.org/tfsco/TFSCO_00002005'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00002026', 'https://purl.archive.org/tfsco/TFSCO_00002005'],
         type=np.dtype(np.float64),
         unit=('Hz'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='rpm'))
 
     centrifuge_time = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000165','https://purl.archive.org/tfsco/TFSCO_00005085'],
+        links=['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
         type=np.dtype(np.float64),
         unit=('second'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='minute'))
@@ -382,7 +382,7 @@ class SolutionStorage(ArchiveSection):
         a_eln=dict(component='StringEditQuantity'),
     )
     temperature = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000146','https://purl.archive.org/tfsco/TFSCO_00002111'],
+        links=['http://purl.obolibrary.org/obo/PATO_0000146', 'https://purl.archive.org/tfsco/TFSCO_00002111'],
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
@@ -417,13 +417,13 @@ class Solution(CompositeSystem):
         a_eln=dict(component='StringEditQuantity'))
 
     temperature = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000146','https://purl.archive.org/tfsco/TFSCO_00002111'],
+        links=['http://purl.obolibrary.org/obo/PATO_0000146', 'https://purl.archive.org/tfsco/TFSCO_00002111'],
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
 
     time = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000165','https://purl.archive.org/tfsco/TFSCO_00005085'],
+        links=['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
         type=np.dtype(
             np.float64),
         unit=('minute'),
@@ -432,7 +432,7 @@ class Solution(CompositeSystem):
             defaultDisplayUnit='minute'))
 
     speed = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00002026','https://purl.archive.org/tfsco/TFSCO_00002005'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00002026', 'https://purl.archive.org/tfsco/TFSCO_00002005'],
         type=np.dtype(np.float64),
         unit=('Hz'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='rpm'))

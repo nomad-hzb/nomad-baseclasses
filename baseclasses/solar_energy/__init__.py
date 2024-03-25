@@ -23,7 +23,7 @@ from .plmeasurement import PLMeasurement, PLMeasurementLibrary, PLSingleLibraryM
 from .plimaging import PLImaging
 from .uvvismeasurement import UVvisMeasurement, UVvisData, UVvisDataSimple, UVvisMeasurementLibrary, UVvisSingleLibraryMeasurement, UVvisProperties
 from .eqemeasurement import EQEMeasurement, SolarCellEQECustom
-from .time_resolved_photoluminescence import TimeResolvedPhotoluminescence, TRPLProperties
+from .time_resolved_photoluminescence import TimeResolvedPhotoluminescence, TRPLProperties, TimeResolvedPhotoluminescenceMeasurementLibrary, TimeResolvedPhotoluminescenceSingleLibraryMeasurement, TRPLPropertiesBasic, TRPLDataSimple
 from .standardsample import StandardSampleSolarCell, SolarCellProperties
 from .substrate import Substrate
 from .solarcellsample import SolcarCellSample, BasicSampleWithID
