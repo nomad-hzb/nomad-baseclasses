@@ -18,10 +18,11 @@
 
 import numpy as np
 
-from nomad.metainfo import (Quantity, SubSection, Datetime, MEnum)
+from nomad.metainfo import (Quantity, Reference, SubSection, Datetime, MEnum)
 from nomad.datamodel.data import ArchiveSection
 
 from .. import BaseMeasurement
+from baseclasses.chemical_energy import CENECCElectrodeID
 
 class NECCFeedGas(ArchiveSection):
 
@@ -197,7 +198,14 @@ class NECCExperimentalProperties(ArchiveSection):
         shape=[],
         a_eln=dict(component='EnumEditQuantity'))
 
-    # TODO anode and cathode ID
+    # TODO reference the ID here or the CENECCElectrode?
+    anode_id = Quantity(
+        type=Reference(CENECCElectrodeID.m_def),
+        a_eln=dict(component='ReferenceEditQuantity'))
+
+    cathode_id = Quantity(
+        type=Reference(CENECCElectrodeID.m_def),
+        a_eln=dict(component='ReferenceEditQuantity'))
 
     def normalize(self, archive, logger):
 
