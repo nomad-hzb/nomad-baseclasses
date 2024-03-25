@@ -155,67 +155,6 @@ def create_id(archive, lab_id_base):
         if not archive.data.lab_id:
             archive.data.lab_id = lab_id
 
-def get_next_recipe_number(data, entry_id):
-    '''Checks the last digits of a recipe id and returns the next higher one'''
-    recipe_numbers = []
-    for entry in data:
-        recipe_ids = entry["results"]["eln"]["recipe_ids"]
-        if entry["entry_id"] == entry_id and recipe_ids[0].split(
-                "_")[-1].isdigit() and correct_lab_id(recipe_ids[0]):
-            return int(recipe_ids[0].split("_")[-1])
-        recipe_numbers.extend([int(recipe_id.split(
-            "_")[-1]) for recipe_id in recipe_ids if correct_lab_id(recipe_id)])
-    return max(recipe_numbers) + 1 if recipe_numbers else 1
-
-def create_recipe_id(archive, recipe_type, element, deposition_method):
-    recipe_type_mapping = {
-        'Cathode Recipe (CR)': 'CR',
-        'Anode Recipe (AR)': 'AR'
-    }
-    deposition_method_mapping = {
-        'Spray Dep': 'SD',
-        'Ultrasonic Nozzle': 'UN',
-        'Dropcast': 'DC'
-    }
-    recipe_id_list = [
-        recipe_type_mapping.get(recipe_type),
-        element,
-        deposition_method_mapping.get(deposition_method)]
-
-    recipe_id_base = '_'.join(recipe_id_list)
-
-    from nomad.search import search
-    from nomad.app.v1.models import MetadataPagination
-
-    query = {'results.eln.recipe_ids': recipe_id_base}
-    pagination = MetadataPagination()
-    pagination.page_size = 9999
-    search_result = search(owner='all', query=query, pagination=pagination,
-                           user_id=archive.metadata.main_author.user_id)
-    recipe_number = get_next_recipe_number(search_result.data, archive.metadata.entry_id)
-
-    if recipe_id_base is not None and recipe_number is not None:
-        recipe_id = f"{recipe_id_base}_{recipe_number:04d}"
-        if not archive.data.recipe_id:
-            archive.data.recipe_id = recipe_id
-
-def create_electrode_id(archive, lab_id_base):
-    from nomad.search import search
-    from nomad.app.v1.models import MetadataPagination
-
-    query = {'results.eln.lab_ids': lab_id_base}
-    pagination = MetadataPagination()
-    pagination.page_size = 9999
-    search_result = search(owner='all', query=query, pagination=pagination,
-                           user_id=archive.metadata.main_author.user_id)
-    project_sample_number = get_next_project_sample_number(search_result.data, archive.metadata.entry_id)
-
-    if lab_id_base is not None and project_sample_number is not None:
-        lab_id = f"{lab_id_base}_{project_sample_number:04d}"
-        if not archive.data.lab_id:
-            archive.data.lab_id = lab_id
-
-
 class SampleIDCE2(ReadableIdentifiersCustom):
     m_def = Section(
         a_eln=dict(
@@ -350,51 +289,6 @@ class SampleIDCENOMEdate(SampleIDCE2date):
 
     def normalize(self, archive, logger):
         super(SampleIDCENOMEdate, self).normalize(archive, logger)
-
-
-class NECCElectrodeID(ReadableIdentifiersCustom):
-    m_def = Section(
-        a_eln=dict(
-            hide=["sample_owner", "sample_short_name", "sample_id", "short_name"]
-        ))
-
-    institute = Quantity(
-        type=str,
-        description='Alias/short name of the home institute of the owner, i.e. *HZB*.',
-        default='CE-NECC',
-        a_eln=dict(
-            component='EnumEditQuantity',
-            props=dict(
-                suggestions=[
-                    'CE-NECC'])))
-
-    owner = Quantity(
-        type=str,
-        default='Matthew Mayer',
-        a_eln=dict(
-            component='EnumEditQuantity',
-            props=dict(
-                suggestions=[
-                    'Matthew Mayer',
-                    'Siddharth Gupta',
-                    'Christina Roukounaki',
-                    'Gumaa El-Nagar',
-                    'Uttam Gupta',
-                    ])))
-
-    def normalize(self, archive, logger):
-        super(NECCElectrodeID, self).normalize(archive, logger)
-
-        if archive.data.lab_id:
-            return
-        if not self.datetime:
-            from datetime import date
-            self.datetime = date.today()
-
-        if self.institute and self.owner and self.datetime:
-            self.lab_id = build_initial_id(self.institute, self.owner, self.datetime)
-
-        create_electrode_id(archive, self.lab_id)
 
 
 class SampleIDCENOME(SampleIDCE2):
@@ -567,86 +461,7 @@ class CENOMESample(CESample):
         super(CENOMESample, self).normalize(archive, logger)
         export_lab_id(archive, self.lab_id)
 
-class CENECCElectrode(CESample):
-    # TODO class name maybe CENECCSample or something with 'catalyst detail'
-    # TODO is it ok to combine cathode and electrode like this?
 
-    datetime = Quantity(
-        type=Datetime,
-        description='The date and time associated with this section.',
-        a_eln=dict(
-            component='DateTimeEditQuantity',
-            label="Date of preparation/purchase"))
-
-    recipe_type = Quantity(
-        type=MEnum(['Cathode Recipe (CR)', 'Anode Recipe (AR)']),
-        a_eln=dict(
-            component='EnumEditQuantity',
-        ))
-
-    recipe_id = Quantity(
-        type=str,
-        shape=[],
-        description='Please provide recipe type, element and deposition method to automatically set this ID.',
-        a_eln=dict(component='StringEditQuantity'))
-
-    chemical_composition_or_formulas = Quantity(
-        type=str,
-        shape=[],
-        description=('A list of the elements involved'),
-        a_eln=dict(component='StringEditQuantity', label='Element'))
-
-    # TODO is there way to get descriptions or keys from enum in normalize?
-    deposition_method = Quantity(
-        type=MEnum(SD='Spray Dep', UN='Ultrasonic Nozzle', DC='Dropcast'),
-        shape=[],
-        a_eln=dict(
-            component='EnumEditQuantity',
-        ))
-
-    deposition_temperature = Quantity(
-        type=np.dtype(np.float64),
-        unit=('°C'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
-
-    n2_deposition_pressure = Quantity(
-        type=np.dtype(np.float64),
-        unit=('bar'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='bar'))
-
-    mass_loading = Quantity(
-        type=np.dtype(np.float64),
-        unit=('mg/cm^2'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mg/cm^2'))
-
-    description = Quantity(
-        type=str,
-        description='Any information that cannot be captured in the other fields.',
-        a_eln=dict(
-            component='RichTextEditQuantity',
-            label='Remarks'))
-
-    # TODO maybe rename to sample_id
-    # TODO originally in the excel the recipe id should be included in this id
-    electrode_id = SubSection(
-        section_def=NECCElectrodeID)
-
-    # TODO check if substrate_type and substrate_dimension is all that necc group wants (right now one empty field in excel)
-    substrate = SubSection(
-        section_def=SubstrateProperties)
-
-    solvents_and_ionomer = SubSection(
-        section_def=CatalystSynthesis, repeats=True)
-
-    def normalize(self, archive, logger):
-        if self.recipe_type is not None and self.chemical_composition_or_formulas is not None and self.deposition_method is not None:
-            create_recipe_id(
-                archive=archive,
-                recipe_type=self.recipe_type,
-                element=self.chemical_composition_or_formulas,
-                deposition_method=self.deposition_method)
-        super(CENECCElectrode, self).normalize(archive, logger)
-        export_lab_id(archive, self.lab_id)
 
 
 class Electrode(CESample):    
