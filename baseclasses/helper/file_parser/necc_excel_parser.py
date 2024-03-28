@@ -50,7 +50,9 @@ def read_thermocouple_data(file):
 def read_gaschromatography_data(file):
     data = pd.read_excel(file, sheet_name='Raw Data', header=1)
 
-    experiment_name = data.loc[0, 'Experiment name']
+    instrument_file_names = data.loc[:, data.columns.str.startswith('Experiment name')]
+    instrument_file_names.dropna(axis=0, how='all', inplace=True)
+
     data['DateTime'] = pd.to_datetime(data['Time '].astype(str))
     data['DateTime'] = data['Date'] + pd.to_timedelta(data['DateTime'].dt.strftime('%H:%M:%S'))
     datetimes = data['DateTime'].dropna()
@@ -64,7 +66,7 @@ def read_gaschromatography_data(file):
     areas.dropna(axis=0, how='all', inplace=True)
     ppms.dropna(axis=0, how='all', inplace=True)
 
-    return experiment_name, datetimes, gas_types, retention_times, areas, ppms
+    return instrument_file_names, datetimes, gas_types, retention_times, areas, ppms
 
 def read_results_data(file):
     data = pd.read_excel(file, sheet_name='Results', header=0)
@@ -90,12 +92,7 @@ def read_results_data(file):
 def read_properties(file):
     data = pd.read_excel(file, sheet_name='Experimental details', index_col=0, header=None)
 
-    # TODO add missing attributes
-    #experiment_id =
-    # user
-    #cathode
-    #anode
-
+    # experiment_id, user, cathode, anode do not get parsed
     experimental_properties_dict = {
         'cell_type': data.loc['Cell type ', 1],
         'has_reference_electrode': data.loc['Reference Electrode (y/n)', 1] == 'y',
