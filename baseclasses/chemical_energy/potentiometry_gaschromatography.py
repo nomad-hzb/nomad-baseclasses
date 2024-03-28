@@ -18,8 +18,9 @@
 
 import numpy as np
 
-from nomad.metainfo import (Quantity, Reference, SubSection, Datetime, MEnum)
+from nomad.metainfo import (Quantity, Reference, Section, SubSection, Datetime, MEnum)
 from nomad.datamodel.data import ArchiveSection
+from nomad.datamodel.metainfo.plot import PlotSection
 
 from .. import BaseMeasurement
 from baseclasses.chemical_energy import CENECCElectrodeID
@@ -44,8 +45,17 @@ class NECCExperimentalProperties(ArchiveSection):
 
     experiment_id = Quantity(
         type=str,
-        default='User_Date_Number',
+        description='This ID is generated automatically and has the structure User_Date_Number.',
         a_eln=dict(component='StringEditQuantity', label='Experiment id'))
+
+    # TODO reference the ID here or the CENECCElectrode?
+    anode_id = Quantity(
+        type=Reference(CENECCElectrodeID.m_def),
+        a_eln=dict(component='ReferenceEditQuantity'))
+
+    cathode_id = Quantity(
+        type=Reference(CENECCElectrodeID.m_def),
+        a_eln=dict(component='ReferenceEditQuantity'))
 
     fill_in_default = Quantity(
         type=bool,
@@ -186,6 +196,11 @@ class NECCExperimentalProperties(ArchiveSection):
         description='Specified in ppm',
         a_eln=dict(component='NumberEditQuantity'))
 
+    chronoanalysis_method = Quantity(
+        type=MEnum('Chronoamperometry (CA)', 'Chronopotentiometry (CP)'),
+        shape=[],
+        a_eln=dict(component='EnumEditQuantity'))
+
     remarks = Quantity(
         type=str,
         a_eln=dict(
@@ -193,21 +208,9 @@ class NECCExperimentalProperties(ArchiveSection):
             label="Remarks"
         ))
 
-    chronoanalysis_method = Quantity(
-        type=MEnum('Chronoamperometry (CA)', 'Chronopotentiometry (CP)'),
-        shape=[],
-        a_eln=dict(component='EnumEditQuantity'))
-
-    # TODO reference the ID here or the CENECCElectrode?
-    anode_id = Quantity(
-        type=Reference(CENECCElectrodeID.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
-
-    cathode_id = Quantity(
-        type=Reference(CENECCElectrodeID.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
-
     def normalize(self, archive, logger):
+
+        # TODO experiment ID
 
         if self.has_reference_electrode is False:
             self.reference_electrode_type = 'N/A'
@@ -236,9 +239,9 @@ class NECCExperimentalProperties(ArchiveSection):
 
 class GasChromatographyOutput(ArchiveSection):
 
-    experiment_name = Quantity(
+    instrument_file_name = Quantity(
         type=str,
-        a_eln=dict(component='StringEditQuantity'))
+        shape=['*'])
 
     datetime = Quantity(
         type=Datetime,
@@ -299,7 +302,39 @@ class PotentiostatOutput(ArchiveSection):
                 "editable": True, "scrollZoom": True}}])
 
 
-class ThermocoupleOutput(ArchiveSection):
+class ThermocoupleOutput(PlotSection, ArchiveSection):
+    m_def = Section(
+        a_plotly_graph_object=[
+            {
+                'label': 'Anode/Cathode Temperatures',
+                'data': [{
+                    'method': 'line',
+                    'name': 'Cathode',
+                    'x': '#datetime',
+                    'y': '#temperature_cathode'
+                }, {
+                    'method': 'line',
+                    'name': 'Anode',
+                    'x': '#datetime',
+                    'y': '#temperature_anode'
+                }],
+                'layout': {
+                    'title': {
+                        'text': 'Anode and Cathode Temperature over Time'
+                    },
+                    'xaxis': {
+                        'title': {
+                            'text': 'Time'
+                        }
+                    },
+                    'yaxis': {
+                        'title': {
+                            'text': 'Temperature'
+                        }
+                    },
+                    'showlegend': True
+                }
+            }])
 
     time = Quantity(
         type=np.dtype(np.float64),
@@ -331,10 +366,10 @@ class ThermocoupleOutput(ArchiveSection):
                 "editable": True, "scrollZoom": True}}])
 
     temperature_anode = Quantity(
-        type=np.dtype(
-            np.float64), shape=['*'], unit='°C', a_plot=[
+        type=np.dtype(np.float64), shape=['*'], unit='°C',
+        a_plot=[
             {
-                "label": "Temperature Anode", 'x': 'time', 'y': 'temperature_anode', 'layout': {
+                "label": "Temperature Anode", 'x': 'datetime', 'y': 'temperature_anode', 'layout': {
                 'yaxis': {
                     "fixedrange": False}, 'xaxis': {
                     "fixedrange": False}}, "config": {
