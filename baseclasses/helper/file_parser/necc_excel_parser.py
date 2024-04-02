@@ -73,6 +73,8 @@ def read_results_data(file):
 
     total_flow_rate = data['Total flow rate (ml/min)'].dropna()
     total_fe = data['Total FE (%)'].dropna()
+    cell_current = data['Current(mA)'].dropna()
+    cell_voltage = data['Cell Voltage'].dropna()
 
     gas_measurements = []
     current_column_headers = [col for col in data.columns if col.endswith("I (mA)")]
@@ -87,7 +89,7 @@ def read_results_data(file):
             faradaic_efficiency=fe,
         ))
 
-    return total_flow_rate, total_fe, gas_measurements
+    return total_flow_rate, total_fe, cell_current, cell_voltage, gas_measurements
 
 def read_properties(file):
     data = pd.read_excel(file, sheet_name='Experimental details', index_col=0, header=None)

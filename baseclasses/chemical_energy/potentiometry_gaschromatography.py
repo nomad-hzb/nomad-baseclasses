@@ -45,7 +45,7 @@ class NECCExperimentalProperties(ArchiveSection):
 
     experiment_id = Quantity(
         type=str,
-        description='This ID is generated automatically and has the structure User_Date_Number.',
+        description='This ID is generated automatically in the format User_Date_Number.',
         a_eln=dict(component='StringEditQuantity', label='Experiment id'))
 
     # TODO reference the ID here or the CENECCElectrode?
@@ -431,6 +431,16 @@ class PotentiometryGasChromatographyResults(ArchiveSection):
             defaultDisplayUnit='ml/minute',
             props=dict(minValue=0)
         ))
+
+    cell_current = Quantity(
+        type=np.dtype(np.float64),
+        shape=['*'],
+        unit='mA')
+
+    cell_voltage = Quantity(
+        type=np.dtype(np.float64),
+        shape=['*'],
+        unit='V')
 
     gas_results = SubSection(
         section_def=GasFEResults, repeats=True)
