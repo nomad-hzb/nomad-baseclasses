@@ -19,6 +19,7 @@
 import numpy as np
 
 from nomad.metainfo import (Quantity, Reference, SubSection, Section, Datetime, MEnum)
+from nomad.datamodel.results import Results, Material
 
 from .. import ReadableIdentifiersCustom
 
@@ -115,6 +116,7 @@ class CENECCElectrodeRecipe(CESample):
         section_def=CatalystSynthesis, repeats=True)
 
     def normalize(self, archive, logger):
+        self.chemical_composition_or_formulas = self.electrode_recipe_id.element
         super(CENECCElectrodeRecipe, self).normalize(archive, logger)
         export_lab_id(archive, self.lab_id)
 
@@ -183,5 +185,6 @@ class CENECCElectrode(CESample):
             label='Remarks'))
 
     def normalize(self, archive, logger):
+        self.chemical_composition_or_formulas = self.electrode_id.recipe.electrode_recipe_id.element
         super(CENECCElectrode, self).normalize(archive, logger)
         export_lab_id(archive, self.lab_id)
