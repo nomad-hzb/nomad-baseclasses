@@ -42,6 +42,9 @@ class UVvisDataSimple(ArchiveSection):
         type=np.dtype(
             np.float64), shape=['*'])
 
+    def normalize(self, archive, logger):
+        super(UVvisDataSimple, self).normalize(archive, logger)
+
 
 class UVvisData(UVvisDataSimple):
     m_def = Section(label_quantity='name',
@@ -68,6 +71,9 @@ class UVvisData(UVvisDataSimple):
                         "fixedrange": False}, 'xaxis': {
                             "fixedrange": False}}, "config": {
                     "editable": True, "scrollZoom": True}}])
+
+    def normalize(self, archive, logger):
+        super(UVvisData, self).normalize(archive, logger)
 
 
 class UVvisProperties(ArchiveSection):
