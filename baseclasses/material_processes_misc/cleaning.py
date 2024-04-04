@@ -31,7 +31,6 @@ from nomad.datamodel.metainfo.basesections import PubChemPureSubstanceSection
 
 class CleaningTechnique(ArchiveSection):
     time = Quantity(
-        #Link to ontology class 'time' and 'time setting datum'
         links = ['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
         type=np.dtype(
             np.float64),
@@ -44,25 +43,20 @@ class CleaningTechnique(ArchiveSection):
 class SolutionCleaning(CleaningTechnique):
     '''Base class for cleaning of a sample'''
     m_def = Section(
-        #Link to ontology class 'solvent cleaning'
         links = ['https://purl.archive.org/tfsco/TFSCO_00001042'],
         label_quantity='name')
     name = Quantity(
         type=str
     )
     solvent = Quantity(
-        #Link to ontology class 'solvent'
         links = ['https://purl.archive.org/tfsco/TFSCO_00000026'],
         type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     solvent_2 = SubSection(
-        #Link to ontology class 'solvent'
-        links = ['https://purl.archive.org/tfsco/TFSCO_00000026'],
         section_def=PubChemPureSubstanceSection)
 
     temperature = Quantity(
-        #Link to ontology class 'temperature' and 'temperature setting datum'
         links = ['http://purl.obolibrary.org/obo/PATO_0000146','https://purl.archive.org/tfsco/TFSCO_00002111'],
         type=np.dtype(np.float64),
         unit=('°C'),
@@ -82,12 +76,10 @@ class SolutionCleaning(CleaningTechnique):
 class UVCleaning(CleaningTechnique):
     '''Base class for cleaning of a sample'''
     m_def = Section(
-        #Link to ontology class 'uv cleaning'
         links = ['https://purl.archive.org/tfsco/TFSCO_00001043'],
     )
 
     pressure = Quantity(
-        #Link to ontology class 'presssure', Link to ontology class 'pressure setting datum'
         links = ['http://purl.obolibrary.org/obo/PATO_0001025','https://purl.archive.org/tfsco/TFSCO_00005040'],
         type=np.dtype(
             np.float64),
@@ -102,12 +94,10 @@ class UVCleaning(CleaningTechnique):
 class PlasmaCleaning(CleaningTechnique):
     '''Base class for cleaning of a sample'''
     m_def = Section(
-        #Link to ontology class 'plasma cleaning'
         links = ['https://purl.archive.org/tfsco/TFSCO_00001044'],
     )
 
     pressure = Quantity(
-        #Link to ontology class 'presssure', Link to ontology class 'pressure setting datum'
         links = ['http://purl.obolibrary.org/obo/PATO_0001025','https://purl.archive.org/tfsco/TFSCO_00005040'],
         type=np.dtype(
             np.float64),
@@ -119,7 +109,6 @@ class PlasmaCleaning(CleaningTechnique):
                 minValue=0)))
 
     power = Quantity(
-        #Link to ontology class 'power', Link to ontology class 'power setting datum'
         links = ['http://purl.obolibrary.org/obo/PATO_0001024','https://purl.archive.org/tfsco/TFSCO_00002104'],
         type=np.dtype(
             np.float64),
@@ -131,7 +120,6 @@ class PlasmaCleaning(CleaningTechnique):
                 minValue=0)))
 
     plasma_type = Quantity(
-        #Link to ontology class 'plasma'
         links = ['https://purl.archive.org/tfsco/TFSCO_00005019'],
         type=str,
         shape=[],
@@ -144,7 +132,6 @@ class PlasmaCleaning(CleaningTechnique):
 
 class Cleaning(BaseProcess):
     m_def = Section(
-        #Link to ontology class 'cleaning'
         links = ['https://purl.archive.org/tfsco/TFSCO_00000068'],
         a_eln=dict(
             hide=[

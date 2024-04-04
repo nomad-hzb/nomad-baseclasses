@@ -237,7 +237,6 @@ class PotentiostatMeasurement(BaseMeasurement):
         a_eln=dict(component='ReferenceEditQuantity'))
 
     pretreatment = SubSection(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0000122'],
         section_def=VoltammetryCycle)
 
     setup_parameters = SubSection(
