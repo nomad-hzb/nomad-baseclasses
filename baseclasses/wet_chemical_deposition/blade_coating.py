@@ -32,7 +32,6 @@ from .wet_chemical_deposition import WetChemicalDeposition
 class BladeCoating(WetChemicalDeposition):
     '''Base class for blade coating of a sample'''
     m_def = Section(
-        # Link to ontology class 'blade coating'
         # links = ['http://purl.obolibrary.org/obo/CHMO_0001471'],
     )
 
