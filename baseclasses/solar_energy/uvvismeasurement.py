@@ -17,10 +17,6 @@
 #
 
 import numpy as np
-import os
-from datetime import datetime
-import pandas as pd
-
 
 from nomad.metainfo import (
     Quantity,
@@ -41,9 +37,6 @@ class UVvisDataSimple(ArchiveSection):
     intensity = Quantity(
         type=np.dtype(
             np.float64), shape=['*'])
-
-    def normalize(self, archive, logger):
-        super(UVvisDataSimple, self).normalize(archive, logger)
 
 
 class UVvisData(UVvisDataSimple):
@@ -71,9 +64,6 @@ class UVvisData(UVvisDataSimple):
                         "fixedrange": False}, 'xaxis': {
                             "fixedrange": False}}, "config": {
                     "editable": True, "scrollZoom": True}}])
-
-    def normalize(self, archive, logger):
-        super(UVvisData, self).normalize(archive, logger)
 
 
 class UVvisProperties(ArchiveSection):
