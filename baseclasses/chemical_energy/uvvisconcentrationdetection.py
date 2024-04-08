@@ -20,7 +20,6 @@ import numpy as np
 
 from nomad.metainfo import Quantity, Reference, Section, SubSection, Datetime
 from nomad.datamodel.metainfo.basesections import Analysis, SectionReference
-from nomad.datamodel.data import ArchiveSection
 
 from nomad.datamodel.metainfo.plot import PlotSection, PlotlyFigure
 import plotly.graph_objects as go
@@ -46,21 +45,23 @@ class UVvisConcentrationDetection(Analysis, PlotSection):
 
     minimum_peak_value = Quantity(
         type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity'))
+        description='The calibration curve can only be applied to peak intensities that are higher than this value.')
 
     maximum_peak_value = Quantity(
         type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity'))
+        description='The calibration curve can only be applied to peak intensities that are lower than this value.')
 
     slope = Quantity(
         type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity'))
+        description='The slope of the calibration curve.')
 
     intercept = Quantity(
         type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity'))
+        description='The intercept of the calibration curve.')
 
-    # TODO maybe add R² value?
+    r2 = Quantity(
+        type=np.dtype(np.float64),
+        description='The R**2 to assess how well the calibration curve reflects the underlying intensity-concentration values.')
 
     def normalize(self, archive, logger):
         super(UVvisConcentrationDetection, self).normalize(archive, logger)
@@ -80,12 +81,14 @@ class UVvisConcentrationDetection(Analysis, PlotSection):
             self.minimum_peak_value = min(peak_values)
             self.maximum_peak_value = max(peak_values)
 
-            # TODO assure correct unit
-            # concentration_values = np.array([measure.to_base_units().magnitude for measure in concentrations])
-            concentration_values = np.array([measure.magnitude for measure in concentrations])
-
             try:
-                self.slope, self.intercept = np.polyfit(peak_values, concentration_values, 1)
+                concentration_values = np.array([measure.magnitude for measure in concentrations])
+                (self.slope, self.intercept), residuals, _, _, _ = np.polyfit(peak_values, concentration_values, 1,
+                                                                              full=True)
+                mean_value = np.mean(concentration_values)
+                sum_squares_total = sum((measure - mean_value)**2 for measure in concentration_values)
+                sum_squares_residuals = residuals[0] if len(residuals > 0) else 0
+                self.r2 = 1-(sum_squares_residuals/sum_squares_total)
             except BaseException:
                 self.slope = 0
                 self.intercept = 0

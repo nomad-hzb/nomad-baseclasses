@@ -17,27 +17,32 @@
 #
 
 import numpy as np
+from scipy import signal
 
 from nomad.metainfo import Quantity, Reference, Section, SubSection, Datetime
 from nomad.datamodel.metainfo.basesections import Analysis
 
+from nomad.datamodel.metainfo.plot import PlotSection, PlotlyFigure
+import plotly.graph_objects as go
+
 from baseclasses.solar_energy import UVvisData, UVvisMeasurement
 from ..helper.utilities import get_reference
 
-class UVvisDataConcentration(UVvisData):
+class UVvisDataConcentration(UVvisData, PlotSection):
 
     concentration = Quantity(
         type=np.dtype(np.float64),
         unit=('ug/ml'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ug/ml'))
 
-    peak_area = Quantity(
-        type=np.dtype(np.float64),
-        description='The integral of the wavelength-intensity graph. This area is automatically computed when saving.')
-
     peak_value = Quantity(
         type=np.dtype(np.float64),
         description='The peak value of the wavelength-intensity graph. It gets automatically computed when saving.')
+
+    peak_x_value = Quantity(
+        type=np.dtype(np.float64),
+        unit='nm',
+        description='The wavelength value of the automatically computed peak.')
 
     chemical_composition_or_formulas = Quantity(
         type=str,
@@ -50,10 +55,22 @@ class UVvisDataConcentration(UVvisData):
         a_eln=dict(component='ReferenceEditQuantity', label='Concentration Detection'))
 
     def normalize(self, archive, logger):
-        # TODO is np.trapz the right thing to use? Should area have a unit?
         if self.intensity is not None:
-            self.peak_value = np.max(self.intensity)
-            self.peak_area = np.trapz(y=self.intensity, x=self.wavelength.magnitude)
+            # TODO is data always sorted along xvalues for peak finding algorithm?
+            peak_indices, _ = signal.find_peaks(self.intensity)
+            # TODO think about peak finding algorithm (e.g. for NH3 peak x should always be at ~650nm)
+            peak_widths, _, _, _ = signal.peak_widths(self.intensity, peak_indices)
+            index_max = peak_indices[np.argmax(peak_widths)]
+            self.peak_value = self.intensity[index_max]
+            self.peak_x_value = self.wavelength[index_max]
+
+            fig = go.Figure(
+                data=[go.Scatter(name='Calibration Curve', x=self.wavelength, y=self.intensity, mode='lines')])
+            fig.add_traces(go.Scatter(x=[self.peak_x_value.magnitude], y=[self.peak_value], mode='markers'))
+            fig.update_layout(xaxis_title='Peak Values',
+                              yaxis_title='Concentrations',
+                              title_text='Calibration Curve')
+            self.figures = [PlotlyFigure(label='figure 1', figure=fig.to_plotly_json())]
 
         if self.concentration is None:
             self.concentration, self.reference = getConcentrationData(archive, logger,
