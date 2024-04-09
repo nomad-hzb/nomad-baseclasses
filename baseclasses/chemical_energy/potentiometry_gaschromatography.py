@@ -28,9 +28,16 @@ from baseclasses.chemical_energy import CENECCElectrodeID
 class NECCFeedGas(ArchiveSection):
 
     name = Quantity(
-        type=MEnum('CO2', 'CO', 'H2'),
+        type=str,
         shape=[],
-        a_eln=dict(component='EnumEditQuantity'))
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=[
+                    'CO2',
+                    'CO',
+                    'H2'
+                ])))
 
     flow_rate = Quantity(
         type=np.dtype(np.float64),
@@ -196,6 +203,7 @@ class NECCExperimentalProperties(ArchiveSection):
         description='Specified in ppm',
         a_eln=dict(component='NumberEditQuantity'))
 
+    # TODO Should an empty option also be specified? If excel is read and CP/CA is not set, CP is set automatically.
     chronoanalysis_method = Quantity(
         type=MEnum('Chronoamperometry (CA)', 'Chronopotentiometry (CP)'),
         shape=[],
@@ -400,17 +408,13 @@ class GasFEResults(ArchiveSection):
                     "fixedrange": False}}, "config": {
                 "editable": True, "scrollZoom": True}}])
 
-    mean_fe = Quantity(
-        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity'))
+    mean_fe = Quantity(type=np.dtype(np.float64))
 
-    variance_fe = Quantity(
-        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity'))
+    variance_fe = Quantity(type=np.dtype(np.float64))
 
-    minimum_fe = Quantity(
-        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity'))
+    minimum_fe = Quantity(type=np.dtype(np.float64))
 
-    maximum_fe = Quantity(
-        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity'))
+    maximum_fe = Quantity(type=np.dtype(np.float64))
 
     def normalize(self, archive, logger):
         self.mean_fe = np.mean(self.faradaic_efficiency)
@@ -425,12 +429,7 @@ class PotentiometryGasChromatographyResults(ArchiveSection):
         type=np.dtype(
             np.float64),
         shape=['*'],
-        unit=('ml/minute'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='ml/minute',
-            props=dict(minValue=0)
-        ))
+        unit=('ml/minute'))
 
     cell_current = Quantity(
         type=np.dtype(np.float64),
