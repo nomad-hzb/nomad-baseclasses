@@ -27,11 +27,19 @@ from baseclasses.chemical_energy import NECCFeedGas, GasFEResults
 def read_potentiostat_data(file):
     data = pd.read_excel(file, sheet_name='Raw Data', header=1)
 
-    date_time = pd.to_datetime(data['time/s'])
+    date_time = pd.to_datetime(data['time/s']).dropna()
     # TODO compute real time/s
     time = 0
-    current = data['<I>/mA']
-    working_electrode_potential = data['Ewe/V']
+    # TODO decide with Christina which col name to use
+    if {'<I>/mA', 'Ewe/V'}.issubset(data.columns):
+        current = data['<I>/mA'].dropna()
+        working_electrode_potential = data['Ewe/V'].dropna()
+    elif {'I/mA', '<Ewe/V>'}.issubset(data.columns):
+        current = data['I/mA'].dropna()
+        working_electrode_potential = data['<Ewe/V>'].dropna()
+    else:
+        current = None
+        working_electrode_potential = None
 
     return date_time, time, current, working_electrode_potential
 
@@ -39,6 +47,7 @@ def read_thermocouple_data(file):
     data = pd.read_excel(file, sheet_name='Raw Data', header=3)
 
     data['DateTime'] = pd.to_datetime(data['Time Stamp Local'].astype(str))
+    data['Date'] = pd.to_datetime(data['Date'].astype(str))
     data['DateTime'] = data['Date'] + pd.to_timedelta(data['DateTime'].dt.strftime('%H:%M:%S'))
     date_time = data['DateTime'].dropna()
     pressure = data['bar(g)'].dropna()
@@ -54,6 +63,7 @@ def read_gaschromatography_data(file):
     instrument_file_names.dropna(axis=0, how='all', inplace=True)
 
     data['DateTime'] = pd.to_datetime(data['Time '].astype(str))
+    data['Date'] = pd.to_datetime(data['Date'].astype(str))
     data['DateTime'] = data['Date'] + pd.to_timedelta(data['DateTime'].dt.strftime('%H:%M:%S'))
     datetimes = data['DateTime'].dropna()
 
