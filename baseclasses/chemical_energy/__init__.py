@@ -39,5 +39,5 @@ from .potentiostat_measurement import PotentiostatMeasurement, PotentiostatSetup
 from .phasefluorometryoxygen import PhaseFluorometryOxygen
 from .pumpratemeasurement import PumpRateMeasurement
 from .potentiometry_gaschromatography import (PotentiometryGasChromatographyMeasurement, NECCExperimentalProperties,
-                                              GasChromatographyOutput, PotentiostatOutput, ThermocoupleOutput,
+                                              GasChromatographyMeasurement, PotentiostatMeasurement, ThermocoupleMeasurement,
                                               GasFEResults, PotentiometryGasChromatographyResults, NECCFeedGas)
