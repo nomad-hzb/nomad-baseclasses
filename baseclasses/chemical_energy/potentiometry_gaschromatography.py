@@ -245,7 +245,7 @@ class NECCExperimentalProperties(ArchiveSection):
             self.chronoanalysis_method = 'Chronopotentiometry (CP)'
 
 
-class GasChromatographyOutput(ArchiveSection):
+class GasChromatographyMeasurement(ArchiveSection):
 
     instrument_file_name = Quantity(
         type=str,
@@ -276,7 +276,7 @@ class GasChromatographyOutput(ArchiveSection):
         shape=['*'])
 
 
-class PotentiostatOutput(ArchiveSection):
+class PotentiostatMeasurement(ArchiveSection):
 
     datetime = Quantity(
         type=Datetime,
@@ -310,7 +310,7 @@ class PotentiostatOutput(ArchiveSection):
                 "editable": True, "scrollZoom": True}}])
 
 
-class ThermocoupleOutput(PlotSection, ArchiveSection):
+class ThermocoupleMeasurement(PlotSection, ArchiveSection):
     m_def = Section(
         a_plotly_graph_object=[
             {
@@ -461,13 +461,13 @@ class PotentiometryGasChromatographyMeasurement(BaseMeasurement):
         section_def=NECCExperimentalProperties)
 
     gaschromatographies = SubSection(
-        section_def=GasChromatographyOutput, repeats=True)
+        section_def=GasChromatographyMeasurement, repeats=True)
 
     potentiometry = SubSection(
-        section_def=PotentiostatOutput)
+        section_def=PotentiostatMeasurement)
 
     thermocouple = SubSection(
-        section_def=ThermocoupleOutput)
+        section_def=ThermocoupleMeasurement)
 
     fe_results = SubSection(
         section_def=PotentiometryGasChromatographyResults)
