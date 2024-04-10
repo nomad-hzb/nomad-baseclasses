@@ -281,18 +281,12 @@ class PotentiostatMeasurement(ArchiveSection):
     datetime = Quantity(
         type=Datetime,
         shape=['*'])
-    # TODO maybe remove this because there is also time in s
-
-    time = Quantity(
-        type=np.dtype(np.float64),
-        shape=['*'],
-        unit='s')
 
     current = Quantity(
         type=np.dtype(
             np.float64), shape=['*'], unit='mA', a_plot=[
             {
-                "label": "Current", 'x': 'time', 'y': 'current', 'layout': {
+                "label": "Current", 'x': 'datetime', 'y': 'current', 'layout': {
                 'yaxis': {
                     "fixedrange": False}, 'xaxis': {
                     "fixedrange": False}}, "config": {
@@ -302,7 +296,7 @@ class PotentiostatMeasurement(ArchiveSection):
         type=np.dtype(
             np.float64), shape=['*'], unit='V', a_plot=[
             {
-                "label": "Working Electrode Potential (Ewe)", 'x': 'time', 'y': 'working_electrode_potential',
+                "label": "Working Electrode Potential (Ewe)", 'x': 'datetime', 'y': 'working_electrode_potential',
                 'layout': {
                     'yaxis': {
                         "fixedrange": False}, 'xaxis': {
@@ -344,11 +338,6 @@ class ThermocoupleMeasurement(PlotSection, ArchiveSection):
                 }
             }])
 
-    time = Quantity(
-        type=np.dtype(np.float64),
-        shape=['*'],
-        unit='s')
-
     datetime = Quantity(
         type=Datetime,
         shape=['*'])
@@ -357,7 +346,7 @@ class ThermocoupleMeasurement(PlotSection, ArchiveSection):
         type=np.dtype(
             np.float64), shape=['*'], unit='bar', a_plot=[
             {
-                "label": "Pressure (in barg)", 'x': 'time', 'y': 'pressure', 'layout': {
+                "label": "Pressure (in barg)", 'x': 'datetime', 'y': 'pressure', 'layout': {
                 'yaxis': {
                     "fixedrange": False}, 'xaxis': {
                     "fixedrange": False}}, "config": {
@@ -367,7 +356,7 @@ class ThermocoupleMeasurement(PlotSection, ArchiveSection):
         type=np.dtype(
             np.float64), shape=['*'], unit='°C', a_plot=[
             {
-                "label": "Temperature Cathode", 'x': 'time', 'y': 'temperature_cathode', 'layout': {
+                "label": "Temperature Cathode", 'x': 'datetime', 'y': 'temperature_cathode', 'layout': {
                 'yaxis': {
                     "fixedrange": False}, 'xaxis': {
                     "fixedrange": False}}, "config": {
@@ -391,6 +380,10 @@ class GasFEResults(ArchiveSection):
         shape=[],
         a_eln=dict(component='EnumEditQuantity'))
 
+    datetime = Quantity(
+        type=Datetime,
+        shape=['*'])
+
     current = Quantity(
         type=np.dtype(np.float64),
         shape=['*'],
@@ -402,7 +395,7 @@ class GasFEResults(ArchiveSection):
         shape=['*'],
         a_plot=[
             {
-                "label": "FE over time", 'x': 'time', 'y': 'faradaic_efficiency', 'layout': {
+                "label": "FE over time", 'x': 'datetime', 'y': 'faradaic_efficiency', 'layout': {
                 'yaxis': {
                     "fixedrange": False}, 'xaxis': {
                     "fixedrange": False}}, "config": {
@@ -424,6 +417,10 @@ class GasFEResults(ArchiveSection):
 
 
 class PotentiometryGasChromatographyResults(ArchiveSection):
+
+    datetime = Quantity(
+        type=Datetime,
+        shape=['*'])
 
     total_flow_rate = Quantity(
         type=np.dtype(
