@@ -27,9 +27,8 @@ from baseclasses.chemical_energy import NECCFeedGas, GasFEResults
 def read_potentiostat_data(file):
     data = pd.read_excel(file, sheet_name='Raw Data', header=1)
 
-    date_time = pd.to_datetime(data['time/s']).dropna()
-    # TODO compute real time/s
-    time = 0
+    datetimes = pd.to_datetime(data['time/s']).dropna()
+
     # TODO decide with Christina which col name to use
     if {'<I>/mA', 'Ewe/V'}.issubset(data.columns):
         current = data['<I>/mA'].dropna()
@@ -41,7 +40,7 @@ def read_potentiostat_data(file):
         current = None
         working_electrode_potential = None
 
-    return date_time, time, current, working_electrode_potential
+    return datetimes, current, working_electrode_potential
 
 def read_thermocouple_data(file):
     data = pd.read_excel(file, sheet_name='Raw Data', header=3)
@@ -49,12 +48,12 @@ def read_thermocouple_data(file):
     data['DateTime'] = pd.to_datetime(data['Time Stamp Local'].astype(str))
     data['Date'] = pd.to_datetime(data['Date'].astype(str))
     data['DateTime'] = data['Date'] + pd.to_timedelta(data['DateTime'].dt.strftime('%H:%M:%S'))
-    date_time = data['DateTime'].dropna()
+    datetimes = data['DateTime'].dropna()
     pressure = data['bar(g)'].dropna()
     temperature_cathode = data['øC  cathode?'].dropna()
     temperature_anode = data['øC  anode?'].dropna()
 
-    return date_time, pressure, temperature_cathode, temperature_anode
+    return datetimes, pressure, temperature_cathode, temperature_anode
 
 def read_gaschromatography_data(file):
     data = pd.read_excel(file, sheet_name='Raw Data', header=1)
@@ -81,6 +80,11 @@ def read_gaschromatography_data(file):
 def read_results_data(file):
     data = pd.read_excel(file, sheet_name='Results', header=0)
 
+    data['DateTime'] = pd.to_datetime(data['Time'].astype(str))
+    data['Date'] = pd.to_datetime(data['Date'].astype(str))
+    data['DateTime'] = data['Date'] + pd.to_timedelta(data['DateTime'].dt.strftime('%H:%M:%S'))
+    datetimes = data['DateTime'].dropna()
+
     total_flow_rate = data['Total flow rate (ml/min)'].dropna()
     total_fe = data['Total FE (%)'].dropna()
     cell_current = data['Current(mA)'].dropna()
@@ -95,11 +99,12 @@ def read_results_data(file):
         fe = data[" ".join([gas_type, 'FE (%)'])].dropna()
         gas_measurements.append(GasFEResults(
             gas_type=gas_type,
+            datetime=datetimes,
             current=current,
             faradaic_efficiency=fe,
         ))
 
-    return total_flow_rate, total_fe, cell_current, cell_voltage, gas_measurements
+    return datetimes, total_flow_rate, total_fe, cell_current, cell_voltage, gas_measurements
 
 def read_properties(file):
     data = pd.read_excel(file, sheet_name='Experimental details', index_col=0, header=None)
