@@ -24,7 +24,6 @@ from nomad.datamodel.metainfo.eln import SolarCellEQE
 from .. import BaseMeasurement
 from ..helper.file_parser.eqe_parser import fit_urbach_tail, calculate_jsc, calculate_bandgap, calculate_j0rad, calculate_voc_rad
 from nomad.units import ureg
-from ..helper.add_solar_cell import add_solar_cell, add_band_gap
 
 
 class SolarCellEQECustom(SolarCellEQE):
@@ -56,12 +55,15 @@ class SolarCellEQECustom(SolarCellEQE):
             self.wavelength_array = self.photon_energy_array.to('nm', 'sp')  # pylint: disable=E1101
             self.raw_wavelength_array = self.raw_photon_energy_array.to('nm', 'sp')  # pylint: disable=E1101
 
-        add_solar_cell(archive)
-        add_band_gap(archive, self.bandgap_eqe)
-
 
 class EQEMeasurement(BaseMeasurement):
     '''Eqe Measurement'''
+
+    data_file = Quantity(
+        type=str,
+        a_eln=dict(component='FileEditQuantity'),
+        a_browser=dict(adaptor='RawFileAdaptor'))
+
     eqe_data = SubSection(
         section_def=SolarCellEQECustom,
         repeats=True)

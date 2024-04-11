@@ -47,6 +47,10 @@ def add_band_gap(archive, band_gap):
     cell data.eV=
     '''
     if band_gap is not None:
+        if not archive.results:
+            archive.results = Results()
+        if not archive.results.properties:
+            archive.results.properties = Properties()
         bg = BandGapDeprecated(value=np.float64(band_gap) * ureg('eV'))
         band_gap = BandGap(value=np.float64(band_gap) * ureg('eV'),
                            provenance=ProvenanceTracker(label='solar_cell_database'))  # TODO: check label
