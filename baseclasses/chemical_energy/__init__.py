@@ -37,5 +37,5 @@ from .voltammetry import VoltammetryCycle, Voltammetry, VoltammetryCycleWithPlot
 from .potentiostat_measurement import PotentiostatMeasurement, PotentiostatSetup
 from .phasefluorometryoxygen import PhaseFluorometryOxygen
 from .pumpratemeasurement import PumpRateMeasurement
-from .uvvismeasurementconcentration import UVvisDataConcentration, UVvisMeasurementConcentration
+from .uvvismeasurementconcentration import UVvisDataConcentration
 from .uvvisconcentrationdetection import UVvisConcentrationDetection

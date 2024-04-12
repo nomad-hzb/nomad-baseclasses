@@ -24,12 +24,11 @@ from nomad.datamodel.metainfo.basesections import Analysis, SectionReference
 from nomad.datamodel.metainfo.plot import PlotSection, PlotlyFigure
 import plotly.graph_objects as go
 
-from .uvvismeasurementconcentration import UVvisMeasurementConcentration
-
+from baseclasses.solar_energy import UVvisMeasurement
 
 class UVvisReference(SectionReference):
     reference = Quantity(
-        type=Reference(UVvisMeasurementConcentration.m_def),
+        type=Reference(UVvisMeasurement.m_def),
         a_eln=dict(component='ReferenceEditQuantity', label='UVvis Measurement'))
 
 
@@ -53,11 +52,13 @@ class UVvisConcentrationDetection(Analysis, PlotSection):
 
     slope = Quantity(
         type=np.dtype(np.float64),
-        description='The slope of the calibration curve.')
+        description='The slope of the calibration curve.',
+        a_eln=dict(component='NumberEditQuantity'))
 
     intercept = Quantity(
         type=np.dtype(np.float64),
-        description='The intercept of the calibration curve.')
+        description='The intercept of the calibration curve.',
+        a_eln=dict(component='NumberEditQuantity'))
 
     r2 = Quantity(
         type=np.dtype(np.float64),

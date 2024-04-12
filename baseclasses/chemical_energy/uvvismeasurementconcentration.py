@@ -17,6 +17,7 @@
 #
 
 import numpy as np
+import pandas as pd
 from scipy import signal
 
 from nomad.metainfo import Quantity, Reference, Section, SubSection, Datetime
@@ -25,10 +26,12 @@ from nomad.datamodel.metainfo.basesections import Analysis
 from nomad.datamodel.metainfo.plot import PlotSection, PlotlyFigure
 import plotly.graph_objects as go
 
-from baseclasses.solar_energy import UVvisData, UVvisMeasurement
+from baseclasses.solar_energy import UVvisData
 from ..helper.utilities import get_reference
 
 class UVvisDataConcentration(UVvisData, PlotSection):
+
+    m_def = Section(a_eln=dict(overview=True))
 
     concentration = Quantity(
         type=np.dtype(np.float64),
@@ -37,17 +40,34 @@ class UVvisDataConcentration(UVvisData, PlotSection):
 
     peak_value = Quantity(
         type=np.dtype(np.float64),
-        description='The peak value of the wavelength-intensity graph. It gets automatically computed when saving.')
+        description='The peak value of the wavelength-intensity graph. '
+                    'It can be set or it gets automatically computed when saving. '
+                    'To recompute it, remove the current value.',
+        a_eln=dict(component='NumberEditQuantity'))
 
     peak_x_value = Quantity(
         type=np.dtype(np.float64),
         unit='nm',
-        description='The wavelength value of the automatically computed peak.')
+        default=0,
+        description='The wavelength value of the automatically computed peak.',
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
 
     chemical_composition_or_formulas = Quantity(
         type=str,
         description='A list of the elements involved',
         a_eln=dict(component='StringEditQuantity', label='Material'))
+
+    estimated_peak_center = Quantity(
+        type=np.dtype(np.float64),
+        unit='nm',
+        description='The wavelength value where the peak is estimated. This value is usually based on the material.',
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+
+    peak_search_range = Quantity(
+        type=np.dtype(np.float64),
+        unit='nm',
+        description='This value sets the range where to search for the peak around the estimated peak center.',
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
 
     reference = Quantity(
         type=Reference(Analysis.m_def),
@@ -55,21 +75,46 @@ class UVvisDataConcentration(UVvisData, PlotSection):
         a_eln=dict(component='ReferenceEditQuantity', label='Concentration Detection'))
 
     def normalize(self, archive, logger):
-        if self.intensity is not None:
-            # TODO is data always sorted along xvalues for peak finding algorithm?
-            peak_indices, _ = signal.find_peaks(self.intensity)
-            # TODO think about peak finding algorithm (e.g. for NH3 peak x should always be at ~650nm)
-            peak_widths, _, _, _ = signal.peak_widths(self.intensity, peak_indices)
-            index_max = peak_indices[np.argmax(peak_widths)]
-            self.peak_value = self.intensity[index_max]
-            self.peak_x_value = self.wavelength[index_max]
+        super(UVvisDataConcentration, self).normalize(archive, logger)
+
+        if self.chemical_composition_or_formulas == 'NH3':
+            self.estimated_peak_center = 650
+            self.peak_search_range = 20
+
+        if self.intensity is not None and self.wavelength is not None:
+            if self.chemical_composition_or_formulas is not None and self.peak_value is None:
+                if self.estimated_peak_center is not None and self.peak_search_range is not None:
+                    search_area_start = (self.estimated_peak_center - self.peak_search_range)
+                    search_area_end = (self.estimated_peak_center + self.peak_search_range)
+                else:
+                    search_area_start = min(self.wavelength)
+                    search_area_end = max(self.wavelength)
+                peak_area_df = pd.DataFrame({'intensity': self.intensity, 'wavelength': self.wavelength})
+                peak_area_df = peak_area_df.loc[(peak_area_df['wavelength'] >= search_area_start.magnitude) & (peak_area_df['wavelength'] <= search_area_end.magnitude)]
+                # sort data to search peak (not sure if uvvis data is always sorted by wavelength)
+                peak_area_df = peak_area_df.sort_values('wavelength')
+
+                peak_indices, _ = signal.find_peaks(peak_area_df['intensity'])
+                if len(peak_indices) == 1:
+                    peak = peak_area_df.iloc[peak_indices[0]]
+                elif len(peak_indices) > 1:
+                    # if multiple peaks exist, use the highest
+                    max_peak_index = peak_indices[np.argmax(peak_area_df['intensity'].iloc[peak_indices])]
+                    peak = peak_area_df.iloc[max_peak_index]
+                else:
+                    peak = {'intensity': None, 'wavelength': 0}
+                    logger.error('Could not find peak in given search range.')
+
+                self.peak_value = peak['intensity']
+                self.peak_x_value = peak['wavelength']
 
             fig = go.Figure(
                 data=[go.Scatter(name='Calibration Curve', x=self.wavelength, y=self.intensity, mode='lines')])
-            fig.add_traces(go.Scatter(x=[self.peak_x_value.magnitude], y=[self.peak_value], mode='markers'))
-            fig.update_layout(xaxis_title='Peak Values',
-                              yaxis_title='Concentrations',
-                              title_text='Calibration Curve')
+            fig.update_layout(xaxis_title='Wavelength',
+                              yaxis_title='Intensity',
+                              title_text='UVvis')
+            if self.peak_value is not None and self.peak_x_value is not None:
+                fig.add_traces(go.Scatter(x=[self.peak_x_value.magnitude], y=[self.peak_value], mode='markers'))
             self.figures = [PlotlyFigure(label='figure 1', figure=fig.to_plotly_json())]
 
         if self.concentration is None:
@@ -141,16 +186,3 @@ def getConcentrationData(data_archive, logger, material, peak_value):
                        'the \'Concentration Detection\' reference section.')
 
     return concentration, calibration_reference
-
-
-class UVvisMeasurementConcentration(UVvisMeasurement):
-    '''UV vis Measurement associated with concentration'''
-
-    measurements = SubSection(
-        section_def=UVvisDataConcentration, repeats=True)
-
-    def normalize(self, archive, logger):
-        self.method = "UVvis Measurement"
-        super(UVvisMeasurementConcentration, self).normalize(archive, logger)
-
-
