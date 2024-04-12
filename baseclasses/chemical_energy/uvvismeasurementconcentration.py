@@ -22,6 +22,7 @@ from scipy import signal
 
 from nomad.metainfo import Quantity, Reference, Section, SubSection, Datetime
 from nomad.datamodel.metainfo.basesections import Analysis
+from nomad.datamodel.results import Results, Material
 
 from nomad.datamodel.metainfo.plot import PlotSection, PlotlyFigure
 import plotly.graph_objects as go
@@ -77,6 +78,18 @@ class UVvisDataConcentration(UVvisData, PlotSection):
     def normalize(self, archive, logger):
         super(UVvisDataConcentration, self).normalize(archive, logger)
 
+        if self.chemical_composition_or_formulas:
+            if not archive.results:
+                archive.results = Results()
+            if not archive.results.material:
+                archive.results.material = Material()
+            try:
+                from nomad.atomutils import Formula
+                formula = Formula(self.chemical_composition_or_formulas)
+                formula.populate(section=archive.results.material)
+            except Exception as e:
+                logger.warn('Could not analyse material', exc_info=e)
+
         if self.chemical_composition_or_formulas == 'NH3':
             self.estimated_peak_center = 650
             self.peak_search_range = 20
@@ -110,7 +123,7 @@ class UVvisDataConcentration(UVvisData, PlotSection):
 
             fig = go.Figure(
                 data=[go.Scatter(name='Calibration Curve', x=self.wavelength, y=self.intensity, mode='lines')])
-            fig.update_layout(xaxis_title='Wavelength',
+            fig.update_layout(xaxis_title=f'Wavelength [{self.wavelength.units}]',
                               yaxis_title='Intensity',
                               title_text='UVvis')
             if self.peak_value is not None and self.peak_x_value is not None:

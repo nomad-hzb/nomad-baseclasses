@@ -100,7 +100,7 @@ class UVvisConcentrationDetection(Analysis, PlotSection):
                                          self.intercept + self.slope * self.maximum_peak_value],
                                       mode='lines'))
             fig.update_layout(xaxis_title='Peak Values',
-                              yaxis_title='Concentrations',
+                              yaxis_title=f'Concentrations [{concentrations[0].units}]',
                               title_text='Calibration Curve')
             self.figures = [PlotlyFigure(label='figure 1', figure=fig.to_plotly_json())]
 
