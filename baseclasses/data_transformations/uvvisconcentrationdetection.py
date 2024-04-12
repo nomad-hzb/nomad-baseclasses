@@ -88,8 +88,9 @@ class UVvisConcentrationDetection(Analysis, PlotSection):
                 linear_regression = stats.linregress(peak_values, concentration_values)
                 self.slope = linear_regression.slope
                 self.intercept = linear_regression.intercept
-                self.r2 = linear_regression.r_value
-            except BaseException:
+                self.r2 = linear_regression.rvalue
+            except BaseException as e:
+                logger.warn('Could not find a linear regression.', exc_info=e)
                 self.slope = 0
                 self.intercept = 0
 
