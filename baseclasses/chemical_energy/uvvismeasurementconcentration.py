@@ -46,7 +46,7 @@ class UVvisDataConcentration(UVvisData, PlotSection):
                     'To recompute it, remove the current value.',
         a_eln=dict(component='NumberEditQuantity'))
 
-    peak_x_value = Quantity(
+    peak_wavelength = Quantity(
         type=np.dtype(np.float64),
         unit='nm',
         default=0,
@@ -91,8 +91,9 @@ class UVvisDataConcentration(UVvisData, PlotSection):
                 logger.warn('Could not analyse material', exc_info=e)
 
         if self.chemical_composition_or_formulas == 'NH3':
-            self.estimated_peak_center = 650
-            self.peak_search_range = 20
+            if self.estimated_peak_center is None and self.peak_search_range is None:
+                self.estimated_peak_center = 650
+                self.peak_search_range = 20
 
         if self.intensity is not None and self.wavelength is not None:
             if self.chemical_composition_or_formulas is not None and self.peak_value is None:
@@ -104,30 +105,21 @@ class UVvisDataConcentration(UVvisData, PlotSection):
                     search_area_end = max(self.wavelength)
                 peak_area_df = pd.DataFrame({'intensity': self.intensity, 'wavelength': self.wavelength})
                 peak_area_df = peak_area_df.loc[(peak_area_df['wavelength'] >= search_area_start.magnitude) & (peak_area_df['wavelength'] <= search_area_end.magnitude)]
-                # sort data to search peak (not sure if uvvis data is always sorted by wavelength)
-                peak_area_df = peak_area_df.sort_values('wavelength')
-
-                peak_indices, _ = signal.find_peaks(peak_area_df['intensity'])
-                if len(peak_indices) == 1:
-                    peak = peak_area_df.iloc[peak_indices[0]]
-                elif len(peak_indices) > 1:
-                    # if multiple peaks exist, use the highest
-                    max_peak_index = peak_indices[np.argmax(peak_area_df['intensity'].iloc[peak_indices])]
-                    peak = peak_area_df.iloc[max_peak_index]
-                else:
-                    peak = {'intensity': None, 'wavelength': 0}
-                    logger.error('Could not find peak in given search range.')
+                # since the search area can be set manually we assume that the peak is always the highest value in that range
+                peak_index = np.argmax(peak_area_df['intensity'])
+                peak = peak_area_df.iloc[peak_index]
 
                 self.peak_value = peak['intensity']
-                self.peak_x_value = peak['wavelength']
+                self.peak_wavelength = peak['wavelength']
 
             fig = go.Figure(
-                data=[go.Scatter(name='Calibration Curve', x=self.wavelength, y=self.intensity, mode='lines')])
+                data=[go.Scatter(name='UVvis', x=self.wavelength, y=self.intensity, mode='lines')])
             fig.update_layout(xaxis_title=f'Wavelength [{self.wavelength.units}]',
                               yaxis_title='Intensity',
                               title_text='UVvis')
-            if self.peak_value is not None and self.peak_x_value is not None:
-                fig.add_traces(go.Scatter(x=[self.peak_x_value.magnitude], y=[self.peak_value], mode='markers'))
+            fig.update_layout(xaxis={'fixedrange': False})
+            if self.peak_value is not None and self.peak_wavelength is not None:
+                fig.add_traces(go.Scatter(x=[self.peak_wavelength.magnitude], y=[self.peak_value], mode='markers'))
             self.figures = [PlotlyFigure(label='figure 1', figure=fig.to_plotly_json())]
 
         if self.concentration is None:
@@ -148,7 +140,7 @@ def getConcentrationData(data_archive, logger, material, peak_value):
 
     # search for all UVvisConcentrationDetection archives
     query = {
-        'entry_type': 'CE_NOME_UVvisConcentrationDetection',
+        'section_defs.definition_qualified_name': 'baseclasses.data_transformations.uvvisconcentrationdetection.UVvisConcentrationDetection',
     }
     pagination = MetadataPagination()
     pagination.page_size = 100

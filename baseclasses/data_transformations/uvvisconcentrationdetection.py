@@ -17,6 +17,7 @@
 #
 
 import numpy as np
+from scipy import stats
 
 from nomad.metainfo import Quantity, Reference, Section, SubSection, Datetime
 from nomad.datamodel.metainfo.basesections import Analysis, SectionReference
@@ -84,12 +85,10 @@ class UVvisConcentrationDetection(Analysis, PlotSection):
 
             try:
                 concentration_values = np.array([measure.magnitude for measure in concentrations])
-                (self.slope, self.intercept), residuals, _, _, _ = np.polyfit(peak_values, concentration_values, 1,
-                                                                              full=True)
-                mean_value = np.mean(concentration_values)
-                sum_squares_total = sum((measure - mean_value)**2 for measure in concentration_values)
-                sum_squares_residuals = residuals[0] if len(residuals > 0) else 0
-                self.r2 = 1-(sum_squares_residuals/sum_squares_total)
+                linear_regression = stats.linregress(peak_values, concentration_values)
+                self.slope = linear_regression.slope
+                self.intercept = linear_regression.intercept
+                self.r2 = linear_regression.r_value
             except BaseException:
                 self.slope = 0
                 self.intercept = 0
