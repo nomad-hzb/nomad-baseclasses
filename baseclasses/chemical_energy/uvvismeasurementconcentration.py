@@ -81,8 +81,8 @@ class UVvisDataConcentration(UVvisData, PlotSection):
         if self.chemical_composition_or_formulas:
             if not archive.results:
                 archive.results = Results()
-            if not archive.results.material:
-                archive.results.material = Material()
+            #if not archive.results.material:
+            archive.results.material = Material()
             try:
                 from nomad.atomutils import Formula
                 formula = Formula(self.chemical_composition_or_formulas)
@@ -148,6 +148,7 @@ def getConcentrationData(data_archive, logger, material, peak_value):
                            user_id=data_archive.metadata.main_author.user_id)
 
     matching_calibrations = []
+    extrapolation_calibrations = []
 
     for res in search_result.data:
         try:
@@ -170,23 +171,43 @@ def getConcentrationData(data_archive, logger, material, peak_value):
                 if entry['material_name'] == material:
                     if entry['minimum_peak_value'] <= peak_value <= entry['maximum_peak_value']:
                         matching_calibrations.append(entry)
-
+                    else:
+                        extrapolation_calibrations.append(entry)
         except Exception as e:
             logger.error("Error in processing data: ", e)
 
     concentration = None
     calibration_reference = None
-    if len(matching_calibrations) > 0:
-        calibration_entry = matching_calibrations[0]
+    if len(matching_calibrations) == 0 and len(extrapolation_calibrations) == 0:
+        logger.error('For the chosen material no calibration exists yet.')
+    else:
+        if len(matching_calibrations) > 0:
+            calibration_entry = matching_calibrations[0]
+        else:
+            calibration_index = 0
+            if len(extrapolation_calibrations) > 1:
+                # find calibration with the peak area that is closest to the peak value of the current measurement
+                minimum_distance = abs(peak_value - extrapolation_calibrations[0]['minimum_peak_value'])
+                for index, calibration in enumerate(extrapolation_calibrations):
+                    distance_start = abs(peak_value - calibration['minimum_peak_value'])
+                    distance_end = abs(peak_value - calibration['maximum_peak_value'])
+                    distance = min(distance_start, distance_end)
+                    if distance < minimum_distance:
+                        minimum_distance = distance
+                        calibration_index = index
+            calibration_entry = extrapolation_calibrations[calibration_index]
+            logger.warn('For the given peak value no UVvisConcentrationDetections exist.'
+                           'The calibration is extrapolated based on the given material.'
+                           'The computation of the concentration is based on the calibration linked in '
+                           'the \'Concentration Detection\' reference section.')
+
         # compute concentration
         concentration = calibration_entry['slope'] * peak_value + calibration_entry['intercept']
         # reference used UVvisConcentrationDetection
         calibration_reference = get_reference(calibration_entry['upload_id'], calibration_entry['entry_id'])
-    else:
-        logger.error('For the chosen material and peak value no calibration exists yet.')
 
     if len(matching_calibrations) > 1:
-        logger.warning('For the chosen material and peak value multiple UVvisConcentrationDetections exist.'
+        logger.warn('For the chosen material and peak value multiple UVvisConcentrationDetections exist.'
                        'The computation of the concentration is based on the calibration linked in '
                        'the \'Concentration Detection\' reference section.')
 
