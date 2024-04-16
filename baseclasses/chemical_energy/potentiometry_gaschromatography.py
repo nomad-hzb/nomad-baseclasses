@@ -446,6 +446,11 @@ class PotentiometryGasChromatographyResults(ArchiveSection):
         shape=['*'],
         description='Total faradaic efficiency specified in %')
 
+    def normalize(self, archive, logger):
+        for gas_result in self.gas_results:
+            gas_result.normalize(archive, logger)
+        super(PotentiometryGasChromatographyResults, self).normalize(archive, logger)
+
 
 class PotentiometryGasChromatographyMeasurement(BaseMeasurement):
 
