@@ -19,11 +19,10 @@
 import numpy as np
 
 from nomad.metainfo import (Quantity, Reference, SubSection, Section, Datetime, MEnum)
-from nomad.datamodel.results import Results, Material
 
 from .. import ReadableIdentifiersCustom
 
-from .cesample import (build_initial_id, create_id, export_lab_id, get_next_project_sample_number, CESample,
+from .cesample import (build_initial_id, create_id, export_lab_id, CESample,
                        SubstrateProperties, CatalystSynthesis)
 
 def build_recipe_id_base(archive, recipe_type, element, deposition_method):
@@ -173,7 +172,7 @@ class CENECCElectrodeID(ReadableIdentifiersCustom):
 
 class CENECCElectrode(CESample):
     # TODO class name maybe CENECCSample or something with 'catalyst detail'
-    # TODO is it ok to combine cathode and electrode like this?
+    # TODO is it ok to combine cathode and anode like this?
 
     electrode_id = SubSection(section_def=CENECCElectrodeID)
 
