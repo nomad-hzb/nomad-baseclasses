@@ -99,8 +99,8 @@ class UVvisDataConcentration(UVvisData, PlotSection):
             self.peak_search_range = 20
 
         if self.intensity is not None and self.wavelength is not None:
-            if self.chemical_composition_or_formulas is not None and self.peak_value is None:
-                if self.estimated_peak_center is not None and self.peak_search_range is not None:
+            if self.chemical_composition_or_formulas is not None:
+                if self.estimated_peak_center is not None:
                     search_area_start = (self.estimated_peak_center - self.peak_search_range)
                     search_area_end = (self.estimated_peak_center + self.peak_search_range)
                 else:
@@ -126,7 +126,7 @@ class UVvisDataConcentration(UVvisData, PlotSection):
                 fig.add_traces(go.Scatter(x=[self.peak_wavelength.magnitude], y=[self.peak_value], mode='markers'))
             self.figures = [PlotlyFigure(label='figure 1', figure=fig.to_plotly_json())]
 
-        if self.concentration is None:
+        if self.chemical_composition_or_formulas and self.peak_value:
             self.concentration, self.reference = getConcentrationData(archive, logger,
                                                                       self.chemical_composition_or_formulas,
                                                                       self.peak_value)
