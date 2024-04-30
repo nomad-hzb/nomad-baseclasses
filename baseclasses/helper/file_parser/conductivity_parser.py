@@ -6,18 +6,21 @@ import os
 from datetime import datetime
 
 
-def read_conductivity(file):
-    # Read MeasurementFile
-    data = pd.read_csv(file, header=0, skiprows=4, index_col=["X (mm)", "Y (mm)"])
+def read_conductivity(file_path: str):
+    with open(file_path, 'r+') as file_handle:
+        header = {}
+        line_split = file_handle.readline().split(";")
+        while len(line_split) == 2:
+            key = line_split[0].strip().strip('"')
+            value = line_split[1].strip().strip('"')
+            header[key] = value
+            line_split = file_handle.readline().split(";")
+        wavelengths = np.array(line_split[-1].strip().split(","))
+        columns = ["x", "y", "z", "resistance"]
+        df = pd.read_csv(file_handle, names=columns, delimiter=';|,', engine='python')
+    return header, df.dropna(axis=1)
 
-    x_pos = np.array(data.index.get_level_values("X (mm)").unique())
-    y_pos = np.array(data.index.get_level_values("Y (mm)").unique())
-    nx = len(x_pos)
-    ny = len(y_pos)
-    conductivity_data = np.zeros((nx, ny))
-    for idx in range(data["Resistance (Ohms)"].shape[0]):
-        conductivity_data[idx % nx, idx // nx] = data.loc[idx % nx, idx // nx]["Resistance (Ohms)"]
 
-    metadata = pd.read_csv(file, header=None, index_col=[0], nrows=4)
-
-    return conductivity_data, x_pos, y_pos, metadata
+# file = "/home/a2853/Documents/Projects/nomad/thomas/HZB_FaAk_20240426_4025-12#Resistance2024_04_25_0941.csv"
+# h, df = read_conductivity(file)
+# df

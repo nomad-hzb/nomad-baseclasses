@@ -33,7 +33,16 @@ from .. import BaseMeasurement, SingleLibraryMeasurement, LibraryMeasurement
 
 
 class ConductivityProperties(ArchiveSection):
-    pass
+    m_def = Section(a_eln=dict(overview=True))
+    integration_time = Quantity(
+        type=np.dtype(np.float64),
+        unit=('s'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'))
+
+    configuration = Quantity(
+        type=np.dtype(np.float64),
+        unit=('m'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
 
 
 class ConductivitySingleLibraryMeasurement(SingleLibraryMeasurement):
@@ -56,9 +65,9 @@ class ConductivityMeasurementLibrary(LibraryMeasurement):
     m_def = Section(
         a_eln=dict(hide=['certified_values', 'certification_institute']))
 
-    # properties = SubSection(
-    #     section_def=ConductivityProperties)
-    
+    properties = SubSection(
+        section_def=ConductivityProperties)
+
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
