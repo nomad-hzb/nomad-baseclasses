@@ -155,7 +155,7 @@ def get_header_and_data(filename):
                 if cur_line[0].strip() in ["METHOD"]:
                     _header[cur_line[0]] = cur_line[1]
                 if cur_line[1].strip() in ["LABEL", "PSTAT"]:
-                    _header[cur_line[0]] = cur_line[2]
+                    _header[cur_line[0]] = cur_line[2] if len(cur_line) > 2 else ''
                     if cur_line[0] in ["TITLE"] and len(cur_line) > 3:
                         _header["SAMPLE_ID"] = cur_line[3]
                 elif cur_line[1] in ["POTEN"] and len(cur_line) == 5:
