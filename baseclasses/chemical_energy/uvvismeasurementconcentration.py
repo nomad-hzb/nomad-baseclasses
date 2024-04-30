@@ -30,6 +30,7 @@ import plotly.graph_objects as go
 from baseclasses.solar_energy import UVvisData
 from ..helper.utilities import get_reference
 
+
 class UVvisDataConcentration(UVvisData, PlotSection):
 
     m_def = Section(a_eln=dict(overview=True))
@@ -81,7 +82,7 @@ class UVvisDataConcentration(UVvisData, PlotSection):
         if self.chemical_composition_or_formulas:
             if not archive.results:
                 archive.results = Results()
-            #if not archive.results.material:
+            # if not archive.results.material:
             archive.results.material = Material()
             try:
                 from nomad.atomutils import Formula
@@ -91,9 +92,11 @@ class UVvisDataConcentration(UVvisData, PlotSection):
                 logger.warn('Could not analyse material', exc_info=e)
 
         if self.chemical_composition_or_formulas == 'NH3':
-            if self.estimated_peak_center is None and self.peak_search_range is None:
+            if not self.estimated_peak_center:
                 self.estimated_peak_center = 650
-                self.peak_search_range = 20
+
+        if not self.peak_search_range:
+            self.peak_search_range = 20
 
         if self.intensity is not None and self.wavelength is not None:
             if self.chemical_composition_or_formulas is not None and self.peak_value is None:
@@ -104,7 +107,8 @@ class UVvisDataConcentration(UVvisData, PlotSection):
                     search_area_start = min(self.wavelength)
                     search_area_end = max(self.wavelength)
                 peak_area_df = pd.DataFrame({'intensity': self.intensity, 'wavelength': self.wavelength})
-                peak_area_df = peak_area_df.loc[(peak_area_df['wavelength'] >= search_area_start.magnitude) & (peak_area_df['wavelength'] <= search_area_end.magnitude)]
+                peak_area_df = peak_area_df.loc[(peak_area_df['wavelength'] >= search_area_start.magnitude) & (
+                    peak_area_df['wavelength'] <= search_area_end.magnitude)]
                 # since the search area can be set manually we assume that the peak is always the highest value in that range
                 peak_index = np.argmax(peak_area_df['intensity'])
                 peak = peak_area_df.iloc[peak_index]
@@ -197,9 +201,9 @@ def getConcentrationData(data_archive, logger, material, peak_value):
                         calibration_index = index
             calibration_entry = extrapolation_calibrations[calibration_index]
             logger.warn('For the given peak value no UVvisConcentrationDetections exist.'
-                           'The calibration is extrapolated based on the given material.'
-                           'The computation of the concentration is based on the calibration linked in '
-                           'the \'Concentration Detection\' reference section.')
+                        'The calibration is extrapolated based on the given material.'
+                        'The computation of the concentration is based on the calibration linked in '
+                        'the \'Concentration Detection\' reference section.')
 
         # compute concentration
         concentration = calibration_entry['slope'] * peak_value + calibration_entry['intercept']
@@ -208,7 +212,7 @@ def getConcentrationData(data_archive, logger, material, peak_value):
 
     if len(matching_calibrations) > 1:
         logger.warn('For the chosen material and peak value multiple UVvisConcentrationDetections exist.'
-                       'The computation of the concentration is based on the calibration linked in '
-                       'the \'Concentration Detection\' reference section.')
+                    'The computation of the concentration is based on the calibration linked in '
+                    'the \'Concentration Detection\' reference section.')
 
     return concentration, calibration_reference
