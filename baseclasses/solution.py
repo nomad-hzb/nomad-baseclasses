@@ -52,25 +52,25 @@ class SolutionChemical(ArchiveSection):
     chemical_volume = Quantity(
         links=['http://purl.obolibrary.org/obo/PATO_0000918', 'https://purl.archive.org/tfsco/TFSCO_00002158'],
         type=np.dtype(np.float64),
-        # unit=('ml'),
+        unit=('ml'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'))
 
     chemical_mass = Quantity(
         links=['http://purl.obolibrary.org/obo/PATO_0000125', 'https://purl.archive.org/tfsco/TFSCO_00005020'],
         type=np.dtype(np.float64),
-        # unit=('mg'),
+        unit=('mg'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mg'))
 
     concentration_mass = Quantity(
         links=['http://purl.obolibrary.org/obo/PATO_0000033'],
         type=np.dtype(np.float64),
-        # unit=('mg/ml'),
+        unit=('mg/ml'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mg/ml'))
 
     concentration_mol = Quantity(
         links=['http://purl.obolibrary.org/obo/PATO_0000033'],
         type=np.dtype(np.float64),
-        # unit=('mol/ml'),
+        unit=('mol/ml'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mmol/ml'))
 
     amount_relative = Quantity(
