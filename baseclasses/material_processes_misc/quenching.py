@@ -35,24 +35,19 @@ class Quenching(ArchiveSection):
 class AntiSolventQuenching(Quenching):
 
     m_def = Section(
-        #Link to ontology class 'anti solvent quenching'
         links = ['https://purl.archive.org/tfsco/TFSCO_00001052'],
         label_quantity='name')
     name = Quantity(type=str)
 
     anti_solvent = Quantity(
-        #Link to ontology class 'solvent'
         links = ['https://purl.archive.org/tfsco/TFSCO_00000026'],
         type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     anti_solvent_2 = SubSection(
-        #Link to ontology class 'solvent'
-        links = ['https://purl.archive.org/tfsco/TFSCO_00000026'],
         section_def=PubChemPureSubstanceSection)
 
     anti_solvent_volume = Quantity( 
-        #Link to ontology class 'volume' and 'volume setting datum'
         links = ['http://purl.obolibrary.org/obo/PATO_0000918','https://purl.archive.org/tfsco/TFSCO_00002158'],
         type=np.dtype(
             np.float64),
@@ -64,7 +59,6 @@ class AntiSolventQuenching(Quenching):
                 minValue=0)))
 
     anti_solvent_dropping_time = Quantity(
-        #Link to ontology class 'anti solvent dropping time' and 'anti solvent dropping time setting datum'
         links = ['https://purl.archive.org/tfsco/TFSCO_00002150','https://purl.archive.org/tfsco/TFSCO_00002151'],
         type=np.dtype(
             np.float64), unit=('s'), a_eln=dict(
@@ -72,7 +66,6 @@ class AntiSolventQuenching(Quenching):
                 minValue=0)))
 
     anti_solvent_dropping_flow_rate = Quantity(
-        #Link to ontology class 'anti solvent dropping flow rate' and 'anti solvent dropping flow rate setting datum'
         links = ['https://purl.archive.org/tfsco/TFSCO_00005091','https://purl.archive.org/tfsco/TFSCO_00005094'],
         type=np.dtype(
             np.float64), unit=('ul/s'), a_eln=dict(
@@ -80,7 +73,6 @@ class AntiSolventQuenching(Quenching):
                 minValue=0)))
 
     anti_solvent_dropping_height = Quantity(
-        #Link to ontology class 'anti solvent dropping height' and 'anti solvent dropping height setting datum'
         links = ['https://purl.archive.org/tfsco/TFSCO_00005092','https://purl.archive.org/tfsco/TFSCO_00005093'],
         type=np.dtype(
             np.float64), unit=('mm'), a_eln=dict(
@@ -103,11 +95,9 @@ class SpinCoatingAntiSolvent(AntiSolventQuenching):
 
 class GasQuenching(Quenching):
     m_def = Section(
-        #Link to ontology class 'gas quenching'
         links = ['https://purl.archive.org/tfsco/TFSCO_00001077']
     )
     gas = Quantity(
-        #Link to ontology class 'chemical substance'
         links = ['http://purl.obolibrary.org/obo/CHEBI_59999'],
         type=str,
         a_eln=dict(component='StringEditQuantity'))
@@ -115,11 +105,9 @@ class GasQuenching(Quenching):
 
 class AirKnifeGasQuenching(GasQuenching):
     m_def = Section(
-        #Link to ontology class 'air knife gas quenching'
         links = ['https://purl.archive.org/tfsco/TFSCO_00005032'],
     )
     air_knife_pressure = Quantity(
-        #Link to ontology class 'air knife pressure' and 'air knife pressure setting datum'
         links = ['https://purl.archive.org/tfsco/TFSCO_00005021','https://purl.archive.org/tfsco/TFSCO_00005027'],
         type=np.dtype(
             np.float64),
@@ -132,7 +120,6 @@ class AirKnifeGasQuenching(GasQuenching):
                 minValue=0)))
 
     air_knife_speed = Quantity(
-        #Link to ontology class 'air knife speed' and 'air knife speed setting datum'
         links = ['https://purl.archive.org/tfsco/TFSCO_00005025','https://purl.archive.org/tfsco/TFSCO_00005026'],
         type=np.dtype(
             np.float64),
@@ -145,7 +132,6 @@ class AirKnifeGasQuenching(GasQuenching):
                 minValue=0)))
 
     air_knife_angle = Quantity(
-        #Link to ontology class 'air knife angle' and 'air knife angle setting datum'
         links = ['https://purl.archive.org/tfsco/TFSCO_00005024','https://purl.archive.org/tfsco/TFSCO_00005029'],
         type=np.dtype(
             np.float64),
@@ -158,7 +144,6 @@ class AirKnifeGasQuenching(GasQuenching):
                 minValue=0)))
 
     air_knife_distance_to_thin_film = Quantity(
-        #Link to ontology class 'air knife distance to thinfilm' and 'air knife distance to thinfilm setting datum'
         links = ['https://purl.archive.org/tfsco/TFSCO_00005023','https://purl.archive.org/tfsco/TFSCO_00005028'],
         type=np.dtype(
             np.float64),

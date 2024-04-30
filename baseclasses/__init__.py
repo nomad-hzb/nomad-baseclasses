@@ -432,7 +432,6 @@ class BaseMeasurement(Measurement):
 class LibraryMeasurement(BaseMeasurement):
 
     measurements = SubSection(
-        links=['http://purl.obolibrary.org/obo/OBI_0000070'],
         section_def=SingleLibraryMeasurement, repeats=True)
 
     def normalize(self, archive, logger):
