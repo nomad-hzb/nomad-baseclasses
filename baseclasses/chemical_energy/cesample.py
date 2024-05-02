@@ -155,6 +155,7 @@ def create_id(archive, lab_id_base):
         if not archive.data.lab_id:
             archive.data.lab_id = lab_id
 
+
 class SampleIDCE2(ReadableIdentifiersCustom):
     m_def = Section(
         a_eln=dict(
@@ -462,15 +463,10 @@ class CENOMESample(CESample):
         export_lab_id(archive, self.lab_id)
 
 
-
-
-class Electrode(CESample):    
+class Electrode(CESample):
     m_def = Section(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007201'],
     )
-
-    m_def = Section(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007201'])
 
     location = Quantity(
         type=str,
@@ -539,7 +535,7 @@ class Purging(ArchiveSection):
     m_def = Section(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007225']
     )
-    
+
     gas = SubSection(
         section_def=PubChemPureSubstanceSection)
 

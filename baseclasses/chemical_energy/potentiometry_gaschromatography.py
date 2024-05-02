@@ -383,9 +383,9 @@ class ThermocoupleMeasurement(PlotSection, ArchiveSection):
 class GasFEResults(ArchiveSection):
 
     gas_type = Quantity(
-        type = str,
-        shape = [],
-        a_eln = dict(
+        type=str,
+        shape=[],
+        a_eln=dict(
             component='EnumEditQuantity',
             props=dict(
                 suggestions=['CO', 'CH4', 'C2H4', 'H2'])
