@@ -124,12 +124,12 @@ def read_properties(file):
         'anolyte_flow_rate': data.loc['Anolyte flow rate (ml/min)', 1],
         'anolyte_volume': data.loc['Anolyte Volume (ml)', 1],
         'has_humidifier': data.loc['Humidifier (y/n)', 1] == 'y',
-        'humidifier_temperature': data.loc['Humidifier Temperature', 1],
+        'humidifier_temperature': 20 if data.loc['Humidifier Temperature', 1] == 'RT' else data.loc['Humidifier Temperature', 1],
         'water_trap_volume': data.loc['Water trap volume', 1],
         'bleedline_flow_rate': data.loc['Bleedline flow rate', 1],
         'nitrogen_start_value': data.loc['Nitrogen start value', 1],
         'remarks': data.loc['Remarks', 1],
-        'chronoanalysis_method': 'Chronoamperometry (CA)' if data.loc['CP/CA', 1] == 'CA' else 'Chronopotentiometry (CP)',
+        'chronoanalysis_method': data.loc['CP/CA', 1],
     }
 
     experimental_properties_dict = {key: value for key, value in experimental_properties_dict.items() if not pd.isna(value)}

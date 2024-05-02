@@ -203,11 +203,14 @@ class NECCExperimentalProperties(ArchiveSection):
         description='Specified in ppm',
         a_eln=dict(component='NumberEditQuantity'))
 
-    # TODO Should an empty option also be specified? If excel is read and CP/CA is not set, CP is set automatically.
     chronoanalysis_method = Quantity(
-        type=MEnum('Chronoamperometry (CA)', 'Chronopotentiometry (CP)'),
+        type=str,
         shape=[],
-        a_eln=dict(component='EnumEditQuantity'))
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=['Chronoamperometry (CA)', 'Chronopotentiometry (CP)'])
+        ))
 
     remarks = Quantity(
         type=str,
@@ -256,9 +259,13 @@ class GasChromatographyMeasurement(ArchiveSection):
         shape=['*'])
 
     gas_type = Quantity(
-        type=MEnum('CO', 'CH4', 'C2H4', 'C2H6', 'H2', 'N2'),
+        type=str,
         shape=[],
-        a_eln=dict(component='EnumEditQuantity'))
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=['CO', 'CH4', 'C2H4', 'C2H6', 'H2', 'N2'])
+        ))
 
     retention_time = Quantity(
         type=np.dtype(np.float64),
@@ -376,9 +383,13 @@ class ThermocoupleMeasurement(PlotSection, ArchiveSection):
 class GasFEResults(ArchiveSection):
 
     gas_type = Quantity(
-        type=MEnum('CO', 'CH4', 'C2H4', 'H2'),
-        shape=[],
-        a_eln=dict(component='EnumEditQuantity'))
+        type = str,
+        shape = [],
+        a_eln = dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=['CO', 'CH4', 'C2H4', 'H2'])
+        ))
 
     datetime = Quantity(
         type=Datetime,
