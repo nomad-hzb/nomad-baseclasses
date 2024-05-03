@@ -22,6 +22,8 @@
 
 import pandas as pd
 
+from nomad.datamodel.metainfo.basesections import CompositeSystemReference
+
 from baseclasses.chemical_energy import NECCFeedGas, GasFEResults
 
 def read_potentiostat_data(file):
@@ -109,7 +111,7 @@ def read_results_data(file):
 def read_properties(file):
     data = pd.read_excel(file, sheet_name='Experimental details', index_col=0, header=None)
 
-    # experiment_id, user, cathode, anode do not get parsed
+    # experiment_id does not get parsed and is set for overall measurement
     experimental_properties_dict = {
         'cell_type': data.loc['Cell type ', 1],
         'has_reference_electrode': data.loc['Reference Electrode (y/n)', 1] == 'y',
@@ -139,7 +141,14 @@ def read_properties(file):
         feed_gases.append(NECCFeedGas(name=data.loc['Feed gas 1', 1], flow_rate=data.loc['Feed gas flow rate (ml/min)', 1].iat[0]))
     if not pd.isna(data.loc['Feed gas 2', 1] and data.loc['Feed gas flow rate (ml/min)', 1].iat[1]):
         feed_gases.append(NECCFeedGas(name=data.loc['Feed gas 2', 1], flow_rate=data.loc['Feed gas flow rate (ml/min)', 1].iat[1]))
-
     experimental_properties_dict.update({'feed_gases': feed_gases})
+
+    if not pd.isna(data.loc['Anode ID', 1]):
+        anode = CompositeSystemReference(lab_id=data.loc['Anode ID', 1])
+        experimental_properties_dict.update({'anode': anode})
+
+    if not pd.isna(data.loc['Cathode ID', 1]):
+        cathode = CompositeSystemReference(lab_id=data.loc['Cathode ID', 1])
+        experimental_properties_dict.update({'cathode': cathode})
 
     return experimental_properties_dict

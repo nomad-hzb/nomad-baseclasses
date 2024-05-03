@@ -21,9 +21,9 @@ import numpy as np
 from nomad.metainfo import (Quantity, Reference, Section, SubSection, Datetime, MEnum)
 from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.plot import PlotSection
+from nomad.datamodel.metainfo.basesections import CompositeSystemReference
 
 from .. import BaseMeasurement
-from baseclasses.chemical_energy import CENECCElectrodeID
 
 class NECCFeedGas(ArchiveSection):
 
@@ -50,19 +50,13 @@ class NECCFeedGas(ArchiveSection):
 
 class NECCExperimentalProperties(ArchiveSection):
 
-    experiment_id = Quantity(
-        type=str,
-        description='This ID is generated automatically in the format User_Date_Number.',
-        a_eln=dict(component='StringEditQuantity', label='Experiment id'))
+    anode = SubSection(
+        section_def=CompositeSystemReference,
+    )
 
-    # TODO reference the ID here or the CENECCElectrode?
-    anode_id = Quantity(
-        type=Reference(CENECCElectrodeID.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
-
-    cathode_id = Quantity(
-        type=Reference(CENECCElectrodeID.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
+    cathode = SubSection(
+        section_def=CompositeSystemReference,
+    )
 
     fill_in_default = Quantity(
         type=bool,
@@ -222,6 +216,12 @@ class NECCExperimentalProperties(ArchiveSection):
     def normalize(self, archive, logger):
 
         # TODO experiment ID
+
+        if self.anode is not None:
+            self.anode.normalize(archive, logger)
+
+        if self.cathode is not None:
+            self.cathode.normalize(archive, logger)
 
         if self.has_reference_electrode is False:
             self.reference_electrode_type = 'N/A'
@@ -463,12 +463,49 @@ class PotentiometryGasChromatographyResults(ArchiveSection):
         super(PotentiometryGasChromatographyResults, self).normalize(archive, logger)
 
 
+from .. import ReadableIdentifiersCustom
+from .cesample import build_initial_id, create_id
+class CENECCExperimentID(ReadableIdentifiersCustom):
+
+    m_def = Section(
+        a_eln=dict(
+            hide=["sample_owner", "sample_short_name", "sample_id", "short_name"]
+        ))
+
+    institute = Quantity(
+        type=str,
+        description='Alias/short name of the home institute of the owner, i.e. *HZB*.',
+        default='CE-NECC',
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=[
+                    'CE-NECC'])))
+
+    def normalize(self, archive, logger):
+        super(CENECCExperimentID, self).normalize(archive, logger)
+
+        if archive.data.lab_id:
+            return
+        if not self.datetime:
+            from datetime import date
+            self.datetime = date.today()
+
+        if self.institute and self.owner and self.datetime:
+            self.lab_id = build_initial_id(self.institute, self.owner, self.datetime)
+
+        create_id(archive, self.lab_id)
+
+
 class PotentiometryGasChromatographyMeasurement(BaseMeasurement):
 
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
         a_browser=dict(adaptor='RawFileAdaptor'))
+
+    experiment_id = SubSection(
+        section_def=CENECCExperimentID)
 
     properties = SubSection(
         section_def=NECCExperimentalProperties)
@@ -486,4 +523,6 @@ class PotentiometryGasChromatographyMeasurement(BaseMeasurement):
         section_def=PotentiometryGasChromatographyResults)
 
     def normalize(self, archive, logger):
+        self.experiment_id = CENECCExperimentID()
+        self.experiment_id.normalize(archive, logger)
         super(PotentiometryGasChromatographyMeasurement, self).normalize(archive, logger)
