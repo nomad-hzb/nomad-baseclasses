@@ -40,7 +40,7 @@ class UVvisDataConcentration(UVvisData, PlotSection):
         unit=('ug/ml'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ug/ml'))
 
-    concentration_measurement = Quantity(
+    calibration_measurement = Quantity(
         type=bool,
         default=False,
         a_eln=dict(component='BoolEditQuantity'))
@@ -131,7 +131,7 @@ class UVvisDataConcentration(UVvisData, PlotSection):
                 fig.add_traces(go.Scatter(x=[self.peak_wavelength.magnitude], y=[self.peak_value], mode='markers'))
             self.figures = [PlotlyFigure(label='figure 1', figure=fig.to_plotly_json())]
 
-        if self.chemical_composition_or_formulas and self.peak_value and not self.concentration_measurement:
+        if self.chemical_composition_or_formulas and self.peak_value and not self.calibration_measurement:
             concentration, self.reference = getConcentrationData(archive, logger,
                                                                  self.chemical_composition_or_formulas,
                                                                  self.peak_value)
