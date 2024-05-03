@@ -127,9 +127,11 @@ class UVvisDataConcentration(UVvisData, PlotSection):
             self.figures = [PlotlyFigure(label='figure 1', figure=fig.to_plotly_json())]
 
         if self.chemical_composition_or_formulas and self.peak_value:
-            self.concentration, self.reference = getConcentrationData(archive, logger,
-                                                                      self.chemical_composition_or_formulas,
-                                                                      self.peak_value)
+            concentration, self.reference = getConcentrationData(archive, logger,
+                                                                 self.chemical_composition_or_formulas,
+                                                                 self.peak_value)
+            if self.reference:
+                self.concentration = concentration
 
 
 def getConcentrationData(data_archive, logger, material, peak_value):
@@ -183,7 +185,7 @@ def getConcentrationData(data_archive, logger, material, peak_value):
     concentration = None
     calibration_reference = None
     if len(matching_calibrations) == 0 and len(extrapolation_calibrations) == 0:
-        logger.error('For the chosen material no calibration exists yet.')
+        logger.warning('For the chosen material no calibration exists yet.')
     else:
         if len(matching_calibrations) > 0:
             calibration_entry = matching_calibrations[0]
