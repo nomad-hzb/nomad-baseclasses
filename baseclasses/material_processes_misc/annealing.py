@@ -18,7 +18,7 @@
 
 import numpy as np
 
-from nomad.metainfo import (Quantity,Section)
+from nomad.metainfo import (Quantity, Section)
 
 from nomad.datamodel.data import ArchiveSection
 
@@ -26,10 +26,10 @@ from nomad.datamodel.data import ArchiveSection
 class Annealing(ArchiveSection):
     '''Base class for annealing of a sample'''
     m_def = Section(
-        links = ['https://purl.archive.org/tfsco/TFSCO_00001033']
+        links=['https://purl.archive.org/tfsco/TFSCO_00001033']
     )
     temperature = Quantity(
-        links = ['https://purl.archive.org/tfsco/TFSCO_00002001','https://purl.archive.org/tfsco/TFSCO_00002073'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00002001', 'https://purl.archive.org/tfsco/TFSCO_00002073'],
         type=np.dtype(
             np.float64),
         unit=('°C'),
@@ -39,7 +39,7 @@ class Annealing(ArchiveSection):
             defaultDisplayUnit='°C'))
 
     time = Quantity(
-        links = ['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
+        links=['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
         type=np.dtype(
             np.float64),
         unit=('s'),
@@ -49,6 +49,14 @@ class Annealing(ArchiveSection):
             defaultDisplayUnit='minute',
             props=dict(
                 minValue=0)))
+
+    atmosphere = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00001012'],
+        type=str,
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(suggestions=["N2", "ambient", "vaccum", "Ar"])
+        ))
 
     # humidity = Quantity(
     #     type=np.dtype(np.float64),
