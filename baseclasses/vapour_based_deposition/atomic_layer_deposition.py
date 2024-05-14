@@ -32,6 +32,7 @@ class ALDProperties(ArchiveSection):
     )
 
     chemical_2 = SubSection(
+        links=['http://purl.obolibrary.org/obo/RO_0000057'],
         section_def=PubChemPureSubstanceSection)
 
     source = Quantity(
