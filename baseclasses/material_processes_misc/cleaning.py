@@ -54,7 +54,7 @@ class SolutionCleaning(CleaningTechnique):
         a_eln=dict(component='ReferenceEditQuantity'))
 
     solvent_2 = SubSection(
-        links=['http://purl.obolibrary.org/obo/RO_0000057'],
+        links=['http://purl.obolibrary.org/obo/RO_0000057','http://purl.obolibrary.org/obo/OBI_0000293'],
         section_def=PubChemPureSubstanceSection)
 
     temperature = Quantity(

@@ -34,6 +34,7 @@ class SputteringProcess(ArchiveSection):
         a_eln=dict(component='ReferenceEditQuantity'))
 
     target_2 = SubSection(
+        links=['http://purl.obolibrary.org/obo/OBI_0000295','http://purl.obolibrary.org/obo/OBI_0000293'],
         section_def=PubChemPureSubstanceSection)
 
     thickness = Quantity(

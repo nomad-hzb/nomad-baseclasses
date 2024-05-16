@@ -338,11 +338,11 @@ class LP50InkjetPrinting(WetChemicalDeposition):
         section_def=LP50InkjetPrintingProperties)
 
     print_head_path = SubSection(
-        links = ['http://purl.obolibrary.org/obo/OBI_0000293'],
+        links=['http://purl.obolibrary.org/obo/OBI_0000295','http://purl.obolibrary.org/obo/OBI_0000293'],
         section_def=LP50PrintHeadPath)
 
     nozzle_voltage_profile = SubSection(
-        links = ['http://purl.obolibrary.org/obo/OBI_0000293'],
+        links=['http://purl.obolibrary.org/obo/OBI_0000295','http://purl.obolibrary.org/obo/OBI_0000293'],
         section_def=LP50NozzleVoltageProfile)
 
     def normalize(self, archive, logger):

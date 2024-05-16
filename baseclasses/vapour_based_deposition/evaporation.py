@@ -32,6 +32,7 @@ class EvaporationSources(ArchiveSection):
         a_eln=dict(component='ReferenceEditQuantity'))
 
     chemical_2 = SubSection(
+        links=['http://purl.obolibrary.org/obo/RO_0000057','http://purl.obolibrary.org/obo/RO_0000056'],
         section_def=PubChemPureSubstanceSection)
 
     sources = Quantity(
@@ -89,6 +90,7 @@ class EvaporationSources(ArchiveSection):
 
 class PerovskiteEvaporation(ArchiveSection):
     evaporation_sources = SubSection(
+        links=['http://purl.obolibrary.org/obo/RO_0000057','http://purl.obolibrary.org/obo/RO_0000056'],
         section_def=EvaporationSources, repeats=True)
 
 
@@ -106,7 +108,7 @@ class Evaporation(ArchiveSection):
         a_eln=dict(component='ReferenceEditQuantity'))
 
     chemical_2 = SubSection(
-        links=['http://purl.obolibrary.org/obo/RO_0000057'],
+        links=['http://purl.obolibrary.org/obo/RO_0000057','http://purl.obolibrary.org/obo/RO_0000056'],
         section_def=PubChemPureSubstanceSection)
 
     source = Quantity(
