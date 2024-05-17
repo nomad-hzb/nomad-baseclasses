@@ -18,12 +18,13 @@
 
 import numpy as np
 
-from nomad.metainfo import (Quantity, Reference, Section, SubSection, Datetime, MEnum)
+from nomad.metainfo import (Quantity, Section, SubSection, Datetime)
 from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.plot import PlotSection
 from nomad.datamodel.metainfo.basesections import CompositeSystemReference
 
-from .. import BaseMeasurement
+from .. import BaseMeasurement, ReadableIdentifiersCustom
+from .cesample import build_initial_id, create_id
 
 class NECCFeedGas(ArchiveSection):
 
@@ -85,7 +86,8 @@ class NECCExperimentalProperties(ArchiveSection):
     reference_electrode_type = Quantity(
         type=str,
         shape=[],
-        description='If has reference electrode is not checked, this reference electrode type must be N/A.',
+        description='If has reference electrode is not checked, '
+                    'this reference electrode type must be N/A.',
         a_eln=dict(
             component='EnumEditQuantity',
             props=dict(
@@ -215,8 +217,6 @@ class NECCExperimentalProperties(ArchiveSection):
 
     def normalize(self, archive, logger):
 
-        # TODO experiment ID
-
         if self.anode is not None:
             self.anode.normalize(archive, logger)
 
@@ -293,22 +293,24 @@ class PotentiostatMeasurement(ArchiveSection):
         type=np.dtype(
             np.float64), shape=['*'], unit='mA', a_plot=[
             {
-                "label": "Current", 'x': 'datetime', 'y': 'current', 'layout': {
-                'yaxis': {
-                    "fixedrange": False}, 'xaxis': {
-                    "fixedrange": False}}, "config": {
-                "editable": True, "scrollZoom": True}}])
+                'label': 'Current', 'x': 'datetime', 'y': 'current',
+                'layout': {
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False}},
+                'config': {
+                'editable': True, 'scrollZoom': True}}])
 
     working_electrode_potential = Quantity(
         type=np.dtype(
             np.float64), shape=['*'], unit='V', a_plot=[
             {
-                "label": "Working Electrode Potential (Ewe)", 'x': 'datetime', 'y': 'working_electrode_potential',
+                'label': 'Working Electrode Potential (Ewe)',
+                'x': 'datetime', 'y': 'working_electrode_potential',
                 'layout': {
-                    'yaxis': {
-                        "fixedrange": False}, 'xaxis': {
-                        "fixedrange": False}}, "config": {
-                "editable": True, "scrollZoom": True}}])
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False}},
+                'config': {
+                'editable': True, 'scrollZoom': True}}])
 
 
 class ThermocoupleMeasurement(PlotSection, ArchiveSection):
@@ -363,10 +365,12 @@ class ThermocoupleMeasurement(PlotSection, ArchiveSection):
         type=np.dtype(
             np.float64), shape=['*'], unit='°C', a_plot=[
             {
-                "label": "Temperature Cathode", 'x': 'datetime', 'y': 'temperature_cathode', 'layout': {
-                'yaxis': {
-                    "fixedrange": False}, 'xaxis': {
-                    "fixedrange": False}}, "config": {
+                'label': 'Temperature Cathode',
+                'x': 'datetime', 'y': 'temperature_cathode',
+                'layout': {
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False}},
+                'config': {
                 "editable": True, "scrollZoom": True}}])
 
     temperature_anode = Quantity(
@@ -463,8 +467,6 @@ class PotentiometryGasChromatographyResults(ArchiveSection):
         super(PotentiometryGasChromatographyResults, self).normalize(archive, logger)
 
 
-from .. import ReadableIdentifiersCustom
-from .cesample import build_initial_id, create_id
 class CENECCExperimentID(ReadableIdentifiersCustom):
 
     m_def = Section(
