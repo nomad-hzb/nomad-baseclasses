@@ -220,6 +220,14 @@ class InorganicEvaporation(Evaporation):
             props=dict(
                 minValue=0)))
 
+    power_percentage = Quantity(
+        links=['http://purl.obolibrary.org/obo/PATO_0001024',
+               'https://purl.archive.org/tfsco/TFSCO_00002104'],
+        type=np.dtype(np.float64),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            props=dict(minValue=0)))
+
 
 class Evaporations(LayerDeposition):
     '''Base class for evaporation of a sample'''
