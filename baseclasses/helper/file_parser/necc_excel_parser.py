@@ -44,18 +44,26 @@ def read_potentiostat_data(file):
 
     return datetimes, current, working_electrode_potential
 
-def read_thermocouple_data(file):
+
+def read_thermocouple_data(file, start_time, end_time):
     data = pd.read_excel(file, sheet_name='Raw Data', header=3)
+    time_grouping = pd.Timedelta(minutes=3)
 
     data['DateTime'] = pd.to_datetime(data['Time Stamp Local'].astype(str))
     data['Date'] = pd.to_datetime(data['Date'].astype(str))
     data['DateTime'] = data['Date'] + pd.to_timedelta(data['DateTime'].dt.strftime('%H:%M:%S'))
-    datetimes = data['DateTime'].dropna()
-    pressure = data['bar(g)'].dropna()
-    temperature_cathode = data['øC  cathode?'].dropna()
-    temperature_anode = data['øC  anode?'].dropna()
+
+    data = data[(data['DateTime'] > start_time - time_grouping) & (data['DateTime'] <= end_time)]
+    data = data[['DateTime', 'bar(g)', 'øC  cathode?', 'øC  anode?']]
+    data = data.resample(time_grouping, on='DateTime', origin=start_time, closed='right', label='right').mean()
+
+    datetimes = data.index
+    pressure = data['bar(g)']
+    temperature_cathode = data['øC  cathode?']
+    temperature_anode = data['øC  anode?']
 
     return datetimes, pressure, temperature_cathode, temperature_anode
+
 
 def read_gaschromatography_data(file):
     data = pd.read_excel(file, sheet_name='Raw Data', header=1)
@@ -78,6 +86,7 @@ def read_gaschromatography_data(file):
     ppms.dropna(axis=0, how='all', inplace=True)
 
     return instrument_file_names, datetimes, gas_types, retention_times, areas, ppms
+
 
 def read_results_data(file):
     data = pd.read_excel(file, sheet_name='Results', header=0)
@@ -108,10 +117,13 @@ def read_results_data(file):
 
     return datetimes, total_flow_rate, total_fe, cell_current, cell_voltage, gas_measurements
 
+
 def read_properties(file):
     data = pd.read_excel(file, sheet_name='Experimental details', index_col=0, header=None)
 
-    # experiment_id does not get parsed and is set for overall measurement
+    if len(data.columns) == 0:
+        return {}
+
     experimental_properties_dict = {
         'cell_type': data.loc['Cell type ', 1],
         'has_reference_electrode': data.loc['Reference Electrode (y/n)', 1] == 'y',
