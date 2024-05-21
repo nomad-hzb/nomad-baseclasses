@@ -26,6 +26,13 @@ from nomad.datamodel.metainfo.basesections import CompositeSystemReference
 
 from baseclasses.chemical_energy import NECCFeedGas, GasFEResults
 
+
+def _round_not_zero(number):
+    rounded_num = round(number, 3)
+    if rounded_num == 0:
+        return number
+    return rounded_num
+
 def read_potentiostat_data(file):
     data = pd.read_excel(file, sheet_name='Raw Data', header=1)
 
@@ -37,7 +44,9 @@ def read_potentiostat_data(file):
         working_electrode_potential = data['Ewe/V'].dropna()
     elif {'I/mA', '<Ewe/V>'}.issubset(data.columns):
         current = data['I/mA'].dropna()
+        current = current.apply(_round_not_zero)
         working_electrode_potential = data['<Ewe/V>'].dropna()
+        working_electrode_potential = working_electrode_potential.apply(_round_not_zero)
     else:
         current = None
         working_electrode_potential = None
@@ -58,9 +67,9 @@ def read_thermocouple_data(file, start_time, end_time):
     data = data.resample(time_grouping, on='DateTime', origin=start_time, closed='right', label='right').mean()
 
     datetimes = data.index
-    pressure = data['bar(g)']
-    temperature_cathode = data['øC  cathode?']
-    temperature_anode = data['øC  anode?']
+    pressure = data['bar(g)'].apply(_round_not_zero)
+    temperature_cathode = data['øC  cathode?'].apply(_round_not_zero)
+    temperature_anode = data['øC  anode?'].apply(_round_not_zero)
 
     return datetimes, pressure, temperature_cathode, temperature_anode
 
