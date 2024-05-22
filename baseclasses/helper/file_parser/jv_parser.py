@@ -126,7 +126,7 @@ def get_jv_data_iris(filename, encoding='utf-8'):
             sep='\t',
             index_col=0,
             encoding='unicode_escape',
-            engine='python')
+            engine='python', on_bad_lines=lambda x: x[:2])
 
     with open(filename) as f:
         df_curves = pd.read_csv(
