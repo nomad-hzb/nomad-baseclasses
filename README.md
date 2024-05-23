@@ -1,6 +1,6 @@
 # NOMAD base sections for solar cell and electro catalysis research
 
-This is a nomad plugin, see [NOMAD Plugins](https://nomad-lab/prod/v1/staging/docs/plugins.html) on how to use them.
+This is a nomad plugin, see [NOMAD Plugins](https://nomad-lab.eu/prod/v1/staging/docs/plugins.html) on how to use them.
 
 ## Documentation
 see [docs](https://rotekekse.github.io/nomad-baseclasses/)
