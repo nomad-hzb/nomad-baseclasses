@@ -43,6 +43,10 @@ class UVvisConcentrationDetection(Analysis, PlotSection):
         type=str,
         a_eln=dict(component='StringEditQuantity'))
 
+    blank_substraction = Quantity(
+        type=Reference(UVvisMeasurement.m_def),
+        a_eln=dict(component='ReferenceEditQuantity'))
+
     minimum_peak_value = Quantity(
         type=np.dtype(np.float64),
         description='The calibration curve can only be applied to peak intensities that are higher than this value.')
@@ -71,13 +75,17 @@ class UVvisConcentrationDetection(Analysis, PlotSection):
         peak_values = []
         concentrations = []
 
+        blank_substraction_value = 0
+        if self.blank_substraction is not None:
+            blank_substraction_value = self.blank_substraction.measurements[0].peak_value
+
         for uvvis_reference in self.inputs:
             for uvvisdata in uvvis_reference.reference.measurements:
                 if uvvisdata.concentration is None or uvvisdata.peak_value is None:
                     logger.error('Please provide concentration and area data for each UVvis Measurement.')
                 else:
                     concentrations.append(uvvisdata.concentration)
-                    peak_values.append(uvvisdata.peak_value)
+                    peak_values.append(uvvisdata.peak_value - blank_substraction_value)
 
         if len(peak_values) > 0:
             self.minimum_peak_value = min(peak_values)
@@ -99,7 +107,7 @@ class UVvisConcentrationDetection(Analysis, PlotSection):
                                       y=[self.intercept + self.slope * self.minimum_peak_value,
                                          self.intercept + self.slope * self.maximum_peak_value],
                                       mode='lines'))
-            fig.update_layout(xaxis_title='Peak Values',
+            fig.update_layout(xaxis_title='Peak Values', xaxis={'fixedrange': False},
                               yaxis_title=f'Concentrations [{concentrations[0].units}]',
                               title_text='Calibration Curve')
             self.figures = [PlotlyFigure(label='figure 1', figure=fig.to_plotly_json())]

@@ -27,7 +27,7 @@ from nomad.datamodel.results import Results, Material
 from nomad.datamodel.metainfo.plot import PlotSection, PlotlyFigure
 import plotly.graph_objects as go
 
-from baseclasses.solar_energy import UVvisData
+from baseclasses.solar_energy import UVvisData, UVvisMeasurement
 from ..helper.utilities import get_reference
 
 
@@ -39,6 +39,10 @@ class UVvisDataConcentration(UVvisData, PlotSection):
         type=np.dtype(np.float64),
         unit=('ug/ml'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ug/ml'))
+
+    blank_substraction = Quantity(
+        type=Reference(UVvisMeasurement.m_def),
+        a_eln=dict(component='ReferenceEditQuantity'))
 
     calibration_measurement = Quantity(
         type=bool,
@@ -132,9 +136,12 @@ class UVvisDataConcentration(UVvisData, PlotSection):
             self.figures = [PlotlyFigure(label='figure 1', figure=fig.to_plotly_json())]
 
         if self.chemical_composition_or_formulas and self.peak_value and not self.calibration_measurement:
+            blank_substraction_value = 0
+            if self.blank_substraction is not None:
+                blank_substraction_value = self.blank_substraction.measurements[0].peak_value
             concentration, self.reference = getConcentrationData(archive, logger,
                                                                  self.chemical_composition_or_formulas,
-                                                                 self.peak_value)
+                                                                 self.peak_value - blank_substraction_value)
             if self.reference:
                 self.concentration = concentration
 
