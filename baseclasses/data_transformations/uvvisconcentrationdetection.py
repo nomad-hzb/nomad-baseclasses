@@ -25,7 +25,7 @@ from nomad.datamodel.metainfo.basesections import Analysis, SectionReference
 from nomad.datamodel.metainfo.plot import PlotSection, PlotlyFigure
 import plotly.graph_objects as go
 
-from baseclasses.solar_energy import UVvisMeasurement
+from baseclasses.solar_energy import UVvisMeasurement, UVvisData
 
 class UVvisReference(SectionReference):
     reference = Quantity(
@@ -44,7 +44,7 @@ class UVvisConcentrationDetection(Analysis, PlotSection):
         a_eln=dict(component='StringEditQuantity'))
 
     blank_substraction = Quantity(
-        type=Reference(UVvisMeasurement.m_def),
+        type=Reference(UVvisData.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     minimum_peak_value = Quantity(
@@ -77,7 +77,7 @@ class UVvisConcentrationDetection(Analysis, PlotSection):
 
         blank_substraction_value = 0
         if self.blank_substraction is not None:
-            blank_substraction_value = self.blank_substraction.measurements[0].peak_value
+            blank_substraction_value = self.blank_substraction.peak_value
 
         for uvvis_reference in self.inputs:
             for uvvisdata in uvvis_reference.reference.measurements:
