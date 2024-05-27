@@ -210,6 +210,12 @@ class SolutionPreparationStandard(SolutionPreparation):
             component='BoolEditQuantity',
         ))
 
+    preparation_description = Quantity(
+        type=str,
+        description='Any information on solution preparation that cannot be captured in other fields.',
+        a_eln=dict(component='RichTextEditQuantity'),
+    )
+
 
 class SolutionPreparationStandardWithSonication(SolutionPreparationStandard):
 
