@@ -45,7 +45,15 @@ class UVvisConcentrationDetection(Analysis, PlotSection):
 
     blank_substraction = Quantity(
         type=Reference(UVvisData.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
+        a_eln=dict(component='ReferenceEditQuantity'),
+        description='If this calibration is computed with internal blank substraction, the user can provide a blank'
+                    'which gets substracted of each new measurement when later using this calibration.'
+                    'Please note that this blank also affects the minimum and maximum peak values of the calibration.')
+
+    blank_substraction_peak_value = Quantity(
+        type=np.dtype(np.float64),
+        default=0.0,
+        description='This value is computed automatically if a blank substraction is given and is 0 otherwise.')
 
     minimum_peak_value = Quantity(
         type=np.dtype(np.float64),
@@ -72,12 +80,13 @@ class UVvisConcentrationDetection(Analysis, PlotSection):
     def normalize(self, archive, logger):
         super(UVvisConcentrationDetection, self).normalize(archive, logger)
 
+        if self.blank_substraction is not None:
+            self.blank_substraction_peak_value = self.blank_substraction.peak_value
+        else:
+            self.blank_substraction_peak_value = 0.0
+
         peak_values = []
         concentrations = []
-
-        blank_substraction_value = 0
-        if self.blank_substraction is not None:
-            blank_substraction_value = self.blank_substraction.peak_value
 
         for uvvis_reference in self.inputs:
             for uvvisdata in uvvis_reference.reference.measurements:
@@ -85,11 +94,14 @@ class UVvisConcentrationDetection(Analysis, PlotSection):
                     logger.error('Please provide concentration and area data for each UVvis Measurement.')
                 else:
                     concentrations.append(uvvisdata.concentration)
-                    peak_values.append(uvvisdata.peak_value - blank_substraction_value)
+                    peak_values.append(uvvisdata.peak_value)
 
         if len(peak_values) > 0:
             self.minimum_peak_value = min(peak_values)
             self.maximum_peak_value = max(peak_values)
+            if self.blank_substraction is not None:
+                self.minimum_peak_value = self.minimum_peak_value + self.blank_substraction.peak_value
+                self.maximum_peak_value = self.maximum_peak_value + self.blank_substraction.peak_value
 
             try:
                 concentration_values = np.array([measure.magnitude for measure in concentrations])

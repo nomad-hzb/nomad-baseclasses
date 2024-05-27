@@ -40,10 +40,6 @@ class UVvisDataConcentration(UVvisData, PlotSection):
         unit=('ug/ml'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ug/ml'))
 
-    blank_substraction = Quantity(
-        type=Reference(UVvisData.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
-
     calibration_measurement = Quantity(
         type=bool,
         default=False,
@@ -136,12 +132,9 @@ class UVvisDataConcentration(UVvisData, PlotSection):
             self.figures = [PlotlyFigure(label='figure 1', figure=fig.to_plotly_json())]
 
         if self.chemical_composition_or_formulas and self.peak_value and not self.calibration_measurement:
-            blank_substraction_value = 0
-            if self.blank_substraction is not None:
-                blank_substraction_value = self.blank_substraction.peak_value
             concentration, self.reference = getConcentrationData(archive, logger,
                                                                  self.chemical_composition_or_formulas,
-                                                                 self.peak_value - blank_substraction_value)
+                                                                 self.peak_value)
             if self.reference:
                 self.concentration = concentration
 
@@ -183,6 +176,7 @@ def getConcentrationData(data_archive, logger, material, peak_value):
                     entry['maximum_peak_value'] = entry_data['maximum_peak_value']
                     entry['slope'] = entry_data['slope']
                     entry['intercept'] = entry_data['intercept']
+                    entry['blank_substraction_peak_value'] = entry_data['blank_substraction_peak_value']
                 except BaseException:
                     entry['material_name'] = None
 
@@ -219,6 +213,9 @@ def getConcentrationData(data_archive, logger, material, peak_value):
                         'The computation of the concentration is based on the calibration linked in '
                         'the \'Concentration Detection\' reference section.')
 
+        # remove possible blank substraction from measurement
+        if calibration_entry['blank_substraction_peak_value'] is not None:
+            peak_value = peak_value - calibration_entry['blank_substraction_peak_value']
         # compute concentration
         concentration = calibration_entry['slope'] * peak_value + calibration_entry['intercept']
         # reference used UVvisConcentrationDetection
