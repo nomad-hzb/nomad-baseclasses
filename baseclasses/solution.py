@@ -204,6 +204,12 @@ class SolutionPreparationStandard(SolutionPreparation):
             component='RadioEnumEditQuantity',
         ))
 
+    filtered = Quantity(
+        type=bool,
+        a_eln=dict(
+            component='BoolEditQuantity',
+        ))
+
 
 class SolutionPreparationStandardWithSonication(SolutionPreparationStandard):
 
