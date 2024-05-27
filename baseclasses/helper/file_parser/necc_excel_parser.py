@@ -38,14 +38,10 @@ def read_potentiostat_data(file):
 
     datetimes = pd.to_datetime(data['time/s']).dropna()
 
-    # TODO decide with Christina which col name to use
-    if {'<I>/mA', 'Ewe/V'}.issubset(data.columns):
-        current = data['<I>/mA'].dropna()
-        working_electrode_potential = data['Ewe/V'].dropna()
-    elif {'I/mA', '<Ewe/V>'}.issubset(data.columns):
+    if {'I/mA', 'Ewe/V'}.issubset(data.columns):
         current = data['I/mA'].dropna()
         current = current.apply(_round_not_zero)
-        working_electrode_potential = data['<Ewe/V>'].dropna()
+        working_electrode_potential = data['Ewe/V'].dropna()
         working_electrode_potential = working_electrode_potential.apply(_round_not_zero)
     else:
         current = None
