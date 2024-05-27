@@ -472,28 +472,28 @@ def read(file_paths: list):  # , required_params: Dict[str, Any]):  # , library_
         positions.append(get_position(spx_root))
         spectra.append(get_channels(spx_root))
         ##########################################################################################
-        if is_results_in_file(spx_root):
-            deconvolution_method, deconvolution_result = get_deconvolution_results(spx_root)
-            deconvolution_methods.append(deconvolution_method)
-            for line_dict in deconvolution_result:
-                line_dict['idx'] = idx
-                deconvolution_rows.append(line_dict)
+        # if is_results_in_file(spx_root):
+        #     deconvolution_method, deconvolution_result = get_deconvolution_results(spx_root)
+        #     deconvolution_methods.append(deconvolution_method)
+        #     for line_dict in deconvolution_result:
+        #         line_dict['idx'] = idx
+        #         deconvolution_rows.append(line_dict)
 
-            roi_results = get_roi_results(spx_root)
-            for element_dict in roi_results:
-                element_dict['idx'] = idx
-                roi_rows.append(element_dict)
+        #     roi_results = get_roi_results(spx_root)
+        #     for element_dict in roi_results:
+        #         element_dict['idx'] = idx
+        #         roi_rows.append(element_dict)
 
-            layer_results, layer_props = get_fit_layer_composition(spx_root)
-            for layer_results_dict in layer_results:
-                layer_results_dict['idx'] = idx
-                layer_rows.append(layer_results_dict)
+        #     layer_results, layer_props = get_fit_layer_composition(spx_root)
+        #     for layer_results_dict in layer_results:
+        #         layer_results_dict['idx'] = idx
+        #         layer_rows.append(layer_results_dict)
 
-            for layer_prop_dict in layer_props:
-                layer_prop_dict['idx'] = idx
-                layer_prop_rows.append(layer_prop_dict)
+        #     for layer_prop_dict in layer_props:
+        #         layer_prop_dict['idx'] = idx
+        #         layer_prop_rows.append(layer_prop_dict)
 
-            fit_bkg.append(get_fit_bkg(spx_root))
+        #     fit_bkg.append(get_fit_bkg(spx_root))
         ##########################################################################################
     # generate axes
     positions_array = np.array(positions).T  # make a (multi-dim) array from list of position and transpose
