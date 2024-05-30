@@ -250,6 +250,8 @@ class NECCExperimentalProperties(ArchiveSection):
 
 class GasChromatographyMeasurement(ArchiveSection):
 
+    m_def = Section(label_quantity='gas_type')
+
     instrument_file_name = Quantity(
         type=str,
         shape=['*'])
