@@ -16,9 +16,11 @@
 # limitations under the License.
 #
 import numpy as np
+import math
 from nomad.metainfo import (
     Quantity,
     Section, SubSection)
+from nomad.units import ureg
 from .. import BaseMeasurement, SingleLibraryMeasurement, LibraryMeasurement
 from nomad.datamodel.data import ArchiveSection
 
@@ -106,6 +108,47 @@ class PLPropertiesLibrary(ArchiveSection):
         type=np.dtype(np.float64),
         unit=('nm'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+
+    laser_power = Quantity(
+        type=np.dtype(np.float64),
+        unit=('W'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='W'))
+
+    power_density = Quantity(
+        type=np.dtype(np.float64),
+        unit=('W/m**2'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='W/m**2'))
+
+    photon_flux = Quantity(
+        type=np.dtype(np.float64),
+        unit=('1/(m**2*s)'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='1/(m**2*s)'))
+
+    # Function to calculate power density and photon flux
+
+    def calculate_laser_parameters(self):
+        # Constants
+        h = 6.626e-34 * ureg("J*s")  # Planck's constant in Js
+        c = 299_792_458 * ureg("m/s")  # Speed of light in m/s
+
+        # Calculate spot area
+        radius = self.spot_size / 2
+        area = math.pi * (radius ** 2)
+
+        # Calculate power density
+        power_density = self.laser_power / area
+
+        # Calculate energy of a single photon
+        photon_energy = (h * c) / self.laser_wavelength
+
+        # Calculate photon flux
+        photon_flux = power_density / photon_energy
+        return power_density, photon_flux
+
+    def normalize(self, archive, logger):
+        super(PLPropertiesLibrary, self).normalize(archive, logger)
+        if self.laser_power and self.laser_wavelength and self.spot_size:
+            self.power_density, self.photon_flux = self.calculate_laser_parameters()
 
 
 class PLMeasurement(BaseMeasurement):
