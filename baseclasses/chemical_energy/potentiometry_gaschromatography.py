@@ -26,6 +26,7 @@ from nomad.datamodel.metainfo.basesections import CompositeSystemReference
 from .. import BaseMeasurement, ReadableIdentifiersCustom
 from .cesample import build_initial_id, create_id
 
+
 class NECCFeedGas(ArchiveSection):
 
     name = Quantity(
@@ -48,6 +49,7 @@ class NECCFeedGas(ArchiveSection):
             defaultDisplayUnit='ml/minute',
             props=dict(minValue=0)
         ))
+
 
 class NECCExperimentalProperties(ArchiveSection):
 
@@ -300,7 +302,7 @@ class PotentiostatMeasurement(ArchiveSection):
                     'yaxis': {'fixedrange': False},
                     'xaxis': {'fixedrange': False}},
                 'config': {
-                'editable': True, 'scrollZoom': True}}])
+                    'editable': True, 'scrollZoom': True}}])
 
     working_electrode_potential = Quantity(
         type=np.dtype(
@@ -312,7 +314,7 @@ class PotentiostatMeasurement(ArchiveSection):
                     'yaxis': {'fixedrange': False},
                     'xaxis': {'fixedrange': False}},
                 'config': {
-                'editable': True, 'scrollZoom': True}}])
+                    'editable': True, 'scrollZoom': True}}])
 
 
 class ThermocoupleMeasurement(PlotSection, ArchiveSection):
@@ -358,10 +360,10 @@ class ThermocoupleMeasurement(PlotSection, ArchiveSection):
             np.float64), shape=['*'], unit='bar', a_plot=[
             {
                 "label": "Pressure (in barg)", 'x': 'datetime', 'y': 'pressure', 'layout': {
-                'yaxis': {
-                    "fixedrange": False}, 'xaxis': {
-                    "fixedrange": False}}, "config": {
-                "editable": True, "scrollZoom": True}}])
+                    'yaxis': {
+                        "fixedrange": False}, 'xaxis': {
+                        "fixedrange": False}}, "config": {
+                    "editable": True, "scrollZoom": True}}])
 
     temperature_cathode = Quantity(
         type=np.dtype(
@@ -373,20 +375,22 @@ class ThermocoupleMeasurement(PlotSection, ArchiveSection):
                     'yaxis': {'fixedrange': False},
                     'xaxis': {'fixedrange': False}},
                 'config': {
-                "editable": True, "scrollZoom": True}}])
+                    "editable": True, "scrollZoom": True}}])
 
     temperature_anode = Quantity(
         type=np.dtype(np.float64), shape=['*'], unit='°C',
         a_plot=[
             {
                 "label": "Temperature Anode", 'x': 'datetime', 'y': 'temperature_anode', 'layout': {
-                'yaxis': {
-                    "fixedrange": False}, 'xaxis': {
-                    "fixedrange": False}}, "config": {
-                "editable": True, "scrollZoom": True}}])
+                    'yaxis': {
+                        "fixedrange": False}, 'xaxis': {
+                        "fixedrange": False}}, "config": {
+                    "editable": True, "scrollZoom": True}}])
 
 
 class GasFEResults(ArchiveSection):
+
+    m_def = Section(label_quantity='gas_type')
 
     gas_type = Quantity(
         type=str,
@@ -413,10 +417,10 @@ class GasFEResults(ArchiveSection):
         a_plot=[
             {
                 "label": "FE over time", 'x': 'datetime', 'y': 'faradaic_efficiency', 'layout': {
-                'yaxis': {
-                    "fixedrange": False}, 'xaxis': {
-                    "fixedrange": False}}, "config": {
-                "editable": True, "scrollZoom": True}}])
+                    'yaxis': {
+                        "fixedrange": False}, 'xaxis': {
+                        "fixedrange": False}}, "config": {
+                    "editable": True, "scrollZoom": True}}])
 
     mean_fe = Quantity(type=np.dtype(np.float64))
 
