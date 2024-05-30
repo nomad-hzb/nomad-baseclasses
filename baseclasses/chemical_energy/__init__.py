@@ -30,6 +30,7 @@ from .photocurrent import PhotoCurrent
 from .cesample import CESample, SampleIDCENOME, SubstrateProperties, Purging, export_lab_id
 from .cesample import CENSLISample, get_next_project_sample_number, SubstanceWithConcentration
 from .cesample import CENOMESample, Electrode, Electrolyte, ElectroChemicalCell, ElectroChemicalSetup, Environment, Equipment, CatalystSynthesis
+from .neccelectrode import CENECCElectrode, CENECCElectrodeRecipe, CENECCElectrodeID
 from .preparation_protocoll import PreparationProtocol
 from .diamondsample import DiamondSample
 # from .waterbath import WaterBath
@@ -37,4 +38,7 @@ from .voltammetry import VoltammetryCycle, Voltammetry, VoltammetryCycleWithPlot
 from .potentiostat_measurement import PotentiostatMeasurement, PotentiostatSetup
 from .phasefluorometryoxygen import PhaseFluorometryOxygen
 from .pumpratemeasurement import PumpRateMeasurement
+from .potentiometry_gaschromatography import (PotentiometryGasChromatographyMeasurement, NECCExperimentalProperties,
+                                              GasChromatographyMeasurement, PotentiostatMeasurement, ThermocoupleMeasurement,
+                                              GasFEResults, PotentiometryGasChromatographyResults, NECCFeedGas)
 from .uvvismeasurementconcentration import UVvisDataConcentration

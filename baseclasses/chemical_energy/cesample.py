@@ -18,7 +18,7 @@
 
 import numpy as np
 
-from nomad.metainfo import (Quantity, SubSection, Section, Reference, Datetime)
+from nomad.metainfo import (Quantity, SubSection, Section, Reference, Datetime, MEnum)
 
 from nomad.datamodel.results import Results, Material
 from nomad.datamodel.data import ArchiveSection
@@ -460,7 +460,7 @@ class CENOMESample(CESample):
         export_lab_id(archive, self.lab_id)
 
 
-class Electrode(CESample):    
+class Electrode(CESample):
     m_def = Section(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007201'],
     )
@@ -530,7 +530,7 @@ class Purging(ArchiveSection):
     m_def = Section(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007225']
     )
-    
+
     gas = SubSection(
         section_def=PubChemPureSubstanceSection)
 
