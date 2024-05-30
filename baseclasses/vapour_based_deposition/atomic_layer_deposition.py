@@ -32,8 +32,7 @@ class ALDProperties(ArchiveSection):
     )
 
     chemical_2 = SubSection(
-        #Link to ontology class 'chemical substance'
-        links = ['http://purl.obolibrary.org/obo/CHEBI_59999'], 
+        links=['http://purl.obolibrary.org/obo/RO_0000057'],
         section_def=PubChemPureSubstanceSection)
 
     source = Quantity(
@@ -50,7 +49,6 @@ class ALDProperties(ArchiveSection):
                     'ULTE2'])))
 
     thickness = Quantity(
-        #Link to ontology class 'thickness', link to ontology class 'thickness setting datum'
         links = ['http://purl.obolibrary.org/obo/PATO_0000915'],
         type=np.dtype(np.float64),
         unit=('nm'),
@@ -61,7 +59,6 @@ class ALDProperties(ArchiveSection):
                 minValue=0)))
 
     temperature = Quantity(
-        #Link to ontology class 'temperature', Link to ontology class 'temperature setting datum'
         links = ['http://purl.obolibrary.org/obo/PATO_0000146','https://purl.archive.org/tfsco/TFSCO_00002111'],
         type=np.dtype(
             np.float64),
@@ -72,7 +69,6 @@ class ALDProperties(ArchiveSection):
         ))
 
     rate = Quantity(
-        #Link to ontology class 'thinfilm deposition rate', Link to ontology class 'thinfilm deposition rate setting datum'
         links = ['https://purl.archive.org/tfsco/TFSCO_00002110'],
         type=np.dtype(
             np.float64),
@@ -82,7 +78,6 @@ class ALDProperties(ArchiveSection):
             defaultDisplayUnit='angstrom/s', props=dict(minValue=0)))
 
     time = Quantity(
-        #Link to ontology class 'time', Link to ontology class 'time setting datum'
         links = ['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
         type=np.dtype(
             np.float64),
@@ -110,7 +105,6 @@ class AtomicLayerDeposition(LayerDeposition):
     '''Base class for evaporation of a sample'''
 
     m_def = Section(
-        #Link to ontology class 'atomic layer deposition'
         links = ['http://purl.obolibrary.org/obo/CHMO_0001311']
     )
 

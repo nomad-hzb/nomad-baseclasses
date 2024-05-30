@@ -41,3 +41,4 @@ from .pumpratemeasurement import PumpRateMeasurement
 from .potentiometry_gaschromatography import (PotentiometryGasChromatographyMeasurement, NECCExperimentalProperties,
                                               GasChromatographyMeasurement, PotentiostatMeasurement, ThermocoupleMeasurement,
                                               GasFEResults, PotentiometryGasChromatographyResults, NECCFeedGas)
+from .uvvismeasurementconcentration import UVvisDataConcentration

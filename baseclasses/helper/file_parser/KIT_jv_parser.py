@@ -270,6 +270,7 @@ def get_jv_data(filename, encoding='utf-8'):
 
     jv_dict = {}
     jv_dict['active_area'] = float(df_header.iloc[1, 1])
+    jv_dict['datetime'] = f'{df_header.iloc[3, 0]} {df_header.iloc[3, 1]}'
     # jv_dict['intensity'] = df_header.iloc[1, 1]
     # jv_dict['integration_time'] = df_header.iloc[2, 1]
     # jv_dict['settling_time'] = df_header.iloc[3, 1]

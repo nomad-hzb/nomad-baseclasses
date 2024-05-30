@@ -143,6 +143,38 @@ def read_file(file_path, header_lines=None):
     return photon_energy_raw, eqe_raw, photon_energy, intensity
 
 
+def read_file_multiple(file_path, encoding="utf-8"):
+    df = pd.read_csv(file_path, sep="\t", encoding=encoding)
+    result = []
+    for i in range(0, len(df.columns), 6):
+        try:
+            x = np.array(df[df.columns[i]][4:], dtype=np.float64)
+            y = np.array(df[df.columns[i+1]][4:], dtype=np.float64)
+
+            x = x[np.isfinite(x)]
+            y = y[np.isfinite(y)]
+            if any(x > 10):  # check if energy (eV) or wavelength (nm)
+                x = hc_eVnm / x
+            if any(y > 10):  # check if EQE is given in (%), if so it's translated to abs. numbers
+                y = y / 100
+
+            # bring both arrays into correct order (i.e. w.r.t eV increasing) if one started with e.g. wavelength in increasing order e.g. 300nm, 305nm,...
+            if x[1] - x[2] > 0:
+                x = np.flip(x)
+                y = np.flip(y)
+            photon_energy, intensity = interpolate_eqe(x, y)
+
+            result.append({
+                "photon_energy_raw": x,
+                "intensty_raw": y,
+                "photon_energy": photon_energy,
+                "intensity": intensity,
+            })
+        except:
+            continue
+    return result
+
+
 def fit_urbach_tail(photon_energy, intensity, fit_window=0.06, filter_window=20):
     '''
     Fits the Urbach tail to the EQE data. To select the fitting range,

@@ -214,7 +214,6 @@ class Voltammetry(PotentiostatMeasurement):
                     "editable": True, "scrollZoom": True}}])
 
     cycles = SubSection(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007228'],
         section_def=VoltammetryCycleWithPlot, repeats=True)
 
     export_data_to_csv = Quantity(

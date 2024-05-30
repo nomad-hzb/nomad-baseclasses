@@ -32,7 +32,6 @@ class DropCastingProperties(ArchiveSection):
             component='NumberEditQuantity'))
 
     dropcast_amount = Quantity(
-        #Link to ontology class 'volume' and 'volume setting datum'
         links = ['http://purl.obolibrary.org/obo/PATO_0000918', 'https://purl.archive.org/tfsco/TFSCO_00002158'],
         type=np.dtype(
             np.float64),
@@ -42,7 +41,6 @@ class DropCastingProperties(ArchiveSection):
             defaultDisplayUnit='ml'))
 
     temperature = Quantity(
-        #Link to ontology class 'temperature' and 'temperature setting datum'
         links = ['http://purl.obolibrary.org/obo/PATO_0000146', 'https://purl.archive.org/tfsco/TFSCO_00002111'],
         type=np.dtype(
             np.float64),
@@ -52,7 +50,6 @@ class DropCastingProperties(ArchiveSection):
             defaultDisplayUnit='°C'))
 
     atmosphere = Quantity(
-        #Link to ontology class 'atmosphere'
         links = ['https://purl.archive.org/tfsco/TFSCO_00001012'],
         type=str,
         a_eln=dict(
@@ -63,7 +60,6 @@ class DropCastingProperties(ArchiveSection):
 
 class DropCasting(WetChemicalDeposition):
     m_def = Section(
-        #Link to ontology class 'Drop casting'
         links = ['https://purl.archive.org/tfsco/TFSCO_00002059'],
     )
 

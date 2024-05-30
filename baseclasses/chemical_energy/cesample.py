@@ -389,7 +389,6 @@ class CatalystSynthesis(ArchiveSection):
     )
 
     substances = SubSection(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0000062'],
         section_def=SubstanceWithConcentration, repeats=True)
 
 
@@ -451,11 +450,9 @@ class CENOMESample(CESample):
         section_def=SampleIDCENOMEdate)
 
     substrate = SubSection(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0000024'],
         section_def=SubstrateProperties)
 
     synthesis = SubSection(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0000045'],
         section_def=CatalystSynthesis, repeats=True)
 
     def normalize(self, archive, logger):
@@ -509,11 +506,9 @@ class Electrolyte(CESample):
         a_eln=dict(component='NumberEditQuantity', label="pH Value"))
 
     solvent = SubSection(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007246'],
         section_def=PubChemPureSubstanceSection)
 
     substances = SubSection(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0000062'],
         section_def=SubstanceWithConcentration, repeats=True)
 
     def normalize(self, archive, logger):
@@ -561,11 +556,9 @@ class EnvironmentReference(CompositeSystemReference):
 
 class Environment(Electrolyte):
     purging = SubSection(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007225'],
         section_def=Purging)
 
     other_environments = SubSection(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007223'],
         section_def=EnvironmentReference, repeats=True)
 
     def normalize(self, archive, logger):

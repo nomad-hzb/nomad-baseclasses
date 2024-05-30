@@ -24,6 +24,7 @@ from .. import ReadableIdentifiersCustom
 from ..helper.utilities import get_reference, create_archive, get_entry_id_from_file_name, add_section_markdown, rewrite_json, get_solutions, convert_datetime
 from ..solar_energy import SolarCellProperties
 from ..wet_chemical_deposition import PrecursorSolution
+from ..solution import OtherSolution
 
 
 def log_error(plan_obj, logger, msg):
@@ -49,7 +50,7 @@ def set_value(section, path, value, unit):
             setattr(section, next_key, value)
     elif isinstance(section, list):
         set_value(section[np.int64(next_key)], "/".join(path_split[1:]), value, unit)
-    elif isinstance(section, PrecursorSolution):
+    elif isinstance(section, PrecursorSolution) or isinstance(section, OtherSolution):
         if not section.solution_details:
             section.solution_details = section.solution.m_copy(deep=True)
         set_value(section[next_key], "/".join(path_split[1:]), value, unit)

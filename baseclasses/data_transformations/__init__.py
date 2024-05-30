@@ -1,1 +1,2 @@
 from .nkdata_analysis import NKData, NKDataResult
+from .uvvisconcentrationdetection import UVvisConcentrationDetection
