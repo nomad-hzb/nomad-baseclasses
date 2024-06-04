@@ -293,11 +293,12 @@ class SolcarCellSample(CompositeSystem):
                 archive.results.properties.optoelectronic.solar_cell.device_area = result_data[
                     "JVs"][jv_key]["device_area"] * ureg('cm**2')
 
-        eqe_eff_val = 0
+        eqe_eff_val = 0 * ureg("eV")
         for entry in result_data["EQEs"]:
             for bandgap in result_data["EQEs"][entry]["band_gap"]:
-                if not np.isnan(bandgap) and bandgap > eqe_eff_val:
-                    eqe_eff_val = bandgap * ureg("eV")
+                if np.isnan(bandgap) or bandgap * ureg("eV") < eqe_eff_val:
+                    continue
+                eqe_eff_val = bandgap * ureg("eV")
 
         if result_data["EQEs"]:
             band_gap = eqe_eff_val
