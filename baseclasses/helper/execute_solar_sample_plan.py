@@ -206,6 +206,9 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=N
     # standard process integration
     if plan_obj.load_standard_processes:
         set_false(plan_obj, archive)
+        if plan_obj.plan_is_loaded:
+            log_error(plan_obj, logger, "The experimental plan has already been loaded. Uncheck the plan_is_loaded checkbox, reloading will overwrite manual entered data!")
+            return
         parameters_before = []
         parameters_linear = []
         parameters_single = []
@@ -260,6 +263,8 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=N
             else:
                 plan_obj.plan[i].batch_processes = [
                     step.process_reference.m_resolved().m_copy(deep=True)] * number_of_subbatches
+        plan_obj.plan_is_loaded = True
+        rewrite_json(["data", "plan_is_loaded"], archive, True)
 
     # process, sample and batch creation
     if plan_obj.create_samples_and_processes \

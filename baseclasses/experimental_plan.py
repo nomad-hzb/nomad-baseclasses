@@ -184,6 +184,12 @@ class ExperimentalPlan(Entity):
         a_eln=dict(component='ButtonEditQuantity')
     )
 
+    plan_is_loaded = Quantity(
+        type=bool,
+        default=False,
+        a_eln=dict(component='BoolEditQuantity')
+    )
+
     plan_is_created = Quantity(
         type=bool,
         default=False,
