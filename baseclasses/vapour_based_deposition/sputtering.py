@@ -231,10 +231,10 @@ class MultiTargetSputteringProcess(ArchiveSection):
         section_def=TargetProperties, repeats=True
     )
 
-    gas = Quantity(
+    gas = SubSection(
         links=['http://purl.obolibrary.org/obo/CHEBI_59999'],
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
+        section_def=PubChemPureSubstanceSection
+    )
 
     manipulator_position = Quantity(
         type=str,
