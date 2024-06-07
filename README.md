@@ -3,7 +3,7 @@
 This is a nomad plugin, see [NOMAD Plugins](https://nomad-lab.eu/prod/v1/staging/docs/plugins.html) on how to use them.
 
 ## Documentation
-see [docs](https://rotekekse.github.io/nomad-baseclasses/)
+see [docs]([https://rotekekse.github.io/nomad-baseclasses/](https://nomad-hzb.github.io/nomad-baseclasses/))
 
 ## Examples
 At the heart of this plugin are deposition techniques as they are used  in perovskite solar cells, characterizations of these solar cells and electro chemical techniques using instruments such as a potentionstat.
