@@ -167,6 +167,10 @@ class Sputtering(LayerDeposition):
 
 
 class TargetProperties(ArchiveSection):
+    m_def = Section(
+        label="name",
+    )
+    name = Quantity(type=str)
     material = SubSection(
         links=['https://purl.archive.org/tfsco/TFSCO_00002035'],
         section_def=PubChemPureSubstanceSection
@@ -223,6 +227,10 @@ class TargetProperties(ArchiveSection):
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='V'))
+
+    def normalize(self, archive, logger):
+        if self.material and self.material.molecular_formula:
+            self.name = self.material.molecular_formula
 
 
 class MultiTargetSputteringProcess(ArchiveSection):
