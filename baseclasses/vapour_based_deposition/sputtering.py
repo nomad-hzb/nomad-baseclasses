@@ -300,7 +300,7 @@ class MultiTargetSputtering(LayerDeposition):
         links=['http://purl.obolibrary.org/obo/CHMO_0001364'],
     )
 
-    processes = SubSection(
+    process_properties = SubSection(
         section_def=MultiTargetSputteringProcess)
 
     def normalize(self, archive, logger):
