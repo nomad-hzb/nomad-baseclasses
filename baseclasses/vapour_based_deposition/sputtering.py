@@ -168,7 +168,7 @@ class Sputtering(LayerDeposition):
 
 class TargetProperties(ArchiveSection):
     m_def = Section(
-        label="name",
+        label_quantity="name",
     )
     name = Quantity(type=str)
     material = SubSection(
