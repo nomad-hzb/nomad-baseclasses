@@ -98,7 +98,6 @@ def add_batch(plan_obj, archive, batch_cls, sample_refs, is_subbatch, idx1=None)
     if is_subbatch:
         file_name += f"_{idx1}"
     file_name += '.archive.json'
-    entry_id = get_entry_id_from_file_name(file_name, archive)
     batch_id = plan_obj.lab_id
     if is_subbatch:
         batch_id += f"_{idx1}"
@@ -109,8 +108,9 @@ def add_batch(plan_obj, archive, batch_cls, sample_refs, is_subbatch, idx1=None)
         entities=[CompositeSystemReference(reference=sample_ref) for sublist in sample_refs for sample_ref in sublist],
         description=plan_obj.description if plan_obj.description and not is_subbatch else None)
     if is_subbatch and plan_obj.substrates_per_subbatch == 1:
-        return entry_id
+        return
     create_archive(batch, archive, file_name, overwrite=True)
+    entry_id = get_entry_id_from_file_name(file_name, archive)
     return entry_id
 
 
