@@ -98,6 +98,7 @@ def add_batch(plan_obj, archive, batch_cls, sample_refs, is_subbatch, idx1=None)
     if is_subbatch:
         file_name += f"_{idx1}"
     file_name += '.archive.json'
+    entry_id = get_entry_id_from_file_name(file_name, archive)
     batch_id = plan_obj.lab_id
     if is_subbatch:
         batch_id += f"_{idx1}"
@@ -108,8 +109,9 @@ def add_batch(plan_obj, archive, batch_cls, sample_refs, is_subbatch, idx1=None)
         entities=[CompositeSystemReference(reference=sample_ref) for sublist in sample_refs for sample_ref in sublist],
         description=plan_obj.description if plan_obj.description and not is_subbatch else None)
     if is_subbatch and plan_obj.substrates_per_subbatch == 1:
-        return
+        return entry_id
     create_archive(batch, archive, file_name, overwrite=True)
+    return entry_id
 
 
 def create_documentation(plan_obj, archive, md, solution_list):
@@ -282,7 +284,8 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=N
             sample_refs.append(sample_refs_subbatch)
             add_batch(plan_obj, archive, batch_cls, [sample_refs_subbatch], True, idx1)
 
-        add_batch(plan_obj, archive, batch_cls, sample_refs, False)
+        batch_entry_id = add_batch(plan_obj, archive, batch_cls, sample_refs, False)
+        plan_obj.batch_reference = get_reference(archive.metadata.upload_id, batch_entry_id)
 
         # create processes
         md = f"# Batch plan of batch {plan_obj.lab_id}\n\n"
@@ -302,6 +305,7 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=N
                         solution_list.append(s["solution"])
 
         create_documentation(plan_obj, archive, md, solution_list)
+
         plan_obj.plan_is_created = True
         rewrite_json(["data", "plan_is_created"], archive, True)
         rewrite_json(["data", "description"], archive, plan_obj.description)

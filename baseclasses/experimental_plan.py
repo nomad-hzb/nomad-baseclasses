@@ -26,7 +26,7 @@ from nomad.metainfo import (
 
 from nomad.datamodel.metainfo.eln import Entity
 
-from . import BaseProcess, StandardSample
+from . import BaseProcess, StandardSample, Batch
 from .customreadable_identifier import ReadableIdentifiersCustom
 from nomad.datamodel.data import ArchiveSection
 from .wet_chemical_deposition import PrecursorSolution
@@ -212,6 +212,10 @@ class ExperimentalPlan(Entity):
     standard_plan = Quantity(
         type=Reference(StandardSample.m_def),
         a_eln=dict(component='ReferenceEditQuantity')
+    )
+
+    batch_reference = Quantity(
+        type=Reference(Batch.m_def)
     )
 
     batch_id = SubSection(
