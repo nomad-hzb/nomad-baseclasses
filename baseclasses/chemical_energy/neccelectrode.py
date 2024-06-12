@@ -107,7 +107,6 @@ class CENECCElectrodeRecipe(CESample):
             component='RichTextEditQuantity',
             label='Remarks'))
 
-    # TODO check if substrate_type and substrate_dimension is all that necc group wants (right now one empty field in excel)
     substrate = SubSection(
         section_def=SubstrateProperties)
 
@@ -139,7 +138,6 @@ class CENECCElectrodeID(ReadableIdentifiersCustom):
 
     owner = Quantity(
         type=str,
-        default='Matthew Mayer',
         a_eln=dict(
             component='EnumEditQuantity',
             props=dict(
@@ -156,6 +154,11 @@ class CENECCElectrodeID(ReadableIdentifiersCustom):
         a_eln=dict(component='ReferenceEditQuantity'))
 
     def normalize(self, archive, logger):
+
+        author = archive.metadata.main_author
+        if author and self.owner is None:
+            self.owner = ' '.join([author.first_name, author.last_name])
+
         super(CENECCElectrodeID, self).normalize(archive, logger)
 
         if archive.data.lab_id:
@@ -171,8 +174,6 @@ class CENECCElectrodeID(ReadableIdentifiersCustom):
         create_id(archive, self.lab_id)
 
 class CENECCElectrode(CESample):
-    # TODO class name maybe CENECCSample or something with 'catalyst detail'
-    # TODO is it ok to combine cathode and anode like this?
 
     electrode_id = SubSection(section_def=CENECCElectrodeID)
 
@@ -187,3 +188,5 @@ class CENECCElectrode(CESample):
         self.chemical_composition_or_formulas = self.electrode_id.recipe.electrode_recipe_id.element
         super(CENECCElectrode, self).normalize(archive, logger)
         export_lab_id(archive, self.lab_id)
+        if archive.data == self and self.name:
+            archive.metadata.entry_name = self.name
