@@ -198,7 +198,8 @@ class SubstrateProperties(ArchiveSection):
         a_eln=dict(
             component='EnumEditQuantity',
             props=dict(
-                suggestions=['glassy carbon', 'ITO on glass', 'Platinum', 'glass', 'silicon wafer'])
+                suggestions=['glassy carbon', 'ITO on glass', 'Platinum', 'glass', 'silicon wafer',
+                             'Treudenberg H23C6', 'Sigracet 39BB'])
         ))
 
     substrate_dimension = Quantity(

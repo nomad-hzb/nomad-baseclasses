@@ -20,6 +20,10 @@ import numpy as np
 
 from nomad.metainfo import (Quantity, Reference, SubSection, Section, Datetime, MEnum)
 
+from nomad.datamodel.data import ArchiveSection
+
+from nomad.datamodel.metainfo.basesections import PubChemPureSubstanceSection
+
 from .. import ReadableIdentifiersCustom
 
 from .cesample import (build_initial_id, create_id, export_lab_id, CESample,
@@ -81,6 +85,34 @@ class CENECCElectrodeRecipeID(ReadableIdentifiersCustom):
         create_id(archive, self.lab_id)
 
 
+class Solvent(ArchiveSection):
+    type = Quantity(
+        type=str,
+        shape=[],
+        a_eln=dict(component='StringEditQuantity'))
+
+    volume = Quantity(
+        type=np.dtype(np.float64),
+        unit=('ml'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'))
+
+
+class Ionomer(ArchiveSection):
+    type = Quantity(
+        type=str,
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=[
+                    'Nafion'
+                ])))
+
+    mass = Quantity(
+        type=np.dtype(np.float64),
+        unit=('mg'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mg'))
+
+
 class CENECCElectrodeRecipe(CESample):
 
     electrode_recipe_id = SubSection(section_def=CENECCElectrodeRecipeID)
@@ -110,8 +142,9 @@ class CENECCElectrodeRecipe(CESample):
     substrate = SubSection(
         section_def=SubstrateProperties)
 
-    solvents_and_ionomer = SubSection(
-        section_def=CatalystSynthesis, repeats=True)
+    solvent = SubSection(section_def=Solvent, repeats=True)
+
+    ionomer = SubSection(section_def=Ionomer, repeats=True)
 
     def normalize(self, archive, logger):
         self.chemical_composition_or_formulas = self.electrode_recipe_id.element
