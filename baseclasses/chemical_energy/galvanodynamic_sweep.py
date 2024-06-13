@@ -29,13 +29,11 @@ from .potentiostat_measurement import PotentiostatProperties
 class LSGProperties(PotentiostatProperties):
 
     initial_current = Quantity(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007216'],
         type=np.dtype(np.float64),
         unit=('mA'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA'))
 
     final_current = Quantity(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007217'],
         type=np.dtype(np.float64),
         unit=('mA'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA'))
