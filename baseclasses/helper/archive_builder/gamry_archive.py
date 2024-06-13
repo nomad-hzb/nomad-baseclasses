@@ -13,6 +13,7 @@ from baseclasses.chemical_energy.chronopotentiometry import CPProperties
 from baseclasses.chemical_energy.chronocoulometry import CCProperties
 from baseclasses.chemical_energy.cyclicvoltammetry import CVProperties
 from baseclasses.chemical_energy.linear_sweep_voltammetry import LSVProperties
+from baseclasses.chemical_energy.galvanodynamic_sweep import LSGProperties
 from baseclasses.chemical_energy.opencircuitvoltage import OCVProperties
 from baseclasses.chemical_energy.electorchemical_impedance_spectroscopy import EISProperties, EISCycle
 from baseclasses.chemical_energy.voltammetry import VoltammetryCycle, VoltammetryCycleWithPlot
@@ -67,6 +68,17 @@ def get_lsv_properties(metadata):
     properties.initial_potential_measured_against = "Eoc" if metadata["VINIT"][1] else "Eref"
     properties.final_potential = metadata["VFINAL"][0]
     properties.final_potential_measured_against = "Eoc" if metadata["VFINAL"][1] else "Eref"
+    properties.scan_rate = metadata.get("SCANRATE")
+    properties.step_size = metadata.get("STEPSIZE")
+    properties.sample_area = metadata.get("AREA")
+    return properties
+
+
+def get_lsg_properties(metadata):
+    properties = LSGProperties()
+
+    properties.initial_current = metadata["VINIT"]
+    properties.final_current = metadata["VFINAL"]
     properties.scan_rate = metadata.get("SCANRATE")
     properties.step_size = metadata.get("STEPSIZE")
     properties.sample_area = metadata.get("AREA")
