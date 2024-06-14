@@ -77,8 +77,8 @@ def get_lsv_properties(metadata):
 def get_lsg_properties(metadata):
     properties = LSGProperties()
 
-    properties.initial_current = metadata["VINIT"]
-    properties.final_current = metadata["VFINAL"]
+    properties.initial_current = metadata["IINIT"]
+    properties.final_current = metadata["IFINAL"]
     properties.scan_rate = metadata.get("SCANRATE")
     properties.step_size = metadata.get("STEPSIZE")
     properties.sample_area = metadata.get("AREA")

@@ -47,8 +47,8 @@ class LSGProperties(PotentiostatProperties):
 
     step_size = Quantity(
         type=np.dtype(np.float64),
-        unit=('mV'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mV'))
+        unit=('mA'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA'))
 
 
 class GalvanodynamicSweep(Voltammetry):
