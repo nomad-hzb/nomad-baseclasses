@@ -1,0 +1,4 @@
+plugin_type: schema
+name: Baseclass Schemas for HZB 
+description: |
+  These are the Nomad baseclass schemas  at HZB for CE and SE.
