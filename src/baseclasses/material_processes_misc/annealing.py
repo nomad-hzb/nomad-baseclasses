@@ -58,6 +58,17 @@ class Annealing(ArchiveSection):
             props=dict(suggestions=["N2", "ambient", "vaccum", "Ar"])
         ))
 
+    ramp = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=('K/minute'),
+        shape=[],
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='°C/minute',
+            props=dict(
+                minValue=0)))
+
     # humidity = Quantity(
     #     type=np.dtype(np.float64),
     #     a_eln=dict(component='NumberEditQuantity'))
