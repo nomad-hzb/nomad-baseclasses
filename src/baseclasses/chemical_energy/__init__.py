@@ -20,6 +20,7 @@ from .cleaning import Cleaning, SolutionCleaning
 from .constantpotential import ConstantPotential
 from .cyclicvoltammetry import CyclicVoltammetry, CVProperties
 from .linear_sweep_voltammetry import LinearSweepVoltammetry, LSVProperties
+from .galvanodynamic_sweep import GalvanodynamicSweep, LSGProperties
 from .chronoamperometry import Chronoamperometry
 from .chronopotentiometry import Chronopotentiometry
 from .chronocoulometry import Chronocoulometry

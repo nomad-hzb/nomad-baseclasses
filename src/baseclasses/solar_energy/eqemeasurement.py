@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -17,18 +16,20 @@
 # limitations under the License.
 #
 
+import numpy as np
 
-# Evaluation of EQE measurement data + Urbach tail to determine the radiative open-circuit voltage.
-# Building from the work of Lisa Krückemeier et al. (https://doi.org/10.1002/aenm.201902573)
-# Initially translated to Python by Christian Wolff
+from nomad.metainfo import (SubSection, Quantity)
+
+from nomad.datamodel.metainfo.eln import SolarCellEQE
+from .. import BaseMeasurement
+
+from nomad.units import ureg
 
 
 from scipy import integrate, optimize
-import numpy as np
 import pandas as pd
 import os
 from scipy.signal import savgol_filter
-import matplotlib.pyplot as plt
 
 
 # Constants
@@ -48,13 +49,6 @@ def find_nearest(array, value):
     return array[idx]
 
 
-def interpolate_eqe(photon_energy_raw, eqe_raw):
-    photon_energy_interpolated = np.linspace(min(photon_energy_raw), max(photon_energy_raw), 1000, endpoint=True)
-    eqe_interpolated = np.interp(photon_energy_interpolated, photon_energy_raw, eqe_raw)
-
-    return photon_energy_interpolated, eqe_interpolated
-
-
 def linear(x, a, b):
     return a * x + b
 
@@ -65,114 +59,6 @@ def select_range(array, value_start, value_end):
     idx_start = np.where(array == value_start)[0][0]
     idx_end = np.where(array == value_end)[0][0]
     return idx_start, idx_end
-
-
-def arrange_eqe_columns(df):
-    """
-    Gets a df with columns of the file and returns a `photon_energy_raw` array
-    and `eqe_raw` array with values of the photon energy values in *eV* and
-    the eqe (values between 0 and 1) respectively.
-    It finds if the eqe data comes in nm or eV and converts it to eV.
-
-    Returns:
-        photon_energy_raw: array of photon energy values in eV
-        eqe_raw: array of eqe values
-    """
-    if 'Calculated' in list(df.columns):  # for files from the hzb
-        x = df.iloc[:, 0].values
-        y = df['Calculated'].values
-    else:
-        x = df.iloc[:, 0].values
-        y = df.iloc[:, 1].values
-
-    if any(x > 10):  # check if energy (eV) or wavelength (nm)
-        x = hc_eVnm / x
-    if any(y > 10):  # check if EQE is given in (%), if so it's translated to abs. numbers
-        y = y / 100
-
-    # bring both arrays into correct order (i.e. w.r.t eV increasing) if one started with e.g. wavelength in increasing order e.g. 300nm, 305nm,...
-    if x[1] - x[2] > 0:
-        x = np.flip(x)
-        y = np.flip(y)
-
-    photon_energy_raw = x
-    eqe_raw = y
-    return photon_energy_raw, eqe_raw
-
-
-def read_file(file_path, header_lines=None):
-    """
-    Reads the file and returns the columns in a pandas DataFrame `df`.
-    :return: df
-    :rtype: pandas.DataFrame
-    """
-    if header_lines is None:
-        header_lines = 0
-    if header_lines == 0:  # in case you have a header
-        try:
-            df = pd.read_csv(file_path, header=None, sep='\t',)
-            if len(df.columns) < 2:
-                raise IndexError
-        except IndexError:
-            df = pd.read_csv(file_path, header=None)
-    else:
-        try:
-            # header_lines - 1 assumes last header line is column names
-            df = pd.read_csv(file_path, header=int(header_lines - 1), sep='\t')
-            if len(df.columns) < 2:
-                raise IndexError
-        except IndexError:
-            try:  # wrong separator?
-                df = pd.read_csv(file_path, header=int(header_lines - 1))
-                if len(df.columns) < 2:
-                    raise IndexError
-            except IndexError:
-                try:  # separator was right, but last header_line is not actually column names?
-                    df = pd.read_csv(file_path, header=int(header_lines), sep='\t')
-                    if len(df.columns) < 2:
-                        raise IndexError
-                except IndexError:
-                    # Last guess: separator was wrong AND last header_line is not actually column names?
-                    df = pd.read_csv(file_path, header=int(header_lines))
-                    if len(df.columns) < 2:
-                        raise IndexError
-    df = df.apply(pd.to_numeric, errors='coerce')
-    df = df.dropna()
-    photon_energy_raw, eqe_raw = arrange_eqe_columns(df)
-    photon_energy, intensity = interpolate_eqe(photon_energy_raw, eqe_raw)
-    return photon_energy_raw, eqe_raw, photon_energy, intensity
-
-
-def read_file_multiple(file_path, encoding="utf-8"):
-    df = pd.read_csv(file_path, sep="\t", encoding=encoding)
-    result = []
-    for i in range(0, len(df.columns), 6):
-        try:
-            x = np.array(df[df.columns[i]][4:], dtype=np.float64)
-            y = np.array(df[df.columns[i+1]][4:], dtype=np.float64)
-
-            x = x[np.isfinite(x)]
-            y = y[np.isfinite(y)]
-            if any(x > 10):  # check if energy (eV) or wavelength (nm)
-                x = hc_eVnm / x
-            if any(y > 10):  # check if EQE is given in (%), if so it's translated to abs. numbers
-                y = y / 100
-
-            # bring both arrays into correct order (i.e. w.r.t eV increasing) if one started with e.g. wavelength in increasing order e.g. 300nm, 305nm,...
-            if x[1] - x[2] > 0:
-                x = np.flip(x)
-                y = np.flip(y)
-            photon_energy, intensity = interpolate_eqe(x, y)
-
-            result.append({
-                "photon_energy_raw": x,
-                "intensty_raw": y,
-                "photon_energy": photon_energy,
-                "intensity": intensity,
-            })
-        except:
-            continue
-    return result
 
 
 def fit_urbach_tail(photon_energy, intensity, fit_window=0.06, filter_window=20):
@@ -341,3 +227,54 @@ def calculate_voc_rad(photon_energy, intensity):
 # print(calculate_bandgap(x, y))
 # print(calculate_j0rad(x, y))
 # print(calculate_voc_rad(x, y))
+
+
+
+class SolarCellEQECustom(SolarCellEQE):
+
+    header_lines = Quantity(
+        type=np.dtype(np.int64),
+        description="""
+        Number of header lines in the file. Edit in case your file has a header.
+        """,
+        a_eln=dict(component='NumberEditQuantity'))
+
+    def normalize(self, archive, logger):
+        if self.photon_energy_array is not None and self.eqe_array is not None:
+            photon_energy_array = np.array(self.photon_energy_array)
+            self.bandgap_eqe = calculate_bandgap(photon_energy_array, self.eqe_array)
+            self.integrated_jsc = calculate_jsc(photon_energy_array, self.eqe_array) * ureg('A/m**2')
+            try:
+                self.integrated_j0rad = calculate_j0rad(photon_energy_array, self.eqe_array)[0] * ureg('A/m**2')
+                self.voc_rad = calculate_voc_rad(photon_energy_array, self.eqe_array)
+            except ValueError:
+                print('Urbach energy is > 0.026 eV (~kB*T for T = 300K).\n')
+            urbach_enery, *_, urbach_energy_fit_std_dev, _ = fit_urbach_tail(photon_energy_array, self.eqe_array)
+            if urbach_enery <= 0.0 or urbach_enery >= 0.5:
+                print('Failed to estimate a reasonable Urbach Energy')
+            else:
+                self.urbach_energy, self.urbach_energy_fit_std_dev = urbach_enery, urbach_energy_fit_std_dev
+
+        if self.photon_energy_array is not None:
+            self.wavelength_array = self.photon_energy_array.to('nm', 'sp')  # pylint: disable=E1101
+            self.raw_wavelength_array = self.raw_photon_energy_array.to('nm', 'sp')  # pylint: disable=E1101
+
+
+class EQEMeasurement(BaseMeasurement):
+    '''Eqe Measurement'''
+
+    data_file = Quantity(
+        type=str,
+        a_eln=dict(component='FileEditQuantity'),
+        a_browser=dict(adaptor='RawFileAdaptor'))
+
+    eqe_data = SubSection(
+        section_def=SolarCellEQECustom,
+        repeats=True)
+
+    data = SubSection(
+        section_def=SolarCellEQECustom)
+
+    def normalize(self, archive, logger):
+        self.method = "EQE Measurement"
+        super(EQEMeasurement, self).normalize(archive, logger)

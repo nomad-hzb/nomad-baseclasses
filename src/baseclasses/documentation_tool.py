@@ -191,6 +191,7 @@ jupyter_string = '''
 
 def get_sample(number_of_substances):
     columns = ["id",
+               "name",
                "chemical_composition_or_formula",
                "component_description",
                "producer",
@@ -211,6 +212,7 @@ def get_sample(number_of_substances):
 
 def get_env(number_of_substances):
     columns = ["id",
+               "name",
                "ph_value",
                "description",
                "solvent_name",
@@ -227,6 +229,7 @@ def get_env(number_of_substances):
 
 def get_setup():
     columns = ["id",
+               "name",
                "setup",
                "reference_electrode",
                "counter_electrode",
