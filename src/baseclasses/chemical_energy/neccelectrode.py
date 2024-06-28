@@ -19,10 +19,7 @@
 import numpy as np
 
 from nomad.metainfo import (Quantity, Reference, SubSection, Section, Datetime, MEnum)
-
 from nomad.datamodel.data import ArchiveSection
-
-from nomad.datamodel.metainfo.basesections import PubChemPureSubstanceSection
 
 from .. import ReadableIdentifiersCustom
 
@@ -88,8 +85,12 @@ class CENECCElectrodeRecipeID(ReadableIdentifiersCustom):
 class Solvent(ArchiveSection):
     type = Quantity(
         type=str,
-        shape=[],
-        a_eln=dict(component='StringEditQuantity'))
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=[
+                    'H2O', 'Isopropanol', 'Ethanol'
+                ])))
 
     volume = Quantity(
         type=np.dtype(np.float64),
