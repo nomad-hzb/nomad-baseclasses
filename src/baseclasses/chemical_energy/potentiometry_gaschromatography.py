@@ -431,6 +431,10 @@ class GasFEResults(ArchiveSection):
     maximum_fe = Quantity(type=np.dtype(np.float64))
 
     def normalize(self, archive, logger):
+        if any(fe < -100 for fe in self.faradaic_efficiency):
+            self.faradaic_efficiency = [0] * len(self.faradaic_efficiency)
+            logger.warn(f'The FE of {self.gas_type} is removed because it is more than 100%. '
+                        f'Please check if {self.gas_type} is a feed gas.')
         self.mean_fe = np.mean(self.faradaic_efficiency)
         self.minimum_fe = np.min(self.faradaic_efficiency)
         self.maximum_fe = np.max(self.faradaic_efficiency)
@@ -491,6 +495,10 @@ class CENECCExperimentID(ReadableIdentifiersCustom):
                     'CE-NECC'])))
 
     def normalize(self, archive, logger):
+        author = archive.metadata.main_author
+        if author and self.owner is None:
+            self.owner = ' '.join([author.first_name, author.last_name])
+
         super(CENECCExperimentID, self).normalize(archive, logger)
 
         if archive.data.lab_id:
