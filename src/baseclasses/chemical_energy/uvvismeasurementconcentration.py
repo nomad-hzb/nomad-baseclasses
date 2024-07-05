@@ -18,9 +18,8 @@
 
 import numpy as np
 import pandas as pd
-from scipy import signal
 
-from nomad.metainfo import Quantity, Reference, Section, SubSection, Datetime
+from nomad.metainfo import MProxy, Quantity, Reference, Section, SubSection, Datetime
 from nomad.datamodel.metainfo.basesections import Analysis
 from nomad.datamodel.results import Results, Material
 
@@ -132,14 +131,31 @@ class UVvisDataConcentration(UVvisData, PlotSection):
             self.figures = [PlotlyFigure(label='figure 1', figure=fig.to_plotly_json())]
 
         if self.chemical_composition_or_formulas and self.peak_value and not self.calibration_measurement:
-            concentration, self.reference = getConcentrationData(archive, logger,
-                                                                 self.chemical_composition_or_formulas,
-                                                                 self.peak_value)
             if self.reference:
-                self.concentration = concentration
+                if isinstance(self.reference, MProxy):
+                    self.reference.m_resolved()
+                    self.concentration = calculate_concentration(self.reference['slope'],
+                                                                 self.reference['intercept'],
+                                                                 self.peak_value,
+                                                                 self.reference['blank_substraction_peak_value'])
+            else:
+                concentration, self.reference = get_concentration_data(archive, logger,
+                                                                       self.chemical_composition_or_formulas,
+                                                                       self.peak_value)
+                if self.reference:
+                    self.concentration = concentration
 
 
-def getConcentrationData(data_archive, logger, material, peak_value):
+def calculate_concentration(slope, intercept, peak_value, blank_value):
+    # remove possible blank substraction from measurement
+    if blank_value is not None:
+        peak_value = peak_value - blank_value
+    # compute concentration
+    concentration = slope * peak_value + intercept
+    return concentration
+
+
+def get_concentration_data(data_archive, logger, material, peak_value):
     # This function gets all UVvisConcentrationDetection archives.
     # Iterates over them and selects suitable UVvisConcentrationDetection based on material and min/max peak_values.
     # Computes the concentration of the given UVvisMeasurement based on slope and intercept of suitable UVvisConcentrationDetection.
@@ -212,12 +228,11 @@ def getConcentrationData(data_archive, logger, material, peak_value):
                         'The calibration is extrapolated based on the given material.'
                         'The computation of the concentration is based on the calibration linked in '
                         'the \'Concentration Detection\' reference section.')
+        concentration = calculate_concentration(calibration_entry['slope'],
+                                                calibration_entry['intercept'],
+                                                peak_value,
+                                                calibration_entry['blank_substraction_peak_value'])
 
-        # remove possible blank substraction from measurement
-        if calibration_entry['blank_substraction_peak_value'] is not None:
-            peak_value = peak_value - calibration_entry['blank_substraction_peak_value']
-        # compute concentration
-        concentration = calibration_entry['slope'] * peak_value + calibration_entry['intercept']
         # reference used UVvisConcentrationDetection
         calibration_reference = get_reference(calibration_entry['upload_id'], calibration_entry['entry_id'])
 
