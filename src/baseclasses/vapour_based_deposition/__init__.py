@@ -21,4 +21,4 @@ from .physical_vapur_deposition import PVDeposition
 from .plasma_enhanced_physical_vapour_deposition import PECVDeposition, PECVDProcess
 from .evaporation import Evaporations, Evaporation
 from .sputtering import Sputtering, SputteringProcess, MultiTargetSputteringProcess, TargetProperties, MultiTargetSputtering
-from .atomic_layer_deposition import AtomicLayerDeposition
+from .atomic_layer_deposition import AtomicLayerDeposition, ALDPropertiesIris
