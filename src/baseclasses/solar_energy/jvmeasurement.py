@@ -141,7 +141,7 @@ class SolarCellJV(PlotSection):
     )
 
     efficiency = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0001029'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00001037'],
         type=np.dtype(np.float64),
         shape=[],
         description="""
@@ -151,7 +151,7 @@ class SolarCellJV(PlotSection):
     )
 
     potential_at_maximum_power_point = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0001464','https://purl.archive.org/tfsco/TFSCO_00005005'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00001106','https://purl.archive.org/tfsco/TFSCO_00002064'],
         type=np.dtype(np.float64),
         unit='V',
         shape=[],
@@ -162,7 +162,7 @@ class SolarCellJV(PlotSection):
     )
 
     current_density_at_maximun_power_point = Quantity(
-        link=['https://purl.archive.org/tfsco/TFSCO_00001105','https://purl.archive.org/tfsco/TFSCO_00005061'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00001105','https://purl.archive.org/tfsco/TFSCO_00005061'],
         type=np.dtype(np.float64),
         unit='mA / cm**2',
         shape=[],
