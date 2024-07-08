@@ -95,6 +95,7 @@ class SolarCellJV(PlotSection):
     )
 
     light_intensity = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00001129','https://purl.archive.org/tfsco/TFSCO_00002034'],
         type=np.dtype(np.float64),
         unit=('mW/cm**2'),
         shape=[],
@@ -109,6 +110,7 @@ class SolarCellJV(PlotSection):
     )
 
     open_circuit_voltage = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00001034','https://purl.archive.org/tfsco/TFSCO_00002063'],
         type=np.dtype(np.float64),
         unit='V',
         shape=[],
@@ -129,6 +131,7 @@ class SolarCellJV(PlotSection):
     )
 
     fill_factor = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00001107','https://purl.archive.org/tfsco/TFSCO_00002050'],
         type=np.dtype(np.float64),
         shape=[],
         description="""
@@ -138,6 +141,7 @@ class SolarCellJV(PlotSection):
     )
 
     efficiency = Quantity(
+        links=['http://purl.obolibrary.org/obo/PATO_0001029'],
         type=np.dtype(np.float64),
         shape=[],
         description="""
@@ -147,6 +151,7 @@ class SolarCellJV(PlotSection):
     )
 
     potential_at_maximum_power_point = Quantity(
+        links=['http://purl.obolibrary.org/obo/PATO_0001464','https://purl.archive.org/tfsco/TFSCO_00005005'],
         type=np.dtype(np.float64),
         unit='V',
         shape=[],
@@ -157,6 +162,7 @@ class SolarCellJV(PlotSection):
     )
 
     current_density_at_maximun_power_point = Quantity(
+        link=['https://purl.archive.org/tfsco/TFSCO_00001105','https://purl.archive.org/tfsco/TFSCO_00005061'],
         type=np.dtype(np.float64),
         unit='mA / cm**2',
         shape=[],
@@ -167,6 +173,7 @@ class SolarCellJV(PlotSection):
     )
 
     series_resistance = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00001104','https://purl.archive.org/tfsco/TFSCO_00002100'],
         type=np.dtype(np.float64),
         unit='ohm*cm**2',
         shape=[],
@@ -177,6 +184,7 @@ class SolarCellJV(PlotSection):
     )
 
     shunt_resistance = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00001103','https://purl.archive.org/tfsco/TFSCO_00002099'],
         type=np.dtype(np.float64),
         unit='ohm*cm**2',
         shape=[],
@@ -256,6 +264,7 @@ class SolarCellJVCurve(SolarCellJV):
     )
 
     current_density = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00000064','https://purl.archive.org/tfsco/TFSCO_00005061'],
         type=np.dtype(np.float64),
         shape=['n_values'],
         unit='mA/cm^2',
@@ -263,6 +272,7 @@ class SolarCellJVCurve(SolarCellJV):
     )
 
     voltage = Quantity(
+        links=['http://purl.obolibrary.org/obo/PATO_0001464','https://purl.archive.org/tfsco/TFSCO_00005005'],
         type=np.dtype(np.float64),
         shape=['n_values'],
         unit='V',
@@ -312,7 +322,9 @@ class SolarCellJVCurveDarkCustom(SolarCellJVCurveCustom):
 
 class JVMeasurement(BaseMeasurement):
 
-    m_def = Section(label_quantity='data_file', validate=False)
+    m_def = Section(
+        links=['https://purl.archive.org/tfsco/TFSCO_00000088'],
+        label_quantity='data_file', validate=False)
 
     data_file = Quantity(
         type=str,
@@ -320,6 +332,7 @@ class JVMeasurement(BaseMeasurement):
         a_browser=dict(adaptor='RawFileAdaptor'))
 
     active_area = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00001004','https://purl.archive.org/tfsco/TFSCO_00002097'],
         type=np.dtype(
             np.float64),
         unit=('cm^2'),
@@ -331,6 +344,7 @@ class JVMeasurement(BaseMeasurement):
                 minValue=0)))
 
     intensity = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00001128'],
         type=np.dtype(
             np.float64),
         unit=('mW/cm^2'),
@@ -340,6 +354,7 @@ class JVMeasurement(BaseMeasurement):
             defaultDisplayUnit='mW/cm^2', props=dict(minValue=0)))
 
     integration_time = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00002076','https://purl.archive.org/tfsco/TFSCO_00002093'],
         type=np.dtype(
             np.float64),
         unit=('ms'),
@@ -351,6 +366,7 @@ class JVMeasurement(BaseMeasurement):
                 minValue=0)))
 
     settling_time = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00002077','https://purl.archive.org/tfsco/TFSCO_00002092'],
         type=np.dtype(
             np.float64),
         unit=('ms'),
@@ -367,6 +383,7 @@ class JVMeasurement(BaseMeasurement):
         a_eln=dict(component='NumberEditQuantity'))
 
     compliance = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00002078'],
         type=np.dtype(
             np.float64),
         unit=('mA/cm^2'),
