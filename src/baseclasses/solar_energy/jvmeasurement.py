@@ -162,7 +162,7 @@ class SolarCellJV(PlotSection):
     )
 
     current_density_at_maximun_power_point = Quantity(
-        link=['https://purl.archive.org/tfsco/TFSCO_00001105','https://purl.archive.org/tfsco/TFSCO_00005061'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00001105','https://purl.archive.org/tfsco/TFSCO_00005061'],
         type=np.dtype(np.float64),
         unit='mA / cm**2',
         shape=[],
