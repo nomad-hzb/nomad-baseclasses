@@ -131,6 +131,10 @@ class UVvisDataConcentration(UVvisData, PlotSection):
             self.figures = [PlotlyFigure(label='figure 1', figure=fig.to_plotly_json())]
 
         if self.chemical_composition_or_formulas and self.peak_value and not self.calibration_measurement:
+            if self.reference is None:
+                self.reference = get_concentration_reference(archive, logger,
+                                                             self.chemical_composition_or_formulas,
+                                                             self.peak_value)
             if self.reference:
                 if isinstance(self.reference, MProxy):
                     self.reference.m_resolved()
@@ -138,12 +142,6 @@ class UVvisDataConcentration(UVvisData, PlotSection):
                                                                  self.reference['intercept'],
                                                                  self.peak_value,
                                                                  self.reference['blank_substraction_peak_value'])
-            else:
-                concentration, self.reference = get_concentration_data(archive, logger,
-                                                                       self.chemical_composition_or_formulas,
-                                                                       self.peak_value)
-                if self.reference:
-                    self.concentration = concentration
 
 
 def calculate_concentration(slope, intercept, peak_value, blank_value):
@@ -155,7 +153,7 @@ def calculate_concentration(slope, intercept, peak_value, blank_value):
     return concentration
 
 
-def get_concentration_data(data_archive, logger, material, peak_value):
+def get_concentration_reference(data_archive, logger, material, peak_value):
     # This function gets all UVvisConcentrationDetection archives.
     # Iterates over them and selects suitable UVvisConcentrationDetection based on material and min/max peak_values.
     # Computes the concentration of the given UVvisMeasurement based on slope and intercept of suitable UVvisConcentrationDetection.
@@ -190,9 +188,6 @@ def get_concentration_data(data_archive, logger, material, peak_value):
                     entry['material_name'] = entry_data['material_name']
                     entry['minimum_peak_value'] = entry_data['minimum_peak_value']
                     entry['maximum_peak_value'] = entry_data['maximum_peak_value']
-                    entry['slope'] = entry_data['slope']
-                    entry['intercept'] = entry_data['intercept']
-                    entry['blank_substraction_peak_value'] = entry_data['blank_substraction_peak_value']
                 except BaseException:
                     entry['material_name'] = None
 
@@ -204,7 +199,6 @@ def get_concentration_data(data_archive, logger, material, peak_value):
         except Exception as e:
             logger.error("Error in processing data: ", e)
 
-    concentration = None
     calibration_reference = None
     if len(matching_calibrations) == 0 and len(extrapolation_calibrations) == 0:
         logger.warning('For the chosen material no calibration exists yet.')
@@ -228,10 +222,6 @@ def get_concentration_data(data_archive, logger, material, peak_value):
                         'The calibration is extrapolated based on the given material.'
                         'The computation of the concentration is based on the calibration linked in '
                         'the \'Concentration Detection\' reference section.')
-        concentration = calculate_concentration(calibration_entry['slope'],
-                                                calibration_entry['intercept'],
-                                                peak_value,
-                                                calibration_entry['blank_substraction_peak_value'])
 
         # reference used UVvisConcentrationDetection
         calibration_reference = get_reference(calibration_entry['upload_id'], calibration_entry['entry_id'])
@@ -241,4 +231,4 @@ def get_concentration_data(data_archive, logger, material, peak_value):
                     'The computation of the concentration is based on the calibration linked in '
                     'the \'Concentration Detection\' reference section.')
 
-    return concentration, calibration_reference
+    return calibration_reference
