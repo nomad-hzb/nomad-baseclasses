@@ -262,6 +262,7 @@ class SolarCellEQE(PlotSection):
     )
 
     light_bias = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00002123','https://purl.archive.org/tfsco/TFSCO_00002124'],
         type=np.dtype(np.float64),
         unit=('mW/cm**2'),
         shape=[],
@@ -272,6 +273,7 @@ class SolarCellEQE(PlotSection):
     )
 
     bandgap_eqe = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00002140','https://purl.archive.org/tfsco/TFSCO_00002133'],
         type=np.dtype(np.float64),
         shape=[],
         unit='eV',
@@ -282,6 +284,7 @@ class SolarCellEQE(PlotSection):
     )
 
     integrated_jsc = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00002141','https://purl.archive.org/tfsco/TFSCO_00002134'],
         type=np.dtype(np.float64),
         unit='mA / cm**2',
         shape=[],
@@ -293,6 +296,7 @@ class SolarCellEQE(PlotSection):
     )
 
     integrated_j0rad = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00002142','https://purl.archive.org/tfsco/TFSCO_00002135'],
         type=np.dtype(np.float64),
         unit='mA / cm**2',
         shape=[],
@@ -303,6 +307,7 @@ class SolarCellEQE(PlotSection):
     )
 
     voc_rad = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00002143','https://purl.archive.org/tfsco/TFSCO_00002136'],
         type=np.dtype(np.float64),
         shape=[],
         unit='V',
@@ -313,6 +318,7 @@ class SolarCellEQE(PlotSection):
     )
 
     urbach_energy = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00002137','https://purl.archive.org/tfsco/TFSCO_00002144'],
         type=np.dtype(np.float64),
         shape=[],
         unit='eV',
@@ -323,6 +329,7 @@ class SolarCellEQE(PlotSection):
     )
 
     urbach_energy_fit_std_dev = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00002145','https://purl.archive.org/tfsco/TFSCO_00002138'],
         type=np.dtype(np.float64),
         shape=[],
         unit='eV',
@@ -467,6 +474,8 @@ class SolarCellEQECustom(SolarCellEQE):
 
 class EQEMeasurement(BaseMeasurement):
     '''Eqe Measurement'''
+
+    m_def = Section(links=['https://purl.archive.org/tfsco/TFSCO_00000087'])
 
     data_file = Quantity(
         type=str,
