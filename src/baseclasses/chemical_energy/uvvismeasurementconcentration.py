@@ -135,13 +135,13 @@ class UVvisDataConcentration(UVvisData, PlotSection):
                 self.reference = get_concentration_reference(archive, logger,
                                                              self.chemical_composition_or_formulas,
                                                              self.peak_value)
-            if self.reference:
-                if isinstance(self.reference, MProxy):
-                    self.reference.m_resolved()
-                    self.concentration = calculate_concentration(self.reference['slope'],
-                                                                 self.reference['intercept'],
-                                                                 self.peak_value,
-                                                                 self.reference['blank_substraction_peak_value'])
+
+            if isinstance(self.reference, MProxy):
+                self.reference.m_resolved()
+                self.concentration = calculate_concentration(self.reference['slope'],
+                                                             self.reference['intercept'],
+                                                             self.peak_value,
+                                                             self.reference['blank_substraction_peak_value'])
 
 
 def calculate_concentration(slope, intercept, peak_value, blank_value):
