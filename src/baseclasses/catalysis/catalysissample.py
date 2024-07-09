@@ -25,7 +25,7 @@ from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.results import Material  # BandGapOptical, Material
 from .. import LibrarySample
 
-from nomad.datamodel.metainfo.basesections import CompositeSystem, ReadableIdentifiers
+from nomad.datamodel.metainfo.basesections import CompositeSystem, ReadableIdentifiers, CompositeSystemReference
 
 
 class CatalysisSubstrate(ArchiveSection):
@@ -55,8 +55,8 @@ class CatalysisSample(CompositeSystem):
     substrate = SubSection(
         section_def=CatalysisSubstrate)
 
-    sample_id = SubSection(
-        section_def=ReadableIdentifiers)
+    parent = SubSection(
+        section_def=CompositeSystemReference)
 
     def normalize(self, archive, logger):
         super(
@@ -71,9 +71,6 @@ class CatalysisLibrary(LibrarySample):
     substrate = Quantity(
         type=Reference(CatalysisSubstrate.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
-
-    sample_id = SubSection(
-        section_def=ReadableIdentifiers)
 
     def normalize(self, archive, logger):
         super(
