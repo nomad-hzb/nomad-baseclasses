@@ -262,7 +262,7 @@ class SolarCellEQE(PlotSection):
     )
 
     light_bias = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00002123','https://purl.archive.org/tfsco/TFSCO_00002124'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00002123', 'https://purl.archive.org/tfsco/TFSCO_00002124'],
         type=np.dtype(np.float64),
         unit=('mW/cm**2'),
         shape=[],
@@ -273,7 +273,7 @@ class SolarCellEQE(PlotSection):
     )
 
     bandgap_eqe = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00002140','https://purl.archive.org/tfsco/TFSCO_00002133'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00002140', 'https://purl.archive.org/tfsco/TFSCO_00002133'],
         type=np.dtype(np.float64),
         shape=[],
         unit='eV',
@@ -284,7 +284,7 @@ class SolarCellEQE(PlotSection):
     )
 
     integrated_jsc = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00002141','https://purl.archive.org/tfsco/TFSCO_00002134'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00002141', 'https://purl.archive.org/tfsco/TFSCO_00002134'],
         type=np.dtype(np.float64),
         unit='mA / cm**2',
         shape=[],
@@ -296,7 +296,7 @@ class SolarCellEQE(PlotSection):
     )
 
     integrated_j0rad = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00002142','https://purl.archive.org/tfsco/TFSCO_00002135'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00002142', 'https://purl.archive.org/tfsco/TFSCO_00002135'],
         type=np.dtype(np.float64),
         unit='mA / cm**2',
         shape=[],
@@ -307,7 +307,7 @@ class SolarCellEQE(PlotSection):
     )
 
     voc_rad = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00002143','https://purl.archive.org/tfsco/TFSCO_00002136'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00002143', 'https://purl.archive.org/tfsco/TFSCO_00002136'],
         type=np.dtype(np.float64),
         shape=[],
         unit='V',
@@ -318,7 +318,7 @@ class SolarCellEQE(PlotSection):
     )
 
     urbach_energy = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00002137','https://purl.archive.org/tfsco/TFSCO_00002144'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00002137', 'https://purl.archive.org/tfsco/TFSCO_00002144'],
         type=np.dtype(np.float64),
         shape=[],
         unit='eV',
@@ -329,7 +329,7 @@ class SolarCellEQE(PlotSection):
     )
 
     urbach_energy_fit_std_dev = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00002145','https://purl.archive.org/tfsco/TFSCO_00002138'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00002145', 'https://purl.archive.org/tfsco/TFSCO_00002138'],
         type=np.dtype(np.float64),
         shape=[],
         unit='eV',
@@ -400,46 +400,6 @@ class SolarCellEQE(PlotSection):
 
     def normalize(self, archive, logger):
         super(SolarCellEQE, self).normalize(archive, logger)
-        from perovskite_solar_cell_database.data_tools.eqe_parser import EQEAnalyzer
-
-        if self.eqe_data_file:
-            with archive.m_context.raw_file(self.eqe_data_file) as f:
-                eqe_dict = EQEAnalyzer(
-                    f.name, header_lines=self.header_lines
-                ).eqe_dict()
-                self.measured = True
-                self.bandgap_eqe = eqe_dict['bandgap']
-                self.integrated_jsc = eqe_dict['jsc'] * ureg('A/m**2')
-                self.integrated_j0rad = (
-                    eqe_dict['j0rad'] * ureg('A/m**2')
-                    if 'j0rad' in eqe_dict
-                    else logger.warning('The j0rad could not be calculated.')
-                )
-                self.voc_rad = (
-                    eqe_dict['voc_rad']
-                    if 'voc_rad' in eqe_dict
-                    else logger.warning('The voc_rad could not be calculated.')
-                )
-                self.urbach_energy = (
-                    eqe_dict['urbach_e']
-                    if 'urbach_e' in eqe_dict
-                    else logger.warning('The urbach_energy could not be calculated.')
-                )
-                if 'error_urbach_std' in eqe_dict:
-                    self.urbach_energy_fit_std_dev = eqe_dict['error_urbach_std']
-                self.photon_energy_array = np.array(
-                    eqe_dict['interpolated_photon_energy']
-                )
-                self.raw_photon_energy_array = np.array(eqe_dict['photon_energy_raw'])
-                self.eqe_array = np.array(eqe_dict['interpolated_eqe'])
-                self.raw_eqe_array = np.array(eqe_dict['eqe_raw'])
-
-        if self.photon_energy_array is not None:
-            self.wavelength_array = self.photon_energy_array.to('nm', 'sp')  # pylint: disable=E1101
-            self.raw_wavelength_array = self.raw_photon_energy_array.to('nm', 'sp')  # pylint: disable=E1101
-
-        add_solar_cell(archive)
-        add_band_gap(archive, self.bandgap_eqe)
 
 
 class SolarCellEQECustom(SolarCellEQE):
