@@ -28,7 +28,7 @@ from .opencircuitvoltage import OpenCircuitVoltage, OCVProperties
 from .electorchemical_impedance_spectroscopy import ElectrochemicalImpedanceSpectroscopy, EISProperties
 from .opticalmicroscopy import OpticalMicorscopy
 from .photocurrent import PhotoCurrent
-from .cesample import CESample, SampleIDCENOME, SubstrateProperties, Purging, export_lab_id
+from .cesample import CESample, SampleIDCENOME, SubstrateProperties, Purging, export_lab_id, ExpectedStructure
 from .cesample import CENSLISample, get_next_project_sample_number, SubstanceWithConcentration
 from .cesample import CENOMESample, Electrode, Electrolyte, ElectroChemicalCell, ElectroChemicalSetup, Environment, Equipment, CatalystSynthesis
 from .neccelectrode import CENECCElectrode, CENECCElectrodeRecipe, CENECCElectrodeID

@@ -196,6 +196,8 @@ def get_sample(number_of_substances):
                "component_description",
                "producer",
                "project_name_long",
+               "expected_structure_links",
+               "expected_structure_description",
                "description",
                "substrate_type",
                "substrate_dimension",

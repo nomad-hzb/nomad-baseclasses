@@ -393,6 +393,15 @@ class CatalystSynthesis(ArchiveSection):
         section_def=SubstanceWithConcentration, repeats=True)
 
 
+class ExpectedStructure(ArchiveSection):
+    expected_structure_links = Quantity(type=str, shape=['*'],
+                                        description='A link reference to some literature for the expected structure',
+                                        a_eln=dict(component='URLEditQuantity'))
+    expected_structure_description = Quantity(type=str,
+                                              description='Further description of the expected structure',
+                                              a_eln=dict(component='RichTextEditQuantity'))
+
+
 class CENOMESample(CESample):
     # id_of_preparation_protocol = Quantity(
     #     type=Reference(PreparationProtocol.m_def),
@@ -455,6 +464,8 @@ class CENOMESample(CESample):
 
     synthesis = SubSection(
         section_def=CatalystSynthesis, repeats=True)
+
+    expected_structure = SubSection(section_def=ExpectedStructure)
 
     def normalize(self, archive, logger):
         super(CENOMESample, self).normalize(archive, logger)
