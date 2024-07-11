@@ -37,7 +37,7 @@ Follow the first  steps in [create_entry.md](create_entry.md).
 
 This looks like this:
 
-|0                           |1                                |2                    |3                              |4                       |
+|0                           |1                                |2                    |3                              |4                       |5|
 |------|----------------------------|---------------------------------|---------------------|-------------------------------|------------------------|
 |0     |HZB_MiGo_20231109_BatchX_0_0|Solution and UV standard cleaning|Sam 2PACz spincoating|CsMAFA perovscite spincoating 1|Evaporation C60, BCP, Cu|
 |1     |HZB_MiGo_20231109_BatchX_0_1|Solution and UV standard cleaning|Sam 2PACz spincoating|CsMAFA perovscite spincoating 1|Evaporation C60, BCP, Cu|
