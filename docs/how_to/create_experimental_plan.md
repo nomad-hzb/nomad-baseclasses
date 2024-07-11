@@ -16,7 +16,7 @@ Follow the first  steps in [create_entry.md](create_entry.md).
 4. You can now manual change or create the information in `solar cell properties` and `plan`. `plan` captures the steps planned for the synthesis by reference, if you added a `standard sample` you can change the references.
 
 5. Parameter variation: for each step you can add some parameter variation. Select a `step` and then add the subsection `parameters` or click the `vary parameters`checkbox. If you added a `parameters`subsection select a parameter from the drop down menue, eg, `quenching/anti_solvent_dropping_time`.  
-   ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/50f193c5-d622-4b26-a875-6997ed3b335d)
+   ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/50f193c5-d622-4b26-a875-6997ed3b335d)  
    The unit is filled automatically but can be changed.
    See also [set_parameters_in_experimental_plan.md](https://github.com/nomad-hzb/nomad-baseclasses/blob/main/docs/how_to/set_parameters_in_experimental_plan.md) to see how to select the correct parameters.
 
