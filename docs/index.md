@@ -16,6 +16,6 @@ The `baseclasses` folder is the heart of this plugin, containing several NOMAD s
 
 The schemas and techniques provided by this plugin can be used to derive application-specific plugins and parsers. Here are some examples of how our baseclasses have been utilized in different contexts:
 
-- [HZB Solar Cells](https://github.com/RoteKekse/nomad-hysprint)
-- [HZB Electro Catalysis](https://github.com/RoteKekse/nomad-chemical-energy)
-- [KIT Solar Cells](https://github.com/RoteKekse/nomad-perotf)
+- [HZB Solar Cells](https://github.com/nomad-hzb/nomad-hysprint)
+- [HZB Electro Catalysis](https://github.com/nomad-hzb/nomad-chemical-energy)
+- [KIT Solar Cells](https://github.com/nomad-hzb/nomad-perotf)
