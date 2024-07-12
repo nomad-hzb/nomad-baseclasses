@@ -9,8 +9,8 @@ Name your file:
 eg:
 `HZB_MiGo_20231109_BatchX_3_0.after_3_days.jv.txt`
 
-The first part is the id, then you can put some individual note, then there is the type currently at `HySprint` we have `eqe`, `jv`, `pl`, `hy`, `spv`, `uvvis` 
-as possible techniques see also [Hysprint Parser](https://github.com/RoteKekse/nomad-hysprint-parser).
+The first part is the id, then you can put some individual note, then there is the type currently at `HySprint` we have `eqe`, `jv`, `pl`, `hy`, `spv`, `uvvis`, `sem`, `xrd`, `pli`
+as possible techniques.
 
 If you drag and drop these files (multiple at once possible) in your upload:   
 ![grafik](https://github.com/RoteKekse/nomad-baseclasses/assets/36420750/495fdb2e-4dad-42f0-853c-fef3a6a4cd03)
