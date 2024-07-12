@@ -108,7 +108,8 @@ cation_dict = {
     '(MTEA)': '(C3H9NS)',
     '(3AMPY)': '(C6H8N2)',
     '(BIM)': '(C6H6N4)',
-    '(2PACz)': '(C14H14NO3P)'
+    '(2PACz)': '(C14H14NO3P)',
+    '(PCBM)': '(C72H14O2)'
 }
 
 cation_dict_miss = {
