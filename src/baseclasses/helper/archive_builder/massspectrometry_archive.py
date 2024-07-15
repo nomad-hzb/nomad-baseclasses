@@ -9,6 +9,14 @@ Created on Mon Jul 15 17:33:35 2024
 from baseclasses.chemical_energy import MassspectrometrySettings, MassspectrometrySpectrum
 
 
+mass_mapping = {
+    2: "H2",
+    28: "N2",
+    40: "Ar",
+    32: "O2"
+}
+
+
 def get_masssectromentry_archive(metadata, data):
     settings = MassspectrometrySettings(
         channel_count=metadata.get("Channel count"),
@@ -27,10 +35,13 @@ def get_masssectromentry_archive(metadata, data):
     if not chemicals:
         return settings, []
     spectra = []
-    for m, elm in zip(masses, chemicals.split(",")):
-        spectra.append(MassspectrometrySpectrum(
-            chemical_name=elm,
-            spectrum_data=data[m]
-        ))
-
+    for m in masses:
+        try:
+            mass_number = int(m.split(" ")[1])
+            spectra.append(MassspectrometrySpectrum(
+                chemical_name=mass_mapping.get(mass_number),
+                spectrum_data=data[m]
+            ))
+        except Exception as e:
+            raise e
     return settings, spectra
