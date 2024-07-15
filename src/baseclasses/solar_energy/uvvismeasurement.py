@@ -39,6 +39,7 @@ class UVvisDataSimple(ArchiveSection):
         type=str)
 
     intensity = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00001128'],
         type=np.dtype(
             np.float64), shape=['*'])
 
@@ -60,6 +61,7 @@ class UVvisData(UVvisDataSimple):
         a_eln=dict(component='DateTimeEditQuantity'))
 
     wavelength = Quantity(
+        links=['http://purl.obolibrary.org/obo/PATO_0001242','https://purl.archive.org/tfsco/TFSCO_00002040'],
         type=np.dtype(
             np.float64), shape=['*'], unit='nm', a_plot=[
             {
@@ -73,11 +75,13 @@ class UVvisData(UVvisDataSimple):
 class UVvisProperties(ArchiveSection):
 
     integration_time = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00002076','https://purl.archive.org/tfsco/TFSCO_00002093'],
         type=np.dtype(np.float64),
         unit=('s'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'))
 
     number_of_averages = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO/TFSCO_00003003'],
         type=np.dtype(np.int64),
         a_eln=dict(component='NumberEditQuantity'))
 
@@ -91,6 +95,7 @@ class UVvisMeasurement(BaseMeasurement):
     '''UV vis Measurement'''
 
     m_def = Section(
+        links=['https://purl.archive.org/tfsco/TFSCO_00005001'],
         a_eln=dict(hide=['certified_values', 'certification_institute']))
 
     data_file = Quantity(
@@ -141,6 +146,7 @@ class UVvisMeasurementLibrary(LibraryMeasurement):
         a_browser=dict(adaptor='RawFileAdaptor'))
 
     wavelength = Quantity(
+        links=['http://purl.obolibrary.org/obo/PATO_0001242','https://purl.archive.org/tfsco/TFSCO_00002040'],
         type=np.dtype(
             np.float64), unit=('nm'), shape=['*'])
 
