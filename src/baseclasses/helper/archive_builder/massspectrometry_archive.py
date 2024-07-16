@@ -38,10 +38,16 @@ def get_masssectromentry_archive(metadata, data):
     for m in masses:
         try:
             mass_number = int(m.split(" ")[1])
+        except Exception as e:
+            raise e
+        if mass_number in mass_mapping:
             spectra.append(MassspectrometrySpectrum(
                 chemical_name=mass_mapping.get(mass_number),
                 spectrum_data=data[m]
             ))
-        except Exception as e:
-            raise e
+        else:
+            spectra.append(MassspectrometrySpectrum(
+                chemical_name=m,
+                spectrum_data=data[m]
+            ))
     return settings, spectra
