@@ -52,6 +52,11 @@ class PLIproperties(ArchiveSection):
         type=np.dtype(np.int64),
         a_eln=dict(component='NumberEditQuantity'))
 
+    long_pass_filter = Quantity(
+        type=np.dtype(np.float64),
+        unit=('nm'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+
 
 class PLImaging(BaseMeasurement):
     '''PL Imaging'''
