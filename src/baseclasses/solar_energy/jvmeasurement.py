@@ -393,6 +393,7 @@ class JVMeasurement(BaseMeasurement):
             defaultDisplayUnit='mA/cm^2', props=dict(minValue=0)))
 
     jv_curve = SubSection(
+        links=['http://purl.obolibrary.org/obo/OBI_0000299'],
         section_def=SolarCellJVCurveCustom,
         repeats=True,
         label_quantity='cell_name')
