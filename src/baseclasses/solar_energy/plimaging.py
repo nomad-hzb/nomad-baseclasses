@@ -53,9 +53,14 @@ class PLIproperties(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity'))
 
     long_pass_filter = Quantity(
+        type=str,
+        shape=["*"],
+        a_eln=dict(component='StringEditQuantity'))
+
+    image_pixel_length = Quantity(
         type=np.dtype(np.float64),
-        unit=('nm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+        unit=('um'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='um'))
 
 
 class PLImaging(BaseMeasurement):
