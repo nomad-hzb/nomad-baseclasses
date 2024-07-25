@@ -64,6 +64,7 @@ class CatalysisSample(CompositeSystem):
             self).normalize(
             archive,
             logger)
+       
 
 
 class CatalysisLibrary(LibrarySample):

@@ -159,7 +159,7 @@ def get_voltammetry_data(data, cycle):
     assert isinstance(cycle, VoltammetryCycle) or \
         baseclasses.chemical_energy.voltammetry.Voltammetry \
         in inspect.getmro(type(cycle))
-
+    print(data)
     cycle.time = np.array(
         data["T"])
     cycle.current = np.array(
@@ -188,8 +188,12 @@ def get_meta_datetime(metadata, entry):
         datetime_object = datetime.strptime(
             datetime_str, '%d/%m/%Y %H:%M:%S')
     except:
-        datetime_object = datetime.strptime(
-            datetime_str, '%d.%m.%Y %H:%M:%S')
+        try:
+            datetime_object = datetime.strptime(
+                datetime_str, '%m/%d/%Y %H:%M:%S')
+        except:
+            datetime_object = datetime.strptime(
+                datetime_str, '%d.%m.%Y %H:%M:%S')
     entry.datetime = datetime_object.strftime(
         "%Y-%m-%d %H:%M:%S.%f")
 
