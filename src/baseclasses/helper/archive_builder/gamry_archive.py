@@ -118,9 +118,9 @@ def get_cp_properties(metadata, cc=False):
     unit = 'mA'
     if "CUnit" in metadata:
         if metadata["CUnit"] == 0:
-            unit = 'A'
-        if metadata["CUnit"] == 2:
             unit = 'uA'
+        if metadata["CUnit"] == 2:
+            unit = 'A'
 
     properties.pre_step_current = metadata.get("IPRESTEP") * ureg(unit) if metadata.get("IPRESTEP") else None
     properties.pre_step_delay_time = metadata.get("TPRESTEP")
