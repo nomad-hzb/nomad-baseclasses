@@ -281,7 +281,7 @@ class SolarCellJVCurve(SolarCellJV):
 
     def normalize(self, archive, logger):
         super(SolarCellJVCurve, self).normalize(archive, logger)
-        if self.current_density is not None and self.efficiency is None:
+        if self.current_density is not None and self.efficiency is None and not self.dark:
             if self.voltage is not None:
                 (
                     self.open_circuit_voltage,
