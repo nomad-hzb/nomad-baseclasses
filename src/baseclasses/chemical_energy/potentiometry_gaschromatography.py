@@ -316,6 +316,27 @@ class PotentiostatMeasurement(ArchiveSection):
                 'config': {
                     'editable': True, 'scrollZoom': True}}])
 
+    mean_current = Quantity(type=np.dtype(np.float64))
+    variance_current = Quantity(type=np.dtype(np.float64))
+    minimum_current = Quantity(type=np.dtype(np.float64))
+    maximum_current = Quantity(type=np.dtype(np.float64))
+
+    mean_working_electrode_potential = Quantity(type=np.dtype(np.float64))
+    variance_working_electrode_potential = Quantity(type=np.dtype(np.float64))
+    minimum_working_electrode_potential = Quantity(type=np.dtype(np.float64))
+    maximum_working_electrode_potential = Quantity(type=np.dtype(np.float64))
+
+    def normalize(self, archive, logger):
+        self.mean_current = np.mean(self.current)
+        self.minimum_current = np.min(self.current)
+        self.maximum_current = np.max(self.current)
+        self.variance_current = np.var(self.current)
+
+        self.mean_working_electrode_potential = np.mean(self.working_electrode_potential)
+        self.minimum_working_electrode_potential = np.min(self.working_electrode_potential)
+        self.maximum_working_electrode_potential = np.max(self.working_electrode_potential)
+        self.variance_working_electrode_potential = np.var(self.working_electrode_potential)
+
 
 class ThermocoupleMeasurement(PlotSection, ArchiveSection):
     m_def = Section(
