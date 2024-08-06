@@ -199,7 +199,7 @@ class SubstrateProperties(ArchiveSection):
             component='EnumEditQuantity',
             props=dict(
                 suggestions=['glassy carbon', 'ITO on glass', 'Platinum', 'glass', 'silicon wafer',
-                             'Treudenberg H23C6', 'Sigracet 39BB'])
+                             'Freudenberg H23C6', 'Sigracet 39BB'])
         ))
 
     substrate_dimension = Quantity(
@@ -209,6 +209,12 @@ class SubstrateProperties(ArchiveSection):
             component='StringEditQuantity',
 
         ))
+
+    total_area = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000037'],
+        type=np.dtype(np.float64),
+        unit=('cm^2'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'))
 
 
 class CESample(CompositeSystem):
