@@ -316,26 +316,26 @@ class PotentiostatMeasurement(ArchiveSection):
                 'config': {
                     'editable': True, 'scrollZoom': True}}])
 
-    mean_current = Quantity(type=np.dtype(np.float64))
-    variance_current = Quantity(type=np.dtype(np.float64))
-    minimum_current = Quantity(type=np.dtype(np.float64))
-    maximum_current = Quantity(type=np.dtype(np.float64))
+    mean_current = Quantity(type=np.dtype(np.float64), unit='mA')
+    standard_deviation_current = Quantity(type=np.dtype(np.float64), unit='mA')
+    minimum_current = Quantity(type=np.dtype(np.float64), unit='mA')
+    maximum_current = Quantity(type=np.dtype(np.float64), unit='mA')
 
-    mean_working_electrode_potential = Quantity(type=np.dtype(np.float64))
-    variance_working_electrode_potential = Quantity(type=np.dtype(np.float64))
-    minimum_working_electrode_potential = Quantity(type=np.dtype(np.float64))
-    maximum_working_electrode_potential = Quantity(type=np.dtype(np.float64))
+    mean_working_electrode_potential = Quantity(type=np.dtype(np.float64), unit='V')
+    standard_deviation_working_electrode_potential = Quantity(type=np.dtype(np.float64), unit='V')
+    minimum_working_electrode_potential = Quantity(type=np.dtype(np.float64), unit='V')
+    maximum_working_electrode_potential = Quantity(type=np.dtype(np.float64), unit='V')
 
     def normalize(self, archive, logger):
         self.mean_current = np.mean(self.current)
         self.minimum_current = np.min(self.current)
         self.maximum_current = np.max(self.current)
-        self.variance_current = np.var(self.current)
+        self.standard_deviation_current = np.std(self.current)
 
         self.mean_working_electrode_potential = np.mean(self.working_electrode_potential)
         self.minimum_working_electrode_potential = np.min(self.working_electrode_potential)
         self.maximum_working_electrode_potential = np.max(self.working_electrode_potential)
-        self.variance_working_electrode_potential = np.var(self.working_electrode_potential)
+        self.standard_deviation_working_electrode_potential = np.std(self.working_electrode_potential)
 
 
 class ThermocoupleMeasurement(PlotSection, ArchiveSection):
@@ -562,4 +562,5 @@ class PotentiometryGasChromatographyMeasurement(BaseMeasurement):
     def normalize(self, archive, logger):
         self.experiment_id = CENECCExperimentID()
         self.experiment_id.normalize(archive, logger)
+        self.potentiometry.normalize(archive, logger)
         super(PotentiometryGasChromatographyMeasurement, self).normalize(archive, logger)
