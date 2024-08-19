@@ -5,7 +5,7 @@ Created on Mon Jul 15 17:33:35 2024
 
 @author: a2853
 """
-
+import numpy as np
 from baseclasses.chemical_energy import MassspectrometrySettings, MassspectrometrySpectrum
 
 
@@ -43,11 +43,11 @@ def get_masssectromentry_archive(metadata, data):
         if mass_number in mass_mapping:
             spectra.append(MassspectrometrySpectrum(
                 chemical_name=mass_mapping.get(mass_number),
-                spectrum_data=data[m]
+                spectrum_data=np.array(data[m], dtype=np.float64)
             ))
         else:
             spectra.append(MassspectrometrySpectrum(
                 chemical_name=m,
-                spectrum_data=data[m]
+                spectrum_data=np.array(data[m], dtype=np.float64)
             ))
     return settings, spectra
