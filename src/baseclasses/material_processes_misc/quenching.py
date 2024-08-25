@@ -174,6 +174,26 @@ class AirKnifeGasQuenching(GasQuenching):
             props=dict(
                 minValue=0)))
 
+    bead_volume = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=('mm/s'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mm/s',
+            props=dict(
+                minValue=0)))
+
+    drying_speed = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=('cm/minute'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='cm/minute',
+            props=dict(
+                minValue=0)))
+
 
 class SpinCoatingGasQuenching(GasQuenching):
     pass
