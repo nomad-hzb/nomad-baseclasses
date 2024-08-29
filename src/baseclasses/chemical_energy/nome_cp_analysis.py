@@ -17,6 +17,7 @@
 #
 
 import numpy as np
+from datetime import datetime
 
 from nomad.metainfo import Quantity, Reference, Section, SubSection, Datetime
 from nomad.datamodel.metainfo.basesections import Analysis, SectionReference, AnalysisResult, CompositeSystemReference
@@ -53,7 +54,7 @@ class CPOERAnalysisResult(AnalysisResult):
         description='string representation of j (needed for terms in explore view)',)
     experiment_duration = Quantity(
         type=np.dtype(np.float64),
-        unit=('hr'))
+        unit=('s'))
     reaction_type = Quantity(
         type=str,
         description='At the moment only OER CP is supported. In the future maybe also NRR CP.')
@@ -76,29 +77,27 @@ class CPAnalysis(Analysis):
     outputs.section_def = CPOERAnalysisResult
 
     def normalize(self, archive, logger):
-        refs = find_all_cp_in_upload(archive, archive.metadata.upload_id)
-        self.inputs = [CPOERReference(reference=ref) for ref in refs]
+        refs = get_all_cp_in_upload(archive, archive.metadata.upload_id)
+        self.inputs = [CPOERReference(name=name, reference=ref) for [name, ref] in refs]
 
         if self.inputs is not None and len(self.inputs) >= 2:
             first_oer_run = self.inputs[0].reference
             last_oer_run = self.inputs[-1].reference
 
-            for cp_entry in self.inputs:
-                cp_entry.name = cp_entry.reference.data_file
-                if cp_entry.reference.datetime < first_oer_run.datetime:
-                    first_oer_run = cp_entry.reference
-                if cp_entry.reference.datetime > last_oer_run.datetime:
-                    last_oer_run = cp_entry.reference
-
             voltage_avg_first5 = np.mean(np.array(first_oer_run.voltage[:5]))
             voltage_avg_last5 = np.mean(np.array(last_oer_run.voltage[-5:]))
             voltage_difference = voltage_avg_first5 - voltage_avg_last5
 
-            current_ma = first_oer_run.properties.step_1_current * 1000  # convert A to mA
-            current_density = current_ma / first_oer_run.properties.sample_area
+            current = first_oer_run.properties.step_1_current
+            area = first_oer_run.properties.sample_area
+            if current is not None and area is not None:
+                current_density = current / first_oer_run.properties.sample_area
 
-            experiment_duration = 7200  #TODO calculate
-            #experiment_duration = cycle_number * (toer + trecover)
+            cycle_number = len(self.inputs)
+            time_oer = first_oer_run.time[-1]
+            time_recover = get_trecover(archive, archive.metadata.upload_id)
+            experiment_duration = cycle_number * (time_oer.to('s').magnitude + time_recover)
+
 
             for sample in first_oer_run.samples:
                 export_lab_id(archive, sample.lab_id)
@@ -126,11 +125,9 @@ class CPAnalysis(Analysis):
         super(CPAnalysis, self).normalize(archive, logger)
 
 
-def find_all_cp_in_upload(data_archive, upload_id):
+def get_all_cp_in_upload(data_archive, upload_id):
     from nomad.search import search
     from nomad.app.v1.models import MetadataPagination
-
-    # search for all UVvisConcentrationDetection archives
     query = {
         'section_defs.definition_qualified_name': 'baseclasses.chemical_energy.chronopotentiometry.Chronopotentiometry',
         'results.eln.methods': 'OER Chronopotentiometry',
@@ -141,8 +138,27 @@ def find_all_cp_in_upload(data_archive, upload_id):
     search_result = search(owner='all', query=query, pagination=pagination,
                            user_id=data_archive.metadata.main_author.user_id)
 
-    refs = []
-    for res in search_result.data:
-        refs.append(get_reference(upload_id, res["entry_id"]))
-
+    lst = search_result.data
+    lst.sort(key=lambda cp_entry: datetime.strptime(cp_entry["data"]["datetime"], "%Y-%m-%dT%H:%M:%S%z"))
+    refs = [[cp_entry["data"]["data_file"], get_reference(upload_id, cp_entry["entry_id"])] for cp_entry in lst]
     return refs
+
+
+def get_trecover(data_archive, upload_id):
+    from nomad.search import search
+    from nomad.app.v1.models import MetadataPagination
+    query = {
+        'section_defs.definition_qualified_name': 'baseclasses.chemical_energy.chronoamperometry.Chronoamperometry',
+        'mainfile': 'CA_recover_run1.DTA_CA.archive.json',
+        'upload_id': upload_id
+    }
+    pagination = MetadataPagination()
+    pagination.page_size = 1
+    search_result = search(owner='all', query=query, pagination=pagination,
+                           user_id=data_archive.metadata.main_author.user_id)
+    try:
+        trecover = search_result.data[0]["data"]["properties"]["step_1_time"]
+    except:
+        trecover = 0
+
+    return trecover
