@@ -80,7 +80,7 @@ class CPAnalysis(Analysis):
         refs = get_all_cp_in_upload(archive, archive.metadata.upload_id)
         self.inputs = [CPOERReference(name=name, reference=ref) for [name, ref] in refs]
 
-        if self.inputs is not None and len(self.inputs) >= 2:
+        if self.inputs is not None and len(self.inputs) > 0:
             first_oer_run = self.inputs[0].reference
             last_oer_run = self.inputs[-1].reference
 
