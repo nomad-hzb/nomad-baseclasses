@@ -25,6 +25,8 @@ from nomad.datamodel.results import Results, Material
 from baseclasses.chemical_energy import Chronopotentiometry
 from ..helper.utilities import get_reference
 
+from .cesample import export_lab_id
+
 
 class CPOERReference(SectionReference):
     reference = Quantity(
@@ -99,6 +101,7 @@ class CPAnalysis(Analysis):
             #experiment_duration = cycle_number * (toer + trecover)
 
             for sample in first_oer_run.samples:
+                export_lab_id(archive, sample.lab_id)
                 if sample.reference.chemical_composition_or_formulas:
                     if not archive.results:
                         archive.results = Results()
