@@ -58,6 +58,14 @@ class CPOERAnalysisResult(AnalysisResult):
     reaction_type = Quantity(
         type=str,
         description='At the moment only OER CP is supported. In the future maybe also NRR CP.')
+    voltage_shift = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
+        type=np.dtype(np.float64),
+        unit=('V'))
+    resistance = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007222'],
+        type=np.dtype(np.float64),
+        unit=('ohm'))
     samples = SubSection(
         section_def=CompositeSystemReference,
         repeats=True,)
@@ -94,10 +102,11 @@ class CPAnalysis(Analysis):
                 current_density = current / first_oer_run.properties.sample_area
 
             cycle_number = len(self.inputs)
-            time_oer = first_oer_run.time[-1]
-            time_recover = get_trecover(archive, archive.metadata.upload_id)
-            experiment_duration = cycle_number * (time_oer.to('s').magnitude + time_recover)
-
+            if cycle_number > 1:
+                time_one_cycle = self.inputs[1].reference.datetime - first_oer_run.datetime
+                experiment_duration = cycle_number * time_one_cycle.total_seconds()
+            else:
+                experiment_duration = first_oer_run.time[-1]
 
             for sample in first_oer_run.samples:
                 export_lab_id(archive, sample.lab_id)
@@ -120,7 +129,9 @@ class CPAnalysis(Analysis):
                                                 j=current_density,
                                                 experiment_duration=experiment_duration,
                                                 reaction_type=first_oer_run.method,
-                                                samples=first_oer_run.samples)]
+                                                samples=first_oer_run.samples,
+                                                voltage_shift=first_oer_run.voltage_shift,
+                                                resistance=first_oer_run.resistance)]
             self.outputs[0].normalize(archive, logger)
         super(CPAnalysis, self).normalize(archive, logger)
 
@@ -134,7 +145,7 @@ def get_all_cp_in_upload(data_archive, upload_id):
         'upload_id': upload_id
     }
     pagination = MetadataPagination()
-    pagination.page_size = 800
+    pagination.page_size = 10000
     search_result = search(owner='all', query=query, pagination=pagination,
                            user_id=data_archive.metadata.main_author.user_id)
 
@@ -142,23 +153,3 @@ def get_all_cp_in_upload(data_archive, upload_id):
     lst.sort(key=lambda cp_entry: datetime.strptime(cp_entry["data"]["datetime"], "%Y-%m-%dT%H:%M:%S%z"))
     refs = [[cp_entry["data"]["data_file"], get_reference(upload_id, cp_entry["entry_id"])] for cp_entry in lst]
     return refs
-
-
-def get_trecover(data_archive, upload_id):
-    from nomad.search import search
-    from nomad.app.v1.models import MetadataPagination
-    query = {
-        'section_defs.definition_qualified_name': 'baseclasses.chemical_energy.chronoamperometry.Chronoamperometry',
-        'mainfile': 'CA_recover_run1.DTA_CA.archive.json',
-        'upload_id': upload_id
-    }
-    pagination = MetadataPagination()
-    pagination.page_size = 1
-    search_result = search(owner='all', query=query, pagination=pagination,
-                           user_id=data_archive.metadata.main_author.user_id)
-    try:
-        trecover = search_result.data[0]["data"]["properties"]["step_1_time"]
-    except:
-        trecover = 0
-
-    return trecover
