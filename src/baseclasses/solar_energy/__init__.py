@@ -17,7 +17,7 @@
 #
 
 from .jvmeasurement import JVMeasurement
-from .mpp_tracking import MPPTracking
+from .mpp_tracking import MPPTracking, MPPTrackingProperties
 from .mpp_tracking_hysprint_custom import MPPTrackingHsprintCustom, SampleData, JVData, PixelData
 from .plmeasurement import PLMeasurement, PLMeasurementLibrary, PLSingleLibraryMeasurement, PLProperties, PLDataSimple, PLPropertiesLibrary, PLData
 from .plimaging import PLImaging
