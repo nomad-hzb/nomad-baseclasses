@@ -83,11 +83,13 @@ class Chronopotentiometry(Voltammetry):
 
     m_def = Section(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007208'],
+        a_eln=dict(),
     )
 
     properties = SubSection(
         section_def=CPProperties)
 
     def normalize(self, archive, logger):
-        self.method = "Chronopotentiometry"
+        if self.method is None:
+            self.method = "Chronopotentiometry"
         super(Chronopotentiometry, self).normalize(archive, logger)

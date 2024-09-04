@@ -44,3 +44,4 @@ from .potentiometry_gaschromatography import (PotentiometryGasChromatographyMeas
                                               GasFEResults, PotentiometryGasChromatographyResults, NECCFeedGas)
 from .uvvismeasurementconcentration import UVvisDataConcentration
 from .massspectrometry import Massspectrometry, MassspectrometrySettings, MassspectrometrySpectrum
+from .nome_cp_analysis import CPAnalysis
