@@ -16,32 +16,64 @@
 # limitations under the License.
 #
 
+from .cesample import (
+    CatalystSynthesis,
+    CENOMESample,
+    CENSLISample,
+    CESample,
+    ElectroChemicalCell,
+    ElectroChemicalSetup,
+    Electrode,
+    Electrolyte,
+    Environment,
+    Equipment,
+    ExpectedStructure,
+    Purging,
+    SampleIDCENOME,
+    SubstanceWithConcentration,
+    SubstrateProperties,
+    export_lab_id,
+    get_next_project_sample_number,
+)
+from .chronoamperometry import Chronoamperometry
+from .chronocoulometry import Chronocoulometry
+from .chronopotentiometry import Chronopotentiometry
 from .cleaning import Cleaning, SolutionCleaning
 from .constantpotential import ConstantPotential
-from .cyclicvoltammetry import CyclicVoltammetry, CVProperties
-from .linear_sweep_voltammetry import LinearSweepVoltammetry, LSVProperties
-from .galvanodynamic_sweep import GalvanodynamicSweep, LSGProperties
-from .chronoamperometry import Chronoamperometry
-from .chronopotentiometry import Chronopotentiometry
-from .chronocoulometry import Chronocoulometry
-from .opencircuitvoltage import OpenCircuitVoltage, OCVProperties
-from .electorchemical_impedance_spectroscopy import ElectrochemicalImpedanceSpectroscopy, EISProperties
-from .opticalmicroscopy import OpticalMicorscopy
-from .photocurrent import PhotoCurrent
-from .cesample import CESample, SampleIDCENOME, SubstrateProperties, Purging, export_lab_id, ExpectedStructure
-from .cesample import CENSLISample, get_next_project_sample_number, SubstanceWithConcentration
-from .cesample import CENOMESample, Electrode, Electrolyte, ElectroChemicalCell, ElectroChemicalSetup, Environment, Equipment, CatalystSynthesis
-from .neccelectrode import CENECCElectrode, CENECCElectrodeRecipe, CENECCElectrodeID
-from .preparation_protocoll import PreparationProtocol
+from .cyclicvoltammetry import CVProperties, CyclicVoltammetry
 from .diamondsample import DiamondSample
-# from .waterbath import WaterBath
-from .voltammetry import VoltammetryCycle, Voltammetry, VoltammetryCycleWithPlot
-from .potentiostat_measurement import PotentiostatMeasurement, PotentiostatSetup
-from .phasefluorometryoxygen import PhaseFluorometryOxygen
-from .pumpratemeasurement import PumpRateMeasurement
-from .potentiometry_gaschromatography import (PotentiometryGasChromatographyMeasurement, NECCExperimentalProperties,
-                                              GasChromatographyMeasurement, PotentiostatMeasurement, ThermocoupleMeasurement,
-                                              GasFEResults, PotentiometryGasChromatographyResults, NECCFeedGas)
-from .uvvismeasurementconcentration import UVvisDataConcentration
-from .massspectrometry import Massspectrometry, MassspectrometrySettings, MassspectrometrySpectrum
+from .electorchemical_impedance_spectroscopy import (
+    EISProperties,
+    ElectrochemicalImpedanceSpectroscopy,
+)
+from .galvanodynamic_sweep import GalvanodynamicSweep, LSGProperties
+from .general_measurement import GeneralMeasurement
+from .linear_sweep_voltammetry import LinearSweepVoltammetry, LSVProperties
+from .massspectrometry import (
+    Massspectrometry,
+    MassspectrometrySettings,
+    MassspectrometrySpectrum,
+)
+from .neccelectrode import CENECCElectrode, CENECCElectrodeID, CENECCElectrodeRecipe
 from .nome_cp_analysis import CPAnalysis
+from .opencircuitvoltage import OCVProperties, OpenCircuitVoltage
+from .opticalmicroscopy import OpticalMicorscopy
+from .phasefluorometryoxygen import PhaseFluorometryOxygen
+from .photocurrent import PhotoCurrent
+from .potentiometry_gaschromatography import (
+    GasChromatographyMeasurement,
+    GasFEResults,
+    NECCExperimentalProperties,
+    NECCFeedGas,
+    PotentiometryGasChromatographyMeasurement,
+    PotentiometryGasChromatographyResults,
+    PotentiostatMeasurement,
+    ThermocoupleMeasurement,
+)
+from .potentiostat_measurement import PotentiostatMeasurement, PotentiostatSetup
+from .preparation_protocoll import PreparationProtocol
+from .pumpratemeasurement import PumpRateMeasurement
+from .uvvismeasurementconcentration import UVvisDataConcentration
+
+# from .waterbath import WaterBath
+from .voltammetry import Voltammetry, VoltammetryCycle, VoltammetryCycleWithPlot
