@@ -23,6 +23,7 @@ from nomad.metainfo import (
 )
 
 from .. import BaseMeasurement
+from ..helper.utilities import set_sample_reference
 
 
 class GeneralMeasurement(BaseMeasurement):
@@ -34,6 +35,24 @@ class GeneralMeasurement(BaseMeasurement):
         a_eln=dict(component='FileEditQuantity'),
         a_browser=dict(adaptor='RawFileAdaptor'))
 
+    search_sample_in_same_upload = Quantity(
+        type=bool,
+        shape=[],
+        default=True,
+        description="""
+            TRUE if the the linked sample must be in the same upload. 
+            FALSE if the linked sample might be stored in other uploads.
+        """,
+        a_eln=dict(component='BoolEditQuantity'),
+    )
+
+
     def normalize(self, archive, logger):
+        if not self.samples:
+            sample_id = self.data_file.split(".")[0].split("-")[0]
+            upload_id = None
+            if self.search_sample_in_same_upload:
+                upload_id = archive.metadata.upload_id
+            set_sample_reference(archive, self, sample_id, upload_id)
         super(GeneralMeasurement, self).normalize(archive, logger)
 
