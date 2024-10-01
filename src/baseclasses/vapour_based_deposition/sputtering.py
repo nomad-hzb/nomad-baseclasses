@@ -36,6 +36,9 @@ class SputteringProcess(ArchiveSection):
     target_2 = SubSection(
         section_def=PubChemPureSubstanceSection)
 
+    gas_2 = SubSection(
+        section_def=PubChemPureSubstanceSection)
+
     thickness = Quantity(
         links=['http://purl.obolibrary.org/obo/PATO_0000915'],
         type=np.dtype(
