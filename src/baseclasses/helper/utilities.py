@@ -276,8 +276,25 @@ def log_error(class_obj, logger, msg):
         raise Exception
 
 
-def set_sample_reference(archive, entry, search_id):
-    search_result = search_entry_by_id(archive, entry, search_id)
+def search_sampleid_in_upload(archive, sample_id, upload_id):
+    from nomad.search import search
+
+    query = {
+        'results.eln.lab_ids': sample_id,
+        'upload_id': upload_id
+    }
+    search_result = search(
+        owner='all',
+        query=query,
+        user_id=archive.metadata.main_author.user_id)
+    return search_result
+
+
+def set_sample_reference(archive, entry, search_id, upload_id=None):
+    if upload_id is None:
+        search_result = search_entry_by_id(archive, entry, search_id)
+    else:
+        search_result = search_sampleid_in_upload(archive, search_id, upload_id)
     if len(search_result.data) == 1:
         data = search_result.data[0]
         upload_id, entry_id = data["upload_id"], data["entry_id"]
