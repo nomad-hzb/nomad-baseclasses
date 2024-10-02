@@ -287,7 +287,7 @@ class GasChromatographyMeasurement(ArchiveSection):
         shape=['*'])
 
 
-class PotentiostatMeasurement(ArchiveSection):
+class NECCPotentiostatMeasurement(ArchiveSection):
 
     datetime = Quantity(
         type=Datetime,
@@ -328,13 +328,13 @@ class PotentiostatMeasurement(ArchiveSection):
 
     def normalize(self, archive, logger):
         self.mean_current = np.mean(self.current)
-        self.minimum_current = np.min(self.current)
-        self.maximum_current = np.max(self.current)
+        self.minimum_current = min(self.current)
+        self.maximum_current = max(self.current)
         self.standard_deviation_current = np.std(self.current)
 
         self.mean_working_electrode_potential = np.mean(self.working_electrode_potential)
-        self.minimum_working_electrode_potential = np.min(self.working_electrode_potential)
-        self.maximum_working_electrode_potential = np.max(self.working_electrode_potential)
+        self.minimum_working_electrode_potential = min(self.working_electrode_potential)
+        self.maximum_working_electrode_potential = max(self.working_electrode_potential)
         self.standard_deviation_working_electrode_potential = np.std(self.working_electrode_potential)
 
 
@@ -551,7 +551,7 @@ class PotentiometryGasChromatographyMeasurement(BaseMeasurement):
         section_def=GasChromatographyMeasurement, repeats=True)
 
     potentiometry = SubSection(
-        section_def=PotentiostatMeasurement)
+        section_def=NECCPotentiostatMeasurement)
 
     thermocouple = SubSection(
         section_def=ThermocoupleMeasurement)
