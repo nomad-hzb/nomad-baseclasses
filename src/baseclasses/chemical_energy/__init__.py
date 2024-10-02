@@ -42,10 +42,11 @@ from .cleaning import Cleaning, SolutionCleaning
 from .constantpotential import ConstantPotential
 from .cyclicvoltammetry import CVProperties, CyclicVoltammetry
 from .diamondsample import DiamondSample
-from .electorchemical_impedance_spectroscopy import (
+from .electrochemical_impedance_spectroscopy import (
     EISProperties,
     ElectrochemicalImpedanceSpectroscopy,
 )
+from .electrolyser_performance import ElectrolyserPerformanceEvaluation
 from .galvanodynamic_sweep import GalvanodynamicSweep, LSGProperties
 from .general_process import GeneralProcess
 from .linear_sweep_voltammetry import LinearSweepVoltammetry, LSVProperties
