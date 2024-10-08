@@ -135,7 +135,7 @@ class SEM_Microscope_Merlin(SEMMicroscopeTechnique):
                 tif_file = hs.load(file_name)
 
                 png_file = os.path.splitext(file_name)[0] + '_preview.png'
-                tif_file.save(png_file)
+                tif_file.save(png_file, overwrite=True)
 
                 store_resolution = get_parameter(
                     ["CZ_SEM", "dp_image_store"], tif_file.original_metadata, 1)

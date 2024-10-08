@@ -151,20 +151,21 @@ class MicroscopeTechnique(BaseMeasurement):
 
         # process images
         # self.detector_data = imgs
-        for image in imgs:
-            with archive.m_context.raw_file(image) as f:
-                processed = False
-                for img in self.images:
-                    if img.file_name == image:
-                        processed = True
-                if not processed:
-                    image_data = self.get_data(f.name)
+        if not archive.metadata.published:
+            for image in imgs:
+                with archive.m_context.raw_file(image) as f:
+                    processed = False
+                    for img in self.images:
+                        if img.file_name == image:
+                            processed = True
+                    if not processed:
+                        image_data = self.get_data(f.name)
 
-                    if image_data:
-                        if not self.images:
-                            self.images = []
-                        self.images.section_def = image_data.m_def
-                        self.images.append(image_data)
+                        if image_data:
+                            if not self.images:
+                                self.images = []
+                            self.images.section_def = image_data.m_def
+                            self.images.append(image_data)
 
 
 class TEMMicroscopeTechnique(MicroscopeTechnique):
