@@ -154,7 +154,7 @@ class BioLogicProperties(PotentiostatProperties):
 
     battery_capacity = Quantity(
         type=np.dtype(np.float64),
-        unit=('Ah'),  # TODO unit steht in feld dahinter kann man vermutlich in archive setzen, was nimmt man hier?
+        unit=('A*h'),  # TODO unit steht in feld dahinter kann man vermutlich in archive setzen, was nimmt man hier? unit Ah does not exist
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='Ah'))
 
     # TODO noch mehr Quantities:
