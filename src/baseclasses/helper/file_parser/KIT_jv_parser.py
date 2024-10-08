@@ -3,6 +3,7 @@ import numpy as np
 from scipy import interpolate
 import matplotlib.pyplot as plt
 # import glob
+from io import StringIO
 
 
 def calculatePVparametersFromJV(
@@ -257,15 +258,14 @@ def calculatePVparametersFromJV(
     return pce, voc, jsc, ff, r_shunt, r_s, mpp
 
 
-def get_jv_data(filename, encoding='utf-8'):
+def get_jv_data(filedata):
 
     df_header = pd.read_csv(
-        filename,
+        StringIO(filedata),
         skiprows=0,
         nrows=10,
         sep='\t',
         # index_col=0,
-        encoding=encoding,
         engine='python')
 
     jv_dict = {}
@@ -278,13 +278,12 @@ def get_jv_data(filename, encoding='utf-8'):
     # jv_dict['compliance'] = df_header.iloc[5, 1]
 
     df = pd.read_csv(
-        filename,
+        StringIO(filedata),
         skiprows=0,
         nrows=10,
         sep='\t',
         # index_col=0,
-        engine='python',
-        encoding=encoding)
+        engine='python')
 
     jv_dict['J_sc'] = list(
         np.abs([float(df.iloc[4, 1]), float(df.iloc[4, 2])]))
@@ -294,11 +293,10 @@ def get_jv_data(filename, encoding='utf-8'):
     jv_dict['Efficiency'] = list([float(df.iloc[7, 1]), float(df.iloc[7, 2])])
 
     df_curves = pd.read_csv(
-        filename,
+        StringIO(filedata),
         # header=0,
         skiprows=11,
         sep='\t',
-        encoding=encoding,
         engine='python')
     df_curves = df_curves.dropna(how='all', axis=1)
 

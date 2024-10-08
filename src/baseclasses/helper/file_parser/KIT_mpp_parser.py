@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from datetime import datetime
+from io import StringIO
 
 # import glob
 
@@ -11,14 +12,13 @@ def get_parameter(d, key):
     return d[key] if key in d else None
 
 
-def get_mpp_data(filename, encoding='utf-8'):
+def get_mpp_data(filedata):
 
     df = pd.read_csv(
-        filename,
+        StringIO(filedata),
         skiprows=0,
         sep='\t',
         # index_col=0,
-        encoding=encoding,
         engine='python')
     header_dict = {}
     for i, row in df.iterrows():
@@ -37,13 +37,12 @@ def get_mpp_data(filename, encoding='utf-8'):
             header_dict.update({key: row[1]})
 
     df = pd.read_csv(
-        filename,
+        StringIO(filedata),
         skiprows=range(
             headerlines + 2,
             headerlines + 3),
         sep="\t",
         header=headerlines + 1,
-        encoding=encoding,
     )
 
     return header_dict, df
