@@ -281,7 +281,7 @@ class MPPTrackingHsprintCustom(BaseMeasurement):
         # calculate averages and best pixels
         best_pixels = []
         averages = {}
-        for sample in self.samples:
+        for i, sample in enumerate(self.samples):
             for pixel in sample.pixels:
 
                 if pixel.best_pixel:
@@ -295,12 +295,12 @@ class MPPTrackingHsprintCustom(BaseMeasurement):
             if sample.parameter is None:
                 continue
             parameter = sample.parameter
-            for pixel in sample.pixels:
+            for j, pixel in enumerate(sample.pixels):
 
                 if pixel.include_for_average:
                     df = pd.DataFrame()
                     df["time"] = pixel.time
-                    df["efficiency"] = pixel.efficiency
+                    df[f"efficiency_{i}_{j}"] = pixel.efficiency
                     df.dropna(inplace=True)
                     df.set_index("time")
                     if parameter in averages:

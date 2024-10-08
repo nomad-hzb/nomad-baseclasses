@@ -152,7 +152,7 @@ def calculate_jsc(photon_energy, intensity):
     energy_AM15 = np.array(df_am15[df_am15.columns[1]])
     spectrum_AM15 = np.array(df_am15[df_am15.columns[2]])
     spectrum_AM15G_interp = np.interp(photon_energy, energy_AM15, spectrum_AM15)
-    jsc_calc = integrate.cumtrapz(intensity * spectrum_AM15G_interp, photon_energy)
+    jsc_calc = integrate.cumulative_trapezoid(intensity * spectrum_AM15G_interp, photon_energy)
     jsc = max(jsc_calc * q * 1e4)
     return jsc
 
