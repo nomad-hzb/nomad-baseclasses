@@ -9,6 +9,7 @@ import baseclasses
 from baseclasses.chemical_energy.potentiostat_measurement import BioLogicProperties
 from baseclasses.chemical_energy.chronoamperometry import CAProperties
 from baseclasses.chemical_energy.chronocoulometry import CCProperties
+from baseclasses.chemical_energy.chronopotentiometry import CPProperties
 from baseclasses.chemical_energy.cyclicvoltammetry import CVProperties
 from baseclasses.chemical_energy.linear_sweep_voltammetry import LSVProperties
 from baseclasses.chemical_energy.opencircuitvoltage import OCVProperties
@@ -57,8 +58,23 @@ def get_ca_properties(metadata, cc=False):
     # TODO is initial != pre_step?
     # TODO in biologic files step1 and step2 (always?) do not exist so I removed that
 
-    properties.sample_period = metadata.get('dt')       # TODO
-    properties.sample_area = metadata.get("AREA")       # TODO
+    properties.sample_period = metadata.get('dta')
+    return properties
+
+
+def get_cp_properties(metadata, cc=False):
+    properties = CPProperties()
+
+    # TODO in biologic files prestep and step2 (always?) do not exist so I removed that
+
+    current_unit = ureg(metadata.get('Is_unit')) if metadata.get('Is_unit') is not None else ureg('A')
+    properties.step_1_current = metadata.get('Is') * current_unit
+    properties.step_1_time = metadata.get('ts')
+
+    properties.lower_limit_potential = metadata.get('E_range_min')
+    properties.upper_limit_potential = metadata.get('E_range_max')
+
+    properties.sample_period = metadata.get('dts')
     return properties
 
 
@@ -79,7 +95,6 @@ def get_cv_properties(metadata):
     properties.scan_rate = metadata.get('dE/dt') * ureg(scan_rate_unit)
     properties.step_size = metadata.get("STEPSIZE")                             #   TODO calculate this?
     properties.cycles = metadata.get('nc_cycles')
-    properties.sample_area = metadata.get("AREA")                               #   TODO calculate this?
     return properties
 
 
@@ -95,7 +110,6 @@ def get_eis_properties(metadata):
     properties.points_per_decade = metadata.get('Nd')
     # TODO metadata.get('points') sollte "per decade" bzw. 1 in yadg sein, evtl spielt auch 'spacing' "logarithmic" bzw "1" eine rolle?
     properties.ac_voltage = metadata.get("VAC")         # TODO
-    properties.sample_area = metadata.get("AREA")       # TODO
     return properties
 
 
@@ -109,11 +123,19 @@ def get_lsv_properties(metadata):
     scan_rate_unit = metadata.get('dE/dt_unit')                                 # yadg gives numbers here. check
     properties.scan_rate = metadata.get('dE/dt') * ureg(scan_rate_unit)
     properties.step_size = metadata.get("STEPSIZE")                             # TODO calculate this?
-    properties.sample_area = metadata.get("AREA")                               # TODO calculate this?
     return properties
 
 
-# TODO OCV properties and data
+def get_ocv_properties(metadata):
+    properties = OCVProperties()
+
+    properties.total_time = metadata.get('tR')
+    properties.sample_period = metadata.get('dtR')
+    properties.stability = metadata.get("STABILITY")                # TODO calculate this?
+    return properties
+
+
+# TODO OCV data
 
 
 def get_meta_data(metadata, entry):
