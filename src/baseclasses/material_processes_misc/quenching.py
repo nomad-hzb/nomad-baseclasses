@@ -103,6 +103,83 @@ class GasQuenching(Quenching):
         a_eln=dict(component='StringEditQuantity'))
 
 
+class GasQuenchingWithNozzle(GasQuenching):
+
+    starting_delay = Quantity(
+        type=np.dtype(np.float64),
+        unit=('s'),
+        description=('Time Delay between starting the spin and the Gas Quenching.'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='s',
+            props=dict(
+                minValue=0)))
+
+    flow_rate = Quantity(
+        type=np.dtype(np.float64),
+        unit=('ml/s'),
+        description=('Volume Flow per time.'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='ml/s',
+            props=dict(
+                minValue=0)))
+
+    height = Quantity(
+        type=np.dtype(np.float64),
+        description=('Distance Nozzle-Sample.'),
+        unit=('mm'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mm',
+            props=dict(
+                minValue=0)))
+
+    duration = Quantity(
+        type=np.dtype(np.float64),
+        description=('Time Duration of Quenching'),
+        unit=('s'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='s',
+            props=dict(
+                minValue=0)))
+
+    pressure = Quantity(
+        type=np.dtype(np.float64),
+        description=("Pressure on the line"),
+        unit=('bar'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='bar',
+            props=dict(
+                minValue=0)))
+
+    velocity = Quantity(
+        type=np.dtype(np.float64),
+        description=("Speed of gas at the nozzle tip (Calculated from Flow and Nozzle Area)"),
+        unit=('m/s'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='m/s',
+            props=dict(
+                minValue=0)))
+
+    nozzle_shape = Quantity(
+        type=str,
+        description=('Description of the nozzle shape.'),
+        a_eln=dict(
+            component='StringEditQuantity'
+        ))
+
+    nozzle_size = Quantity(
+        type=str,
+        description=('Description of the nozzle size.'),
+        a_eln=dict(
+            component='StringEditQuantity'
+        ))
+
+
 class VacuumQuenching(Quenching):
 
     pressure = Quantity(
