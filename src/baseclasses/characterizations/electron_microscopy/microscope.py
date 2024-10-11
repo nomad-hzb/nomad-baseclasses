@@ -127,6 +127,7 @@ class MicroscopeTechnique(BaseMeasurement):
 
     def normalize(self, archive, logger):
         super(MicroscopeTechnique, self).normalize(archive, logger)
+        import tempfile
 
         if not self.detector_data and not self.detector_data_folder:
             return
@@ -151,21 +152,24 @@ class MicroscopeTechnique(BaseMeasurement):
 
         # process images
         # self.detector_data = imgs
-        if not archive.metadata.published:
-            for image in imgs:
-                with archive.m_context.raw_file(image) as f:
-                    processed = False
-                    for img in self.images:
-                        if img.file_name == image:
-                            processed = True
-                    if not processed:
-                        image_data = self.get_data(f.name)
+        for image in imgs:
+            with archive.m_context.raw_file(image, "rb") as f:
+                processed = False
+                for img in self.images:
+                    if img.file_name == image:
+                        processed = True
+                if not processed:
+                    file_content = f.read()
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=".tif") as temp_file:
+                        temp_file.write(file_content)
+                        temp_file_path = temp_file.name
+                    image_data = self.get_data(temp_file_path)
 
-                        if image_data:
-                            if not self.images:
-                                self.images = []
-                            self.images.section_def = image_data.m_def
-                            self.images.append(image_data)
+                    if image_data:
+                        if not self.images:
+                            self.images = []
+                        self.images.section_def = image_data.m_def
+                        self.images.append(image_data)
 
 
 class TEMMicroscopeTechnique(MicroscopeTechnique):
