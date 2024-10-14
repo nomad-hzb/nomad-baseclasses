@@ -28,7 +28,14 @@ maintainers = [
     { name = "Michael Götte", email = "michael.goette@helmholtz-berlin.de" },
 ]
 license = { file = "LICENSE" }
-#dependencies = ["nomad-lab>=1.2.2dev578"]
+dependencies = [
+"nomad-lab>=1.2.2dev578",
+'chardet>=5.1',
+'markdown2==2.4.8',
+'qrcode==7.4.2 ',
+'hdf5plugin==4.3'
+]
+
 [project.urls]
 Repository = "https://github.com/nomad-hzb/nomad-cbaseclasses"
 
@@ -76,7 +83,7 @@ select = [
     "UP",
     # isort
     "I",
-    # pylint 
+    # pylint
     "PL",
 ]
 
