@@ -165,6 +165,7 @@ class GasQuenchingWithNozzle(GasQuenching):
                 minValue=0)))
 
     velocity = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO/TFSCO_00003313'],
         type=np.dtype(np.float64),
         description=("Speed of gas at the nozzle tip (Calculated from Flow and Nozzle Area)"),
         unit=('m/s'),
