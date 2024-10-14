@@ -106,6 +106,7 @@ class GasQuenching(Quenching):
 class GasQuenchingWithNozzle(GasQuenching):
 
     starting_delay = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO/TFSCO_00003301','https://purl.archive.org/tfsco/TFSCO/TFSCO_00003312'],
         type=np.dtype(np.float64),
         unit=('s'),
         description=('Time Delay between starting the spin and the Gas Quenching.'),
@@ -116,6 +117,7 @@ class GasQuenchingWithNozzle(GasQuenching):
                 minValue=0)))
 
     flow_rate = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00002114','https://purl.archive.org/tfsco/TFSCO_00002108'],
         type=np.dtype(np.float64),
         unit=('ml/s'),
         description=('Volume Flow per time.'),
@@ -126,6 +128,7 @@ class GasQuenchingWithNozzle(GasQuenching):
                 minValue=0)))
 
     height = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO/TFSCO_00003302','https://purl.archive.org/tfsco/TFSCO/TFSCO_00003308'],
         type=np.dtype(np.float64),
         description=('Distance Nozzle-Sample.'),
         unit=('mm'),
@@ -136,6 +139,7 @@ class GasQuenchingWithNozzle(GasQuenching):
                 minValue=0)))
 
     duration = Quantity(
+        links=['http://purl.obolibrary.org/obo/PATO_0001309','https://purl.archive.org/tfsco/TFSCO_00002006'],
         type=np.dtype(np.float64),
         description=('Time Duration of Quenching'),
         unit=('s'),
@@ -146,6 +150,7 @@ class GasQuenchingWithNozzle(GasQuenching):
                 minValue=0)))
 
     pressure = Quantity(
+        links=['http://purl.obolibrary.org/obo/PATO_0001025','https://purl.archive.org/tfsco/TFSCO_00005040'],
         type=np.dtype(np.float64),
         description=("Pressure on the line"),
         unit=('bar'),
@@ -166,6 +171,7 @@ class GasQuenchingWithNozzle(GasQuenching):
                 minValue=0)))
 
     nozzle_shape = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO/TFSCO_00003304'],
         type=str,
         description=('Description of the nozzle shape.'),
         a_eln=dict(
