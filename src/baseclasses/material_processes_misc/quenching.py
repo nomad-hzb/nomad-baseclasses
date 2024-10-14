@@ -105,6 +105,10 @@ class GasQuenching(Quenching):
 
 class GasQuenchingWithNozzle(GasQuenching):
 
+    m_def = Section(
+        links=['https://purl.archive.org/tfsco/TFSCO/TFSCO_00003300'],
+    )
+
     starting_delay = Quantity(
         links=['https://purl.archive.org/tfsco/TFSCO/TFSCO_00003301','https://purl.archive.org/tfsco/TFSCO/TFSCO_00003312'],
         type=np.dtype(np.float64),
