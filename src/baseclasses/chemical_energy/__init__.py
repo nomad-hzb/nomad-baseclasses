@@ -47,7 +47,7 @@ from .electorchemical_impedance_spectroscopy import (
     ElectrochemicalImpedanceSpectroscopy,
 )
 from .galvanodynamic_sweep import GalvanodynamicSweep, LSGProperties
-from .general_measurement import GeneralMeasurement
+from .general_process import GeneralProcess
 from .linear_sweep_voltammetry import LinearSweepVoltammetry, LSVProperties
 from .massspectrometry import (
     Massspectrometry,

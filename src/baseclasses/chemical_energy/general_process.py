@@ -26,7 +26,7 @@ from .. import BaseMeasurement
 from ..helper.utilities import set_sample_reference
 
 
-class GeneralMeasurement(BaseMeasurement):
+class GeneralProcess(BaseMeasurement):
 
     m_def = Section()
 
@@ -54,5 +54,5 @@ class GeneralMeasurement(BaseMeasurement):
             if self.search_sample_in_same_upload:
                 upload_id = archive.metadata.upload_id
             set_sample_reference(archive, self, sample_id, upload_id)
-        super(GeneralMeasurement, self).normalize(archive, logger)
+        super(GeneralProcess, self).normalize(archive, logger)
 
