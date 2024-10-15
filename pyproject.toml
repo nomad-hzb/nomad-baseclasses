@@ -42,7 +42,7 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://github.com/nomad-hzb/nomad-cbaseclasses"
+Repository = "https://github.com/nomad-hzb/nomad-baseclasses"
 
 [project.optional-dependencies]
 dev = ["ruff", "pytest", "structlog"]
