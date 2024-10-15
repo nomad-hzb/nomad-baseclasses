@@ -28,6 +28,7 @@ from nomad.datamodel.data import ArchiveSection
 
 from .chemical import Chemical
 from nomad.datamodel.metainfo.basesections import PubChemPureSubstanceSection
+from nomad.datamodel.metainfo.action import ActionSection
 
 from nomad.datamodel.metainfo.basesections import CompositeSystem
 from .customreadable_identifier import ReadableIdentifiersCustom
@@ -98,15 +99,16 @@ class SolutionChemical(ArchiveSection):
                 self.name = self.chemical_2.name
 
 
-class OtherSolution(ArchiveSection):
+class OtherSolution(ArchiveSection, ActionSection):
     m_def = Section(
         links=['http://purl.obolibrary.org/obo/CHEBI_75958'],
         label_quantity='name')
 
-    reload_referenced_solution = Quantity(
+    action_trigger = Quantity(
         type=bool,
+        label="Reload referenced solution",
         default=False,
-        a_eln=dict(component='ButtonEditQuantity')
+        a_eln=dict(component='ActionEditQuantity')
     )
 
     name = Quantity(type=str)
@@ -129,14 +131,14 @@ class OtherSolution(ArchiveSection):
     solution_details = SubSection(
         section_def=SectionProxy("Solution"))
 
-    def normalize(self, archive, logger):
-
-        if self.reload_referenced_solution and self.solution:
-            self.reload_referenced_solution = False
-            # TODO rewrite to FALSE in json for reprocess
-            rewrite_json_recursively(archive, "reload_referenced_solution", False)
+    def perform_action(self, archive, logger):
+        if self.action_trigger and self.solution:
+            self.action_trigger = False
+            rewrite_json_recursively(archive, "action_trigger", False)
             self.solution_details = self.solution.m_copy(deep=True)
             self.solution = None
+
+    def normalize(self, archive, logger):
 
         if self.solution and self.solution.name:
             if self.solution_volume:

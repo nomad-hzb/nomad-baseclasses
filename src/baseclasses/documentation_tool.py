@@ -261,7 +261,7 @@ class DocumentationTool(Entity):
     create_entries = Quantity(
         type=bool,
         default=False,
-        a_eln=dict(component='ButtonEditQuantity')
+        a_eln=dict(component='BoolEditQuantity')
     )
 
     number_of_substances_per_env = Quantity(

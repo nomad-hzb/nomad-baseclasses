@@ -125,7 +125,7 @@ class Design(Entity):
     create_design_template = Quantity(
         type=bool,
         default=False,
-        a_eln=dict(component='ButtonEditQuantity')
+        a_eln=dict(component='BoolEditQuantity')
     )
 
     design_file = Quantity(

@@ -55,7 +55,7 @@ class Batch(Collection):
     export_batch_ids = Quantity(
         type=bool,
         default=False,
-        a_eln=dict(component='ButtonEditQuantity')
+        a_eln=dict(component='BoolEditQuantity')
     )
 
     csv_export_file = Quantity(
@@ -102,7 +102,7 @@ class SampleReference(CompositeSystemReference):
     create_sample = Quantity(
         type=bool,
         default=False,
-        a_eln=dict(component='ButtonEditQuantity')
+        a_eln=dict(component='BoolEditQuantity')
     )
 
 
@@ -147,7 +147,7 @@ class SingleSampleExperimentStep(ExperimentStep):
     create_experimental_step = Quantity(
         type=bool,
         default=False,
-        a_eln=dict(component='ButtonEditQuantity')
+        a_eln=dict(component='BoolEditQuantity')
     )
 
     with_last_step = Quantity(

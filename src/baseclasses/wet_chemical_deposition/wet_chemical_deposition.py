@@ -25,6 +25,8 @@ from nomad.metainfo import (
 )
 
 from nomad.datamodel.data import ArchiveSection
+from nomad.datamodel.metainfo.action import ActionSection
+
 from ..solution import Solution
 from .. import LayerDeposition
 from ..material_processes_misc import Annealing, Quenching, Sintering
@@ -38,10 +40,11 @@ class PrecursorSolution(ArchiveSection):
         label_quantity='name')
     name = Quantity(type=str)
 
-    reload_referenced_solution = Quantity(
+    action_trigger = Quantity(
         type=bool,
+        label="Reload referenced solution",
         default=False,
-        a_eln=dict(component='ButtonEditQuantity')
+        a_eln=dict(component='ActionEditQuantity')
     )
 
     solution = Quantity(
@@ -64,13 +67,14 @@ class PrecursorSolution(ArchiveSection):
     solution_details = SubSection(
         section_def=Solution)
 
-    def normalize(self, archive, logger):
-
-        if self.reload_referenced_solution and self.solution:
-            self.reload_referenced_solution = False
-            rewrite_json_recursively(archive, "reload_referenced_solution", False)
+    def perform_action(self, archive, logger):
+        if self.action_trigger and self.solution:
+            self.action_trigger = False
+            rewrite_json_recursively(archive, "action_trigger", False)
             self.solution_details = self.solution.m_copy(deep=True)
             self.solution = None
+
+    def normalize(self, archive, logger):
 
         if self.solution and self.solution.name:
             if self.solution_volume:
