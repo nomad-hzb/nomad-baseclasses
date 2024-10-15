@@ -17,7 +17,7 @@ name = "nomad-baseclasses"
 description = "A schema package plugin for chemical energy at hzb."
 version = "1.0.0"
 readme = "README.rst"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 authors = [
     { name = "Michael Götte", email = "michael.goette@helmholtz-berlin.de" },
     { name = "Carla Terboven", email = "carla.terboven@helmholtz-berlin.de" },
@@ -28,7 +28,19 @@ maintainers = [
     { name = "Michael Götte", email = "michael.goette@helmholtz-berlin.de" },
 ]
 license = { file = "LICENSE" }
-#dependencies = ["nomad-lab>=1.2.2dev578"]
+dependencies = [
+    "nomad-lab>=1.3.8",
+    "nomad-lab[infrastructure]>=1.3.8",
+    'openpyxl>=3.0.0',
+    'networkx>=3.3',
+    'matid>=2.0.0.dev2',
+    'chardet>=5.1',
+    'markdown2>=2.4.8',
+    'qrcode>=7.4.2 ',
+    'hdf5plugin>=4.3'
+
+]
+
 [project.urls]
 Repository = "https://github.com/nomad-hzb/nomad-cbaseclasses"
 

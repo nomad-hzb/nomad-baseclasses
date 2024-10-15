@@ -124,7 +124,7 @@ class Step(ArchiveSection):
     add_step = Quantity(
         type=bool,
         default=False,
-        a_eln=dict(component='ButtonEditQuantity')
+        a_eln=dict(component='ActionEditQuantity')
     )
 
     name = Quantity(
@@ -175,13 +175,13 @@ class ExperimentalPlan(Entity):
     load_standard_processes = Quantity(
         type=bool,
         default=False,
-        a_eln=dict(component='ButtonEditQuantity')
+        a_eln=dict(component='ActionEditQuantity')
     )
 
     create_samples_and_processes = Quantity(
         type=bool,
         default=False,
-        a_eln=dict(component='ButtonEditQuantity')
+        a_eln=dict(component='ActionEditQuantity')
     )
 
     plan_is_loaded = Quantity(

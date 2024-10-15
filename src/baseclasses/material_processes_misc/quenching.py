@@ -25,7 +25,7 @@ from nomad.metainfo import (
 from nomad.datamodel.data import ArchiveSection
 
 from ..chemical import Chemical
-from nomad.datamodel.metainfo.basesections import PubChemPureSubstanceSection
+from baseclasses import PubChemPureSubstanceSectionCustom
 
 
 class Quenching(ArchiveSection):
@@ -45,7 +45,7 @@ class AntiSolventQuenching(Quenching):
         a_eln=dict(component='ReferenceEditQuantity'))
 
     anti_solvent_2 = SubSection(
-        section_def=PubChemPureSubstanceSection)
+        section_def=PubChemPureSubstanceSectionCustom)
 
     anti_solvent_volume = Quantity(
         links=['http://purl.obolibrary.org/obo/PATO_0000918', 'https://purl.archive.org/tfsco/TFSCO_00002158'],

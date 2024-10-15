@@ -35,7 +35,7 @@ from nomad.datamodel.metainfo.basesections import (
     Process,
     Measurement, Experiment, ExperimentStep,
     Entity,
-    CompositeSystemReference
+    CompositeSystemReference, PubChemPureSubstanceSection, PureSubstanceSection
 )
 
 from nomad.datamodel.results import Results, Material
@@ -50,12 +50,32 @@ from .atmosphere import Atmosphere
 import hdf5plugin
 
 
+class PubChemPureSubstanceSectionCustom(PubChemPureSubstanceSection):
+    """
+    A section for pure substances existing as "compounds" in the PubChem database.
+    """
+
+    load_data = Quantity(
+        type=bool,
+        default=True,
+        a_eln=dict(
+            component='BoolEditQuantity',
+        )
+    )
+
+    def normalize(self, archive, logger):
+        if self.load_data:
+            super(PubChemPureSubstanceSectionCustom, self).normalize(archive, logger)
+        else:
+            super(PubChemPureSubstanceSection, self).normalize(archive, logger)
+
+
 class Batch(Collection):
 
     export_batch_ids = Quantity(
         type=bool,
         default=False,
-        a_eln=dict(component='ButtonEditQuantity')
+        a_eln=dict(component='ActionEditQuantity')
     )
 
     csv_export_file = Quantity(
@@ -102,7 +122,7 @@ class SampleReference(CompositeSystemReference):
     create_sample = Quantity(
         type=bool,
         default=False,
-        a_eln=dict(component='ButtonEditQuantity')
+        a_eln=dict(component='ActionEditQuantity')
     )
 
 
@@ -147,7 +167,7 @@ class SingleSampleExperimentStep(ExperimentStep):
     create_experimental_step = Quantity(
         type=bool,
         default=False,
-        a_eln=dict(component='ButtonEditQuantity')
+        a_eln=dict(component='ActionEditQuantity')
     )
 
     with_last_step = Quantity(

@@ -22,24 +22,24 @@ from nomad.metainfo import (Quantity, Reference, SubSection, Section)
 from nomad.datamodel.data import ArchiveSection
 
 from ..chemical import Chemical
-from nomad.datamodel.metainfo.basesections import PubChemPureSubstanceSection
+from baseclasses import PubChemPureSubstanceSectionCustom
 from .. import LayerDeposition
 
 
 class PVDProcess(ArchiveSection):
 
     target = Quantity(
-        links = ['https://purl.archive.org/tfsco/TFSCO_00002035'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00002035'],
         type=Reference(Chemical.m_def),
         shape=['*'],
         a_eln=dict(component='ReferenceEditQuantity'))
 
     target_2 = SubSection(
         links=['http://purl.obolibrary.org/obo/RO_0000057'],
-        section_def=PubChemPureSubstanceSection, repeats=True)
+        section_def=PubChemPureSubstanceSectionCustom, repeats=True)
 
     power = Quantity(
-        links = ['http://purl.obolibrary.org/obo/PATO_0001024','https://purl.archive.org/tfsco/TFSCO_00002104'],
+        links=['http://purl.obolibrary.org/obo/PATO_0001024', 'https://purl.archive.org/tfsco/TFSCO_00002104'],
         type=np.dtype(
             np.float64),
         unit=('W'),
@@ -50,7 +50,7 @@ class PVDProcess(ArchiveSection):
                 minValue=0)))
 
     pressure = Quantity(
-        links = ['https://purl.archive.org/tfsco/TFSCO_00001094'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00001094'],
         type=np.dtype(
             np.float64),
         unit=('ubar'),
@@ -61,7 +61,7 @@ class PVDProcess(ArchiveSection):
                 minValue=0)))
 
     time = Quantity(
-        links = ['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
+        links=['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
         type=np.dtype(
             np.float64),
         unit=('s'),
@@ -72,13 +72,13 @@ class PVDProcess(ArchiveSection):
                 minValue=0)))
 
     rotation_speed = Quantity(
-        links = ['https://purl.archive.org/tfsco/TFSCO_00002026','https://purl.archive.org/tfsco/TFSCO_00002005'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00002026', 'https://purl.archive.org/tfsco/TFSCO_00002005'],
         type=np.dtype(np.float64),
         unit=('1/s'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='1/s'))
 
     temperature = Quantity(
-        links = ['http://purl.obolibrary.org/obo/PATO_0000146','https://purl.archive.org/tfsco/TFSCO_00002111'],
+        links=['http://purl.obolibrary.org/obo/PATO_0000146', 'https://purl.archive.org/tfsco/TFSCO_00002111'],
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
@@ -95,7 +95,7 @@ class PVDProcess(ArchiveSection):
 class PVDeposition(LayerDeposition):
     '''Base class for evaporation of a sample'''
     m_def = Section(
-        links = ['http://purl.obolibrary.org/obo/CHMO_0001356'],
+        links=['http://purl.obolibrary.org/obo/CHMO_0001356'],
     )
 
     process = SubSection(

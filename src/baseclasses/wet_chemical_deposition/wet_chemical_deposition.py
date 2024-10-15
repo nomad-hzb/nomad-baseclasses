@@ -25,6 +25,8 @@ from nomad.metainfo import (
 )
 
 from nomad.datamodel.data import ArchiveSection
+from nomad.datamodel.metainfo.action import ActionSection
+
 from ..solution import Solution
 from .. import LayerDeposition
 from ..material_processes_misc import Annealing, Quenching, Sintering
@@ -41,7 +43,7 @@ class PrecursorSolution(ArchiveSection):
     reload_referenced_solution = Quantity(
         type=bool,
         default=False,
-        a_eln=dict(component='ButtonEditQuantity')
+        a_eln=dict(component='ActionEditQuantity')
     )
 
     solution = Quantity(
