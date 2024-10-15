@@ -17,7 +17,7 @@ name = "nomad-baseclasses"
 description = "A schema package plugin for chemical energy at hzb."
 version = "1.0.0"
 readme = "README.rst"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 authors = [
     { name = "Michael Götte", email = "michael.goette@helmholtz-berlin.de" },
     { name = "Carla Terboven", email = "carla.terboven@helmholtz-berlin.de" },
