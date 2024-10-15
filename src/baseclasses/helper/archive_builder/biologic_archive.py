@@ -135,9 +135,6 @@ def get_ocv_properties(metadata):
     return properties
 
 
-# TODO OCV data
-
-
 def get_meta_data(metadata, entry):
     assert baseclasses.chemical_energy.potentiostat_measurement.PotentiostatMeasurement \
         in inspect.getmro(type(entry))
@@ -147,9 +144,6 @@ def get_meta_data(metadata, entry):
 
     if not entry.description:
         entry.description = metadata.get('comments')
-
-    # TODO use device settings
-    metadata_device_settings = json.loads(data_tree.attrs.get('original_metadata')).get('params', {})
 
 
 def get_eis_data(data, cycle):
