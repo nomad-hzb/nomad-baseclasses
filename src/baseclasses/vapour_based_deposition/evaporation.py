@@ -18,7 +18,7 @@
 
 import numpy as np
 from nomad.datamodel.data import ArchiveSection
-from nomad.datamodel.metainfo.basesections import PubChemPureSubstanceSection
+from baseclasses import PubChemPureSubstanceSectionCustom
 from nomad.metainfo import (Quantity, Reference, SubSection, Section)
 
 from .. import LayerDeposition
@@ -33,7 +33,7 @@ class EvaporationSources(ArchiveSection):
 
     chemical_2 = SubSection(
         links=['http://purl.obolibrary.org/obo/RO_0000057'],
-        section_def=PubChemPureSubstanceSection)
+        section_def=PubChemPureSubstanceSectionCustom)
 
     sources = Quantity(
         type=str,
@@ -109,7 +109,7 @@ class Evaporation(ArchiveSection):
 
     chemical_2 = SubSection(
         links=['http://purl.obolibrary.org/obo/RO_0000057'],
-        section_def=PubChemPureSubstanceSection)
+        section_def=PubChemPureSubstanceSectionCustom)
 
     source = Quantity(
         type=str,

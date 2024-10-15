@@ -23,8 +23,10 @@ from nomad.metainfo import (Quantity, SubSection, Section, Reference, Datetime, 
 from nomad.datamodel.results import Results, Material
 from nomad.datamodel.data import ArchiveSection
 
-from nomad.datamodel.metainfo.basesections import CompositeSystem, PubChemPureSubstanceSection, \
+from nomad.datamodel.metainfo.basesections import CompositeSystem, \
     CompositeSystemReference, Entity
+from baseclasses import PubChemPureSubstanceSectionCustom
+
 from .. import ReadableIdentifiersCustom
 # from .preparation_protocoll import PreparationProtocol
 from nomad.datamodel.results import (
@@ -347,7 +349,7 @@ class CENSLISample(CESample):
 class SubstanceWithConcentration(ArchiveSection):
     m_def = Section(label_quantity='name')
     substance = SubSection(
-        section_def=PubChemPureSubstanceSection)
+        section_def=PubChemPureSubstanceSectionCustom)
 
     name = Quantity(type=str)
 
@@ -524,7 +526,7 @@ class Electrolyte(CESample):
         a_eln=dict(component='NumberEditQuantity', label="pH Value"))
 
     solvent = SubSection(
-        section_def=PubChemPureSubstanceSection)
+        section_def=PubChemPureSubstanceSectionCustom)
 
     substances = SubSection(
         section_def=SubstanceWithConcentration, repeats=True)
@@ -550,7 +552,7 @@ class Purging(ArchiveSection):
     )
 
     gas = SubSection(
-        section_def=PubChemPureSubstanceSection)
+        section_def=PubChemPureSubstanceSectionCustom)
 
     temperature = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007227'],

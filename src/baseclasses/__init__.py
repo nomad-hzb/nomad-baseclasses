@@ -35,7 +35,7 @@ from nomad.datamodel.metainfo.basesections import (
     Process,
     Measurement, Experiment, ExperimentStep,
     Entity,
-    CompositeSystemReference
+    CompositeSystemReference, PubChemPureSubstanceSection, PureSubstanceSection
 )
 
 from nomad.datamodel.results import Results, Material
@@ -48,6 +48,26 @@ from .helper.utilities import update_archive, get_processes
 from .customreadable_identifier import ReadableIdentifiersCustom
 from .atmosphere import Atmosphere
 import hdf5plugin
+
+
+class PubChemPureSubstanceSectionCustom(PubChemPureSubstanceSection):
+    """
+    A section for pure substances existing as "compounds" in the PubChem database.
+    """
+
+    load_data = Quantity(
+        type=bool,
+        default=True,
+        a_eln=dict(
+            component='BoolEditQuantity',
+        )
+    )
+
+    def normalize(self, archive, logger):
+        if self.load_data:
+            super(PubChemPureSubstanceSectionCustom, self).normalize(archive, logger)
+        else:
+            super(PubChemPureSubstanceSection, self).normalize(archive, logger)
 
 
 class Batch(Collection):

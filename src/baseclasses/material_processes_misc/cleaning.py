@@ -26,12 +26,12 @@ from nomad.datamodel.data import ArchiveSection
 
 from .. import BaseProcess
 from ..chemical import Chemical
-from nomad.datamodel.metainfo.basesections import PubChemPureSubstanceSection
+from baseclasses import PubChemPureSubstanceSectionCustom
 
 
 class CleaningTechnique(ArchiveSection):
     time = Quantity(
-        links = ['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
+        links=['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
         type=np.dtype(
             np.float64),
         unit=('minute'),
@@ -43,22 +43,22 @@ class CleaningTechnique(ArchiveSection):
 class SolutionCleaning(CleaningTechnique):
     '''Base class for cleaning of a sample'''
     m_def = Section(
-        links = ['https://purl.archive.org/tfsco/TFSCO_00001042'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00001042'],
         label_quantity='name')
     name = Quantity(
         type=str
     )
     solvent = Quantity(
-        links = ['https://purl.archive.org/tfsco/TFSCO_00000026'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00000026'],
         type=Reference(Chemical.m_def),
         a_eln=dict(component='ReferenceEditQuantity'))
 
     solvent_2 = SubSection(
         links=['http://purl.obolibrary.org/obo/RO_0000057'],
-        section_def=PubChemPureSubstanceSection)
+        section_def=PubChemPureSubstanceSectionCustom)
 
     temperature = Quantity(
-        links = ['http://purl.obolibrary.org/obo/PATO_0000146','https://purl.archive.org/tfsco/TFSCO_00002111'],
+        links=['http://purl.obolibrary.org/obo/PATO_0000146', 'https://purl.archive.org/tfsco/TFSCO_00002111'],
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
@@ -77,11 +77,11 @@ class SolutionCleaning(CleaningTechnique):
 class UVCleaning(CleaningTechnique):
     '''Base class for cleaning of a sample'''
     m_def = Section(
-        links = ['https://purl.archive.org/tfsco/TFSCO_00001043'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00001043'],
     )
 
     pressure = Quantity(
-        links = ['http://purl.obolibrary.org/obo/PATO_0001025','https://purl.archive.org/tfsco/TFSCO_00005040'],
+        links=['http://purl.obolibrary.org/obo/PATO_0001025', 'https://purl.archive.org/tfsco/TFSCO_00005040'],
         type=np.dtype(
             np.float64),
         unit=('mbar'),
@@ -95,11 +95,11 @@ class UVCleaning(CleaningTechnique):
 class PlasmaCleaning(CleaningTechnique):
     '''Base class for cleaning of a sample'''
     m_def = Section(
-        links = ['https://purl.archive.org/tfsco/TFSCO_00001044'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00001044'],
     )
 
     pressure = Quantity(
-        links = ['http://purl.obolibrary.org/obo/PATO_0001025','https://purl.archive.org/tfsco/TFSCO_00005040'],
+        links=['http://purl.obolibrary.org/obo/PATO_0001025', 'https://purl.archive.org/tfsco/TFSCO_00005040'],
         type=np.dtype(
             np.float64),
         unit=('mbar'),
@@ -110,7 +110,7 @@ class PlasmaCleaning(CleaningTechnique):
                 minValue=0)))
 
     power = Quantity(
-        links = ['http://purl.obolibrary.org/obo/PATO_0001024','https://purl.archive.org/tfsco/TFSCO_00002104'],
+        links=['http://purl.obolibrary.org/obo/PATO_0001024', 'https://purl.archive.org/tfsco/TFSCO_00002104'],
         type=np.dtype(
             np.float64),
         unit=('W'),
@@ -121,7 +121,7 @@ class PlasmaCleaning(CleaningTechnique):
                 minValue=0)))
 
     plasma_type = Quantity(
-        links = ['https://purl.archive.org/tfsco/TFSCO_00005019'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00005019'],
         type=str,
         shape=[],
         a_eln=dict(
@@ -133,7 +133,7 @@ class PlasmaCleaning(CleaningTechnique):
 
 class Cleaning(BaseProcess):
     m_def = Section(
-        links = ['https://purl.archive.org/tfsco/TFSCO_00000068'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00000068'],
         a_eln=dict(
             hide=[
                 'lab_id', 'user', 'author']))

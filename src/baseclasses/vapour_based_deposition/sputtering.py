@@ -23,7 +23,7 @@ from nomad.metainfo import (Quantity, Reference, SubSection, Section, MEnum)
 
 from ..chemical import Chemical
 from .. import LayerDeposition
-from nomad.datamodel.metainfo.basesections import PubChemPureSubstanceSection
+from baseclasses import PubChemPureSubstanceSectionCustom
 
 
 class SputteringProcess(ArchiveSection):
@@ -34,10 +34,10 @@ class SputteringProcess(ArchiveSection):
         a_eln=dict(component='ReferenceEditQuantity'))
 
     target_2 = SubSection(
-        section_def=PubChemPureSubstanceSection)
+        section_def=PubChemPureSubstanceSectionCustom)
 
     gas_2 = SubSection(
-        section_def=PubChemPureSubstanceSection)
+        section_def=PubChemPureSubstanceSectionCustom)
 
     thickness = Quantity(
         links=['http://purl.obolibrary.org/obo/PATO_0000915'],
@@ -176,7 +176,7 @@ class TargetProperties(ArchiveSection):
     name = Quantity(type=str)
     material = SubSection(
         links=['https://purl.archive.org/tfsco/TFSCO_00002035'],
-        section_def=PubChemPureSubstanceSection
+        section_def=PubChemPureSubstanceSectionCustom
     )
 
     position = Quantity(
@@ -244,7 +244,7 @@ class MultiTargetSputteringProcess(ArchiveSection):
 
     gas = SubSection(
         links=['http://purl.obolibrary.org/obo/CHEBI_59999'],
-        section_def=PubChemPureSubstanceSection
+        section_def=PubChemPureSubstanceSectionCustom
     )
 
     manipulator_position = Quantity(

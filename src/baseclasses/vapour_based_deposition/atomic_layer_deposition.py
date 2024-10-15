@@ -21,7 +21,7 @@ import numpy as np
 from nomad.metainfo import (Quantity, SubSection, Section)
 from nomad.datamodel.data import ArchiveSection
 
-from nomad.datamodel.metainfo.basesections import PubChemPureSubstanceSection
+from baseclasses import PubChemPureSubstanceSectionCustom
 from .. import LayerDeposition
 
 
@@ -33,7 +33,7 @@ class ALDProperties(ArchiveSection):
 
     chemical_2 = SubSection(
         links=['http://purl.obolibrary.org/obo/RO_0000057'],
-        section_def=PubChemPureSubstanceSection)
+        section_def=PubChemPureSubstanceSectionCustom)
 
     source = Quantity(
         type=str,
@@ -109,7 +109,7 @@ class ALDMaterial(ArchiveSection):
 
     material = SubSection(
         links=['http://purl.obolibrary.org/obo/RO_0000057'],
-        section_def=PubChemPureSubstanceSection)
+        section_def=PubChemPureSubstanceSectionCustom)
 
     pulse_duration = Quantity(
         type=np.dtype(
@@ -145,7 +145,7 @@ class ALDMaterial(ArchiveSection):
 class ALDOxidizerReducer(ArchiveSection):
     material = SubSection(
         links=['http://purl.obolibrary.org/obo/RO_0000057'],
-        section_def=PubChemPureSubstanceSection)
+        section_def=PubChemPureSubstanceSectionCustom)
 
     pulse_duration = Quantity(
         type=np.dtype(

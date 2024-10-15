@@ -40,9 +40,8 @@ class PrecursorSolution(ArchiveSection):
         label_quantity='name')
     name = Quantity(type=str)
 
-    action_trigger = Quantity(
+    reload_referenced_solution = Quantity(
         type=bool,
-        label="Reload referenced solution",
         default=False,
         a_eln=dict(component='ActionEditQuantity')
     )
@@ -67,14 +66,13 @@ class PrecursorSolution(ArchiveSection):
     solution_details = SubSection(
         section_def=Solution)
 
-    def perform_action(self, archive, logger):
-        if self.action_trigger and self.solution:
-            self.action_trigger = False
-            rewrite_json_recursively(archive, "action_trigger", False)
+    def normalize(self, archive, logger):
+
+        if self.reload_referenced_solution and self.solution:
+            self.reload_referenced_solution = False
+            rewrite_json_recursively(archive, "reload_referenced_solution", False)
             self.solution_details = self.solution.m_copy(deep=True)
             self.solution = None
-
-    def normalize(self, archive, logger):
 
         if self.solution and self.solution.name:
             if self.solution_volume:

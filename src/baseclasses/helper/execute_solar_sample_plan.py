@@ -17,7 +17,9 @@
 #
 import numpy as np
 import itertools
-from nomad.datamodel.metainfo.basesections import CompositeSystemReference, PubChemPureSubstanceSection
+from nomad.datamodel.metainfo.basesections import CompositeSystemReference
+from baseclasses import PubChemPureSubstanceSectionCustom
+
 from nomad.units import ureg
 from .. import ReadableIdentifiersCustom
 
@@ -54,8 +56,8 @@ def set_value(section, path, value, unit):
         if not section.solution_details:
             section.solution_details = section.solution.m_copy(deep=True)
         set_value(section[next_key], "/".join(path_split[1:]), value, unit)
-    elif isinstance(section[next_key], PubChemPureSubstanceSection) and (next_key in ["anti_solvent_2", "chemcial_2"]):
-        pubchem = PubChemPureSubstanceSection(load_data=False)
+    elif isinstance(section[next_key], PubChemPureSubstanceSectionCustom) and (next_key in ["anti_solvent_2", "chemcial_2"]):
+        pubchem = PubChemPureSubstanceSectionCustom(load_data=False)
         setattr(section, next_key, pubchem)
         set_value(section[next_key], "/".join(path_split[1:]), value, unit)
     else:
