@@ -177,6 +177,25 @@ class Evaporation(ArchiveSection):
             props=dict(
                 minValue=0)))
 
+    time_delay_to_start = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=('s'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='s',
+            props=dict(
+                minValue=0)))
+
+    substrate_temparature = Quantity(
+        type=np.dtype(
+            np.float64),
+        unit=('°C'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='°C',
+            label="Temperature"))
+
     def normalize(self, archive, logger):
 
         if self.chemical:
