@@ -37,8 +37,8 @@ dependencies = [
     'chardet>=5.1',
     'markdown2>=2.4.8',
     'qrcode>=7.4.2 ',
-    'hdf5plugin>=4.3'
-
+    'hdf5plugin>=4.3',
+    'hyperspy>=2.1.1'
 ]
 
 [project.urls]
