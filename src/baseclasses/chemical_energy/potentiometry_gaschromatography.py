@@ -316,6 +316,30 @@ class NECCPotentiostatMeasurement(ArchiveSection):
                 'config': {
                     'editable': True, 'scrollZoom': True}}])
 
+    counter_electrode_potential = Quantity(
+        type=np.dtype(
+            np.float64), shape=['*'], unit='V', a_plot=[
+            {
+                'label': 'Counter Electrode Potential (Ece)',
+                'x': 'datetime', 'y': 'counter_electrode_potential',
+                'layout': {
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False}},
+                'config': {
+                    'editable': True, 'scrollZoom': True}}])
+
+    ewe_ece_difference = Quantity(
+        type=np.dtype(
+            np.float64), shape=['*'], unit='V', a_plot=[
+            {
+                'label': 'Ewe - Ece',
+                'x': 'datetime', 'y': 'ewe_ece_difference',
+                'layout': {
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False}},
+                'config': {
+                    'editable': True, 'scrollZoom': True}}])
+
     mean_current = Quantity(type=np.dtype(np.float64), unit='mA')
     standard_deviation_current = Quantity(type=np.dtype(np.float64), unit='mA')
     minimum_current = Quantity(type=np.dtype(np.float64), unit='mA')
@@ -326,16 +350,34 @@ class NECCPotentiostatMeasurement(ArchiveSection):
     minimum_working_electrode_potential = Quantity(type=np.dtype(np.float64), unit='V')
     maximum_working_electrode_potential = Quantity(type=np.dtype(np.float64), unit='V')
 
-    def normalize(self, archive, logger):
-        self.mean_current = np.mean(self.current)
-        self.minimum_current = min(self.current)
-        self.maximum_current = max(self.current)
-        self.standard_deviation_current = np.std(self.current)
+    mean_counter_electrode_potential = Quantity(type=np.dtype(np.float64), unit='V')
+    standard_deviation_counter_electrode_potential = Quantity(type=np.dtype(np.float64), unit='V')
+    minimum_counter_electrode_potential = Quantity(type=np.dtype(np.float64), unit='V')
+    maximum_counter_electrode_potential = Quantity(type=np.dtype(np.float64), unit='V')
 
-        self.mean_working_electrode_potential = np.mean(self.working_electrode_potential)
-        self.minimum_working_electrode_potential = min(self.working_electrode_potential)
-        self.maximum_working_electrode_potential = max(self.working_electrode_potential)
-        self.standard_deviation_working_electrode_potential = np.std(self.working_electrode_potential)
+    mean_ewe_ece_difference = Quantity(type=np.dtype(np.float64), unit='V')
+    standard_deviation_ewe_ece_difference = Quantity(type=np.dtype(np.float64), unit='V')
+    minimum_ewe_ece_difference = Quantity(type=np.dtype(np.float64), unit='V')
+    maximum_ewe_ece_difference = Quantity(type=np.dtype(np.float64), unit='V')
+
+    def calculate_statistics(self, quantity, quantity_name):
+        supported_quantities = {'current', 'working_electrode_potential', 'counter_electrode_potential', 'ewe_ece_difference'}
+        if quantity_name not in supported_quantities:
+            return
+        if quantity is not None:
+            setattr(self, f'mean_{quantity_name}', np.mean(quantity))
+            setattr(self, f'minimum_{quantity_name}', min(quantity))
+            setattr(self, f'maximum_{quantity_name}', max(quantity))
+            setattr(self, f'standard_deviation_{quantity_name}', np.std(quantity))
+
+    def normalize(self, archive, logger):
+        if self.ewe_ece_difference is None:
+            if self.working_electrode_potential is not None and self.counter_electrode_potential is not None:
+                self.ewe_ece_difference = self.working_electrode_potential - self.counter_electrode_potential
+        self.calculate_statistics(self.current, 'current')
+        self.calculate_statistics(self.working_electrode_potential, 'working_electrode_potential')
+        self.calculate_statistics(self.counter_electrode_potential, 'counter_electrode_potential')
+        self.calculate_statistics(self.ewe_ece_difference, 'ewe_ece_difference')
 
 
 class ThermocoupleMeasurement(PlotSection, ArchiveSection):
