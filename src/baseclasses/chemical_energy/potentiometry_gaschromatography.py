@@ -364,11 +364,12 @@ class NECCPotentiostatMeasurement(ArchiveSection):
         supported_quantities = {'current', 'working_electrode_potential', 'counter_electrode_potential', 'ewe_ece_difference'}
         if quantity_name not in supported_quantities:
             return
-        if quantity is not None:
-            setattr(self, f'mean_{quantity_name}', np.mean(quantity))
-            setattr(self, f'minimum_{quantity_name}', min(quantity))
-            setattr(self, f'maximum_{quantity_name}', max(quantity))
-            setattr(self, f'standard_deviation_{quantity_name}', np.std(quantity))
+        if quantity is None:
+            return
+        setattr(self, f'mean_{quantity_name}', np.mean(quantity))
+        setattr(self, f'minimum_{quantity_name}', min(quantity))
+        setattr(self, f'maximum_{quantity_name}', max(quantity))
+        setattr(self, f'standard_deviation_{quantity_name}', np.std(quantity))
 
     def normalize(self, archive, logger):
         if self.ewe_ece_difference is None:
