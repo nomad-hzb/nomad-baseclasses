@@ -1,6 +1,6 @@
 # NOMAD base sections for solar cell and electro catalysis research
 
-This is a nomad plugin, see [NOMAD Plugins](https://nomad-lab.eu/prod/v1/staging/docs/plugins.html) on how to use them.
+This is a nomad plugin, see [NOMAD Plugins](https://nomad-lab.eu/prod/v1/staging/docs/plugins.html) on how to use them. These baseclasses are developed for HZB and are tested in their labratories. We use the [TFSCO](https://matportal.org/ontologies/TFSCO/?p=classes) to annotate our nomad quantities. The classes are not meant to be complete but can serve as an entry point to new plugin developers.
 
 ## Documentation
 see [docs](https://nomad-hzb.github.io/nomad-baseclasses/)
