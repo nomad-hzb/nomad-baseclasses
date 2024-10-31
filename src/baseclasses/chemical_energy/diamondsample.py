@@ -17,9 +17,8 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (Quantity, SubSection)
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity, SubSection
 
 from .cesample import CENSLISample
 

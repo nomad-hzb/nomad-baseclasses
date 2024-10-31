@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-from nomad.metainfo import (Quantity)
+from nomad.metainfo import Quantity
 
 from .. import BaseMeasurement
 

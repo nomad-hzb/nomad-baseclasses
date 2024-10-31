@@ -16,11 +16,11 @@
 # limitations under the License.
 #
 
-import numpy as np
 import os
 
-from nomad.metainfo import (Quantity, SubSection, Section)
+import numpy as np
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity, Section, SubSection
 
 from .. import MeasurementOnSample
 
@@ -141,8 +141,7 @@ class CatalyticReaction(MeasurementOnSample):
             if len(col_split) < 2:
                 continue
 
-            if len(data[col]) > number_of_runs:
-                number_of_runs = len(data[col])
+            number_of_runs = max(len(data[col]), number_of_runs)
 
             if col_split[0] == "x":
                 reactant = Reactant(name=col_split[1],

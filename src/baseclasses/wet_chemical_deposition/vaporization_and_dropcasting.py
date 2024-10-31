@@ -17,12 +17,8 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (
-    Quantity,
-    SubSection,
-    Datetime, Section)
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Datetime, Quantity, Section, SubSection
 
 from .wet_chemical_deposition import WetChemicalDeposition
 

@@ -17,15 +17,14 @@
 #
 
 import numpy as np
+import plotly.graph_objects as go
+from nomad.datamodel.metainfo.basesections import Analysis, SectionReference
+from nomad.datamodel.metainfo.plot import PlotlyFigure, PlotSection
+from nomad.metainfo import Quantity, Reference, Section
 from scipy import stats
 
-from nomad.metainfo import Quantity, Reference, Section, SubSection, Datetime
-from nomad.datamodel.metainfo.basesections import Analysis, SectionReference
+from baseclasses.solar_energy import UVvisData, UVvisMeasurement
 
-from nomad.datamodel.metainfo.plot import PlotSection, PlotlyFigure
-import plotly.graph_objects as go
-
-from baseclasses.solar_energy import UVvisMeasurement, UVvisData
 
 class UVvisReference(SectionReference):
     reference = Quantity(

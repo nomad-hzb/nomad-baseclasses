@@ -16,8 +16,9 @@
 # limitations under the License.
 #
 
+from nomad.metainfo import Quantity, Section
+
 from .. import BaseMeasurement, LibraryMeasurement
-from nomad.metainfo import (Quantity, Section)
 
 
 class XPS(BaseMeasurement):

@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Mon Jul 15 17:33:35 2024
 
 @author: a2853
 """
 import numpy as np
-from baseclasses.chemical_energy import MassspectrometrySettings, MassspectrometrySpectrum
 
+from baseclasses.chemical_energy import (
+    MassspectrometrySettings,
+    MassspectrometrySpectrum,
+)
 
 mass_mapping = {
     2: "H2",

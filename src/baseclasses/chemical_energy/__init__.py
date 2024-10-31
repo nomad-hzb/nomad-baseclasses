@@ -65,9 +65,9 @@ from .potentiometry_gaschromatography import (
     GasFEResults,
     NECCExperimentalProperties,
     NECCFeedGas,
+    NECCPotentiostatMeasurement,
     PotentiometryGasChromatographyMeasurement,
     PotentiometryGasChromatographyResults,
-    NECCPotentiostatMeasurement,
     ThermocoupleMeasurement,
 )
 from .potentiostat_measurement import PotentiostatMeasurement, PotentiostatSetup

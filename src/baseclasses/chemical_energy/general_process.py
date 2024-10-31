@@ -18,7 +18,6 @@
 
 from nomad.metainfo import (
     Quantity,
-    Reference,
     Section,
 )
 

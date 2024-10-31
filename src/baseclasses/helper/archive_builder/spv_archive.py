@@ -18,10 +18,10 @@
 
 import os
 import re
+
 import pandas as pd
 
-from baseclasses.solar_energy import trSPVVoltage, trSPVData, trSPVProperties
-
+from baseclasses.solar_energy import trSPVData, trSPVProperties, trSPVVoltage
 
 filter_to_intensity = {
     3: 10000,

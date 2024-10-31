@@ -17,7 +17,6 @@
 #
 
 import numpy as np
-
 from nomad.units import ureg
 
 

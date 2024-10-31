@@ -16,13 +16,13 @@
 # limitations under the License.
 #
 
-from .spray_pyrolysis import SprayPyrolysis
-from .spin_coating import SpinCoating, SpinCoatingRecipe
-from .inkjet_printing import LP50InkjetPrinting
-from .slot_die_coating import SlotDieCoating
-from .vaporization_and_dropcasting import VaporizationAndDropCasting
-from .wet_chemical_deposition import WetChemicalDeposition, PrecursorSolution
+from .blade_coating import BladeCoating
 from .crystallization import Crystallization
 from .dip_coating import DipCoating
-from .blade_coating import BladeCoating
 from .dropcast import DropCasting
+from .inkjet_printing import LP50InkjetPrinting
+from .slot_die_coating import SlotDieCoating
+from .spin_coating import SpinCoating, SpinCoatingRecipe
+from .spray_pyrolysis import SprayPyrolysis
+from .vaporization_and_dropcasting import VaporizationAndDropCasting
+from .wet_chemical_deposition import PrecursorSolution, WetChemicalDeposition

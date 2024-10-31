@@ -16,16 +16,12 @@
 # limitations under the License.
 #
 
+
 import numpy as np
-import os
-
-from nomad.metainfo import (
-    Quantity,
-    SubSection,
-    Section)
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity, Section, SubSection
 
-from .. import BaseMeasurement, SingleLibraryMeasurement, LibraryMeasurement
+from .. import BaseMeasurement, LibraryMeasurement, SingleLibraryMeasurement
 
 
 class TRPLPropertiesBasic(ArchiveSection):

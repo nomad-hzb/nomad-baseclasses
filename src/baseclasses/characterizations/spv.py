@@ -16,10 +16,10 @@
 # limitations under the License.
 #
 
-import numpy as np
 import os
 
-from nomad.metainfo import (Quantity)
+import numpy as np
+from nomad.metainfo import Quantity
 
 from .. import BaseMeasurement
 

@@ -16,16 +16,14 @@
 # limitations under the License.
 #
 import numpy as np
-
-from nomad.metainfo import (Quantity, Reference, SubSection)
-from nomad.units import ureg
 from nomad.datamodel.data import ArchiveSection
+from nomad.datamodel.metainfo.basesections import (
+    CompositeSystem,
+    CompositeSystemReference,
+)
+from nomad.metainfo import Quantity, Reference, SubSection
 
-
-from nomad.datamodel.results import Material  # BandGapOptical, Material
 from .. import LibrarySample
-
-from nomad.datamodel.metainfo.basesections import CompositeSystem, ReadableIdentifiers, CompositeSystemReference
 
 
 class CatalysisSubstrate(ArchiveSection):

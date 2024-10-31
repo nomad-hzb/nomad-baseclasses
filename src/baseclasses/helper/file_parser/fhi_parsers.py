@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Tue Jul  5 10:11:18 2022
 
 @author: a2853
 """
 from configparser import ConfigParser
+
 from openpyxl import load_workbook
 
 
@@ -30,7 +30,7 @@ def readUXD(datafile, withdata=True):
     """Reads a uxd-datafile <datafile> and outputs two lists: two_theta,intensity"""
     res = {}
 
-    with open(datafile, 'r') as file:
+    with open(datafile) as file:
         for line in file:
             stripped_line = line.strip()
             if len(stripped_line) > 0:
@@ -118,7 +118,7 @@ def readTXTSEM_ov(datafile, withdata=True):
     res = {}
     energy = []
     count = []
-    with open(datafile, 'r') as file:
+    with open(datafile) as file:
         for line in file:
             stripped_line = line.strip()
             if len(stripped_line) > 0:

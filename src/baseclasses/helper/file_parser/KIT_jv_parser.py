@@ -1,9 +1,10 @@
-import pandas as pd
-import numpy as np
-from scipy import interpolate
-import matplotlib.pyplot as plt
 # import glob
 from io import StringIO
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from scipy import interpolate
 
 
 def calculatePVparametersFromJV(
@@ -227,13 +228,13 @@ def calculatePVparametersFromJV(
         r_shunt = (np.nan, np.nan)
         r_s = (np.nan, np.nan)
 
-    s = "pce = {} % \n".format(pce)
-    s += "voc = {} V \n".format(voc)
-    s += "jsc = {} mA/cm2 \n".format(jsc)
-    s += "ff = {} % \n".format(ff)
-    s += "r_shunt = {} Ohm/cm2 \n".format(r_shunt)
-    s += "r_s = {} Ohm/cm2\n".format(r_s)
-    s += "mpp = {} mA/cm2 V".format(mpp)
+    s = f"pce = {pce} % \n"
+    s += f"voc = {voc} V \n"
+    s += f"jsc = {jsc} mA/cm2 \n"
+    s += f"ff = {ff} % \n"
+    s += f"r_shunt = {r_shunt} Ohm/cm2 \n"
+    s += f"r_s = {r_s} Ohm/cm2\n"
+    s += f"mpp = {mpp} mA/cm2 V"
 
     if printing:
         print(s)

@@ -16,15 +16,8 @@
 # limitations under the License.
 #
 
-import numpy as np
 
-from nomad.metainfo import (
-    Quantity,
-    Section,
-    SubSection,
-    Reference)
-from nomad.datamodel.data import ArchiveSection
-
+from nomad.metainfo import Section
 
 from .wet_chemical_deposition import WetChemicalDeposition
 

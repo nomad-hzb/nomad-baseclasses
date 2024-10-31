@@ -17,14 +17,18 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (Quantity, Reference, SubSection, Section, Datetime, MEnum)
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import MEnum, Quantity, Reference, Section, SubSection
 
 from .. import ReadableIdentifiersCustom
+from .cesample import (
+    CESample,
+    SubstrateProperties,
+    build_initial_id,
+    create_id,
+    export_lab_id,
+)
 
-from .cesample import (build_initial_id, create_id, export_lab_id, CESample,
-                       SubstrateProperties, CatalystSynthesis)
 
 def build_recipe_id_base(archive, recipe_type, element, deposition_method):
     recipe_type_mapping = {

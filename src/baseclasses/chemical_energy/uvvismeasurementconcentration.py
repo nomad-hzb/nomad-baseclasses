@@ -18,15 +18,14 @@
 
 import numpy as np
 import pandas as pd
-
-from nomad.metainfo import MProxy, Quantity, Reference, Section, SubSection, Datetime
-from nomad.datamodel.metainfo.basesections import Analysis
-from nomad.datamodel.results import Results, Material
-
-from nomad.datamodel.metainfo.plot import PlotSection, PlotlyFigure
 import plotly.graph_objects as go
+from nomad.datamodel.metainfo.basesections import Analysis
+from nomad.datamodel.metainfo.plot import PlotlyFigure, PlotSection
+from nomad.datamodel.results import Material, Results
+from nomad.metainfo import MProxy, Quantity, Reference, Section
 
 from baseclasses.solar_energy import UVvisData
+
 from ..helper.utilities import get_reference
 
 
@@ -159,9 +158,9 @@ def get_concentration_reference(data_archive, logger, material, peak_value):
     # Computes the concentration of the given UVvisMeasurement based on slope and intercept of suitable UVvisConcentrationDetection.
     # Returns a concentration.
 
-    from nomad.search import search, update_by_query
-    from nomad.app.v1.models import MetadataPagination
     from nomad import files
+    from nomad.app.v1.models import MetadataPagination
+    from nomad.search import search
 
     # search for all UVvisConcentrationDetection archives
     query = {

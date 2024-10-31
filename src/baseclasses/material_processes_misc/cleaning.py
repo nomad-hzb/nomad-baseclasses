@@ -17,16 +17,13 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (
-    Quantity,
-    Reference,
-    Section, SubSection)
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity, Reference, Section, SubSection
+
+from baseclasses import PubChemPureSubstanceSectionCustom
 
 from .. import BaseProcess
 from ..chemical import Chemical
-from baseclasses import PubChemPureSubstanceSectionCustom
 
 
 class CleaningTechnique(ArchiveSection):

@@ -16,22 +16,17 @@
 # limitations under the License.
 #
 
-import numpy as np
-
-from nomad.metainfo import (Section, SubSection, Quantity)
-from nomad.datamodel.metainfo.plot import PlotSection
-from ..helper.add_solar_cell import add_solar_cell, add_band_gap
-
-from .. import BaseMeasurement
-
-from nomad.units import ureg
-
-
-from scipy import integrate, optimize
-import pandas as pd
 import os
+
+import numpy as np
+import pandas as pd
+from nomad.datamodel.metainfo.plot import PlotSection
+from nomad.metainfo import Quantity, Section, SubSection
+from nomad.units import ureg
+from scipy import integrate, optimize
 from scipy.signal import savgol_filter
 
+from .. import BaseMeasurement
 
 # Constants
 temperature = 300  # in [°K]

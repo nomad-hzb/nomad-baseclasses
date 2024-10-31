@@ -15,14 +15,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import numpy as np
 import math
-from nomad.metainfo import (
-    Quantity,
-    Section, SubSection)
-from nomad.units import ureg
-from .. import BaseMeasurement, SingleLibraryMeasurement, LibraryMeasurement
+
+import numpy as np
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity, Section, SubSection
+from nomad.units import ureg
+
+from .. import BaseMeasurement, LibraryMeasurement, SingleLibraryMeasurement
 
 
 class PLDataSimple(ArchiveSection):

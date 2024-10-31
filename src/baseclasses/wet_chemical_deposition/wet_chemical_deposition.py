@@ -17,20 +17,14 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (
-    Quantity,
-    Reference,
-    SubSection, Section
-)
-
 from nomad.datamodel.data import ArchiveSection
-from nomad.datamodel.metainfo.action import ActionSection
+from nomad.metainfo import Quantity, Reference, Section, SubSection
 
-from ..solution import Solution
+from baseclasses.helper.utilities import rewrite_json_recursively
+
 from .. import LayerDeposition
 from ..material_processes_misc import Annealing, Quenching, Sintering
-from baseclasses.helper.utilities import rewrite_json_recursively
+from ..solution import Solution
 
 
 class PrecursorSolution(ArchiveSection):

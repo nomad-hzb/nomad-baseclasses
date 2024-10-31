@@ -17,16 +17,10 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (
-    Quantity,
-    Reference,
-    SubSection, Section)
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity, Section, SubSection
 
-from ..solution import Solution
 from .wet_chemical_deposition import WetChemicalDeposition
-from ..material_processes_misc import Annealing, AirKnifeGasQuenching
 
 
 class SlotDieCoatingProperties(ArchiveSection):

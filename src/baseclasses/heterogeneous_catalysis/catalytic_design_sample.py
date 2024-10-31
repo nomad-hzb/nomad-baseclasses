@@ -17,16 +17,13 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (
-    Quantity, SubSection, Reference, Section, SectionProxy)
 from nomad.datamodel.data import ArchiveSection
-
 from nomad.datamodel.metainfo.eln import SampleID
-from nomad.datamodel.results import Results, ELN, Material
+from nomad.datamodel.results import ELN, Material, Results
+from nomad.metainfo import Quantity, Reference, Section, SectionProxy, SubSection
 
 from .. import BasicSample
-from ..design import ActiveFactor, PassiveFactor, Design
+from ..design import ActiveFactor, Design, PassiveFactor
 
 
 class DesignSampleID(SampleID):

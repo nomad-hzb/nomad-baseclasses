@@ -1,13 +1,16 @@
-import numpy as np
 import inspect
 from datetime import datetime
 
+import numpy as np
 from nomad.units import ureg
 
 import baseclasses
 from baseclasses.chemical_energy.cyclicvoltammetry import CVProperties
+from baseclasses.chemical_energy.electorchemical_impedance_spectroscopy import (
+    EISCycle,
+    EISProperties,
+)
 from baseclasses.chemical_energy.opencircuitvoltage import OCVProperties
-from baseclasses.chemical_energy.electorchemical_impedance_spectroscopy import EISProperties, EISPropertiesWithData, EISCycle
 from baseclasses.chemical_energy.voltammetry import VoltammetryCycleWithPlot
 
 

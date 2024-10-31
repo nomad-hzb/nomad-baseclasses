@@ -16,8 +16,9 @@
 # limitations under the License.
 #
 
-import os
 import json
+import os
+
 from baseclasses.characterizations.xrd import XRDData, XRDShiftedData
 from baseclasses.characterizations.xrr import XRRData, XRRFittedData
 

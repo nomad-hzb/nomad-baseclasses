@@ -16,13 +16,13 @@
 # limitations under the License.
 #
 
-import numpy as np
-import pandas as pd
 import os
 
-from nomad.metainfo import (Quantity, SubSection, Section)
+import numpy as np
+import pandas as pd
+from nomad.metainfo import Quantity, Section, SubSection
+
 from .potentiostat_measurement import PotentiostatMeasurement, VoltammetryCycle
-from nomad.datamodel.data import ArchiveSection
 
 # encoding = "iso-8859-1"
 

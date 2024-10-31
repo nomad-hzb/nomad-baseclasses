@@ -16,17 +16,15 @@
 # limitations under the License.
 #
 
-import numpy as np
 import os
-import pandas as pd
 
-from nomad.metainfo import (
-    Quantity, Reference, Section, SubSection, SectionProxy)
+import numpy as np
+import pandas as pd
+from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity, Reference, Section, SectionProxy, SubSection
 
 from .. import BaseMeasurement
-from .cesample import Environment, ElectroChemicalSetup
-
-from nomad.datamodel.data import ArchiveSection
+from .cesample import ElectroChemicalSetup, Environment
 
 
 class PotentiostatProperties(ArchiveSection):

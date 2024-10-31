@@ -17,13 +17,13 @@
 #
 
 import numpy as np
-
 from nomad.datamodel.data import ArchiveSection
-from nomad.metainfo import (Quantity, Reference, SubSection, Section, MEnum)
+from nomad.metainfo import MEnum, Quantity, Reference, Section, SubSection
 
-from ..chemical import Chemical
-from .. import LayerDeposition
 from baseclasses import PubChemPureSubstanceSectionCustom
+
+from .. import LayerDeposition
+from ..chemical import Chemical
 
 
 class SputteringProcess(ArchiveSection):

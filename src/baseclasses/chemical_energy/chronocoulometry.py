@@ -17,11 +17,10 @@
 #
 
 import numpy as np
+from nomad.metainfo import Quantity, Section, SubSection
 
-from nomad.metainfo import (Quantity, Section, SubSection)
-
-from .voltammetry import Voltammetry
 from .chronoamperometry import CAProperties
+from .voltammetry import Voltammetry
 
 
 class CCProperties(CAProperties):

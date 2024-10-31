@@ -17,14 +17,10 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (
-    Quantity,
-    Section,
-    SubSection)
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity, Section, SubSection
 
-from .. import BaseMeasurement, SingleLibraryMeasurement, LibraryMeasurement
+from .. import BaseMeasurement, LibraryMeasurement, SingleLibraryMeasurement
 
 
 class XRFData(ArchiveSection):

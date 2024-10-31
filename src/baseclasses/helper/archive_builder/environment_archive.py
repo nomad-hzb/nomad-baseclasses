@@ -18,11 +18,7 @@
 
 import pandas as pd
 
-
-from baseclasses.assays import (
-    EnvironmentData,
-    TemperatureSensors
-)
+from baseclasses.assays import EnvironmentData, TemperatureSensors
 
 
 def get_environment_archive(env_data, env_entry):

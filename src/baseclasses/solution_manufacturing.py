@@ -1,14 +1,6 @@
-import numpy as np
-
-from nomad.metainfo import (
-    Quantity,
-    SubSection,
-    Section,
-    Reference,
-    MEnum, SectionProxy)
 
 from nomad.datamodel.metainfo.basesections import Activity
-
+from nomad.metainfo import Quantity, Reference, Section
 
 from baseclasses.wet_chemical_deposition import PrecursorSolution
 

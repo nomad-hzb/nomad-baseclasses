@@ -16,16 +16,21 @@
 # limitations under the License.
 #
 
-import numpy as np
 from datetime import datetime
 
-from nomad.metainfo import Quantity, Reference, Section, SubSection, Datetime
-from nomad.datamodel.metainfo.basesections import Analysis, SectionReference, AnalysisResult, CompositeSystemReference
-from nomad.datamodel.results import Results, Material
+import numpy as np
+from nomad.datamodel.metainfo.basesections import (
+    Analysis,
+    AnalysisResult,
+    CompositeSystemReference,
+    SectionReference,
+)
+from nomad.datamodel.results import Material, Results
+from nomad.metainfo import Quantity, Reference, Section, SubSection
 
 from baseclasses.chemical_energy import Chronopotentiometry
-from ..helper.utilities import get_reference
 
+from ..helper.utilities import get_reference
 from .cesample import export_lab_id
 
 
@@ -137,8 +142,8 @@ class CPAnalysis(Analysis):
 
 
 def get_all_cp_in_upload(data_archive, upload_id):
-    from nomad.search import search
     from nomad.app.v1.models import MetadataPagination
+    from nomad.search import search
     query = {
         'section_defs.definition_qualified_name': 'baseclasses.chemical_energy.chronopotentiometry.Chronopotentiometry',
         'results.eln.methods': 'OER Chronopotentiometry',

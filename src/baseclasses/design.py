@@ -17,15 +17,9 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (
-    Quantity,
-    SubSection,
-    Section,
-    MEnum)
 from nomad.datamodel.data import ArchiveSection
-
 from nomad.datamodel.metainfo.eln import Entity
+from nomad.metainfo import MEnum, Quantity, Section, SubSection
 
 from . import SampleID
 

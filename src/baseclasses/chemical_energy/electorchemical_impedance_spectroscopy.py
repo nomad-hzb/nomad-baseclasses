@@ -17,10 +17,8 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (
-    Quantity, SubSection, MEnum, Section, Datetime)
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Datetime, MEnum, Quantity, Section, SubSection
 
 from .potentiostat_measurement import PotentiostatMeasurement, PotentiostatProperties
 

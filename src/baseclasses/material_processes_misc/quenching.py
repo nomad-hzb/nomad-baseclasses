@@ -17,15 +17,12 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (
-    Quantity,
-    Section,
-    Reference, SubSection)
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity, Reference, Section, SubSection
+
+from baseclasses import PubChemPureSubstanceSectionCustom
 
 from ..chemical import Chemical
-from baseclasses import PubChemPureSubstanceSectionCustom
 
 
 class Quenching(ArchiveSection):

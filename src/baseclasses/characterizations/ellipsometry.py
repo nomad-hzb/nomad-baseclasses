@@ -16,12 +16,9 @@
 # limitations under the License.
 #
 
-from nomad.metainfo import (
-    Quantity,
-    Section,
-    SubSection)
-# from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity, Section
 
+# from nomad.datamodel.data import ArchiveSection
 from .. import BaseMeasurement, LibraryMeasurement
 
 

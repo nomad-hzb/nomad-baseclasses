@@ -15,18 +15,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import numpy as np
 import itertools
+
+import numpy as np
 from nomad.datamodel.metainfo.basesections import CompositeSystemReference
+from nomad.units import ureg
+
 from baseclasses import PubChemPureSubstanceSectionCustom
 
-from nomad.units import ureg
-from .. import ReadableIdentifiersCustom
-
-from ..helper.utilities import get_reference, create_archive, get_entry_id_from_file_name, add_section_markdown, rewrite_json, get_solutions, convert_datetime
+from ..helper.utilities import (
+    add_section_markdown,
+    convert_datetime,
+    create_archive,
+    get_entry_id_from_file_name,
+    get_reference,
+    get_solutions,
+    rewrite_json,
+)
 from ..solar_energy import SolarCellProperties
-from ..wet_chemical_deposition import PrecursorSolution
 from ..solution import OtherSolution
+from ..wet_chemical_deposition import PrecursorSolution
 
 
 def log_error(plan_obj, logger, msg):
@@ -71,7 +79,7 @@ def set_process_parameters(process, parameters, i, plan_obj, logger):
             names.append(str(p[2]).replace("/", ""))
             try:
                 set_value(process, p[1], p[2], p[3])
-            except Exception as e:
+            except Exception:
                 log_error(plan_obj, logger,
                           f"Could not set {p[1]} to {p[2]} {p[3]}, likely due to a faulty path or unit")
     process.name += f" {','.join(names)}"

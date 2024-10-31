@@ -16,17 +16,13 @@
 #
 
 import os
+
 import numpy as np
-
-from nomad.metainfo import (
-    Quantity,
-    MEnum,
-    Section,
-    Datetime)
-
-from .microscope import SEMMicroscopeTechnique, Image
+from nomad.metainfo import Datetime, MEnum, Quantity, Section
 
 from baseclasses.helper.utilities import get_parameter
+
+from .microscope import Image, SEMMicroscopeTechnique
 
 
 class SEMImage_Zeiss_Detector(Image):
@@ -129,8 +125,9 @@ class SEM_Microscope_Merlin(SEMMicroscopeTechnique):
     @staticmethod
     def get_data(file_name):
         if file_name.lower().endswith(".tif"):
-            import hyperspy.api as hs
             from datetime import datetime
+
+            import hyperspy.api as hs
             try:
                 tif_file = hs.load(file_name)
 

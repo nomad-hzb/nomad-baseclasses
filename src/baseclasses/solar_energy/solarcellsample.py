@@ -16,16 +16,14 @@
 # limitations under the License.
 #
 import numpy as np
-
-from nomad.metainfo import (Quantity, Reference, SubSection)
+from nomad.datamodel.metainfo.basesections import CompositeSystem
+from nomad.datamodel.results import Material  # BandGapOptical, Material
+from nomad.metainfo import Quantity, Reference, SubSection
 from nomad.units import ureg
 
-from .substrate import Substrate
-from ..helper.add_solar_cell import add_solar_cell, add_band_gap
-from nomad.datamodel.results import Material  # BandGapOptical, Material
 from .. import ReadableIdentifiersCustom
-
-from nomad.datamodel.metainfo.basesections import CompositeSystem
+from ..helper.add_solar_cell import add_band_gap, add_solar_cell
+from .substrate import Substrate
 
 
 def collectBaseProcesses(entry, entry_id, entry_data):
@@ -35,6 +33,7 @@ def collectBaseProcesses(entry, entry_id, entry_data):
             {"positon_in_experimental_plan": entry_data["positon_in_experimental_plan"]})
     # Check if it is a layer deposition
     import inspect
+
     import baseclasses
 
     entry[entry_id].update({"layer_deposition": False})
@@ -109,11 +108,13 @@ def collectSampleData(archive):
     # At the end the synthesis steps are ordered
     # returns a dictionary containing synthesis process, JV and EQE information
 
-    from nomad.search import search
-    from nomad.app.v1.models import MetadataPagination
-    from nomad import files
-    import baseclasses
     import inspect
+
+    from nomad import files
+    from nomad.app.v1.models import MetadataPagination
+    from nomad.search import search
+
+    import baseclasses
 
     # search for all archives referencing this archive
     query = {

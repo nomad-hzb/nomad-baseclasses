@@ -16,10 +16,11 @@
 # limitations under the License.
 #
 
+import numpy as np
+from nomad.units import ureg
+
 from baseclasses.data_transformations.data_baseclasses import DataWithStatistics
 from baseclasses.data_transformations.nkdata_analysis import NKDataResult
-from nomad.units import ureg
-import numpy as np
 
 
 def get_nk_archive(nk_data):

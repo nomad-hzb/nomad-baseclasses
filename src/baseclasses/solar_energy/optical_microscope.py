@@ -16,9 +16,12 @@
 # limitations under the License.
 #
 
-from nomad.metainfo import Reference, Quantity
+from nomad.metainfo import Quantity, Reference
+
 from .. import Batch
-from ..characterizations.electron_microscopy.microscope import OpticalMicroscopeTechnique
+from ..characterizations.electron_microscopy.microscope import (
+    OpticalMicroscopeTechnique,
+)
 
 
 class OpticalMicroscope(OpticalMicroscopeTechnique):

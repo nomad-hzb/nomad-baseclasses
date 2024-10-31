@@ -17,37 +17,30 @@
 #
 
 import json
-import numpy as np
 
-from nomad.metainfo import (
-    Quantity,
-    Reference,
-    Section,
-    SectionProxy,
-    SubSection, MEnum)
-
-from nomad.datamodel.metainfo.eln import (
-    ElnWithFormulaBaseSection)
-
-from nomad.datamodel.metainfo.basesections import (
-    CompositeSystem,
-    Collection,
-    Process,
-    Measurement, Experiment, ExperimentStep,
-    Entity,
-    CompositeSystemReference, PubChemPureSubstanceSection, PureSubstanceSection
-)
-
-from nomad.datamodel.results import Results, Material
-from nomad.datamodel.data import ArchiveSection
-
-
-from .helper.add_solar_cell import add_solar_cell
-from .helper.utilities import update_archive, get_processes
-
-from .customreadable_identifier import ReadableIdentifiersCustom
-from .atmosphere import Atmosphere
 import hdf5plugin
+import numpy as np
+from nomad.datamodel.data import ArchiveSection
+from nomad.datamodel.metainfo.basesections import (
+    Collection,
+    CompositeSystem,
+    CompositeSystemReference,
+    Entity,
+    Experiment,
+    ExperimentStep,
+    Measurement,
+    Process,
+    PubChemPureSubstanceSection,
+    PureSubstanceSection,
+)
+from nomad.datamodel.metainfo.eln import ElnWithFormulaBaseSection
+from nomad.datamodel.results import Material, Results
+from nomad.metainfo import MEnum, Quantity, Reference, Section, SectionProxy, SubSection
+
+from .atmosphere import Atmosphere
+from .customreadable_identifier import ReadableIdentifiersCustom
+from .helper.add_solar_cell import add_solar_cell
+from .helper.utilities import get_processes, update_archive
 
 
 class PubChemPureSubstanceSectionCustom(PubChemPureSubstanceSection):

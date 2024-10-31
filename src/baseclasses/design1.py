@@ -16,17 +16,14 @@
 # limitations under the License.
 #
 
-import numpy as np
 import os
 
-from nomad.metainfo import (
-    Quantity,
-    SubSection,
-    Section,
-    MEnum)
+import numpy as np
 from nomad.datamodel.data import ArchiveSection
-from baseclasses.helper.utilities import rewrite_json
 from nomad.datamodel.metainfo.basesections import Entity
+from nomad.metainfo import Quantity, Section, SubSection
+
+from baseclasses.helper.utilities import rewrite_json
 
 
 class Factor(ArchiveSection):

@@ -17,7 +17,9 @@
 #
 
 import os
+
 import numpy as np
+
 from baseclasses.solar_energy.plmeasurement import PLData, PLProperties
 
 

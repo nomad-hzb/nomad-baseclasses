@@ -17,11 +17,11 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (Quantity, SubSection, Section)
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity, Section, SubSection
 
 from baseclasses import PubChemPureSubstanceSectionCustom
+
 from .. import LayerDeposition
 
 

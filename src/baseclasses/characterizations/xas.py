@@ -15,12 +15,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 import numpy as np
-import os
-from datetime import datetime
+from nomad.metainfo import Quantity
 
 from .. import BaseMeasurement
-from nomad.metainfo import (Quantity)
 
 
 class XAS(BaseMeasurement):

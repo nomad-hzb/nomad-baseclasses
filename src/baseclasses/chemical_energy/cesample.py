@@ -17,23 +17,20 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (Quantity, SubSection, Section, Reference, Datetime, MEnum)
-
-from nomad.datamodel.results import Results, Material
 from nomad.datamodel.data import ArchiveSection
+from nomad.datamodel.metainfo.basesections import (
+    CompositeSystem,
+    CompositeSystemReference,
+    Entity,
+)
 
-from nomad.datamodel.metainfo.basesections import CompositeSystem, \
-    CompositeSystemReference, Entity
+# from .preparation_protocoll import PreparationProtocol
+from nomad.datamodel.results import ELN, Material, Results
+from nomad.metainfo import Datetime, Quantity, Reference, Section, SubSection
+
 from baseclasses import PubChemPureSubstanceSectionCustom
 
 from .. import ReadableIdentifiersCustom
-# from .preparation_protocoll import PreparationProtocol
-from nomad.datamodel.results import (
-    Results,
-    ELN
-)
-
 from ..helper.utilities import log_error
 
 
@@ -142,8 +139,8 @@ def build_initial_id(institute, owner, datetime=None):
 
 
 def create_id(archive, lab_id_base):
-    from nomad.search import search
     from nomad.app.v1.models import MetadataPagination
+    from nomad.search import search
 
     query = {'results.eln.lab_ids': lab_id_base}
     pagination = MetadataPagination()
@@ -259,7 +256,7 @@ class CESample(CompositeSystem):
                     material.chemical_formula_reduced = formula.get_chemical_formula(
                         mode='reduce')
                     material.chemical_formula_descriptive = self.chemical_composition_or_formulas
-            except Exception as e:
+            except Exception:
                 log_error(self, logger,
                           f"chemical_composition_or_formulas no correct elements : {self.chemical_composition_or_formulas}")
 

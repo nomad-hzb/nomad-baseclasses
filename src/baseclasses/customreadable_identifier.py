@@ -1,10 +1,5 @@
-from nomad.metainfo import (
-    Quantity, Section
-)
-
-from nomad.datamodel.metainfo.basesections import (
-    ReadableIdentifiers
-)
+from nomad.datamodel.metainfo.basesections import ReadableIdentifiers
+from nomad.metainfo import Quantity, Section
 
 
 class ReadableIdentifiersCustom(ReadableIdentifiers):

@@ -18,16 +18,13 @@
 
 import numpy as np
 import pandas as pd
-
-from nomad.metainfo import (
-    Quantity,
-    SubSection,
-    Section,
-    Reference)
+from nomad.datamodel.data import ArchiveSection
+from nomad.datamodel.metainfo.basesections import (
+    CompositeSystemReference,
+)
+from nomad.metainfo import Quantity, Section, SubSection
 
 from baseclasses import BaseMeasurement
-from nomad.datamodel.data import ArchiveSection
-from nomad.datamodel.metainfo.basesections import CompositeSystem, CompositeSystemReference
 
 
 class ProcessedEfficiency(ArchiveSection):

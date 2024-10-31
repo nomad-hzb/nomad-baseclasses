@@ -1,23 +1,28 @@
 
 import inspect
+import os
 from datetime import datetime
 
-
 import numpy as np
-import os
-
 from nomad.units import ureg
+
 import baseclasses
-from baseclasses.chemical_energy.chronoamperometry import CAProperties
-from baseclasses.chemical_energy.chronopotentiometry import CPProperties
-from baseclasses.chemical_energy.chronocoulometry import CCProperties
-from baseclasses.chemical_energy.cyclicvoltammetry import CVProperties
-from baseclasses.chemical_energy.linear_sweep_voltammetry import LSVProperties
-from baseclasses.chemical_energy.galvanodynamic_sweep import LSGProperties
-from baseclasses.chemical_energy.opencircuitvoltage import OCVProperties
-from baseclasses.chemical_energy.electorchemical_impedance_spectroscopy import EISProperties, EISCycle
-from baseclasses.chemical_energy.voltammetry import VoltammetryCycle, VoltammetryCycleWithPlot
 from baseclasses.atmosphere import Atmosphere
+from baseclasses.chemical_energy.chronoamperometry import CAProperties
+from baseclasses.chemical_energy.chronocoulometry import CCProperties
+from baseclasses.chemical_energy.chronopotentiometry import CPProperties
+from baseclasses.chemical_energy.cyclicvoltammetry import CVProperties
+from baseclasses.chemical_energy.electorchemical_impedance_spectroscopy import (
+    EISCycle,
+    EISProperties,
+)
+from baseclasses.chemical_energy.galvanodynamic_sweep import LSGProperties
+from baseclasses.chemical_energy.linear_sweep_voltammetry import LSVProperties
+from baseclasses.chemical_energy.opencircuitvoltage import OCVProperties
+from baseclasses.chemical_energy.voltammetry import (
+    VoltammetryCycle,
+    VoltammetryCycleWithPlot,
+)
 
 
 def get_eis_properties(metadata):
@@ -148,7 +153,7 @@ def get_cc_properties(metadata):
 def get_atmosphere_data(metadata):
     properties = Atmosphere()
     properties.ambient_pressure = metadata.get("AIRPRESSURE")
-    if not (properties.ambient_pressure is None):
+    if properties.ambient_pressure is not None:
         properties.ambient_pressure /= 1000
     properties.temperature = metadata.get("AIRTEMPERATURE")
     properties.relative_humidity = metadata.get("AIRHUMIDITY")

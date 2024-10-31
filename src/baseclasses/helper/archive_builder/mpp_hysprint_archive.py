@@ -2,7 +2,7 @@ import pandas as pd
 
 
 def get_mpp_hysprint_samples(entry_self, data):
-    from baseclasses.solar_energy import SampleData, JVData, PixelData
+    from baseclasses.solar_energy import JVData, PixelData, SampleData
     samples = []
     for sample_idx, sample in enumerate(data["samples"]):
         df = sample["data"]

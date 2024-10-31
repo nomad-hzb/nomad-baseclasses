@@ -17,13 +17,13 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (Quantity, Reference, SubSection, Section)
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity, Reference, Section, SubSection
 
-from ..chemical import Chemical
 from baseclasses import PubChemPureSubstanceSectionCustom
+
 from .. import LayerDeposition
+from ..chemical import Chemical
 
 
 class PVDProcess(ArchiveSection):

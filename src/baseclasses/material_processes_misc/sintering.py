@@ -17,10 +17,8 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (Quantity)
-
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity
 
 
 class Sintering(ArchiveSection):

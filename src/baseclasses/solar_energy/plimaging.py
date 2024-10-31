@@ -16,11 +16,10 @@
 # limitations under the License.
 #
 import numpy as np
-from nomad.metainfo import (
-    Quantity,
-    Section, SubSection)
-from .. import BaseMeasurement
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity, Section, SubSection
+
+from .. import BaseMeasurement
 
 
 class PLIproperties(ArchiveSection):

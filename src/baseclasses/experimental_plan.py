@@ -16,19 +16,15 @@
 # limitations under the License.
 #
 
-import numpy as np
 import json
-from nomad.metainfo import (
-    Quantity,
-    SubSection,
-    Section,
-    Reference, MProxy)
 
-from nomad.datamodel.metainfo.eln import Entity
-
-from . import BaseProcess, StandardSample, Batch
-from .customreadable_identifier import ReadableIdentifiersCustom
+import numpy as np
 from nomad.datamodel.data import ArchiveSection
+from nomad.datamodel.metainfo.eln import Entity
+from nomad.metainfo import MProxy, Quantity, Reference, Section, SubSection
+
+from . import BaseProcess, Batch, StandardSample
+from .customreadable_identifier import ReadableIdentifiersCustom
 from .wet_chemical_deposition import PrecursorSolution
 
 list_path = [

@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Tue Mar 14 11:51:01 2023
 
 @author: a2853
 """
 
-import pandas as pd
 import numpy as np
-from baseclasses.vapour_based_deposition.plasma_enhanced_physical_vapour_deposition import GasFlow, LogData
+import pandas as pd
+
+from baseclasses.vapour_based_deposition.plasma_enhanced_physical_vapour_deposition import (
+    GasFlow,
+    LogData,
+)
 
 
 def parse_recipe_line(line):

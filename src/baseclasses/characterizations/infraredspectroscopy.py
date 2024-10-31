@@ -17,9 +17,9 @@
 #
 
 import os
-import numpy as np
 
-from nomad.metainfo import (Quantity)
+import numpy as np
+from nomad.metainfo import Quantity
 
 from .. import BaseMeasurement
 

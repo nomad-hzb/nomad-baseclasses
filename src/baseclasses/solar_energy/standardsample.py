@@ -16,15 +16,11 @@
 # limitations under the License.
 #
 
-from nomad.metainfo import (
-    Quantity,
-    Reference
-)
-
-
-from .substrate import Substrate
-from .. import StandardSample
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity, Reference
+
+from .. import StandardSample
+from .substrate import Substrate
 
 
 class SolarCellProperties(ArchiveSection):

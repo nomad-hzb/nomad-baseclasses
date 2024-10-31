@@ -15,17 +15,15 @@
 # limitations under the License.
 #
 
-import numpy as np
 import os
 
-from nomad.metainfo import (
-    Quantity,
-    SubSection)
+import numpy as np
 from nomad.datamodel.data import ArchiveSection
-
-from .microscope import TEMMicroscopeTechnique, MicroscopeConfiguration2, Image
+from nomad.metainfo import Quantity, SubSection
 
 from baseclasses.helper.utilities import get_parameter
+
+from .microscope import Image, MicroscopeConfiguration2, TEMMicroscopeTechnique
 
 
 class HighLevel(ArchiveSection):

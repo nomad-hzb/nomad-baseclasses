@@ -1,14 +1,7 @@
 import numpy as np
-import pandas as pd
-
-from nomad.metainfo import MProxy, Quantity, Reference, Section, SubSection, Datetime
-from nomad.datamodel.metainfo.basesections import Analysis
-from nomad.datamodel.results import Results, Material
-
-from nomad.datamodel.metainfo.plot import PlotSection, PlotlyFigure
-import plotly.graph_objects as go
-
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Datetime, Quantity, Section, SubSection
+
 from .. import BaseMeasurement
 
 

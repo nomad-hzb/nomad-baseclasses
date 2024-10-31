@@ -17,13 +17,9 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (
-    Quantity,
-    Datetime)
+from nomad.metainfo import Datetime, Quantity
 
 from .. import BaseProcess
-
 
 
 class Storage(BaseProcess):

@@ -16,11 +16,10 @@
 # limitations under the License.
 #
 
-import numpy as np
-import os
 
-from nomad.metainfo import (Quantity, SubSection, Section)
+import numpy as np
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity, Section, SubSection
 
 from .. import LayerDeposition
 

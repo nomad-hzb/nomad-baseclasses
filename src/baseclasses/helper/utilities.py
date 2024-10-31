@@ -16,21 +16,17 @@
 # limitations under the License.
 #
 
+import json
 import random
 import string
-import chardet
-import json
 from datetime import datetime
-import pytz
-from tabulate import tabulate
-from nomad.metainfo import MProxy
+
+import chardet
 import pandas as pd
-
-from nomad.datamodel.metainfo.basesections import (
-    CompositeSystemReference
-)
-
+import pytz
 from ase.formula import Formula as ASEFormula
+from nomad.datamodel.metainfo.basesections import CompositeSystemReference
+from tabulate import tabulate
 
 
 def get_elements_from_formula(formula):
@@ -52,7 +48,7 @@ def rewrite_json_recursively(archive, key, value):
     with archive.m_context.raw_file(archive.metadata.mainfile) as f:
         file = f.name
 
-    with open(file, "r") as jsonFile:
+    with open(file) as jsonFile:
         data = json.load(jsonFile)
     traverse_dictionary(data, key, value)
     with open(file, "w") as jsonFile:
@@ -63,7 +59,7 @@ def rewrite_json(keys_list, archive, value):
     with archive.m_context.raw_file(archive.metadata.mainfile) as f:
         file = f.name
 
-    with open(file, "r") as jsonFile:
+    with open(file) as jsonFile:
         data = json.load(jsonFile)
     tmp = data
     for key in keys_list[:-1]:
@@ -156,7 +152,7 @@ def get_as_displayunit(inst, key):
     try:
         unit = getattr(type(inst), key).a_eln.defaultDisplayUnit
         return getattr(inst, key, "     ").to(unit)
-    except Exception as e:
+    except Exception:
         return getattr(inst, key, "     ")
 
 
@@ -253,9 +249,9 @@ def get_reference(upload_id, entry_id):
 
 
 def search_entry_by_id(archive, entry, search_id):
+
     from nomad.search import search
-    import inspect
-    import baseclasses
+
 
     query = {
         'results.eln.lab_ids': search_id
@@ -348,11 +344,11 @@ def search_class(archive, entry_type):
 
 
 def get_processes(archive, entry_id):
-    from nomad.search import search
-    from nomad.app.v1.models import MetadataPagination
+
     from nomad import files
-    import baseclasses
-    import inspect
+    from nomad.app.v1.models import MetadataPagination
+    from nomad.search import search
+
 
     # search for all archives referencing this archive
     query = {

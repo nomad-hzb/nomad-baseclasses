@@ -16,20 +16,12 @@
 # limitations under the License.
 #
 
+
 import numpy as np
-import os
-from datetime import datetime
-import pandas as pd
-
-
-from nomad.metainfo import (
-    Quantity,
-    Section,
-    SubSection,
-    Datetime)
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity, Section, SubSection
 
-from .. import BaseMeasurement, SingleLibraryMeasurement, LibraryMeasurement
+from .. import LibraryMeasurement, SingleLibraryMeasurement
 
 
 class ConductivityProperties(ArchiveSection):

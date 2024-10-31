@@ -20,7 +20,10 @@ import os
 
 from nomad.units import ureg
 
-from baseclasses.solar_energy.jvmeasurement import SolarCellJVCurveCustom, SolarCellJVCurveDarkCustom
+from baseclasses.solar_energy.jvmeasurement import (
+    SolarCellJVCurveCustom,
+    SolarCellJVCurveDarkCustom,
+)
 
 
 def get_jv_archive(jv_dict, mainfile, jvm):

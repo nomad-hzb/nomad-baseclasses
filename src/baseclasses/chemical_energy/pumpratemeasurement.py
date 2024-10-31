@@ -17,11 +17,11 @@
 #
 
 import numpy as np
+from nomad.metainfo import Quantity, Reference
 
-from nomad.metainfo import (Quantity, Reference)
 from .. import BaseMeasurement
+from .cesample import ElectroChemicalSetup, Environment
 from .potentiostat_measurement import PotentiostatMeasurement
-from .cesample import Environment, ElectroChemicalSetup
 
 
 class PumpRateMeasurement(BaseMeasurement):

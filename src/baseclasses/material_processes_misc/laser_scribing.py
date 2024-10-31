@@ -17,12 +17,8 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (
-    Quantity,
-    Reference,
-    SubSection)
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity, SubSection
 
 from .. import BaseProcess
 

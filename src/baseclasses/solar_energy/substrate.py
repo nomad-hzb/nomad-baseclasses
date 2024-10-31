@@ -16,9 +16,9 @@
 # limitations under the License.
 #
 import numpy as np
-
-from nomad.metainfo import (Quantity)
 from nomad.datamodel.metainfo.eln import Entity
+from nomad.metainfo import Quantity
+
 from ..helper.add_solar_cell import add_solar_cell
 
 

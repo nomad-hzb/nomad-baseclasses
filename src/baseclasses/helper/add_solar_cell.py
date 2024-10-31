@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # Copyright The NOMAD Authors.
 #
@@ -17,14 +16,19 @@
 # limitations under the License.
 #
 
-from nomad.datamodel.metainfo.common import ProvenanceTracker
-from nomad.datamodel.results import (BandGapDeprecated, BandGap, BandStructureElectronic,
-                                     ElectronicProperties, OptoelectronicProperties,
-                                     Properties, Results, SolarCell)
 import numpy as np
-
+from nomad.datamodel.metainfo.common import ProvenanceTracker
+from nomad.datamodel.results import (
+    BandGap,
+    BandGapDeprecated,
+    BandStructureElectronic,
+    ElectronicProperties,
+    OptoelectronicProperties,
+    Properties,
+    Results,
+    SolarCell,
+)
 from nomad.units import ureg
-from nomad.datamodel.results import OptoelectronicProperties, Properties, Results, SolarCell, BandGap, BandStructureElectronic, ElectronicProperties
 
 
 def add_solar_cell(archive):

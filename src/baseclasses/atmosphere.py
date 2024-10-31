@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Fri Oct 20 18:20:02 2023
 
@@ -7,9 +6,8 @@ Created on Fri Oct 20 18:20:02 2023
 """
 
 import numpy as np
-
-from nomad.metainfo import Quantity, Datetime, Section
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Datetime, Quantity, Section
 
 
 class Atmosphere(ArchiveSection):

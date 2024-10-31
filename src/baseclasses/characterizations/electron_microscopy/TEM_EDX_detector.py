@@ -16,15 +16,10 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (
-    Quantity,
-    SubSection,
-    MEnum,
-    Section)
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import MEnum, Quantity, Section, SubSection
 
-from .microscope import TEMMicroscopeTechnique, MicroscopeConfiguration2
+from .microscope import MicroscopeConfiguration2, TEMMicroscopeTechnique
 
 
 class EDXMethod(ArchiveSection):

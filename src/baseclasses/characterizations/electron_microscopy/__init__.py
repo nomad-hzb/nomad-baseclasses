@@ -15,10 +15,10 @@
 # limitations under the License.
 #
 
-from .TEM_Session import TEM_Session
-from .TEM_Lambda_750k_detector import TEM_lambda750k
-from .TEM_HAADE_detector import TEM_HAADE
-from .TEM_Gatam_US1000_detector import TEM_Gatam_US1000
-from .TEM_EDX_detector import TEM_EDX
-from .SEM_Zeiss_detector import SEM_Microscope_Merlin
 from .microscope import TEMMicroscopeConfiguration
+from .SEM_Zeiss_detector import SEM_Microscope_Merlin
+from .TEM_EDX_detector import TEM_EDX
+from .TEM_Gatam_US1000_detector import TEM_Gatam_US1000
+from .TEM_HAADE_detector import TEM_HAADE
+from .TEM_Lambda_750k_detector import TEM_lambda750k
+from .TEM_Session import TEM_Session

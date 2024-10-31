@@ -16,6 +16,12 @@
 # limitations under the License.
 #
 
-from .catalytic_design_sample import DesignSample, ActiveDesignParameter, PassiveDesignParameter, FurtherDesignParameter, DesignSampleID
-from .catalytic_sample import CatalyticSample, CatalyticSampleWithGrid
+from .catalytic_design_sample import (
+    ActiveDesignParameter,
+    DesignSample,
+    DesignSampleID,
+    FurtherDesignParameter,
+    PassiveDesignParameter,
+)
 from .catalytic_measurement import CatalyticReaction
+from .catalytic_sample import CatalyticSample, CatalyticSampleWithGrid

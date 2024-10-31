@@ -17,11 +17,10 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (Quantity, SubSection, Datetime, Section)
-from .. import BaseMeasurement
-
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Datetime, Quantity, Section, SubSection
+
+from .. import BaseMeasurement
 
 
 class TemperatureSensors(ArchiveSection):

@@ -16,8 +16,9 @@
 # limitations under the License.
 #
 
+from nomad.metainfo import Quantity
+
 from .. import BaseMeasurement
-from nomad.metainfo import (Quantity)
 
 
 class TGA(BaseMeasurement):

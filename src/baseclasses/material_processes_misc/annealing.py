@@ -17,10 +17,8 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (Quantity, Section)
-
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity, Section
 
 
 class Annealing(ArchiveSection):

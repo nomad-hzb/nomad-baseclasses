@@ -17,13 +17,10 @@
 #
 
 import numpy as np
+from nomad.metainfo import Datetime, MEnum, Quantity, Section, SubSection
 
-from nomad.metainfo import (
-    Quantity, SubSection, MEnum, Datetime, Section)
-from nomad.datamodel.data import ArchiveSection
-
-from .voltammetry import Voltammetry, VoltammetryCycle
 from .potentiostat_measurement import PotentiostatProperties
+from .voltammetry import Voltammetry, VoltammetryCycle
 
 
 class CAProperties(PotentiostatProperties):

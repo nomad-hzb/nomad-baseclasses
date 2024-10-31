@@ -1,5 +1,5 @@
-from datetime import datetime
 import numpy as np
+
 
 def _get_uvvis_data_entry(data_entry, data, datetime_object, data_file):
     if datetime_object is not None:

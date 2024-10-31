@@ -17,12 +17,8 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (
-    Quantity,
-    Section,
-    SubSection)
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity, Section
 
 from .. import BaseMeasurement, LibraryMeasurement
 

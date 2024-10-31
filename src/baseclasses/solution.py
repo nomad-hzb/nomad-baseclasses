@@ -17,23 +17,23 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (
-    Quantity,
-    SubSection,
-    Section,
-    Reference,
-    MEnum, SectionProxy, Datetime)
 from nomad.datamodel.data import ArchiveSection
+from nomad.datamodel.metainfo.basesections import CompositeSystem
+from nomad.metainfo import (
+    Datetime,
+    MEnum,
+    Quantity,
+    Reference,
+    Section,
+    SectionProxy,
+    SubSection,
+)
+
+from baseclasses import PubChemPureSubstanceSectionCustom
+from baseclasses.helper.utilities import rewrite_json_recursively
 
 from .chemical import Chemical
-from baseclasses import PubChemPureSubstanceSectionCustom
-from nomad.datamodel.metainfo.action import ActionSection
-
-from nomad.datamodel.metainfo.basesections import CompositeSystem
 from .customreadable_identifier import ReadableIdentifiersCustom
-
-from baseclasses.helper.utilities import rewrite_json_recursively
 
 
 class SolutionChemical(ArchiveSection):

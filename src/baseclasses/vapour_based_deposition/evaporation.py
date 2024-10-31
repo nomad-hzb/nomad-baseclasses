@@ -18,8 +18,9 @@
 
 import numpy as np
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity, Reference, Section, SubSection
+
 from baseclasses import PubChemPureSubstanceSectionCustom
-from nomad.metainfo import (Quantity, Reference, SubSection, Section)
 
 from .. import LayerDeposition
 from ..chemical import Chemical

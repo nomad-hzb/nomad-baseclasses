@@ -15,20 +15,16 @@
 # limitations under the License.
 #
 
-import numpy as np
 import os
 
-from nomad.metainfo import (
-    Quantity,
-    SubSection,
-    MEnum,
-    Reference,
-    Section)
+import numpy as np
 from nomad.datamodel.data import ArchiveSection
+from nomad.datamodel.metainfo.eln import Entity
+from nomad.metainfo import MEnum, Quantity, Reference, Section, SubSection
+
+from baseclasses import BaseMeasurement
 
 from .TEM_Session import TEM_Session
-from nomad.datamodel.metainfo.eln import Entity
-from baseclasses import BaseMeasurement
 
 
 class TEMMicroscopeConfiguration(Entity):

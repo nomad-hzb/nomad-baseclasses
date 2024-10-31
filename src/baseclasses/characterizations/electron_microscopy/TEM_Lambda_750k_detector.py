@@ -16,13 +16,12 @@
 # limitations under the License.
 #
 
-import numpy as np
 import os
-from nomad.metainfo import (
-    Quantity,
-    MEnum)
 
-from .microscope import TEMMicroscopeTechnique, Image
+import numpy as np
+from nomad.metainfo import MEnum, Quantity
+
+from .microscope import Image, TEMMicroscopeTechnique
 
 
 class Lambda750kImage(Image):

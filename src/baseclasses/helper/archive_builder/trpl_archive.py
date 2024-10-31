@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def get_trpl_archive(data, data_file):
     from baseclasses.solar_energy import TRPLProperties
     trpl_properties = TRPLProperties(

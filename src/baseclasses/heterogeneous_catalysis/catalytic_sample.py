@@ -17,10 +17,9 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (SubSection, Quantity)
-from nomad.datamodel.metainfo.eln import SampleID
 from nomad.datamodel.data import ArchiveSection
+from nomad.datamodel.metainfo.eln import SampleID
+from nomad.metainfo import Quantity, SubSection
 
 from baseclasses.chemical_energy import CESample
 

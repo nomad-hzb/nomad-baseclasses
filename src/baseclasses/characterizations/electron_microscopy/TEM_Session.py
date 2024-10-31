@@ -16,15 +16,9 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (
-    Quantity,
-    MEnum,
-    Datetime)
-
-from nomad.datamodel.metainfo.eln import Entity
-
 import pytz
+from nomad.datamodel.metainfo.eln import Entity
+from nomad.metainfo import Datetime, MEnum, Quantity
 
 
 class TEM_Session(Entity):

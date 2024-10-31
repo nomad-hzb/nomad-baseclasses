@@ -3,18 +3,17 @@ from nomad.datamodel.metainfo.annotations import (
     ELNAnnotation,
 )
 from nomad.datamodel.metainfo.basesections import (
-    Entity, AnalysisResult, SectionReference
+    AnalysisResult,
+    Entity,
 )
 from nomad.datamodel.results import (
-    Results,
     Material,
+    Results,
 )
-from nomad.metainfo import (
-    Quantity,
-    SubSection, Section)
+from nomad.metainfo import Quantity, Section, SubSection
 
-from .data_baseclasses import DataWithStatistics
 from .. import BaseMeasurement
+from .data_baseclasses import DataWithStatistics
 
 
 class NKDataResult(AnalysisResult):

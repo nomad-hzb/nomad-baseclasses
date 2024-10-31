@@ -17,11 +17,10 @@
 #
 
 import numpy as np
-
-from nomad.metainfo import (Quantity, Section, SubSection, Datetime)
 from nomad.datamodel.data import ArchiveSection
-from nomad.datamodel.metainfo.plot import PlotSection
 from nomad.datamodel.metainfo.basesections import CompositeSystemReference
+from nomad.datamodel.metainfo.plot import PlotSection
+from nomad.metainfo import Datetime, Quantity, Section, SubSection
 
 from .. import BaseMeasurement, ReadableIdentifiersCustom
 from .cesample import build_initial_id, create_id

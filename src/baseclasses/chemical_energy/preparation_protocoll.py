@@ -16,9 +16,8 @@
 # limitations under the License.
 #
 
-from nomad.metainfo import (Quantity)
-
 from nomad.datamodel.metainfo.eln import Entity
+from nomad.metainfo import Quantity
 
 
 class PreparationProtocol(Entity):

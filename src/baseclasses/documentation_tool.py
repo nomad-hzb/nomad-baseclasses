@@ -16,20 +16,12 @@
 # limitations under the License.
 #
 
-import numpy as np
 import os
+
+import numpy as np
 import pandas as pd
-
-from nomad.metainfo import (
-    Quantity,
-    SubSection,
-    Section,
-    Reference, MProxy)
-
 from nomad.datamodel.metainfo.eln import Entity
-
-
-from baseclasses.helper.utilities import rewrite_json
+from nomad.metainfo import Quantity, SubSection
 
 from baseclasses.chemical_energy import SampleIDCENOME, export_lab_id
 
