@@ -30,3 +30,5 @@ I want to produce a solar cell using:
 6. Standard evaporation of Cu as a back contact
 
 The experimental planning tool is designed to document these plans efficiently provided that the standard processes exist, see: [create experimental plan](create_experimental_plan.md), [create standard sample](create_standard_sample.md) and [create wet chemical deposition](create_wet_chemical_deposition.md) for more how-tos.
+
+Alternative we developed even easier to use structured excel sheets which are more intutitve to be used, see [excel parsing hysprint](https://github.com/nomad-hzb/nomad-hysprint/blob/main/src/nomad_hysprint/parsers/hysprint_batch_parser.py) for the nomad parser.

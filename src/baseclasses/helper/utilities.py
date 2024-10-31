@@ -298,6 +298,8 @@ def set_sample_reference(archive, entry, search_id, upload_id=None):
             entry.samples = [CompositeSystemReference(reference=get_reference(upload_id, entry_id))]
         if "solution" in data["entry_type"].lower() or "ink" in data["entry_type"].lower():
             entry.samples = [CompositeSystemReference(reference=get_reference(upload_id, entry_id))]
+        if "environment" in data["entry_type"].lower() or "setup" in data["entry_type"].lower():
+            entry.samples = [CompositeSystemReference(reference=get_reference(upload_id, entry_id))]
 
 
 def get_entry_reference(archive, entry, search_id):
