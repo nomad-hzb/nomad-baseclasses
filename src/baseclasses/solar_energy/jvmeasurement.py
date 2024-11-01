@@ -43,7 +43,8 @@ class SolarCellJV(PlotSection):
         type=bool,
         shape=[],
         description="""
-            TRUE if the IV data is measured by an independent and certification institute.
+            TRUE if the IV data is measured by an independent and certification 
+            institute.
             If your solar simulator is calibrated by a calibrated reference diode,
             that does not count as a certified result.
         """,
@@ -54,7 +55,8 @@ class SolarCellJV(PlotSection):
         type=str,
         shape=[],
         description="""
-            The name of the certification institute that has measured the certified device.
+            The name of the certification institute that has measured the certified 
+            device.
             Example:
             Newport
             NIM, National Institute of Metrology of China
@@ -66,19 +68,19 @@ class SolarCellJV(PlotSection):
                 suggestions=sorted(
                     [
                         'National Institute ofMetrology, China',
-                        'Quality supervision＆Testing Center of Chemical＆Physical Power Sources of Information Industry',
-                        'CREST, Photovoltaic Meaasurement and calibration Laboratory at Universit of Loughborough',
-                        'Photovoltaic and Wind Power Systems Quality Test Center, Chinese Academy of Sciences',
+                        'Quality supervision＆Testing Center of Chemical＆Physical Power Sources of Information Industry',  # noqa E501
+                        'CREST, Photovoltaic Meaasurement and calibration Laboratory at Universit of Loughborough',  # noqa E501
+                        'Photovoltaic and Wind Power Systems Quality Test Center, Chinese Academy of Sciences',  # noqa E501
                         'NREL',
                         'Institute of Metrology (NIM) of China',
                         'PVEVL, National Central University, Taiwan',
                         'NIM, National Institute of Metrology of China',
                         'Fraunhofer ISE',
-                        'SIMIT, Shanghai Institute of Microsystem and Information Technology',
+                        'SIMIT, Shanghai Institute of Microsystem and Information Technology',  # noqa E501
                         'Newport',
                         'CSIRO, PV Performance Lab at Monash University',
-                        'AIST, National Institute of Advanced Industrial Science and Technology',
-                        'CPVT, National Center of Supervision and Inspection on Solar Photovoltaic Products Quality of China',
+                        'AIST, National Institute of Advanced Industrial Science and Technology',  # noqa E501
+                        'CPVT, National Center of Supervision and Inspection on Solar Photovoltaic Products Quality of China',  # noqa E501
                         'KIER, Korea Institute of Energy Research',
                         'Newport Corporation',
                         'Solar Power Lab at Arizona State University',
@@ -99,9 +101,16 @@ class SolarCellJV(PlotSection):
         default=100.0,
         description="""
             The light intensity during the IV measurement
-            - If there are uncertainties, only state the best estimate, e.g. write 100 and not 90-100.
+            - If there are uncertainties, only state the best estimate, e.g. write
+            100 and not 90-100.
             - Standard AM 1.5 illumination correspond to 100 mW/cm2
-            - If you need to convert from illumination given in lux; at 550 nm, 1 mW/cm2 corresponds to 6830 lux. Be aware that the conversion change with the spectrum used. As a rule of thumb for general fluorescent/LED light sources, around 0.31mW corresponded to 1000 lux. If your light intensity is measured in lux, it probably means that your light spectra deviates quite a lot from AM 1.5, wherefore it is very important that you also specify the light spectra in the next column.
+            - If you need to convert from illumination given in lux; at 550 nm, 
+            1 mW/cm2 corresponds to 6830 lux. Be aware that the conversion change
+            with the spectrum used. As a rule of thumb for general fluorescent/LED
+            light sources, around 0.31mW corresponded to 1000 lux. If your light
+            intensity is measured in lux, it probably means that your light spectra
+            deviates quite a lot from AM 1.5, wherefore it is very important that you
+            also specify the light spectra in the next column.
         """,
         a_eln=dict(component='NumberEditQuantity'),
     )
@@ -221,9 +230,11 @@ class SolarCellJV(PlotSection):
 
     def update_results(self, archive):
         if self.open_circuit_voltage is not None:
-            archive.results.properties.optoelectronic.solar_cell.open_circuit_voltage = self.open_circuit_voltage
+            archive.results.properties.optoelectronic.solar_cell\
+                .open_circuit_voltage = self.open_circuit_voltage
         if self.short_circuit_current_density is not None:
-            archive.results.properties.optoelectronic.solar_cell.short_circuit_current_density = self.short_circuit_current_density
+            archive.results.properties.optoelectronic.solar_cell.\
+                short_circuit_current_density = self.short_circuit_current_density
         if self.fill_factor is not None:
             archive.results.properties.optoelectronic.solar_cell.fill_factor = (
                 self.fill_factor
@@ -233,7 +244,8 @@ class SolarCellJV(PlotSection):
                 self.efficiency
             )
         if self.light_intensity is not None:
-            archive.results.properties.optoelectronic.solar_cell.illumination_intensity = self.light_intensity
+            archive.results.properties.optoelectronic.solar_cell\
+                .illumination_intensity = self.light_intensity
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)

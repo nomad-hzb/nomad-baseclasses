@@ -102,7 +102,8 @@ class AntiSolventQuenching(Quenching):
     def normalize(self, archive, logger):
         if self.anti_solvent and self.anti_solvent.name:
             if self.anti_solvent_volume:
-                self.name = self.anti_solvent.name + ' ' + str(self.anti_solvent_volume)
+                self.name = self.anti_solvent.name + ' ' \
+                    + str(self.anti_solvent_volume)
             else:
                 self.name = self.anti_solvent.name
 
@@ -276,7 +277,8 @@ class AirKnifeGasQuenching(GasQuenching):
         type=np.dtype(np.float64),
         unit=('degree'),
         description=(
-            'The angle of the air knife with respect to the sample, ie. 90° is straight above the sample.'
+            '''The angle of the air knife with respect to the sample,
+            ie. 90° is straight above the sample.'''
         ),
         a_eln=dict(
             component='NumberEditQuantity',

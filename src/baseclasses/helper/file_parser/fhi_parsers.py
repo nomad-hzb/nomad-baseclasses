@@ -52,7 +52,8 @@ def readUXD(datafile, withdata=True):
                 elif stripped_line[0] == '_':
                     split = stripped_line[1:].split(' = ')
                     if len(split) == 2:
-                        key = ''.join(e for e in split[0] if e.isalnum() or e.isspace())
+                        key = ''.join(e for e in split[0] if e.isalnum()
+                                      or e.isspace())
                         try:
                             elm = {key: float(split[1])}
                         except BaseException:
@@ -175,14 +176,14 @@ def readRayFile(datafile, withdata=True):
     )
     x0_sim = (
         root.find(
-            './/TreeNode[@name="Fit Curve"]/FitCurve/FitSolutions/Solution/SimCurve/Data/x0'
+            './/TreeNode[@name="Fit Curve"]/FitCurve/FitSolutions/Solution/SimCurve/Data/x0'  # noqa 501
         )
         .text.strip()
         .split()
     )
     y_sim = (
         root.find(
-            './/TreeNode[@name="Fit Curve"]/FitCurve/FitSolutions/Solution/SimCurve/Data/y'
+            './/TreeNode[@name="Fit Curve"]/FitCurve/FitSolutions/Solution/SimCurve/Data/y'  # noqa 501
         )
         .text.strip()
         .split()
@@ -190,37 +191,37 @@ def readRayFile(datafile, withdata=True):
 
     app_roughness = float(
         root.find(
-            './/TreeNode[@name="Fit Curve"]/FitCurve/FitSolutions/Solution/SimCurve/Sample/LayersGroups/LayersGroup/Layers/Layer[@index="0"]/Geometry'
+            './/TreeNode[@name="Fit Curve"]/FitCurve/FitSolutions/Solution/SimCurve/Sample/LayersGroups/LayersGroup/Layers/Layer[@index="0"]/Geometry'  # noqa 501
         ).get('roughness')
     )
 
     app_density = float(
         root.find(
-            './/TreeNode[@name="Fit Curve"]/FitCurve/FitSolutions/Solution/SimCurve/Sample/LayersGroups/LayersGroup/Layers/Layer[@index="0"]/Density'
+            './/TreeNode[@name="Fit Curve"]/FitCurve/FitSolutions/Solution/SimCurve/Sample/LayersGroups/LayersGroup/Layers/Layer[@index="0"]/Density'  # noqa 501
         ).get('top')
     )
 
     app_roughness_std = float(
         root.find(
-            './/TreeNode[@name="Fit Curve"]/FitCurve/FitSolutions/Solution/SimCurve/Sample/LayersGroups/LayersGroup/Layers/Layer[@index="0"]/Parameters/Parameter[@id="17"]'
+            './/TreeNode[@name="Fit Curve"]/FitCurve/FitSolutions/Solution/SimCurve/Sample/LayersGroups/LayersGroup/Layers/Layer[@index="0"]/Parameters/Parameter[@id="17"]'  # noqa 501
         ).get('stdDeviation')
     )
 
     app_density_std = float(
         root.find(
-            './/TreeNode[@name="Fit Curve"]/FitCurve/FitSolutions/Solution/SimCurve/Sample/LayersGroups/LayersGroup/Layers/Layer[@index="0"]/Parameters/Parameter[@id="18"]'
+            './/TreeNode[@name="Fit Curve"]/FitCurve/FitSolutions/Solution/SimCurve/Sample/LayersGroups/LayersGroup/Layers/Layer[@index="0"]/Parameters/Parameter[@id="18"]'  # noqa 501
         ).get('stdDeviation')
     )
 
     diffuce_scattering = float(
         root.find(
-            './/TreeNode[@name="Fit Curve"]/FitCurve/FitSolutions/Solution/SimCurve/SimParam'
+            './/TreeNode[@name="Fit Curve"]/FitCurve/FitSolutions/Solution/SimCurve/SimParam'  # noqa 501
         ).get('poisson')
     )
 
     detector_noise = float(
         root.find(
-            './/TreeNode[@name="Fit Curve"]/FitCurve/FitSolutions/Solution/SimCurve/SimParam'
+            './/TreeNode[@name="Fit Curve"]/FitCurve/FitSolutions/Solution/SimCurve/SimParam'  # noqa 501
         ).get('background_poisson')
     )
 

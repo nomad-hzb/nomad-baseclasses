@@ -412,9 +412,9 @@ def get_processes(archive, entry_id):
     for res in search_result.data:
         with files.UploadFiles.get(upload_id=res['upload_id']).read_archive(
             entry_id=res['entry_id']
-        ) as archive:
+        ) as arch:
             entry_id = res['entry_id']
-            entry_data = archive[entry_id]['data']
+            entry_data = arch[entry_id]['data']
             if 'positon_in_experimental_plan' in entry_data:
                 processes.append(
                     (

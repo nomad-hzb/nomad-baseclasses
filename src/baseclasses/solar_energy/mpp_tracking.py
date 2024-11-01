@@ -87,7 +87,8 @@ class MPPTrackingProperties(ArchiveSection):
 
     last_pce = Quantity(
         type=np.dtype(np.float64),
-        description='Last power convertion efficiency recorded in the MPP tracking measurement',
+        description='''Last power convertion efficiency recorded in the MPP tracking
+        measurement''',
         a_eln=dict(
             component='NumberEditQuantity', props=dict(minValue=0, maxValue=100)
         ),
@@ -95,7 +96,8 @@ class MPPTrackingProperties(ArchiveSection):
 
     last_vmpp = Quantity(
         type=np.dtype(np.float64),
-        description='Last voltage at maximum power point recorded in the MPP tracking measurement',
+        description='''Last voltage at maximum power point recorded in the MPP tracking
+        measurement''',
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
     )
@@ -103,7 +105,7 @@ class MPPTrackingProperties(ArchiveSection):
 
 class StabilityFiguresOfMerit(ArchiveSection):
     """
-    Perovskite solar cell stability figures of merit. More information can be found in the
+    Perovskite solar cell stability figures of merit. More information can be found in
     the publication Consensus statement for stability assessment and reporting for
     perovskite photovoltaics based on ISOS procedures published in NAture Energy
     https://www.nature.com/articles/s41560-019-0529-5/.
@@ -114,9 +116,11 @@ class StabilityFiguresOfMerit(ArchiveSection):
         unit=('hour'),
         shape=[],
         description="""
-    The time after which the cell performance has degraded by 5 % with respect to the initial performance.
-- If there are uncertainties, only state the best estimate, e.g. write 1000 and not 950-1050
-- If unknown or not applicable, leave this field empty.
+    The time after which the cell performance has degraded by 5 % with respect to the
+    initial performance.
+    - If there are uncertainties, only state the best estimate, e.g. write 1000
+    and not 950-1050
+    - If unknown or not applicable, leave this field empty.
                     """,
         a_eln=dict(component='NumberEditQuantity'),
     )
@@ -126,8 +130,10 @@ class StabilityFiguresOfMerit(ArchiveSection):
         unit=('hour'),
         shape=[],
         description="""
-            The time after which the cell performance has degraded by 5 % with respect to the performance after any initial burn in phase.
-        - If there are uncertainties, only state the best estimate, e.g. write 1000 and not 950-1050
+            The time after which the cell performance has degraded by 5 % with respect
+            to the performance after any initial burn in phase.
+        - If there are uncertainties, only state the best estimate, e.g. write
+        1000 and not 950-1050
         - If unknown or not applicable, leave this field empty.
         """,
         a_eln=dict(component='NumberEditQuantity'),
@@ -138,8 +144,10 @@ class StabilityFiguresOfMerit(ArchiveSection):
         unit=('hour'),
         shape=[],
         description="""
-            The time after which the cell performance has degraded by 20 % with respect to the initial performance.
-        - If there are uncertainties, only state the best estimate, e.g. write 1000 and not 950-1050
+            The time after which the cell performance has degraded by 20 %
+            with respect to the initial performance.
+        - If there are uncertainties, only state the best estimate,
+        e.g. write 1000 and not 950-1050
         - If unknown or not applicable, leave this field empty.
         """,
         a_eln=dict(component='NumberEditQuantity'),
@@ -150,8 +158,10 @@ class StabilityFiguresOfMerit(ArchiveSection):
         unit=('hour'),
         shape=[],
         description="""
-            The time after which the cell performance has degraded by 20 % with respect to the performance after any initial burn in phase.
-        - If there are uncertainties, only state the best estimate, e.g. write 1000 and not 950-1050
+            The time after which the cell performance has degraded by 20 %
+            with respect to the performance after any initial burn in phase.
+        - If there are uncertainties, only state the best estimate, e.g.
+        write 1000 and not 950-1050
         - If unknown or not applicable, leave this field empty.
         """,
         a_eln=dict(component='NumberEditQuantity'),
@@ -163,7 +173,8 @@ class StabilityFiguresOfMerit(ArchiveSection):
         description="""
             The efficiency, PCE, of the cell after 1000 hours
         - Give the efficiency in %
-        - If there are uncertainties, only state the best estimate, e.g. write 20.5 and not 19-20
+        - If there are uncertainties, only state the best estimate, e.g. write
+        20.5 and not 19-20
         - If unknown or not applicable, leave this field empty.
         """,
         a_eln=dict(component='NumberEditQuantity'),
@@ -173,8 +184,10 @@ class StabilityFiguresOfMerit(ArchiveSection):
         type=np.dtype(np.float64),
         unit=('hour'),
         description="""The time that it takes for the cell to stabilize after
-        an initial burn-in *(fast peroformance decrease) or a fast increase in performance
-        to reach a maximun PCE value in the transient. This values is needed to report the
+        an initial burn-in *(fast peroformance decrease) or a fast increase in
+        performance
+        to reach a maximun PCE value in the transient. This values is needed to
+        report the
         Ts80 and Ts95 values.""",
         a_eln=dict(component='NumberEditQuantity'),
     )

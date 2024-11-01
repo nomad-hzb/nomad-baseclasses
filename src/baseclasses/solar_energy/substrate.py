@@ -96,5 +96,3 @@ class Substrate(Entity):
                 archive.results.properties.optoelectronic.solar_cell.substrate = [
                     self.substrate
                 ]
-        # if self.back_contact:
-        #     archive.results.properties.optoelectronic.solar_cell.back_contact = self.back_contact

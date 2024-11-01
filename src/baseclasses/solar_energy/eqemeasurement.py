@@ -51,9 +51,6 @@ def linear(x, a, b):
     return a * x + b
 
 
-# Select a range from a numpy array from a given value to a given value and rerturn the indexes
-
-
 def select_range(array, value_start, value_end):
     idx_start = np.where(array == value_start)[0][0]
     idx_end = np.where(array == value_end)[0][0]
@@ -64,8 +61,10 @@ def fit_urbach_tail(photon_energy, intensity, fit_window=0.06, filter_window=20)
     """
     Fits the Urbach tail to the EQE data. To select the fitting range,
     finds the maximun of the derivative of the log(eqe) data. Then selects the range
-    by going down a factor of 8 in eqe values from this reference point and up a factor of 2.
-    This is unfortunately only a quick fix, but it works well enough based a few empirical tests
+    by going down a factor of 8 in eqe values from this reference point and up a factor
+    of 2.
+    This is unfortunately only a quick fix, but it works well enough based a few
+    empirical tests
     with eqe data of perovskite solar cells.
 
     Returns:
@@ -119,7 +118,8 @@ def extrapolate_eqe(photon_energy, intensity):
     Extrapolates the EQE data with the fitted Urbach tail.
 
     Returns:
-        photon_energy_extrapolated: array of the extrapolated photon energy values in eV
+        photon_energy_extrapolated: array of the extrapolated photon energy values in
+        eV
         eqe_extrapolated: array of the extrapolated eqe values
     """
     try:
@@ -133,12 +133,13 @@ def extrapolate_eqe(photon_energy, intensity):
             (x_extrap - photon_energy[fit_data.get('stop')]) * 1 / urbach_e
         )
         x_interp = np.linspace(
-            photon_energy[fit_data.get('stop')], max(photon_energy), 1000, endpoint=True
+            photon_energy[fit_data.get('stop')], max(photon_energy), 1000,
+            endpoint=True
         )
         y_interp = np.interp(
             x_interp,
-            photon_energy[max(fit_data.get('start'), fit_data.get('stop')) :],
-            intensity[max(fit_data.get('start'), fit_data.get('stop')) :],
+            photon_energy[max(fit_data.get('start'), fit_data.get('stop')):],
+            intensity[max(fit_data.get('start'), fit_data.get('stop')):],
         )
         x_interp = x_interp[y_interp >= min_eqe_fit]
         y_interp = y_interp[y_interp >= min_eqe_fit]
@@ -191,7 +192,8 @@ def calculate_bandgap(photon_energy, intensity):
 
 def calculate_j0rad(photon_energy, intensity):
     """
-    Calculates the radiative saturation current (j0rad) and the calculated electroluminescence (EL)
+    Calculates the radiative saturation current (j0rad) and the calculated
+    electroluminescence (EL)
     spectrum (Rau's reciprocity) from the extrapolated eqe.
 
     Returns:
@@ -200,13 +202,15 @@ def calculate_j0rad(photon_energy, intensity):
     """
     try:
         urbach_e = fit_urbach_tail(photon_energy, intensity)[0]
-        # try to calculate the j0rad and EL spectrum except if the urbach energy is larger than 0.026
+        # try to calculate the j0rad and EL spectrum except if the urbach energy is
+        # larger than 0.026
         if urbach_e >= 0.026 or urbach_e <= 0.0:
             raise ValueError("""Urbach energy is > 0.026 eV (~kB*T for T = 300K), or
             it could notbe estimated. The `j0rad` could not be calculated.""")
 
         x, y = extrapolate_eqe(photon_energy, intensity)
-        phi_BB = (2 * np.pi * q**3 * (x) ** 2) / (h_Js**3 * c**2 * (np.exp(x / VT) - 1))
+        phi_BB = (2 * np.pi * q**3 * (x) ** 2) / \
+            (h_Js**3 * c**2 * (np.exp(x / VT) - 1))
         el = phi_BB * y
         j0rad = np.trapz(el, x)
         j0rad = j0rad * q
@@ -233,17 +237,6 @@ def calculate_voc_rad(photon_energy, intensity):
         raise ValueError("""Urbach energy is > 0.026 eV (~kB*T for T = 300K).
                        The `j0rad` could not be calculated.""")
     return voc_rad
-
-
-# test
-# file = "/home/a2853/Documents/Projects/nomad/hysprintlab/testfiles_dragndrop/HZB_MiGo_20230225_p2_0_0.1.eqe.txt"
-# x_raw, y_raw, x, y = read_file(file, 9)
-
-# print(fit_urbach_tail(x, y))
-# print(calculate_jsc(x, y))
-# print(calculate_bandgap(x, y))
-# print(calculate_j0rad(x, y))
-# print(calculate_voc_rad(x, y))
 
 
 class SolarCellEQE(PlotSection):
@@ -314,7 +307,8 @@ class SolarCellEQE(PlotSection):
         unit='mA / cm**2',
         shape=[],
         description="""
-        The integrated short circuit current density $J_{SC}$ from the product of the EQE spectrum
+        The integrated short circuit current density $J_{SC}$ from the product of
+        the EQE spectrum
         with the *AM 1.5G* sun spectrum.
         """,
         a_eln=dict(component='NumberEditQuantity'),
@@ -425,14 +419,16 @@ class SolarCellEQE(PlotSection):
         type=np.dtype(np.float64),
         shape=['n_values'],
         unit='nanometer',
-        description='Interpolated/extrapolated wavelength array with *E<sub>u</sub>* of the eqe spectrum ',
+        description='''Interpolated/extrapolated wavelength array with *E<sub>u</sub>*
+        of the eqe spectrum ''',
     )
 
     photon_energy_array = Quantity(
         type=np.dtype(np.float64),
         shape=['n_values'],
         unit='eV',
-        description='Interpolated/extrapolated photon energy array with a *E<sub>u</sub>*  of the eqe spectrum',
+        description='''Interpolated/extrapolated photon energy array with a
+        *E<sub>u</sub>*  of the eqe spectrum''',
     )
 
     def normalize(self, archive, logger):
@@ -474,8 +470,10 @@ class SolarCellEQECustom(SolarCellEQE):
                 )
 
         if self.photon_energy_array is not None:
-            self.wavelength_array = self.photon_energy_array.to('nm', 'sp')  # pylint: disable=E1101
-            self.raw_wavelength_array = self.raw_photon_energy_array.to('nm', 'sp')  # pylint: disable=E1101
+            self.wavelength_array = self.photon_energy_array.to(
+                'nm', 'sp')  # pylint: disable=E1101
+            self.raw_wavelength_array = self.raw_photon_energy_array.to(
+                'nm', 'sp')  # pylint: disable=E1101
 
 
 class EQEMeasurement(BaseMeasurement):
