@@ -8,11 +8,10 @@ Created on Tue Mar 14 11:51:01 2023
 import numpy as np
 import pandas as pd
 
-from baseclasses.vapour_based_deposition\
-    .plasma_enhanced_physical_vapour_deposition import (
-        GasFlow,
-        LogData,
-    )
+from baseclasses.vapour_based_deposition.plasma_enhanced_physical_vapour_deposition import (
+    GasFlow,
+    LogData,
+)
 
 
 def parse_recipe_line(line):
@@ -112,13 +111,13 @@ def parse_log(f, entry, time=None, shift=None):
 
     # if not pd.isnull(ignite) and time is not None and shift is not None:
 
-    data.power_mean = powerval.iloc[ignite + shift: ignite + time + shift].mean()
-    data.power_var = powerval.iloc[ignite + shift: ignite + time + shift].var()
+    data.power_mean = powerval.iloc[ignite + shift : ignite + time + shift].mean()
+    data.power_var = powerval.iloc[ignite + shift : ignite + time + shift].var()
 
-    data.temperature_mean = tempval.iloc[ignite + shift: ignite + time + shift].mean()
-    data.temperature_var = tempval.iloc[ignite + shift: ignite + time + shift].var()
+    data.temperature_mean = tempval.iloc[ignite + shift : ignite + time + shift].mean()
+    data.temperature_var = tempval.iloc[ignite + shift : ignite + time + shift].var()
 
-    data.pressure_mean = pressureval.iloc[ignite + shift: ignite + time + shift].mean()
-    data.pressure_var = pressureval.iloc[ignite + shift: ignite + time + shift].var()
+    data.pressure_mean = pressureval.iloc[ignite + shift : ignite + time + shift].mean()
+    data.pressure_var = pressureval.iloc[ignite + shift : ignite + time + shift].var()
 
     return data

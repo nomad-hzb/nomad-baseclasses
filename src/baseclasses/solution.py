@@ -228,8 +228,8 @@ class SolutionPreparationStandard(SolutionPreparation):
 
     preparation_description = Quantity(
         type=str,
-        description='''Any information on solution preparation
-            that cannot be captured in other fields.''',
+        description="""Any information on solution preparation
+            that cannot be captured in other fields.""",
         a_eln=dict(component='RichTextEditQuantity'),
     )
 

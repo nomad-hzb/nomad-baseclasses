@@ -66,6 +66,5 @@ class DropCasting(WetChemicalDeposition):
     properties = SubSection(section_def=DropCastingProperties)
 
     def normalize(self, archive, logger):
-        super().normalize(archive, logger)
-
         self.method = 'Drop Casting'
+        super().normalize(archive, logger)

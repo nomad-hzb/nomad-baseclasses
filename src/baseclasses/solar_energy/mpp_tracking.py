@@ -87,8 +87,8 @@ class MPPTrackingProperties(ArchiveSection):
 
     last_pce = Quantity(
         type=np.dtype(np.float64),
-        description='''Last power convertion efficiency recorded in the MPP tracking
-        measurement''',
+        description="""Last power convertion efficiency recorded in the MPP tracking
+        measurement""",
         a_eln=dict(
             component='NumberEditQuantity', props=dict(minValue=0, maxValue=100)
         ),
@@ -96,8 +96,8 @@ class MPPTrackingProperties(ArchiveSection):
 
     last_vmpp = Quantity(
         type=np.dtype(np.float64),
-        description='''Last voltage at maximum power point recorded in the MPP tracking
-        measurement''',
+        description="""Last voltage at maximum power point recorded in the MPP tracking
+        measurement""",
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
     )

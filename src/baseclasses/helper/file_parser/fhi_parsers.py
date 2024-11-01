@@ -52,8 +52,7 @@ def readUXD(datafile, withdata=True):
                 elif stripped_line[0] == '_':
                     split = stripped_line[1:].split(' = ')
                     if len(split) == 2:
-                        key = ''.join(e for e in split[0] if e.isalnum()
-                                      or e.isspace())
+                        key = ''.join(e for e in split[0] if e.isalnum() or e.isspace())
                         try:
                             elm = {key: float(split[1])}
                         except BaseException:

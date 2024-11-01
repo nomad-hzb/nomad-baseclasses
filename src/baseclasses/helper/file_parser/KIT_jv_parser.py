@@ -81,11 +81,11 @@ def calculatePVparametersFromJV(
         try:
             m1, b1 = np.polyfit(
                 v_new[
-                    voc_ind[0] - lineFittingDataPoints: voc_ind[0]
+                    voc_ind[0] - lineFittingDataPoints : voc_ind[0]
                     + lineFittingDataPoints
                 ],
                 j_interpolated[0][
-                    voc_ind[0] - lineFittingDataPoints: voc_ind[0]
+                    voc_ind[0] - lineFittingDataPoints : voc_ind[0]
                     + lineFittingDataPoints
                 ],
                 1,
@@ -97,11 +97,11 @@ def calculatePVparametersFromJV(
         try:
             m2, b2 = np.polyfit(
                 v_new[
-                    voc_ind[1] - lineFittingDataPoints: voc_ind[1]
+                    voc_ind[1] - lineFittingDataPoints : voc_ind[1]
                     + lineFittingDataPoints
                 ],
                 j_interpolated[1][
-                    voc_ind[1] - lineFittingDataPoints: voc_ind[1]
+                    voc_ind[1] - lineFittingDataPoints : voc_ind[1]
                     + lineFittingDataPoints
                 ],
                 1,
@@ -120,11 +120,11 @@ def calculatePVparametersFromJV(
         try:
             m3, b3 = np.polyfit(
                 v_new[
-                    jsc_ind[0] - lineFittingDataPoints * factor: jsc_ind[0]
+                    jsc_ind[0] - lineFittingDataPoints * factor : jsc_ind[0]
                     + lineFittingDataPoints * factor
                 ],
                 j_interpolated[0][
-                    jsc_ind[0] - lineFittingDataPoints * factor: jsc_ind[0]
+                    jsc_ind[0] - lineFittingDataPoints * factor : jsc_ind[0]
                     + lineFittingDataPoints * factor
                 ],
                 1,
@@ -133,12 +133,12 @@ def calculatePVparametersFromJV(
             while m3 > 0:
                 m3, b3 = np.polyfit(
                     v_new[
-                        jsc_ind[0] - lineFittingDataPoints + i: jsc_ind[0]
+                        jsc_ind[0] - lineFittingDataPoints + i : jsc_ind[0]
                         + lineFittingDataPoints
                         + i
                     ],
                     j_interpolated[0][
-                        jsc_ind[0] - lineFittingDataPoints + i: jsc_ind[0]
+                        jsc_ind[0] - lineFittingDataPoints + i : jsc_ind[0]
                         + lineFittingDataPoints
                         + i
                     ],
@@ -153,11 +153,11 @@ def calculatePVparametersFromJV(
         try:
             m4, b4 = np.polyfit(
                 v_new[
-                    jsc_ind[1] - lineFittingDataPoints * factor: jsc_ind[1]
+                    jsc_ind[1] - lineFittingDataPoints * factor : jsc_ind[1]
                     + lineFittingDataPoints * factor
                 ],
                 j_interpolated[1][
-                    jsc_ind[1] - lineFittingDataPoints * factor: jsc_ind[1]
+                    jsc_ind[1] - lineFittingDataPoints * factor : jsc_ind[1]
                     + lineFittingDataPoints * factor
                 ],
                 1,
@@ -166,12 +166,12 @@ def calculatePVparametersFromJV(
             while m4 > 0:
                 m4, b4 = np.polyfit(
                     v_new[
-                        jsc_ind[1] - lineFittingDataPoints * factor + i: jsc_ind[1]
+                        jsc_ind[1] - lineFittingDataPoints * factor + i : jsc_ind[1]
                         + lineFittingDataPoints * factor
                         + i
                     ],
                     j_interpolated[1][
-                        jsc_ind[1] - lineFittingDataPoints * factor + i: jsc_ind[1]
+                        jsc_ind[1] - lineFittingDataPoints * factor + i : jsc_ind[1]
                         + lineFittingDataPoints * factor
                         + i
                     ],

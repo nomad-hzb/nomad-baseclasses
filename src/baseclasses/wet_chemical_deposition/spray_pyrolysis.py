@@ -53,6 +53,5 @@ class SprayPyrolysis(WetChemicalDeposition):
     properties = SubSection(section_def=SprayPyrolysisProperties)
 
     def normalize(self, archive, logger):
-        super().normalize(archive, logger)
-
         self.method = 'Spray Pyrolysis'
+        super().normalize(archive, logger)

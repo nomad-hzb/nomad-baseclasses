@@ -230,11 +230,9 @@ class SolarCellJV(PlotSection):
 
     def update_results(self, archive):
         if self.open_circuit_voltage is not None:
-            archive.results.properties.optoelectronic.solar_cell\
-                .open_circuit_voltage = self.open_circuit_voltage
+            archive.results.properties.optoelectronic.solar_cell.open_circuit_voltage = self.open_circuit_voltage
         if self.short_circuit_current_density is not None:
-            archive.results.properties.optoelectronic.solar_cell.\
-                short_circuit_current_density = self.short_circuit_current_density
+            archive.results.properties.optoelectronic.solar_cell.short_circuit_current_density = self.short_circuit_current_density
         if self.fill_factor is not None:
             archive.results.properties.optoelectronic.solar_cell.fill_factor = (
                 self.fill_factor
@@ -244,8 +242,7 @@ class SolarCellJV(PlotSection):
                 self.efficiency
             )
         if self.light_intensity is not None:
-            archive.results.properties.optoelectronic.solar_cell\
-                .illumination_intensity = self.light_intensity
+            archive.results.properties.optoelectronic.solar_cell.illumination_intensity = self.light_intensity
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)

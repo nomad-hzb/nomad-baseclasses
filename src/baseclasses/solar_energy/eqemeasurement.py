@@ -133,13 +133,12 @@ def extrapolate_eqe(photon_energy, intensity):
             (x_extrap - photon_energy[fit_data.get('stop')]) * 1 / urbach_e
         )
         x_interp = np.linspace(
-            photon_energy[fit_data.get('stop')], max(photon_energy), 1000,
-            endpoint=True
+            photon_energy[fit_data.get('stop')], max(photon_energy), 1000, endpoint=True
         )
         y_interp = np.interp(
             x_interp,
-            photon_energy[max(fit_data.get('start'), fit_data.get('stop')):],
-            intensity[max(fit_data.get('start'), fit_data.get('stop')):],
+            photon_energy[max(fit_data.get('start'), fit_data.get('stop')) :],
+            intensity[max(fit_data.get('start'), fit_data.get('stop')) :],
         )
         x_interp = x_interp[y_interp >= min_eqe_fit]
         y_interp = y_interp[y_interp >= min_eqe_fit]
@@ -209,8 +208,7 @@ def calculate_j0rad(photon_energy, intensity):
             it could notbe estimated. The `j0rad` could not be calculated.""")
 
         x, y = extrapolate_eqe(photon_energy, intensity)
-        phi_BB = (2 * np.pi * q**3 * (x) ** 2) / \
-            (h_Js**3 * c**2 * (np.exp(x / VT) - 1))
+        phi_BB = (2 * np.pi * q**3 * (x) ** 2) / (h_Js**3 * c**2 * (np.exp(x / VT) - 1))
         el = phi_BB * y
         j0rad = np.trapz(el, x)
         j0rad = j0rad * q
@@ -419,16 +417,16 @@ class SolarCellEQE(PlotSection):
         type=np.dtype(np.float64),
         shape=['n_values'],
         unit='nanometer',
-        description='''Interpolated/extrapolated wavelength array with *E<sub>u</sub>*
-        of the eqe spectrum ''',
+        description="""Interpolated/extrapolated wavelength array with *E<sub>u</sub>*
+        of the eqe spectrum """,
     )
 
     photon_energy_array = Quantity(
         type=np.dtype(np.float64),
         shape=['n_values'],
         unit='eV',
-        description='''Interpolated/extrapolated photon energy array with a
-        *E<sub>u</sub>*  of the eqe spectrum''',
+        description="""Interpolated/extrapolated photon energy array with a
+        *E<sub>u</sub>*  of the eqe spectrum""",
     )
 
     def normalize(self, archive, logger):
@@ -470,10 +468,8 @@ class SolarCellEQECustom(SolarCellEQE):
                 )
 
         if self.photon_energy_array is not None:
-            self.wavelength_array = self.photon_energy_array.to(
-                'nm', 'sp')  # pylint: disable=E1101
-            self.raw_wavelength_array = self.raw_photon_energy_array.to(
-                'nm', 'sp')  # pylint: disable=E1101
+            self.wavelength_array = self.photon_energy_array.to('nm', 'sp')  # pylint: disable=E1101
+            self.raw_wavelength_array = self.raw_photon_energy_array.to('nm', 'sp')  # pylint: disable=E1101
 
 
 class EQEMeasurement(BaseMeasurement):

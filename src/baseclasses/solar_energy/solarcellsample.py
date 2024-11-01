@@ -30,8 +30,7 @@ def collectBaseProcesses(entry, entry_id, entry_data):
     # read out information
     if 'positon_in_experimental_plan' in entry_data:
         entry[entry_id].update(
-            {'positon_in_experimental_plan':
-             entry_data['positon_in_experimental_plan']}
+            {'positon_in_experimental_plan': entry_data['positon_in_experimental_plan']}
         )
     # Check if it is a layer deposition
     import inspect
@@ -111,8 +110,7 @@ def collectEQEMeasurement(entry, entry_id, entry_data):
 def sortProcesses(processes):
     processes_working = [p for key, p in processes.items()]
     process_positions = [
-        p['positon_in_experimental_plan']
-        if 'positon_in_experimental_plan' in p else -1
+        p['positon_in_experimental_plan'] if 'positon_in_experimental_plan' in p else -1
         for p in processes_working
     ]
     return [
@@ -164,16 +162,15 @@ def collectSampleData(archive):
                 entry_data = arch[entry_id]['data']
                 entry = {entry_id: {}}
                 try:
-                    entry[entry_id]['elements'] = arch[entry_id]['results'][
-                        'material'
-                    ]['elements']
+                    entry[entry_id]['elements'] = arch[entry_id]['results']['material'][
+                        'elements'
+                    ]
                 except BaseException:
                     entry[entry_id]['elements'] = []
                 # Check if it is a BaseProcess
                 module = entry_data['m_def'].split('.')[0]
                 eval(f"exec('import {module}')")
-                if baseclasses.BaseProcess in\
-                        inspect.getmro(eval(entry_data['m_def'])):
+                if baseclasses.BaseProcess in inspect.getmro(eval(entry_data['m_def'])):
                     collectBaseProcesses(entry, entry_id, entry_data)
                     result['processes'].update(entry)
 
@@ -221,28 +218,25 @@ def addLayerDepositionToStack(archive, process):
             archive.results.properties.optoelectronic.solar_cell.absorber.append(
                 layer_name
             )
-            archive.results.properties.optoelectronic\
-                .solar_cell.absorber_fabrication = [
-                    f"{process['method']}"
-                ]
+            archive.results.properties.optoelectronic.solar_cell.absorber_fabrication = [
+                f"{process['method']}"
+            ]
 
         if (
             'etl' in layer['layer_type'].lower()
             or 'electron' in layer['layer_type'].lower()
         ):
-            archive.results.properties.optoelectronic.solar_cell\
-                .electron_transport_layer.append(
-                    layer_name
-                )
+            archive.results.properties.optoelectronic.solar_cell.electron_transport_layer.append(
+                layer_name
+            )
 
         if (
             'htl' in layer['layer_type'].lower()
             or 'hole' in layer['layer_type'].lower()
         ):
-            archive.results.properties.optoelectronic.solar_cell\
-                .hole_transport_layer.append(
-                    layer_name
-                )
+            archive.results.properties.optoelectronic.solar_cell.hole_transport_layer.append(
+                layer_name
+            )
 
         if 'back' in layer['layer_type'].lower():
             archive.results.properties.optoelectronic.solar_cell.back_contact.append(
@@ -308,24 +302,21 @@ class SolcarCellSample(CompositeSystem):
                 archive.results.properties.optoelectronic.solar_cell.substrate = [
                     self.substrate.substrate
                 ]
-                archive.results.properties.optoelectronic.solar_cell\
-                    .device_stack.append(
-                        self.substrate.substrate
-                    )
+                archive.results.properties.optoelectronic.solar_cell.device_stack.append(
+                    self.substrate.substrate
+                )
             if self.substrate.conducting_material is not None:
                 archive.results.properties.optoelectronic.solar_cell.substrate.extend(
                     self.substrate.conducting_material
                 )
-                archive.results.properties.optoelectronic.solar_cell\
-                    .device_stack.extend(
-                        self.substrate.conducting_material
-                    )
+                archive.results.properties.optoelectronic.solar_cell.device_stack.extend(
+                    self.substrate.conducting_material
+                )
 
         if self.architecture:
-            archive.results.properties.optoelectronic.solar_cell\
-                .device_architecture = (
-                    self.architecture
-                )
+            archive.results.properties.optoelectronic.solar_cell.device_architecture = (
+                self.architecture
+            )
 
         if self.substrate:
             if self.substrate.pixel_area:
@@ -354,28 +345,23 @@ class SolcarCellSample(CompositeSystem):
                 archive.results.properties.optoelectronic.solar_cell.fill_factor = (
                     result_data['JVs'][jv_key]['fill_factor'][jv_idx]
                 )
-            if not np.isnan(result_data['JVs'][jv_key]['open_circuit_voltage']
-                            [jv_idx]):
-                archive.results.properties.optoelectronic.solar_cell\
-                    .open_circuit_voltage = (
-                        result_data['JVs'][jv_key]['open_circuit_voltage'][jv_idx]
-                        * ureg('V')
-                    )
+            if not np.isnan(result_data['JVs'][jv_key]['open_circuit_voltage'][jv_idx]):
+                archive.results.properties.optoelectronic.solar_cell.open_circuit_voltage = (
+                    result_data['JVs'][jv_key]['open_circuit_voltage'][jv_idx]
+                    * ureg('V')
+                )
             if not np.isnan(result_data['JVs'][jv_key]['light_intensity'][jv_idx]):
-                archive.results.properties.optoelectronic.solar_cell\
-                    .illumination_intensity = (
-                        result_data['JVs'][jv_key]['light_intensity'][jv_idx]
-                        * ureg('mW/cm**2')
-                    )
+                archive.results.properties.optoelectronic.solar_cell.illumination_intensity = (
+                    result_data['JVs'][jv_key]['light_intensity'][jv_idx]
+                    * ureg('mW/cm**2')
+                )
             if not np.isnan(
                 result_data['JVs'][jv_key]['short_circuit_current_density'][jv_idx]
             ):
-                archive.results.properties.optoelectronic.solar_cell\
-                    .short_circuit_current_density = (
-                        result_data['JVs'][jv_key]['short_circuit_current_density']
-                        [jv_idx]
-                        * ureg('mA/cm**2')
-                    )
+                archive.results.properties.optoelectronic.solar_cell.short_circuit_current_density = (
+                    result_data['JVs'][jv_key]['short_circuit_current_density'][jv_idx]
+                    * ureg('mA/cm**2')
+                )
             if not np.isnan(result_data['JVs'][jv_key]['device_area']):
                 archive.results.properties.optoelectronic.solar_cell.device_area = (
                     result_data['JVs'][jv_key]['device_area'] * ureg('cm**2')
@@ -394,8 +380,7 @@ class SolcarCellSample(CompositeSystem):
 
         archive.results.properties.optoelectronic.solar_cell.absorber = []
         archive.results.properties.optoelectronic.solar_cell.absorber_fabrication = []
-        archive.results.properties.optoelectronic.solar_cell.electron_transport_layer\
-            = []
+        archive.results.properties.optoelectronic.solar_cell.electron_transport_layer = []
         archive.results.properties.optoelectronic.solar_cell.hole_transport_layer = []
         archive.results.properties.optoelectronic.solar_cell.back_contact = []
 
@@ -413,5 +398,4 @@ class SolcarCellSample(CompositeSystem):
             if process['layer_deposition'] and process['elements']:
                 archive.results.material.elements.extend(process['elements'])
 
-        archive.results.material.elements = list(
-            set(archive.results.material.elements))
+        archive.results.material.elements = list(set(archive.results.material.elements))

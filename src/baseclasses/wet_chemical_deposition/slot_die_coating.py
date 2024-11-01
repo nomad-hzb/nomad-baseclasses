@@ -131,6 +131,5 @@ class SlotDieCoating(WetChemicalDeposition):
     properties = SubSection(section_def=SlotDieCoatingProperties)
 
     def normalize(self, archive, logger):
-        super().normalize(archive, logger)
-
         self.method = 'Slot Die Coating'
+        super().normalize(archive, logger)
