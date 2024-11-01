@@ -89,7 +89,10 @@ class SolarCellJV(PlotSection):
     )
 
     light_intensity = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00001129', 'https://purl.archive.org/tfsco/TFSCO_00002034'],
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00001129',
+            'https://purl.archive.org/tfsco/TFSCO_00002034',
+        ],
         type=np.dtype(np.float64),
         unit=('mW/cm**2'),
         shape=[],
@@ -104,7 +107,10 @@ class SolarCellJV(PlotSection):
     )
 
     open_circuit_voltage = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00001034', 'https://purl.archive.org/tfsco/TFSCO_00002063'],
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00001034',
+            'https://purl.archive.org/tfsco/TFSCO_00002063',
+        ],
         type=np.dtype(np.float64),
         unit='V',
         shape=[],
@@ -125,7 +131,10 @@ class SolarCellJV(PlotSection):
     )
 
     fill_factor = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00001107', 'https://purl.archive.org/tfsco/TFSCO_00002050'],
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00001107',
+            'https://purl.archive.org/tfsco/TFSCO_00002050',
+        ],
         type=np.dtype(np.float64),
         shape=[],
         description="""
@@ -145,7 +154,10 @@ class SolarCellJV(PlotSection):
     )
 
     potential_at_maximum_power_point = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00001106', 'https://purl.archive.org/tfsco/TFSCO_00002064'],
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00001106',
+            'https://purl.archive.org/tfsco/TFSCO_00002064',
+        ],
         type=np.dtype(np.float64),
         unit='V',
         shape=[],
@@ -156,7 +168,10 @@ class SolarCellJV(PlotSection):
     )
 
     current_density_at_maximun_power_point = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00001105', 'https://purl.archive.org/tfsco/TFSCO_00005061'],
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00001105',
+            'https://purl.archive.org/tfsco/TFSCO_00005061',
+        ],
         type=np.dtype(np.float64),
         unit='mA / cm**2',
         shape=[],
@@ -167,7 +182,10 @@ class SolarCellJV(PlotSection):
     )
 
     series_resistance = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00001104', 'https://purl.archive.org/tfsco/TFSCO_00002100'],
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00001104',
+            'https://purl.archive.org/tfsco/TFSCO_00002100',
+        ],
         type=np.dtype(np.float64),
         unit='ohm*cm**2',
         shape=[],
@@ -178,7 +196,10 @@ class SolarCellJV(PlotSection):
     )
 
     shunt_resistance = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00001103', 'https://purl.archive.org/tfsco/TFSCO_00002099'],
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00001103',
+            'https://purl.archive.org/tfsco/TFSCO_00002099',
+        ],
         type=np.dtype(np.float64),
         unit='ohm*cm**2',
         shape=[],
@@ -258,7 +279,10 @@ class SolarCellJVCurve(SolarCellJV):
     )
 
     current_density = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00000064', 'https://purl.archive.org/tfsco/TFSCO_00005061'],
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00000064',
+            'https://purl.archive.org/tfsco/TFSCO_00005061',
+        ],
         type=np.dtype(np.float64),
         shape=['n_values'],
         unit='mA/cm^2',
@@ -266,7 +290,10 @@ class SolarCellJVCurve(SolarCellJV):
     )
 
     voltage = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0001464', 'https://purl.archive.org/tfsco/TFSCO_00005005'],
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0001464',
+            'https://purl.archive.org/tfsco/TFSCO_00005005',
+        ],
         type=np.dtype(np.float64),
         shape=['n_values'],
         unit='V',
@@ -275,7 +302,11 @@ class SolarCellJVCurve(SolarCellJV):
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
-        if self.current_density is not None and self.efficiency is None and not self.dark:
+        if (
+            self.current_density is not None
+            and self.efficiency is None
+            and not self.dark
+        ):
             if self.voltage is not None:
                 (
                     self.open_circuit_voltage,
@@ -289,17 +320,10 @@ class SolarCellJVCurve(SolarCellJV):
 class SolarCellJVCurveCustom(SolarCellJVCurve):
     m_def = Section(
         label_quantity='cell_name',
-        a_eln=dict(
-            hide=[
-                'data_file',
-                'certified_values',
-                'certification_institute']))
-
-    dark = Quantity(
-        type=bool,
-        default=False,
-        a_eln=dict(component='BoolEditQuantity')
+        a_eln=dict(hide=['data_file', 'certified_values', 'certification_institute']),
     )
+
+    dark = Quantity(type=bool, default=False, a_eln=dict(component='BoolEditQuantity'))
 
 
 class SolarCellJVCurveDarkCustom(SolarCellJVCurveCustom):
@@ -309,105 +333,137 @@ class SolarCellJVCurveDarkCustom(SolarCellJVCurveCustom):
             hide=[
                 'data_file',
                 'certified_values',
-                'certification_institute', 'light_intensity', 'open_circuit_voltage', 'short_circuit_current_density',
-                'fill_factor', 'efficiency', 'potential_at_maximum_power_point',
-                'current_density_at_maximun_power_point', 'series_resistance', 'shunt_resistance']))
+                'certification_institute',
+                'light_intensity',
+                'open_circuit_voltage',
+                'short_circuit_current_density',
+                'fill_factor',
+                'efficiency',
+                'potential_at_maximum_power_point',
+                'current_density_at_maximun_power_point',
+                'series_resistance',
+                'shunt_resistance',
+            ]
+        ),
+    )
 
 
 class JVMeasurement(BaseMeasurement):
-
     m_def = Section(
         links=['https://purl.archive.org/tfsco/TFSCO_00000088'],
-        label_quantity='data_file', validate=False)
+        label_quantity='data_file',
+        validate=False,
+    )
 
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
     active_area = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00001004', 'https://purl.archive.org/tfsco/TFSCO_00002097'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00001004',
+            'https://purl.archive.org/tfsco/TFSCO_00002097',
+        ],
+        type=np.dtype(np.float64),
         unit=('cm^2'),
         shape=[],
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='cm^2',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     intensity = Quantity(
         links=['https://purl.archive.org/tfsco/TFSCO_00001128'],
-        type=np.dtype(
-            np.float64),
+        type=np.dtype(np.float64),
         unit=('mW/cm^2'),
         shape=[],
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='mW/cm^2', props=dict(minValue=0)))
+            defaultDisplayUnit='mW/cm^2',
+            props=dict(minValue=0),
+        ),
+    )
 
     integration_time = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00002076', 'https://purl.archive.org/tfsco/TFSCO_00002093'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00002076',
+            'https://purl.archive.org/tfsco/TFSCO_00002093',
+        ],
+        type=np.dtype(np.float64),
         unit=('ms'),
         shape=[],
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='ms',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     settling_time = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00002077', 'https://purl.archive.org/tfsco/TFSCO_00002092'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00002077',
+            'https://purl.archive.org/tfsco/TFSCO_00002092',
+        ],
+        type=np.dtype(np.float64),
         unit=('ms'),
         shape=[],
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='ms',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     averaging = Quantity(
-        type=np.dtype(np.float64),
-        shape=[],
-        a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.float64), shape=[], a_eln=dict(component='NumberEditQuantity')
+    )
 
     compliance = Quantity(
         links=['https://purl.archive.org/tfsco/TFSCO_00002078'],
-        type=np.dtype(
-            np.float64),
+        type=np.dtype(np.float64),
         unit=('mA/cm^2'),
         shape=[],
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='mA/cm^2', props=dict(minValue=0)))
+            defaultDisplayUnit='mA/cm^2',
+            props=dict(minValue=0),
+        ),
+    )
 
     jv_curve = SubSection(
         links=['http://purl.obolibrary.org/obo/OBI_0000299'],
         section_def=SolarCellJVCurveCustom,
         repeats=True,
-        label_quantity='cell_name')
+        label_quantity='cell_name',
+    )
 
     def normalize(self, archive, logger):
-        self.method = "JV Measurement"
+        self.method = 'JV Measurement'
         super().normalize(archive, logger)
 
         max_idx = -1
         eff = -1
         for i, curve in enumerate(self.jv_curve):
-            if curve.efficiency is not None and curve.efficiency > eff and not curve.dark:
+            if (
+                curve.efficiency is not None
+                and curve.efficiency > eff
+                and not curve.dark
+            ):
                 eff = curve.efficiency
                 max_idx = i
         if max_idx >= 0:
             add_solar_cell(archive)
             solar_cell = archive.results.properties.optoelectronic.solar_cell
-            solar_cell.open_circuit_voltage = self.jv_curve[max_idx].open_circuit_voltage
+            solar_cell.open_circuit_voltage = self.jv_curve[
+                max_idx
+            ].open_circuit_voltage
             solar_cell.short_circuit_current_density = self.jv_curve[
-                max_idx].short_circuit_current_density
+                max_idx
+            ].short_circuit_current_density
             solar_cell.fill_factor = self.jv_curve[max_idx].fill_factor
             solar_cell.efficiency = self.jv_curve[max_idx].efficiency
             solar_cell.illumination_intensity = self.jv_curve[max_idx].light_intensity

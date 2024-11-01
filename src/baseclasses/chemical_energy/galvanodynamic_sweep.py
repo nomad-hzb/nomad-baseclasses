@@ -24,37 +24,38 @@ from .voltammetry import Voltammetry
 
 
 class LSGProperties(PotentiostatProperties):
-
     initial_current = Quantity(
         type=np.dtype(np.float64),
         unit=('mA'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA'),
+    )
 
     final_current = Quantity(
         type=np.dtype(np.float64),
         unit=('mA'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA'),
+    )
 
     scan_rate = Quantity(
         type=np.dtype(np.float64),
         unit=('mA/s'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA/s'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA/s'),
+    )
 
     step_size = Quantity(
         type=np.dtype(np.float64),
         unit=('mA'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA'),
+    )
 
 
 class GalvanodynamicSweep(Voltammetry):
-
     # m_def = Section(
     #     links=[],
     # )
 
-    properties = SubSection(
-        section_def=LSGProperties)
+    properties = SubSection(section_def=LSGProperties)
 
     def normalize(self, archive, logger):
-        self.method = "Galvano dynamic sweep"
+        self.method = 'Galvano dynamic sweep'
         super().normalize(archive, logger)

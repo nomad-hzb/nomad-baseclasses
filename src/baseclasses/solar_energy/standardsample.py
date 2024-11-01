@@ -25,8 +25,8 @@ from .substrate import Substrate
 
 class SolarCellProperties(ArchiveSection):
     substrate = Quantity(
-        type=Reference(Substrate.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
+        type=Reference(Substrate.m_def), a_eln=dict(component='ReferenceEditQuantity')
+    )
 
     architecture = Quantity(
         type=str,
@@ -51,14 +51,17 @@ class SolarCellProperties(ArchiveSection):
                     'Back contacted',
                     'pin',
                     'nip',
-                    'Schottky'])))
+                    'Schottky',
+                ]
+            ),
+        ),
+    )
 
 
 class StandardSampleSolarCell(StandardSample):
-
     substrate = Quantity(
-        type=Reference(Substrate.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
+        type=Reference(Substrate.m_def), a_eln=dict(component='ReferenceEditQuantity')
+    )
 
     architecture = Quantity(
         type=str,
@@ -83,7 +86,11 @@ class StandardSampleSolarCell(StandardSample):
                     'Back contacted',
                     'pin',
                     'nip',
-                    'Schottky'])))
+                    'Schottky',
+                ]
+            ),
+        ),
+    )
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)

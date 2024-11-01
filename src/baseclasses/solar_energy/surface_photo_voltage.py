@@ -24,96 +24,92 @@ from .. import BaseMeasurement
 
 
 class trSPVProperties(ArchiveSection):
-
     laser_pulse_frequency = Quantity(
         type=np.dtype(np.float64),
         unit=('Hz'),
-        a_eln=dict(component='NumberEditQuantity',
-                   defaultDisplayUnit='Hz'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='Hz'),
+    )
 
-    filter_setup = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
+    filter_setup = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
     laser_pulse_intensity = Quantity(
         type=np.dtype(np.float64),
         unit=('W/m**2'),
-        a_eln=dict(component='NumberEditQuantity',
-                   defaultDisplayUnit='W/m**2'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='W/m**2'),
+    )
 
     number_of_transients = Quantity(
         type=np.dtype(np.int64),
-        a_eln=dict(component='NumberEditQuantity',
-                   ))
+        a_eln=dict(
+            component='NumberEditQuantity',
+        ),
+    )
 
     number_of_averages = Quantity(
         type=np.dtype(np.int64),
-        a_eln=dict(component='NumberEditQuantity',
-                   ))
+        a_eln=dict(
+            component='NumberEditQuantity',
+        ),
+    )
 
     points_per_transient = Quantity(
         type=np.dtype(np.int64),
-        a_eln=dict(component='NumberEditQuantity',
-                   ))
+        a_eln=dict(
+            component='NumberEditQuantity',
+        ),
+    )
 
     capacitance = Quantity(
         type=np.dtype(np.float64),
         unit=('pF'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='pF'
-                   ))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='pF'),
+    )
 
 
 class trSPVVoltage(ArchiveSection):
-
-    m_def = Section(label_quantity="laser_energy")
+    m_def = Section(label_quantity='laser_energy')
     laser_energy = Quantity(
         type=np.dtype(np.float64),
         unit=('nm'),
-        a_eln=dict(component='NumberEditQuantity',
-                   defaultDisplayUnit='nm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
+    )
 
-    measurement = Quantity(
-        type=np.dtype(
-            np.float64), shape=['*'], unit='V/pF')
+    measurement = Quantity(type=np.dtype(np.float64), shape=['*'], unit='V/pF')
 
-    voltage = Quantity(
-        type=np.dtype(
-            np.float64), shape=['*'], unit='mV')
+    voltage = Quantity(type=np.dtype(np.float64), shape=['*'], unit='mV')
 
 
 class trSPVData(ArchiveSection):
+    time = Quantity(type=np.dtype(np.float64), shape=['*'], unit='s')
 
-    time = Quantity(
-        type=np.dtype(np.float64),
-        shape=['*'],
-        unit='s')
-
-    voltages = SubSection(
-        section_def=trSPVVoltage, repeats=True)
+    voltages = SubSection(section_def=trSPVVoltage, repeats=True)
 
 
 class trSPVMeasurement(BaseMeasurement):
-    '''PL Measurement'''
+    """PL Measurement"""
 
-    m_def = Section(
-        a_eln=dict(hide=['certified_values', 'certification_institute'])
-    )
+    m_def = Section(a_eln=dict(hide=['certified_values', 'certification_institute']))
 
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
-    properties = SubSection(
-        section_def=trSPVProperties)
+    properties = SubSection(section_def=trSPVProperties)
 
-    data = SubSection(
-        section_def=trSPVData)
+    data = SubSection(section_def=trSPVData)
 
     def normalize(self, archive, logger):
-        self.method = "transient SPV Measurement"
-        if self.properties is not None and self.properties.capacitance is not None \
-                and self.data is not None and self.data.voltages is not None:
+        self.method = 'transient SPV Measurement'
+        if (
+            self.properties is not None
+            and self.properties.capacitance is not None
+            and self.data is not None
+            and self.data.voltages is not None
+        ):
             for voltage_data in self.data.voltages:
-                voltage_data.voltage = voltage_data.measurement * self.properties.capacitance
+                voltage_data.voltage = (
+                    voltage_data.measurement * self.properties.capacitance
+                )
         super().normalize(archive, logger)

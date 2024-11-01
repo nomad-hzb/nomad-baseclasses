@@ -27,33 +27,32 @@ from ..chemical import Chemical
 
 
 class SputteringProcess(ArchiveSection):
-
     target = Quantity(
         links=['https://purl.archive.org/tfsco/TFSCO_00002035'],
         type=Reference(Chemical.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
+        a_eln=dict(component='ReferenceEditQuantity'),
+    )
 
-    target_2 = SubSection(
-        section_def=PubChemPureSubstanceSectionCustom)
+    target_2 = SubSection(section_def=PubChemPureSubstanceSectionCustom)
 
-    gas_2 = SubSection(
-        section_def=PubChemPureSubstanceSectionCustom)
+    gas_2 = SubSection(section_def=PubChemPureSubstanceSectionCustom)
 
     thickness = Quantity(
         links=['http://purl.obolibrary.org/obo/PATO_0000915'],
-        type=np.dtype(
-            np.float64),
+        type=np.dtype(np.float64),
         unit=('nm'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='nm',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     gas = Quantity(
         links=['http://purl.obolibrary.org/obo/CHEBI_59999'],
         type=Reference(Chemical.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
+        a_eln=dict(component='ReferenceEditQuantity'),
+    )
 
     source = Quantity(
         links=['https://purl.archive.org/tfsco/TFSCO_00002035'],
@@ -66,170 +65,203 @@ class SputteringProcess(ArchiveSection):
                     '2',
                     '3',
                     '4',
-                ])))
+                ]
+            ),
+        ),
+    )
 
     pressure = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0001025', 'https://purl.archive.org/tfsco/TFSCO_00005040'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0001025',
+            'https://purl.archive.org/tfsco/TFSCO_00005040',
+        ],
+        type=np.dtype(np.float64),
         unit=('mbar'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='mbar',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     capman_pressure = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0001025', 'https://purl.archive.org/tfsco/TFSCO_00005040'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0001025',
+            'https://purl.archive.org/tfsco/TFSCO_00005040',
+        ],
+        type=np.dtype(np.float64),
         unit=('mmmHg'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='mmmHg',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     temperature = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000146', 'https://purl.archive.org/tfsco/TFSCO_00002071'],
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000146',
+            'https://purl.archive.org/tfsco/TFSCO_00002071',
+        ],
         type=np.dtype(np.float64),
         unit=('°C'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
 
     burn_in_time = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000165',
+            'https://purl.archive.org/tfsco/TFSCO_00005085',
+        ],
+        type=np.dtype(np.float64),
         unit=('s'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='s',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     deposition_time = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000165',
+            'https://purl.archive.org/tfsco/TFSCO_00005085',
+        ],
+        type=np.dtype(np.float64),
         unit=('s'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='s',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     power = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0001024', 'https://purl.archive.org/tfsco/TFSCO_00002104'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0001024',
+            'https://purl.archive.org/tfsco/TFSCO_00002104',
+        ],
+        type=np.dtype(np.float64),
         unit=('W'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='W', props=dict(minValue=0)))
+            defaultDisplayUnit='W',
+            props=dict(minValue=0),
+        ),
+    )
 
     voltage = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0001464', 'https://purl.archive.org/tfsco/TFSCO_00005005'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0001464',
+            'https://purl.archive.org/tfsco/TFSCO_00005005',
+        ],
+        type=np.dtype(np.float64),
         unit=('V'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='V'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
 
     gas_flow_rate = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00002114', 'https://purl.archive.org/tfsco/TFSCO_00002108'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00002114',
+            'https://purl.archive.org/tfsco/TFSCO_00002108',
+        ],
+        type=np.dtype(np.float64),
         unit=('cm**3/minute'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='cm**3/minute', props=dict(minValue=0)))
+            defaultDisplayUnit='cm**3/minute',
+            props=dict(minValue=0),
+        ),
+    )
 
     rotation_rate = Quantity(
-        type=np.dtype(
-            np.float64),
+        type=np.dtype(np.float64),
         unit=('rpm'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='rpm', props=dict(minValue=0)))
+            defaultDisplayUnit='rpm',
+            props=dict(minValue=0),
+        ),
+    )
 
 
 class Sputtering(LayerDeposition):
-    '''Base class for evaporation of a sample'''
+    """Base class for evaporation of a sample"""
+
     m_def = Section(
         links=['http://purl.obolibrary.org/obo/CHMO_0001364'],
     )
 
-    processes = SubSection(
-        section_def=SputteringProcess, repeats=True)
+    processes = SubSection(section_def=SputteringProcess, repeats=True)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
 
-        self.method = "Sputtering"
+        self.method = 'Sputtering'
 
 
 class TargetProperties(ArchiveSection):
     m_def = Section(
-        label_quantity="name",
+        label_quantity='name',
     )
     name = Quantity(type=str)
     material = SubSection(
         links=['https://purl.archive.org/tfsco/TFSCO_00002035'],
-        section_def=PubChemPureSubstanceSectionCustom
+        section_def=PubChemPureSubstanceSectionCustom,
     )
 
     position = Quantity(
         type=str,
         a_eln=dict(
             component='StringEditQuantity',
-        ))
+        ),
+    )
 
     angle = Quantity(
         type=np.dtype(np.float64),
         unit=('degree'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='degree'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='degree'),
+    )
 
     power = Quantity(
         type=np.dtype(np.float64),
         unit=('W'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='W'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='W'),
+    )
 
     distance = Quantity(
         type=np.dtype(np.float64),
         unit=('cm'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='cm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm'),
+    )
 
     time = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000165',
+            'https://purl.archive.org/tfsco/TFSCO_00005085',
+        ],
+        type=np.dtype(np.float64),
         unit=('s'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='s',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     ac_dc = Quantity(
-        type=MEnum('AC', 'DC'),
-        a_eln=dict(
-            component='RadioEnumEditQuantity'))
+        type=MEnum('AC', 'DC'), a_eln=dict(component='RadioEnumEditQuantity')
+    )
 
     voltage = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0001464', 'https://purl.archive.org/tfsco/TFSCO_00005005'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0001464',
+            'https://purl.archive.org/tfsco/TFSCO_00005005',
+        ],
+        type=np.dtype(np.float64),
         unit=('V'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='V'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
 
     def normalize(self, archive, logger):
         if self.material and self.material.molecular_formula:
@@ -237,76 +269,90 @@ class TargetProperties(ArchiveSection):
 
 
 class MultiTargetSputteringProcess(ArchiveSection):
-
-    targets = SubSection(
-        section_def=TargetProperties, repeats=True
-    )
+    targets = SubSection(section_def=TargetProperties, repeats=True)
 
     gas = SubSection(
         links=['http://purl.obolibrary.org/obo/CHEBI_59999'],
-        section_def=PubChemPureSubstanceSectionCustom
+        section_def=PubChemPureSubstanceSectionCustom,
     )
 
     manipulator_position = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
+        type=str, a_eln=dict(component='StringEditQuantity')
+    )
 
     base_pressure = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0001025', 'https://purl.archive.org/tfsco/TFSCO_00005040'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0001025',
+            'https://purl.archive.org/tfsco/TFSCO_00005040',
+        ],
+        type=np.dtype(np.float64),
         unit=('mbar'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='mbar',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     temperature = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000146', 'https://purl.archive.org/tfsco/TFSCO_00002071'],
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000146',
+            'https://purl.archive.org/tfsco/TFSCO_00002071',
+        ],
         type=np.dtype(np.float64),
         unit=('°C'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
 
     deposition_time = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000165',
+            'https://purl.archive.org/tfsco/TFSCO_00005085',
+        ],
+        type=np.dtype(np.float64),
         unit=('s'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='s',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     power = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0001024', 'https://purl.archive.org/tfsco/TFSCO_00002104'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0001024',
+            'https://purl.archive.org/tfsco/TFSCO_00002104',
+        ],
+        type=np.dtype(np.float64),
         unit=('W'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='W', props=dict(minValue=0)))
+            defaultDisplayUnit='W',
+            props=dict(minValue=0),
+        ),
+    )
 
     rotation_rate = Quantity(
-        type=np.dtype(
-            np.float64),
+        type=np.dtype(np.float64),
         unit=('rpm'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='rpm', props=dict(minValue=0)))
+            defaultDisplayUnit='rpm',
+            props=dict(minValue=0),
+        ),
+    )
 
 
 class MultiTargetSputtering(LayerDeposition):
-    '''Base class for evaporation of a sample'''
+    """Base class for evaporation of a sample"""
+
     m_def = Section(
         links=['http://purl.obolibrary.org/obo/CHMO_0001364'],
     )
 
-    process_properties = SubSection(
-        section_def=MultiTargetSputteringProcess)
+    process_properties = SubSection(section_def=MultiTargetSputteringProcess)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
 
-        self.method = "Multi Target Sputtering"
+        self.method = 'Multi Target Sputtering'

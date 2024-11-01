@@ -24,28 +24,30 @@ from .wet_chemical_deposition import WetChemicalDeposition
 
 
 class DipCoatingProperties(ArchiveSection):
-
     time = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000165',
+            'https://purl.archive.org/tfsco/TFSCO_00005085',
+        ],
+        type=np.dtype(np.float64),
         unit=('minute'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='minute',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
 
 class DipCoating(WetChemicalDeposition):
-    '''Base class for dip coating of a sample'''
+    """Base class for dip coating of a sample"""
+
     m_def = Section(
         links=['http://purl.obolibrary.org/obo/CHMO_0001471'],
     )
 
-    properties = SubSection(
-        section_def=DipCoatingProperties)
+    properties = SubSection(section_def=DipCoatingProperties)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
-        self.method = "Dip Coating"
+        self.method = 'Dip Coating'

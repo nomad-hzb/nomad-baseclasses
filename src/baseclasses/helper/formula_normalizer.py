@@ -19,10 +19,7 @@ import re
 
 from pymatgen.core import Composition
 
-preprocess_rules = {
-    'FAPbI': 'FAPbI3',
-    'MAPbI': 'MAPbI3'
-}
+preprocess_rules = {'FAPbI': 'FAPbI3', 'MAPbI': 'MAPbI3'}
 
 cation_dict = {
     '(TMA)': '(N(CH3)3)',
@@ -111,7 +108,7 @@ cation_dict = {
     '(2PACz)': '(C14H14NO3P)',
     '(PCBM)': '(C72H14O2)',
     '(PEDOT)': 'CHOS',
-    '(PM6)': 'C68H76F2O2S8'
+    '(PM6)': 'C68H76F2O2S8',
 }
 
 cation_dict_miss = {
@@ -152,14 +149,13 @@ cation_dict_miss = {
     'PDA': '',
     '(F5PEA)': '',
     '(OdA)': '',
-    '(ThFA)': ''}
+    '(ThFA)': '',
+}
 
 
 class PerovskiteFormulaNormalizer:
-
     def __init__(self, input_formula: str):
-        """
-        """
+        """ """
         self.input_formula = input_formula
         self.cation_dict = cation_dict
         self.cation_dict_miss = cation_dict_miss
@@ -173,26 +169,26 @@ class PerovskiteFormulaNormalizer:
     def replace_formula(self):
         item = self.input_formula
         if any(key in item for key in self.cation_dict_miss.keys()):
-            print('''
+            print("""
                   The given perovskite composition contains an undefined abbreviation.
                   The composition could not be parsed.
-                  ''')
+                  """)
         else:
             for word, replacement in sorted(
-                self.cation_dict.items(), key=lambda x: len(
-                    x[0]), reverse=True):
+                self.cation_dict.items(), key=lambda x: len(x[0]), reverse=True
+            ):
                 item = re.sub(word, replacement, item)
             output_formula = item
             return output_formula
 
     def clean_formula(self):
-        '''
+        """
         Takes a formula and formats it into a nomad `chemical_formula_reduced`
 
         Returns:
             chemical_formula_reduced: A string of the formatted *reduced* formula
             elements: A list of the elements in the formula
-        '''
+        """
         self.pre_process_formula()
         replaced_formula = self.replace_formula()
         if replaced_formula is not None:
@@ -201,18 +197,23 @@ class PerovskiteFormulaNormalizer:
                 print(composition)
                 int_formula = composition.get_integer_formula_and_factor()[0]
                 composition_final = Composition(int_formula)
-                clean_formulas_no_brackets = composition_final.get_reduced_composition_and_factor()[
-                    0]
+                clean_formulas_no_brackets = (
+                    composition_final.get_reduced_composition_and_factor()[0]
+                )
                 composition_final_int = Composition(clean_formulas_no_brackets)
                 # hill_formula = composition_final_int.hill_formula
-                reduced_formula = composition_final_int.get_reduced_composition_and_factor()[
-                    0].to_pretty_string()
+                reduced_formula = (
+                    composition_final_int.get_reduced_composition_and_factor()[
+                        0
+                    ].to_pretty_string()
+                )
                 # reduced_formula = Composition(hill_formula).reduced_formula
                 elements = composition_final_int.chemical_system.split('-')
                 return reduced_formula, elements
 
             except ValueError:
                 print(
-                    'Perovskite formula with a cation abbreviation could not be parsed')
+                    'Perovskite formula with a cation abbreviation could not be parsed'
+                )
 
             return None, None

@@ -23,35 +23,38 @@ from .. import BaseProcess
 
 
 class Storage(BaseProcess):
-    '''Base class for storage of a sample'''
-    start_date = Quantity(
-        type=Datetime,
-        a_eln=dict(component='DateTimeEditQuantity'))
+    """Base class for storage of a sample"""
 
-    end_date = Quantity(
-        type=Datetime,
-        a_eln=dict(component='DateTimeEditQuantity'))
+    start_date = Quantity(type=Datetime, a_eln=dict(component='DateTimeEditQuantity'))
+
+    end_date = Quantity(type=Datetime, a_eln=dict(component='DateTimeEditQuantity'))
 
     duration = Quantity(
-        links = ['http://purl.obolibrary.org/obo/PATO_0001309', 'https://purl.archive.org/tfsco/TFSCO_00002006'],
-        type=str)
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0001309',
+            'https://purl.archive.org/tfsco/TFSCO_00002006',
+        ],
+        type=str,
+    )
 
     start_humidity = Quantity(
-        links = ['http://purl.obolibrary.org/obo/PATO_0015009'],
+        links=['http://purl.obolibrary.org/obo/PATO_0015009'],
         type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity'))
+        a_eln=dict(component='NumberEditQuantity'),
+    )
 
     end_humidity = Quantity(
-        links = ['http://purl.obolibrary.org/obo/PATO_0015009'],
+        links=['http://purl.obolibrary.org/obo/PATO_0015009'],
         type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity'))
+        a_eln=dict(component='NumberEditQuantity'),
+    )
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
 
-        self.method = "Storage"
+        self.method = 'Storage'
         if self.start_date and self.end_date:
             if self.start_date < self.end_date:
                 self.duration = str(self.end_date - self.start_date)
             else:
-                self.duration = "invalid, start date after end date"
+                self.duration = 'invalid, start date after end date'

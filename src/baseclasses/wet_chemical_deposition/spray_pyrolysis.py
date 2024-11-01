@@ -24,31 +24,35 @@ from .wet_chemical_deposition import WetChemicalDeposition
 
 
 class SprayPyrolysisProperties(ArchiveSection):
-
     temperature = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000146',
-               'https://purl.archive.org/tfsco/TFSCO_00002111'],
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000146',
+            'https://purl.archive.org/tfsco/TFSCO_00002111',
+        ],
         type=np.dtype(np.float64),
         unit=('°C'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
 
     time = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000165',
-               'https://purl.archive.org/tfsco/TFSCO_00005085'],
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000165',
+            'https://purl.archive.org/tfsco/TFSCO_00005085',
+        ],
         type=np.dtype(np.float64),
         unit=('minute'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='minute'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='minute'),
+    )
 
 
 class SprayPyrolysis(WetChemicalDeposition):
-    '''Base class for spray pyrolysis of a sample'''
-    m_def = Section(
-        links=['http://purl.obolibrary.org/obo/CHMO_0001516']
-    )
+    """Base class for spray pyrolysis of a sample"""
+
+    m_def = Section(links=['http://purl.obolibrary.org/obo/CHMO_0001516'])
 
     properties = SubSection(section_def=SprayPyrolysisProperties)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
 
-        self.method = "Spray Pyrolysis"
+        self.method = 'Spray Pyrolysis'

@@ -32,44 +32,45 @@ class CatalysisSubstrate(ArchiveSection):
         a_eln=dict(
             component='EnumEditQuantity',
             props=dict(
-                suggestions=['glassy carbon', 'ITO on glass', 'Platinum', 'glass', 'silicon wafer'])
-        ))
+                suggestions=[
+                    'glassy carbon',
+                    'ITO on glass',
+                    'Platinum',
+                    'glass',
+                    'silicon wafer',
+                ]
+            ),
+        ),
+    )
 
     substrate_dimension = Quantity(
         type=str,
         a_eln=dict(
             component='StringEditQuantity',
-
-        ))
+        ),
+    )
 
 
 class CatalysisSample(CompositeSystem):
-
     active_area = Quantity(
         type=np.dtype(np.float64),
         unit=('cm^2'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'),
+    )
 
-    substrate = SubSection(
-        section_def=CatalysisSubstrate)
+    substrate = SubSection(section_def=CatalysisSubstrate)
 
-    parent = SubSection(
-        section_def=CompositeSystemReference)
+    parent = SubSection(section_def=CompositeSystemReference)
 
     def normalize(self, archive, logger):
-        super().normalize(
-            archive,
-            logger)
-       
+        super().normalize(archive, logger)
 
 
 class CatalysisLibrary(LibrarySample):
-
     substrate = Quantity(
         type=Reference(CatalysisSubstrate.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
+        a_eln=dict(component='ReferenceEditQuantity'),
+    )
 
     def normalize(self, archive, logger):
-        super().normalize(
-            archive,
-            logger)
+        super().normalize(archive, logger)

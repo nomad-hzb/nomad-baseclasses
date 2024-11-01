@@ -22,39 +22,44 @@ from nomad.metainfo import Quantity
 
 
 class Sintering(ArchiveSection):
-    '''Base class for sintering of a sample'''
+    """Base class for sintering of a sample"""
+
     temperature = Quantity(
-        links = ['http://purl.obolibrary.org/obo/PATO_0000146','https://purl.archive.org/tfsco/TFSCO_00002111'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000146',
+            'https://purl.archive.org/tfsco/TFSCO_00002111',
+        ],
+        type=np.dtype(np.float64),
         unit=('°C'),
         shape=[],
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='°C'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
 
     time = Quantity(
-        links = ['http://purl.obolibrary.org/obo/PATO_0000165','https://purl.archive.org/tfsco/TFSCO_00005085'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000165',
+            'https://purl.archive.org/tfsco/TFSCO_00005085',
+        ],
+        type=np.dtype(np.float64),
         unit=('s'),
         shape=[],
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='minute',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     ramp = Quantity(
-        type=np.dtype(
-            np.float64),
+        type=np.dtype(np.float64),
         unit=('s'),
         shape=[],
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='minute',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
 
 # class AnnealingStandAlone(Annealing,ProcessOnSample):

@@ -24,35 +24,33 @@ from .voltammetry import Voltammetry
 
 
 class OCVProperties(PotentiostatProperties):
-
     total_time = Quantity(
         type=np.dtype(np.float64),
         unit=('s'),
         shape=[],
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
+    )
 
     sample_period = Quantity(
         type=np.dtype(np.float64),
         unit=('s'),
         shape=[],
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
+    )
 
     stability = Quantity(
         type=np.dtype(np.float64),
         unit=('mV/s'),
         shape=[],
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mV/s'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mV/s'),
+    )
 
 
 class OpenCircuitVoltage(Voltammetry):
-    
-    m_def = Section(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007210']
-    )
+    m_def = Section(links=['https://w3id.org/nfdi4cat/voc4cat_0007210'])
 
-    properties = SubSection(
-        section_def=OCVProperties)
+    properties = SubSection(section_def=OCVProperties)
 
     def normalize(self, archive, logger):
-        self.method = "Open Circuit Voltage"
+        self.method = 'Open Circuit Voltage'
         super().normalize(archive, logger)

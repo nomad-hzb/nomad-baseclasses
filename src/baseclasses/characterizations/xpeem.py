@@ -20,8 +20,8 @@ from .. import BaseMeasurement
 
 
 class XPEEM(BaseMeasurement):
-    '''Eqe Measurement'''
+    """Eqe Measurement"""
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
-        self.method = "XPEEM"
+        self.method = 'XPEEM'

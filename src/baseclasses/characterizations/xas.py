@@ -23,105 +23,114 @@ from .. import BaseMeasurement
 
 
 class XAS(BaseMeasurement):
-    '''XAS Measurement'''
+    """XAS Measurement"""
 
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
-    energy = Quantity(
-        type=np.dtype(np.float64),
-        shape=['*'],
-        unit='keV')
+    energy = Quantity(type=np.dtype(np.float64), shape=['*'], unit='keV')
 
     seconds = Quantity(
         type=np.dtype(np.float64),
         unit='s',
-        shape=['*'], a_plot=[
+        shape=['*'],
+        a_plot=[
             {
                 'x': 'energy',
                 'y': 'seconds',
                 'layout': {
-                    'yaxis': {
-                        "fixedrange": False},
-                    'xaxis': {
-                        "fixedrange": False}},
-            }])
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+            }
+        ],
+    )
 
     k0 = Quantity(
         type=np.dtype(np.float64),
-        shape=['*'], a_plot=[
+        shape=['*'],
+        a_plot=[
             {
                 'x': 'energy',
                 'y': 'k0',
                 'layout': {
-                    'yaxis': {
-                        "fixedrange": False},
-                    'xaxis': {
-                        "fixedrange": False}},
-            }])
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+            }
+        ],
+    )
 
     k1 = Quantity(
         type=np.dtype(np.float64),
-        shape=['*'], a_plot=[
+        shape=['*'],
+        a_plot=[
             {
                 'x': 'energy',
                 'y': 'k1',
                 'layout': {
-                    'yaxis': {
-                        "fixedrange": False},
-                    'xaxis': {
-                        "fixedrange": False}},
-            }])
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+            }
+        ],
+    )
 
     k3 = Quantity(
         type=np.dtype(np.float64),
-        shape=['*'], a_plot=[
+        shape=['*'],
+        a_plot=[
             {
                 'x': 'energy',
                 'y': 'k3',
                 'layout': {
-                    'yaxis': {
-                        "fixedrange": False},
-                    'xaxis': {
-                        "fixedrange": False}},
-            }])
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+            }
+        ],
+    )
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
 
 
 class XASFluorescence(XAS):
-
     absorbance_of_the_reference = Quantity(
         type=np.dtype(np.float64),
-        shape=['*'], a_plot=[
+        shape=['*'],
+        a_plot=[
             {
                 'x': 'energy',
                 'y': 'absorbance_of_the_reference',
                 'layout': {
-                    'yaxis': {
-                        "fixedrange": False},
-                    'xaxis': {
-                        "fixedrange": False}},
-            }])
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+            }
+        ],
+    )
 
     fluorescence_yield = Quantity(
         type=np.dtype(np.float64),
-        shape=['*'], a_plot=[
+        shape=['*'],
+        a_plot=[
             {
                 'x': 'energy',
                 'y': 'fluorescence_yield',
                 'layout': {
-                    'yaxis': {
-                        "fixedrange": False},
-                    'xaxis': {
-                        "fixedrange": False}},
-            }])
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+            }
+        ],
+    )
 
     def normalize(self, archive, logger):
-        self.method = "XAS Fluoresence"
+        self.method = 'XAS Fluoresence'
         super().normalize(archive, logger)
 
         if self.k1 is not None and self.k0 is not None:
@@ -132,35 +141,38 @@ class XASFluorescence(XAS):
 
 
 class XASTransmission(XAS):
-
     absorbance_of_the_reference = Quantity(
         type=np.dtype(np.float64),
-        shape=['*'], a_plot=[
+        shape=['*'],
+        a_plot=[
             {
                 'x': 'energy',
                 'y': 'absorbance_of_the_reference',
                 'layout': {
-                    'yaxis': {
-                        "fixedrange": False},
-                    'xaxis': {
-                        "fixedrange": False}},
-            }])
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+            }
+        ],
+    )
 
     absorbance_of_the_sample = Quantity(
         type=np.dtype(np.float64),
-        shape=['*'], a_plot=[
+        shape=['*'],
+        a_plot=[
             {
                 'x': 'energy',
                 'y': 'absorbance_of_the_sample',
                 'layout': {
-                    'yaxis': {
-                        "fixedrange": False},
-                    'xaxis': {
-                        "fixedrange": False}},
-            }])
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+            }
+        ],
+    )
 
     def normalize(self, archive, logger):
-        self.method = "XAS Transmission"
+        self.method = 'XAS Transmission'
         super().normalize(archive, logger)
 
         if self.k1 is not None and self.k0 is not None:

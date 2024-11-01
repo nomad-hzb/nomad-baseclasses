@@ -22,50 +22,54 @@ from nomad.metainfo import Quantity, Section
 
 
 class Annealing(ArchiveSection):
-    '''Base class for annealing of a sample'''
-    m_def = Section(
-        links=['https://purl.archive.org/tfsco/TFSCO_00001033']
-    )
+    """Base class for annealing of a sample"""
+
+    m_def = Section(links=['https://purl.archive.org/tfsco/TFSCO_00001033'])
     temperature = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00002001', 'https://purl.archive.org/tfsco/TFSCO_00002073'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00002001',
+            'https://purl.archive.org/tfsco/TFSCO_00002073',
+        ],
+        type=np.dtype(np.float64),
         unit=('°C'),
         shape=[],
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='°C'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
 
     time = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000165',
+            'https://purl.archive.org/tfsco/TFSCO_00005085',
+        ],
+        type=np.dtype(np.float64),
         unit=('s'),
         shape=[],
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='minute',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     atmosphere = Quantity(
         links=['https://purl.archive.org/tfsco/TFSCO_00001012'],
         type=str,
         a_eln=dict(
             component='EnumEditQuantity',
-            props=dict(suggestions=["N2", "ambient", "vaccum", "Ar"])
-        ))
+            props=dict(suggestions=['N2', 'ambient', 'vaccum', 'Ar']),
+        ),
+    )
 
     ramp = Quantity(
-        type=np.dtype(
-            np.float64),
+        type=np.dtype(np.float64),
         unit=('K/minute'),
         shape=[],
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='°C/minute',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     # humidity = Quantity(
     #     type=np.dtype(np.float64),

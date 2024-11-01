@@ -24,31 +24,33 @@ from .wet_chemical_deposition import WetChemicalDeposition
 
 
 class VaporizationProperties(ArchiveSection):
-
     temperature = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000146',
-               'https://purl.archive.org/tfsco/TFSCO_00002111'],
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000146',
+            'https://purl.archive.org/tfsco/TFSCO_00002111',
+        ],
         type=np.dtype(np.float64),
         unit=('°C'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
 
     initial_time = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000165',
-               'https://purl.archive.org/tfsco/TFSCO_00005085'],
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000165',
+            'https://purl.archive.org/tfsco/TFSCO_00005085',
+        ],
         type=Datetime,
-        a_eln=dict(component='DateTimeEditQuantity'))
+        a_eln=dict(component='DateTimeEditQuantity'),
+    )
 
 
 class VaporizationAndDropCasting(WetChemicalDeposition):
-    '''Base class for spin coating of a sample'''
-    m_def = Section(
-        links=['https://purl.archive.org/tfsco/TFSCO_00002059']
+    """Base class for spin coating of a sample"""
 
-    )
+    m_def = Section(links=['https://purl.archive.org/tfsco/TFSCO_00002059'])
 
-    properties = SubSection(
-        section_def=VaporizationProperties, repeats=True)
+    properties = SubSection(section_def=VaporizationProperties, repeats=True)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
-        self.method = "Vaporization and Drop Casting"
+        self.method = 'Vaporization and Drop Casting'

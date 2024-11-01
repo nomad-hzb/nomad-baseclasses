@@ -26,71 +26,67 @@ from ..chemical import Chemical
 
 class CleaningTechnique(ArchiveSection):
     time = Quantity(
-        type=np.dtype(
-            np.float64),
+        type=np.dtype(np.float64),
         unit=('minute'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='minute'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='minute'),
+    )
 
 
 class SolutionCleaning(CleaningTechnique):
-    '''Base class for cleaning of a sample'''
+    """Base class for cleaning of a sample"""
+
     m_def = Section(label_quantity='name')
-    name = Quantity(
-        type=str
-    )
+    name = Quantity(type=str)
     solvent = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007246'],
         type=Reference(Chemical.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
+        a_eln=dict(component='ReferenceEditQuantity'),
+    )
 
     temperature = Quantity(
         type=np.dtype(np.float64),
         unit=('°C'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
 
     def normalize(self, archive, logger):
-
         if self.solvent:
             if self.solvent.name:
                 self.name = self.solvent.name
 
 
 class UVCleaning(CleaningTechnique):
-    '''Base class for cleaning of a sample'''
+    """Base class for cleaning of a sample"""
 
     pressure = Quantity(
         type=np.dtype(np.float64),
         unit=('mbar'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mbar'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mbar'),
+    )
 
 
 class PlasmaCleaning(CleaningTechnique):
-    '''Base class for cleaning of a sample'''
+    """Base class for cleaning of a sample"""
 
     pressure = Quantity(
         type=np.dtype(np.float64),
         unit=('mbar'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mbar'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mbar'),
+    )
 
     plasma_type = Quantity(
         type=str,
         shape=[],
         a_eln=dict(
-            component='EnumEditQuantity',
-            props=dict(
-                suggestions=['Oxygen', 'Nitrogen'])
-        ))
+            component='EnumEditQuantity', props=dict(suggestions=['Oxygen', 'Nitrogen'])
+        ),
+    )
 
 
 class Cleaning(BaseProcess):
-    m_def = Section(
-        a_eln=dict(
-            hide=[
-                'lab_id', 'user', 'author']))
+    m_def = Section(a_eln=dict(hide=['lab_id', 'user', 'author']))
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
 
-        self.method = "Cleaning"
+        self.method = 'Cleaning'

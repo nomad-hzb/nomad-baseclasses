@@ -27,18 +27,13 @@ from .cesample import build_initial_id, create_id
 
 
 class NECCFeedGas(ArchiveSection):
-
     name = Quantity(
         type=str,
         shape=[],
         a_eln=dict(
-            component='EnumEditQuantity',
-            props=dict(
-                suggestions=[
-                    'CO2',
-                    'CO',
-                    'H2'
-                ])))
+            component='EnumEditQuantity', props=dict(suggestions=['CO2', 'CO', 'H2'])
+        ),
+    )
 
     flow_rate = Quantity(
         type=np.dtype(np.float64),
@@ -46,12 +41,12 @@ class NECCFeedGas(ArchiveSection):
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='ml/minute',
-            props=dict(minValue=0)
-        ))
+            props=dict(minValue=0),
+        ),
+    )
 
 
 class NECCExperimentalProperties(ArchiveSection):
-
     anode = SubSection(
         section_def=CompositeSystemReference,
     )
@@ -64,94 +59,90 @@ class NECCExperimentalProperties(ArchiveSection):
         type=bool,
         default=False,
         description='Check this box and press the save button to load default entries. '
-                    'Attention: Already entered values will be overwritten.',
-        a_eln=dict(component='BoolEditQuantity'))
+        'Attention: Already entered values will be overwritten.',
+        a_eln=dict(component='BoolEditQuantity'),
+    )
 
     cell_type = Quantity(
         type=str,
         shape=[],
         a_eln=dict(
             component='EnumEditQuantity',
-            props=dict(
-                suggestions=[
-                    'Zero-Gap',
-                    'Catholyte Flow',
-                    'H-Cell'
-                ])))
+            props=dict(suggestions=['Zero-Gap', 'Catholyte Flow', 'H-Cell']),
+        ),
+    )
 
     has_reference_electrode = Quantity(
-        type=bool,
-        default=False,
-        a_eln=dict(component='BoolEditQuantity'))
+        type=bool, default=False, a_eln=dict(component='BoolEditQuantity')
+    )
 
     reference_electrode_type = Quantity(
         type=str,
         shape=[],
         description='If has reference electrode is not checked, '
-                    'this reference electrode type must be N/A.',
+        'this reference electrode type must be N/A.',
         a_eln=dict(
             component='EnumEditQuantity',
-            props=dict(
-                suggestions=[
-                    'Ag/AgCl',
-                    'Hg/HgO',
-                    'N/A'
-                ])))
+            props=dict(suggestions=['Ag/AgCl', 'Hg/HgO', 'N/A']),
+        ),
+    )
 
     cathode_geometric_area = Quantity(
         type=np.dtype(np.float64),
         unit=('cm^2'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'),
+    )
 
     membrane_type = Quantity(
         type=str,
         shape=[],
         a_eln=dict(
-            component='EnumEditQuantity',
-            props=dict(
-                suggestions=[
-                    'AEM',
-                    'CEM'
-                ])))
+            component='EnumEditQuantity', props=dict(suggestions=['AEM', 'CEM'])
+        ),
+    )
 
     membrane_name = Quantity(
         type=str,
         shape=[],
         a_eln=dict(
             component='EnumEditQuantity',
-            props=dict(
-                suggestions=[
-                    'PiperION',
-                    'SustainION',
-                    'Fumasep',
-                    'Nafion'
-                ])))
+            props=dict(suggestions=['PiperION', 'SustainION', 'Fumasep', 'Nafion']),
+        ),
+    )
 
     membrane_thickness = Quantity(
         type=np.dtype(np.float64),
         unit=('um'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='um', props=dict(minValue=0)))
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='um',
+            props=dict(minValue=0),
+        ),
+    )
 
     gasket_thickness = Quantity(
         type=np.dtype(np.float64),
         unit=('um'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='um', props=dict(minValue=0)))
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='um',
+            props=dict(minValue=0),
+        ),
+    )
 
     anolyte_type = Quantity(
         type=str,
         shape=[],
         a_eln=dict(
-            component='EnumEditQuantity',
-            props=dict(
-                suggestions=[
-                    'KOH',
-                    'KHCO3'
-                ])))
+            component='EnumEditQuantity', props=dict(suggestions=['KOH', 'KHCO3'])
+        ),
+    )
 
     anolyte_concentration = Quantity(
         type=np.dtype(np.float64),
         unit=('mol/L'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mol/L'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mol/L'),
+    )
 
     anolyte_flow_rate = Quantity(
         type=np.dtype(np.float64),
@@ -159,32 +150,33 @@ class NECCExperimentalProperties(ArchiveSection):
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='ml/minute',
-            props=dict(minValue=0)
-        ))
+            props=dict(minValue=0),
+        ),
+    )
 
     anolyte_volume = Quantity(
         type=np.dtype(np.float64),
         unit=('ml'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'),
+    )
 
     has_humidifier = Quantity(
-        type=bool,
-        default=True,
-        a_eln=dict(component='BoolEditQuantity')
+        type=bool, default=True, a_eln=dict(component='BoolEditQuantity')
     )
 
     humidifier_temperature = Quantity(
         type=np.dtype(np.float64),
         unit='°C',
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
 
     water_trap_volume = Quantity(
         type=np.dtype(np.float64),
         unit=('ml'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'),
+    )
 
-    feed_gases = SubSection(
-        section_def=NECCFeedGas, repeats=True)
+    feed_gases = SubSection(section_def=NECCFeedGas, repeats=True)
 
     bleedline_flow_rate = Quantity(
         type=np.dtype(np.float64),
@@ -192,13 +184,15 @@ class NECCExperimentalProperties(ArchiveSection):
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='ml/minute',
-            props=dict(minValue=0)
-        ))
+            props=dict(minValue=0),
+        ),
+    )
 
     nitrogen_start_value = Quantity(
         type=np.dtype(np.float64),
         description='Specified in ppm',
-        a_eln=dict(component='NumberEditQuantity'))
+        a_eln=dict(component='NumberEditQuantity'),
+    )
 
     chronoanalysis_method = Quantity(
         type=str,
@@ -206,18 +200,16 @@ class NECCExperimentalProperties(ArchiveSection):
         a_eln=dict(
             component='EnumEditQuantity',
             props=dict(
-                suggestions=['Chronoamperometry (CA)', 'Chronopotentiometry (CP)'])
-        ))
+                suggestions=['Chronoamperometry (CA)', 'Chronopotentiometry (CP)']
+            ),
+        ),
+    )
 
     remarks = Quantity(
-        type=str,
-        a_eln=dict(
-            component='RichTextEditQuantity',
-            label="Remarks"
-        ))
+        type=str, a_eln=dict(component='RichTextEditQuantity', label='Remarks')
+    )
 
     def normalize(self, archive, logger):
-
         if self.anode is not None:
             self.anode.normalize(archive, logger)
 
@@ -250,94 +242,104 @@ class NECCExperimentalProperties(ArchiveSection):
 
 
 class GasChromatographyMeasurement(ArchiveSection):
-
     m_def = Section(label_quantity='gas_type')
 
-    instrument_file_name = Quantity(
-        type=str,
-        shape=['*'])
+    instrument_file_name = Quantity(type=str, shape=['*'])
 
-    datetime = Quantity(
-        type=Datetime,
-        shape=['*'])
+    datetime = Quantity(type=Datetime, shape=['*'])
 
     gas_type = Quantity(
         type=str,
         shape=[],
         a_eln=dict(
             component='EnumEditQuantity',
-            props=dict(
-                suggestions=['CO', 'CH4', 'C2H4', 'C2H6', 'H2', 'N2'])
-        ))
+            props=dict(suggestions=['CO', 'CH4', 'C2H4', 'C2H6', 'H2', 'N2']),
+        ),
+    )
 
-    retention_time = Quantity(
-        type=np.dtype(np.float64),
-        shape=['*'],
-        unit='minute')
+    retention_time = Quantity(type=np.dtype(np.float64), shape=['*'], unit='minute')
 
-    area = Quantity(
-        type=np.dtype(np.float64),
-        shape=['*'],
-        unit='pA*minute')
+    area = Quantity(type=np.dtype(np.float64), shape=['*'], unit='pA*minute')
 
     ppm = Quantity(
-        type=np.dtype(np.float64),
-        description='Specified in ppm',
-        shape=['*'])
+        type=np.dtype(np.float64), description='Specified in ppm', shape=['*']
+    )
 
 
 class NECCPotentiostatMeasurement(ArchiveSection):
-
-    datetime = Quantity(
-        type=Datetime,
-        shape=['*'])
+    datetime = Quantity(type=Datetime, shape=['*'])
 
     current = Quantity(
-        type=np.dtype(
-            np.float64), shape=['*'], unit='mA', a_plot=[
+        type=np.dtype(np.float64),
+        shape=['*'],
+        unit='mA',
+        a_plot=[
             {
-                'label': 'Current', 'x': 'datetime', 'y': 'current',
+                'label': 'Current',
+                'x': 'datetime',
+                'y': 'current',
                 'layout': {
                     'yaxis': {'fixedrange': False},
-                    'xaxis': {'fixedrange': False}},
-                'config': {
-                    'editable': True, 'scrollZoom': True}}])
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
+    )
 
     working_electrode_potential = Quantity(
-        type=np.dtype(
-            np.float64), shape=['*'], unit='V', a_plot=[
+        type=np.dtype(np.float64),
+        shape=['*'],
+        unit='V',
+        a_plot=[
             {
                 'label': 'Working Electrode Potential (Ewe)',
-                'x': 'datetime', 'y': 'working_electrode_potential',
+                'x': 'datetime',
+                'y': 'working_electrode_potential',
                 'layout': {
                     'yaxis': {'fixedrange': False},
-                    'xaxis': {'fixedrange': False}},
-                'config': {
-                    'editable': True, 'scrollZoom': True}}])
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
+    )
 
     counter_electrode_potential = Quantity(
-        type=np.dtype(
-            np.float64), shape=['*'], unit='V', a_plot=[
+        type=np.dtype(np.float64),
+        shape=['*'],
+        unit='V',
+        a_plot=[
             {
                 'label': 'Counter Electrode Potential (Ece)',
-                'x': 'datetime', 'y': 'counter_electrode_potential',
+                'x': 'datetime',
+                'y': 'counter_electrode_potential',
                 'layout': {
                     'yaxis': {'fixedrange': False},
-                    'xaxis': {'fixedrange': False}},
-                'config': {
-                    'editable': True, 'scrollZoom': True}}])
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
+    )
 
     ewe_ece_difference = Quantity(
-        type=np.dtype(
-            np.float64), shape=['*'], unit='V', a_plot=[
+        type=np.dtype(np.float64),
+        shape=['*'],
+        unit='V',
+        a_plot=[
             {
                 'label': 'Ewe - Ece',
-                'x': 'datetime', 'y': 'ewe_ece_difference',
+                'x': 'datetime',
+                'y': 'ewe_ece_difference',
                 'layout': {
                     'yaxis': {'fixedrange': False},
-                    'xaxis': {'fixedrange': False}},
-                'config': {
-                    'editable': True, 'scrollZoom': True}}])
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
+    )
 
     mean_current = Quantity(type=np.dtype(np.float64), unit='mA')
     standard_deviation_current = Quantity(type=np.dtype(np.float64), unit='mA')
@@ -345,22 +347,33 @@ class NECCPotentiostatMeasurement(ArchiveSection):
     maximum_current = Quantity(type=np.dtype(np.float64), unit='mA')
 
     mean_working_electrode_potential = Quantity(type=np.dtype(np.float64), unit='V')
-    standard_deviation_working_electrode_potential = Quantity(type=np.dtype(np.float64), unit='V')
+    standard_deviation_working_electrode_potential = Quantity(
+        type=np.dtype(np.float64), unit='V'
+    )
     minimum_working_electrode_potential = Quantity(type=np.dtype(np.float64), unit='V')
     maximum_working_electrode_potential = Quantity(type=np.dtype(np.float64), unit='V')
 
     mean_counter_electrode_potential = Quantity(type=np.dtype(np.float64), unit='V')
-    standard_deviation_counter_electrode_potential = Quantity(type=np.dtype(np.float64), unit='V')
+    standard_deviation_counter_electrode_potential = Quantity(
+        type=np.dtype(np.float64), unit='V'
+    )
     minimum_counter_electrode_potential = Quantity(type=np.dtype(np.float64), unit='V')
     maximum_counter_electrode_potential = Quantity(type=np.dtype(np.float64), unit='V')
 
     mean_ewe_ece_difference = Quantity(type=np.dtype(np.float64), unit='V')
-    standard_deviation_ewe_ece_difference = Quantity(type=np.dtype(np.float64), unit='V')
+    standard_deviation_ewe_ece_difference = Quantity(
+        type=np.dtype(np.float64), unit='V'
+    )
     minimum_ewe_ece_difference = Quantity(type=np.dtype(np.float64), unit='V')
     maximum_ewe_ece_difference = Quantity(type=np.dtype(np.float64), unit='V')
 
     def calculate_statistics(self, quantity, quantity_name):
-        supported_quantities = {'current', 'working_electrode_potential', 'counter_electrode_potential', 'ewe_ece_difference'}
+        supported_quantities = {
+            'current',
+            'working_electrode_potential',
+            'counter_electrode_potential',
+            'ewe_ece_difference',
+        }
         if quantity_name not in supported_quantities:
             return
         if quantity is None:
@@ -372,11 +385,20 @@ class NECCPotentiostatMeasurement(ArchiveSection):
 
     def normalize(self, archive, logger):
         if self.ewe_ece_difference is None:
-            if self.working_electrode_potential is not None and self.counter_electrode_potential is not None:
-                self.ewe_ece_difference = self.working_electrode_potential - self.counter_electrode_potential
+            if (
+                self.working_electrode_potential is not None
+                and self.counter_electrode_potential is not None
+            ):
+                self.ewe_ece_difference = (
+                    self.working_electrode_potential - self.counter_electrode_potential
+                )
         self.calculate_statistics(self.current, 'current')
-        self.calculate_statistics(self.working_electrode_potential, 'working_electrode_potential')
-        self.calculate_statistics(self.counter_electrode_potential, 'counter_electrode_potential')
+        self.calculate_statistics(
+            self.working_electrode_potential, 'working_electrode_potential'
+        )
+        self.calculate_statistics(
+            self.counter_electrode_potential, 'counter_electrode_potential'
+        )
         self.calculate_statistics(self.ewe_ece_difference, 'ewe_ece_difference')
 
 
@@ -385,74 +407,88 @@ class ThermocoupleMeasurement(PlotSection, ArchiveSection):
         a_plotly_graph_object=[
             {
                 'label': 'Anode/Cathode Temperatures',
-                'data': [{
-                    'method': 'line',
-                    'name': 'Cathode',
-                    'x': '#datetime',
-                    'y': '#temperature_cathode'
-                }, {
-                    'method': 'line',
-                    'name': 'Anode',
-                    'x': '#datetime',
-                    'y': '#temperature_anode'
-                }],
+                'data': [
+                    {
+                        'method': 'line',
+                        'name': 'Cathode',
+                        'x': '#datetime',
+                        'y': '#temperature_cathode',
+                    },
+                    {
+                        'method': 'line',
+                        'name': 'Anode',
+                        'x': '#datetime',
+                        'y': '#temperature_anode',
+                    },
+                ],
                 'layout': {
-                    'title': {
-                        'text': 'Anode and Cathode Temperature over Time'
-                    },
-                    'xaxis': {
-                        'title': {
-                            'text': 'Time'
-                        }
-                    },
-                    'yaxis': {
-                        'title': {
-                            'text': 'Temperature'
-                        }
-                    },
-                    'showlegend': True
-                }
-            }])
+                    'title': {'text': 'Anode and Cathode Temperature over Time'},
+                    'xaxis': {'title': {'text': 'Time'}},
+                    'yaxis': {'title': {'text': 'Temperature'}},
+                    'showlegend': True,
+                },
+            }
+        ]
+    )
 
-    datetime = Quantity(
-        type=Datetime,
-        shape=['*'])
+    datetime = Quantity(type=Datetime, shape=['*'])
 
     pressure = Quantity(
-        type=np.dtype(
-            np.float64), shape=['*'], unit='bar', a_plot=[
-            {
-                "label": "Pressure (in barg)", 'x': 'datetime', 'y': 'pressure', 'layout': {
-                    'yaxis': {
-                        "fixedrange": False}, 'xaxis': {
-                        "fixedrange": False}}, "config": {
-                    "editable": True, "scrollZoom": True}}])
-
-    temperature_cathode = Quantity(
-        type=np.dtype(
-            np.float64), shape=['*'], unit='°C', a_plot=[
-            {
-                'label': 'Temperature Cathode',
-                'x': 'datetime', 'y': 'temperature_cathode',
-                'layout': {
-                    'yaxis': {'fixedrange': False},
-                    'xaxis': {'fixedrange': False}},
-                'config': {
-                    "editable": True, "scrollZoom": True}}])
-
-    temperature_anode = Quantity(
-        type=np.dtype(np.float64), shape=['*'], unit='°C',
+        type=np.dtype(np.float64),
+        shape=['*'],
+        unit='bar',
         a_plot=[
             {
-                "label": "Temperature Anode", 'x': 'datetime', 'y': 'temperature_anode', 'layout': {
-                    'yaxis': {
-                        "fixedrange": False}, 'xaxis': {
-                        "fixedrange": False}}, "config": {
-                    "editable": True, "scrollZoom": True}}])
+                'label': 'Pressure (in barg)',
+                'x': 'datetime',
+                'y': 'pressure',
+                'layout': {
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
+    )
+
+    temperature_cathode = Quantity(
+        type=np.dtype(np.float64),
+        shape=['*'],
+        unit='°C',
+        a_plot=[
+            {
+                'label': 'Temperature Cathode',
+                'x': 'datetime',
+                'y': 'temperature_cathode',
+                'layout': {
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
+    )
+
+    temperature_anode = Quantity(
+        type=np.dtype(np.float64),
+        shape=['*'],
+        unit='°C',
+        a_plot=[
+            {
+                'label': 'Temperature Anode',
+                'x': 'datetime',
+                'y': 'temperature_anode',
+                'layout': {
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
+    )
 
 
 class GasFEResults(ArchiveSection):
-
     m_def = Section(label_quantity='gas_type')
 
     gas_type = Quantity(
@@ -460,18 +496,13 @@ class GasFEResults(ArchiveSection):
         shape=[],
         a_eln=dict(
             component='EnumEditQuantity',
-            props=dict(
-                suggestions=['CO', 'CH4', 'C2H4', 'H2'])
-        ))
+            props=dict(suggestions=['CO', 'CH4', 'C2H4', 'H2']),
+        ),
+    )
 
-    datetime = Quantity(
-        type=Datetime,
-        shape=['*'])
+    datetime = Quantity(type=Datetime, shape=['*'])
 
-    current = Quantity(
-        type=np.dtype(np.float64),
-        shape=['*'],
-        unit='mA')
+    current = Quantity(type=np.dtype(np.float64), shape=['*'], unit='mA')
 
     faradaic_efficiency = Quantity(
         type=np.dtype(np.float64),
@@ -479,11 +510,17 @@ class GasFEResults(ArchiveSection):
         shape=['*'],
         a_plot=[
             {
-                "label": "FE over time", 'x': 'datetime', 'y': 'faradaic_efficiency', 'layout': {
-                    'yaxis': {
-                        "fixedrange": False}, 'xaxis': {
-                        "fixedrange": False}}, "config": {
-                    "editable": True, "scrollZoom": True}}])
+                'label': 'FE over time',
+                'x': 'datetime',
+                'y': 'faradaic_efficiency',
+                'layout': {
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
+    )
 
     mean_fe = Quantity(type=np.dtype(np.float64))
 
@@ -496,8 +533,10 @@ class GasFEResults(ArchiveSection):
     def normalize(self, archive, logger):
         if any(fe < -100 for fe in self.faradaic_efficiency):
             self.faradaic_efficiency = [0] * len(self.faradaic_efficiency)
-            logger.warn(f'The FE of {self.gas_type} is removed because it is more than 100%. '
-                        f'Please check if {self.gas_type} is a feed gas.')
+            logger.warn(
+                f'The FE of {self.gas_type} is removed because it is more than 100%. '
+                f'Please check if {self.gas_type} is a feed gas.'
+            )
         self.mean_fe = np.mean(self.faradaic_efficiency)
         self.minimum_fe = np.min(self.faradaic_efficiency)
         self.maximum_fe = np.max(self.faradaic_efficiency)
@@ -505,34 +544,23 @@ class GasFEResults(ArchiveSection):
 
 
 class PotentiometryGasChromatographyResults(ArchiveSection):
-
-    datetime = Quantity(
-        type=Datetime,
-        shape=['*'])
+    datetime = Quantity(type=Datetime, shape=['*'])
 
     total_flow_rate = Quantity(
-        type=np.dtype(
-            np.float64),
-        shape=['*'],
-        unit=('ml/minute'))
+        type=np.dtype(np.float64), shape=['*'], unit=('ml/minute')
+    )
 
-    cell_current = Quantity(
-        type=np.dtype(np.float64),
-        shape=['*'],
-        unit='mA')
+    cell_current = Quantity(type=np.dtype(np.float64), shape=['*'], unit='mA')
 
-    cell_voltage = Quantity(
-        type=np.dtype(np.float64),
-        shape=['*'],
-        unit='V')
+    cell_voltage = Quantity(type=np.dtype(np.float64), shape=['*'], unit='V')
 
-    gas_results = SubSection(
-        section_def=GasFEResults, repeats=True)
+    gas_results = SubSection(section_def=GasFEResults, repeats=True)
 
     total_fe = Quantity(
         type=np.dtype(np.float64),
         shape=['*'],
-        description='Total faradaic efficiency specified in %')
+        description='Total faradaic efficiency specified in %',
+    )
 
     def normalize(self, archive, logger):
         for gas_result in self.gas_results:
@@ -541,21 +569,18 @@ class PotentiometryGasChromatographyResults(ArchiveSection):
 
 
 class CENECCExperimentID(ReadableIdentifiersCustom):
-
     m_def = Section(
         a_eln=dict(
-            hide=["sample_owner", "sample_short_name", "sample_id", "short_name"]
-        ))
+            hide=['sample_owner', 'sample_short_name', 'sample_id', 'short_name']
+        )
+    )
 
     institute = Quantity(
         type=str,
         description='Alias/short name of the home institute of the owner, i.e. *HZB*.',
         default='CE-NECC',
-        a_eln=dict(
-            component='EnumEditQuantity',
-            props=dict(
-                suggestions=[
-                    'CE-NECC'])))
+        a_eln=dict(component='EnumEditQuantity', props=dict(suggestions=['CE-NECC'])),
+    )
 
     def normalize(self, archive, logger):
         author = archive.metadata.main_author
@@ -568,6 +593,7 @@ class CENECCExperimentID(ReadableIdentifiersCustom):
             return
         if not self.datetime:
             from datetime import date
+
             self.datetime = date.today()
 
         if self.institute and self.owner and self.datetime:
@@ -577,29 +603,25 @@ class CENECCExperimentID(ReadableIdentifiersCustom):
 
 
 class PotentiometryGasChromatographyMeasurement(BaseMeasurement):
-
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
-    experiment_id = SubSection(
-        section_def=CENECCExperimentID)
+    experiment_id = SubSection(section_def=CENECCExperimentID)
 
-    properties = SubSection(
-        section_def=NECCExperimentalProperties)
+    properties = SubSection(section_def=NECCExperimentalProperties)
 
     gaschromatographies = SubSection(
-        section_def=GasChromatographyMeasurement, repeats=True)
+        section_def=GasChromatographyMeasurement, repeats=True
+    )
 
-    potentiometry = SubSection(
-        section_def=NECCPotentiostatMeasurement)
+    potentiometry = SubSection(section_def=NECCPotentiostatMeasurement)
 
-    thermocouple = SubSection(
-        section_def=ThermocoupleMeasurement)
+    thermocouple = SubSection(section_def=ThermocoupleMeasurement)
 
-    fe_results = SubSection(
-        section_def=PotentiometryGasChromatographyResults)
+    fe_results = SubSection(section_def=PotentiometryGasChromatographyResults)
 
     def normalize(self, archive, logger):
         self.experiment_id = CENECCExperimentID()

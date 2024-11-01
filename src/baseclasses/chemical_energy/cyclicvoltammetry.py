@@ -24,91 +24,104 @@ from .voltammetry import Voltammetry
 
 
 class CVProperties(PotentiostatProperties):
-
     initial_potential = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007216'],
         type=np.dtype(np.float64),
         unit=('V'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
 
     initial_potential_measured_against = Quantity(
         type=MEnum('Eoc', 'Eref'),
         shape=[],
         a_eln=dict(
             component='EnumEditQuantity',
-        ))
+        ),
+    )
 
     limit_potential_1 = Quantity(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007214','https://w3id.org/nfdi4cat/voc4cat_0007215'],
+        links=[
+            'https://w3id.org/nfdi4cat/voc4cat_0007214',
+            'https://w3id.org/nfdi4cat/voc4cat_0007215',
+        ],
         type=np.dtype(np.float64),
         unit=('V'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
 
     limit_potential_1_measured_against = Quantity(
         type=MEnum('Eoc', 'Eref'),
         shape=[],
         a_eln=dict(
             component='EnumEditQuantity',
-        ))
+        ),
+    )
 
     limit_potential_2 = Quantity(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007214','https://w3id.org/nfdi4cat/voc4cat_0007215'],
+        links=[
+            'https://w3id.org/nfdi4cat/voc4cat_0007214',
+            'https://w3id.org/nfdi4cat/voc4cat_0007215',
+        ],
         type=np.dtype(np.float64),
         unit=('V'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
 
     limit_potential_2_measured_against = Quantity(
         type=MEnum('Eoc', 'Eref'),
         shape=[],
         a_eln=dict(
             component='EnumEditQuantity',
-        ))
+        ),
+    )
 
     final_potential = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007217'],
         type=np.dtype(np.float64),
         unit=('V'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
 
     final_potential_measured_against = Quantity(
         type=MEnum('Eoc', 'Eref'),
         shape=[],
         a_eln=dict(
             component='EnumEditQuantity',
-        ))
+        ),
+    )
 
     scan_rate = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007213'],
         type=np.dtype(np.float64),
         unit=('mV/s'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mV/s'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mV/s'),
+    )
 
     step_size = Quantity(
         type=np.dtype(np.float64),
         unit=('mV'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mV'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mV'),
+    )
 
     cycles = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007228'],
         type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity'))
+        a_eln=dict(component='NumberEditQuantity'),
+    )
 
     open_circuit_potential = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(np.float64),
         unit=('V'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
 
 
 class CyclicVoltammetry(Voltammetry):
+    m_def = Section(links=['https://w3id.org/nfdi4cat/voc4cat_0000082'])
 
-    m_def = Section(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0000082']
-    )
-
-    properties = SubSection(
-        section_def=CVProperties)
+    properties = SubSection(section_def=CVProperties)
 
     def normalize(self, archive, logger):
-        self.method = "Cyclic Voltammetry"
+        self.method = 'Cyclic Voltammetry'
         super().normalize(archive, logger)

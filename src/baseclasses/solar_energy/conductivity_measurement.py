@@ -29,45 +29,57 @@ class ConductivityProperties(ArchiveSection):
     integration_time = Quantity(
         type=np.dtype(np.float64),
         unit=('s'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
+    )
 
     configuration = Quantity(
         type=np.dtype(np.float64),
         unit=('m'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
+    )
 
 
 class ConductivitySingleLibraryMeasurement(SingleLibraryMeasurement):
-    m_def = Section(label_quantity='name',
-                    a_eln=dict(properties=dict(
-                        order=[
-                            "name", "position_x_relative", "position_y_relative", "position_index", "position_x", "position_y"
-                        ]))
-                    )
+    m_def = Section(
+        label_quantity='name',
+        a_eln=dict(
+            properties=dict(
+                order=[
+                    'name',
+                    'position_x_relative',
+                    'position_y_relative',
+                    'position_index',
+                    'position_x',
+                    'position_y',
+                ]
+            )
+        ),
+    )
 
     conductivity = Quantity(
         type=np.dtype(np.float64),
         unit=('ohm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ohm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ohm'),
+    )
 
 
 class ConductivityMeasurementLibrary(LibraryMeasurement):
-    '''UV vis Measurement'''
+    """UV vis Measurement"""
 
-    m_def = Section(
-        a_eln=dict(hide=['certified_values', 'certification_institute']))
+    m_def = Section(a_eln=dict(hide=['certified_values', 'certification_institute']))
 
-    properties = SubSection(
-        section_def=ConductivityProperties)
+    properties = SubSection(section_def=ConductivityProperties)
 
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
     measurements = SubSection(
-        section_def=ConductivitySingleLibraryMeasurement, repeats=True)
+        section_def=ConductivitySingleLibraryMeasurement, repeats=True
+    )
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
-        self.method = "Conductivity Measurement Mapping"
+        self.method = 'Conductivity Measurement Mapping'

@@ -23,11 +23,12 @@ from .wet_chemical_deposition import WetChemicalDeposition
 
 
 class BladeCoating(WetChemicalDeposition):
-    '''Base class for blade coating of a sample'''
+    """Base class for blade coating of a sample"""
+
     m_def = Section(
         # links = ['http://purl.obolibrary.org/obo/CHMO_0001471'],
     )
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
-        self.method = "Blade Coating"
+        self.method = 'Blade Coating'

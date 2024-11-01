@@ -23,34 +23,31 @@ from ..helper.add_solar_cell import add_solar_cell
 
 
 class Substrate(Entity):
-
     solar_cell_area = Quantity(
         type=np.dtype(np.float64),
         unit='cm**2',
         shape=[],
-        a_eln=dict(
-            component='NumberEditQuantity'))
+        a_eln=dict(component='NumberEditQuantity'),
+    )
 
     number_of_pixels = Quantity(
-        type=np.dtype(np.float64),
-        shape=[],
-        a_eln=dict(
-            component='NumberEditQuantity'))
+        type=np.dtype(np.float64), shape=[], a_eln=dict(component='NumberEditQuantity')
+    )
 
     pixel_area = Quantity(
         type=np.dtype(np.float64),
         unit='cm**2',
         shape=[],
-        a_eln=dict(
-            component='NumberEditQuantity'))
+        a_eln=dict(component='NumberEditQuantity'),
+    )
 
     substrate = Quantity(
         type=str,
         a_eln=dict(
             component='EnumEditQuantity',
-            props=dict(
-                suggestions=['glass', 'Ti-foil', 'silicon wafer'])
-        ))
+            props=dict(suggestions=['glass', 'Ti-foil', 'silicon wafer']),
+        ),
+    )
 
     conducting_material = Quantity(
         type=str,
@@ -58,10 +55,25 @@ class Substrate(Entity):
         a_eln=dict(
             component='EnumEditQuantity',
             props=dict(
-                suggestions=['SLG', 'FTO', 'ITO', 'PET', 'PEN', 'AZO', 'IZO',
-                             'Graphene', 'Ti', 'Ag', 'Ag-nw', 'Ag-grid',
-                             'Au', 'PDMS'])
-        ))
+                suggestions=[
+                    'SLG',
+                    'FTO',
+                    'ITO',
+                    'PET',
+                    'PEN',
+                    'AZO',
+                    'IZO',
+                    'Graphene',
+                    'Ti',
+                    'Ag',
+                    'Ag-nw',
+                    'Ag-grid',
+                    'Au',
+                    'PDMS',
+                ]
+            ),
+        ),
+    )
     # back_contact = Quantity(
     #     type=str,
     #     shape=['*'],
@@ -73,16 +85,16 @@ class Substrate(Entity):
     #     ))
 
     def normalize(self, archive, logger):
-        super().normalize(
-            archive,
-            logger)
+        super().normalize(archive, logger)
         add_solar_cell(archive)
         if self.substrate:
             if self.conducting_material:
                 archive.results.properties.optoelectronic.solar_cell.substrate = [
-                    self.substrate] + self.conducting_material
+                    self.substrate
+                ] + self.conducting_material
             else:
                 archive.results.properties.optoelectronic.solar_cell.substrate = [
-                    self.substrate]
+                    self.substrate
+                ]
         # if self.back_contact:
         #     archive.results.properties.optoelectronic.solar_cell.back_contact = self.back_contact

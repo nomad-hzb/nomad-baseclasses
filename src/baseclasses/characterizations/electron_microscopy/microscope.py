@@ -29,27 +29,28 @@ from .TEM_Session import TEM_Session
 
 class TEMMicroscopeConfiguration(Entity):
     zeroloss_filtered = Quantity(
-        type=MEnum([
-            'True', 'False']),
-        a_eln=dict(component='EnumEditQuantity'))
+        type=MEnum(['True', 'False']), a_eln=dict(component='EnumEditQuantity')
+    )
     slit_width = Quantity(
         type=np.dtype(np.float64),
         unit='eV',
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='eV'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='eV'),
+    )
     condensor_aperture = Quantity(
-        type=MEnum([
-            'no', '10 um', '20 um', '200 um']),
+        type=MEnum(['no', '10 um', '20 um', '200 um']),
         unit='A',
-        a_eln=dict(component='EnumEditQuantity'))
+        a_eln=dict(component='EnumEditQuantity'),
+    )
     scale = Quantity(
-        type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
     magnification = Quantity(
-        type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
     illumination_index = Quantity(
         type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity', minValue=0, maxValue=25))
+        a_eln=dict(component='NumberEditQuantity', minValue=0, maxValue=25),
+    )
 
 
 class SEMMicroscopeConfiguration(Entity):
@@ -57,65 +58,54 @@ class SEMMicroscopeConfiguration(Entity):
 
 
 class MicroscopeConfiguration2(ArchiveSection):
-
     x_value = Quantity(
-        type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
 
     y_value = Quantity(
-        type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
 
     z_value = Quantity(
-        type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
 
     alpha_tilt = Quantity(
-        type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
 
     beta_tilt = Quantity(
-        type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
 
 
 class Image(ArchiveSection):
     m_def = Section(label_quantity='file_name')
 
-    file_name = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
+    file_name = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
 
 class MicroscopeTechnique(BaseMeasurement):
+    """Any physical process applied to the sample."""
 
-    ''' Any physical process applied to the sample. '''
-    name = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
+    name = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
-    external_sample_url = Quantity(
-        type=str,
-        a_eln=dict(component='URLEditQuantity'))
+    external_sample_url = Quantity(type=str, a_eln=dict(component='URLEditQuantity'))
 
     detector_data_folder = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
+        type=str, a_eln=dict(component='StringEditQuantity')
+    )
 
     detector_data = Quantity(
         type=str,
         shape=['*'],
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
-    description = Quantity(
-        type=str,
-        a_eln=dict(component='RichTextEditQuantity'))
+    description = Quantity(type=str, a_eln=dict(component='RichTextEditQuantity'))
 
-    images = SubSection(
-        section_def=Image,
-        label_quantity='file_name',
-        repeats=True)
+    images = SubSection(section_def=Image, label_quantity='file_name', repeats=True)
 
     @staticmethod
     def get_data(file_name):
@@ -134,29 +124,31 @@ class MicroscopeTechnique(BaseMeasurement):
         if self.detector_data_folder:
             # detector_data_folder = self.detector_data_folder
             detector_data_folder = os.path.join(
-                "/measurement_data", self.detector_data_folder)
+                '/measurement_data', self.detector_data_folder
+            )
             for file in os.listdir(detector_data_folder):
                 file_with_path = os.path.join(detector_data_folder, file)
                 dst_path = archive.m_context.upload_files._raw_dir.os_path
                 if file not in os.listdir(dst_path):
                     import shutil
-                    shutil.copyfile(
-                        file_with_path, os.path.join(
-                            dst_path, file))
+
+                    shutil.copyfile(file_with_path, os.path.join(dst_path, file))
 
             imgs.extend(os.listdir(detector_data_folder))
 
         # process images
         # self.detector_data = imgs
         for image in imgs:
-            with archive.m_context.raw_file(image, "rb") as f:
+            with archive.m_context.raw_file(image, 'rb') as f:
                 processed = False
                 for img in self.images:
                     if img.file_name == image:
                         processed = True
                 if not processed:
                     file_content = f.read()
-                    with tempfile.NamedTemporaryFile(delete=False, suffix=".tif") as temp_file:
+                    with tempfile.NamedTemporaryFile(
+                        delete=False, suffix='.tif'
+                    ) as temp_file:
                         temp_file.write(file_content)
                         temp_file_path = temp_file.name
                     image_data = self.get_data(temp_file_path)
@@ -169,21 +161,20 @@ class MicroscopeTechnique(BaseMeasurement):
 
 
 class TEMMicroscopeTechnique(MicroscopeTechnique):
-
     session = Quantity(
-        type=Reference(TEM_Session.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
+        type=Reference(TEM_Session.m_def), a_eln=dict(component='ReferenceEditQuantity')
+    )
 
     microscope_configuration = Quantity(
         type=Reference(TEMMicroscopeConfiguration.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
+        a_eln=dict(component='ReferenceEditQuantity'),
+    )
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
 
 
 class SEMMicroscopeTechnique(MicroscopeTechnique):
-
     # microscope_configuration = Quantity(
     #     type=Reference(SEMMicroscopeConfiguration.m_def),
     #     a_eln=dict(component='ReferenceEditQuantity'))
@@ -193,7 +184,6 @@ class SEMMicroscopeTechnique(MicroscopeTechnique):
 
 
 class OpticalMicroscopeTechnique(MicroscopeTechnique):
-
     # microscope_configuration = Quantity(
     #     type=Reference(SEMMicroscopeConfiguration.m_def),
     #     a_eln=dict(component='ReferenceEditQuantity'))

@@ -53,7 +53,7 @@ class PubChemPureSubstanceSectionCustom(PubChemPureSubstanceSection):
         default=True,
         a_eln=dict(
             component='BoolEditQuantity',
-        )
+        ),
     )
 
     def normalize(self, archive, logger):
@@ -64,24 +64,20 @@ class PubChemPureSubstanceSectionCustom(PubChemPureSubstanceSection):
 
 
 class Batch(Collection):
-
     export_batch_ids = Quantity(
-        type=bool,
-        default=False,
-        a_eln=dict(component='ActionEditQuantity')
+        type=bool, default=False, a_eln=dict(component='ActionEditQuantity')
     )
 
     csv_export_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor')
+        a_browser=dict(adaptor='RawFileAdaptor'),
     )
 
     entities = Collection.entities.m_copy()
-    entities.a_eln = dict(label="Samples")
+    entities.a_eln = dict(label='Samples')
 
-    batch_id = SubSection(
-        section_def=ReadableIdentifiersCustom)
+    batch_id = SubSection(section_def=ReadableIdentifiersCustom)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
@@ -91,12 +87,20 @@ class Batch(Collection):
             # try:
             samples = []
             for sample in self.entities:
-                sample_id = sample.reference.lab_id if sample.reference is not None else self.lab_id
+                sample_id = (
+                    sample.reference.lab_id
+                    if sample.reference is not None
+                    else self.lab_id
+                )
                 sample_entry_id = sample.reference.m_parent.entry_id
-                samples.append([sample_id] + [p[1] for p in get_processes(archive, sample_entry_id)])
+                samples.append(
+                    [sample_id]
+                    + [p[1] for p in get_processes(archive, sample_entry_id)]
+                )
             import pandas as pd
+
             df = pd.DataFrame(samples)
-            export_file_name = f"list_of_ids_{self.name}.csv"
+            export_file_name = f'list_of_ids_{self.name}.csv'
             with archive.m_context.raw_file(export_file_name, 'w') as outfile:
                 df.to_csv(outfile.name)
             self.csv_export_file = export_file_name
@@ -110,36 +114,41 @@ class SampleReference(CompositeSystemReference):
         shape=[],
         a_eln=dict(
             component='EnumEditQuantity',
-        ))
+        ),
+    )
 
     create_sample = Quantity(
-        type=bool,
-        default=False,
-        a_eln=dict(component='ActionEditQuantity')
+        type=bool, default=False, a_eln=dict(component='ActionEditQuantity')
     )
 
 
 class ExperimentalStepData(ArchiveSection):
-    data_folder = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
+    data_folder = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
     data_files = Quantity(
         type=str,
-        shape=["*"],
+        shape=['*'],
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
 
 class SingleSampleExperimentStep(ExperimentStep):
-    m_def = Section(label_quantity='name',
-                    a_eln=dict(
-                        hide=["lab_id"],
-                        properties=dict(
-                            order=[
-                                "name",
-                                "method", "method_type", "create_experimental_step", "activity"
-                            ])))
+    m_def = Section(
+        label_quantity='name',
+        a_eln=dict(
+            hide=['lab_id'],
+            properties=dict(
+                order=[
+                    'name',
+                    'method',
+                    'method_type',
+                    'create_experimental_step',
+                    'activity',
+                ]
+            ),
+        ),
+    )
 
     method = Quantity(
         type=str,
@@ -147,26 +156,38 @@ class SingleSampleExperimentStep(ExperimentStep):
         a_eln=dict(
             component='EnumEditQuantity',
             props=dict(
-                suggestions=['XRR', 'XRD', 'XRF', 'Ellipsometry', 'Sputtering', 'SEM_Merlin', 'Measurement', 'Synthesis', 'Dektak', 'TGA', "PECVD", "Catalytic_Reaction"])
-        ))
+                suggestions=[
+                    'XRR',
+                    'XRD',
+                    'XRF',
+                    'Ellipsometry',
+                    'Sputtering',
+                    'SEM_Merlin',
+                    'Measurement',
+                    'Synthesis',
+                    'Dektak',
+                    'TGA',
+                    'PECVD',
+                    'Catalytic_Reaction',
+                ]
+            ),
+        ),
+    )
 
     method_type = Quantity(
         type=MEnum('Single', 'X-Y'),
         shape=[],
         a_eln=dict(
             component='EnumEditQuantity',
-        ))
+        ),
+    )
 
     create_experimental_step = Quantity(
-        type=bool,
-        default=False,
-        a_eln=dict(component='ActionEditQuantity')
+        type=bool, default=False, a_eln=dict(component='ActionEditQuantity')
     )
 
     with_last_step = Quantity(
-        type=bool,
-        default=False,
-        a_eln=dict(component='BoolEditQuantity')
+        type=bool, default=False, a_eln=dict(component='BoolEditQuantity')
     )
 
     # data = SubSection(
@@ -174,54 +195,53 @@ class SingleSampleExperimentStep(ExperimentStep):
 
 
 class SingleSampleExperiment(Experiment):
-
     sample = SubSection(
         links=['https://purl.archive.org/tfsco/TFSCO_00005000'],
         section_def=SampleReference,
-        description='''
+        description="""
         The samples as that have undergone the process.
-        '''
+        """,
     )
 
     steps = SubSection(
         section_def=SingleSampleExperimentStep,
-        description='''
+        description="""
         An ordered list of all the dependant steps that make up this Experiment.
-        ''',
-        repeats=True
+        """,
+        repeats=True,
     )
 
 
 class SingleLibraryMeasurement(ArchiveSection):
     m_def = Section(label_quantity='name')
-    name = Quantity(
-        type=str)
+    name = Quantity(type=str)
 
     position_x = Quantity(
         links=['http://purl.obolibrary.org/obo/PATO_0000140'],
         type=np.dtype(np.float64),
         unit=('mm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm')
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm'),
     )
 
     position_y = Quantity(
         links=['http://purl.obolibrary.org/obo/PATO_0000140'],
         type=np.dtype(np.float64),
         unit=('mm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm')
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm'),
     )
 
     position_z = Quantity(
         type=np.dtype(np.float64),
         unit=('mm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm')
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm'),
     )
 
     data_file = Quantity(
         type=str,
         shape=['*'],
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
     # position_x_relative = Quantity(
     #     type=np.dtype(np.float64),
@@ -240,22 +260,16 @@ class SingleLibraryMeasurement(ArchiveSection):
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
         if self.position_x and self.position_y:
-            self.name = f"{self.position_x},{self.position_y}"
+            self.name = f'{self.position_x},{self.position_y}'
 
 
 class LibrarySample(CompositeSystem):
+    grid_information = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
-    grid_information = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity')
-    )
-
-    library_id = SubSection(
-        section_def=ReadableIdentifiersCustom)
+    library_id = SubSection(section_def=ReadableIdentifiersCustom)
 
 
 class BaseProcess(Process):
-
     # is_standard_process = Quantity(
     #     type=bool,
     #     default=False,
@@ -263,24 +277,23 @@ class BaseProcess(Process):
     # )
 
     present = Quantity(
-        type=bool,
-        default=True,
-        a_eln=dict(component='BoolEditQuantity')
+        type=bool, default=True, a_eln=dict(component='BoolEditQuantity')
     )
 
     batch = Quantity(
-        type=Reference(Batch.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
+        type=Reference(Batch.m_def), a_eln=dict(component='ReferenceEditQuantity')
+    )
 
     positon_in_experimental_plan = Quantity(
-        type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
 
     def normalize(self, archive, logger):
-
         if not self.positon_in_experimental_plan:
             try:
-                self.positon_in_experimental_plan = float(archive.metadata.mainfile.split("_")[0])
+                self.positon_in_experimental_plan = float(
+                    archive.metadata.mainfile.split('_')[0]
+                )
             except:
                 pass
 
@@ -290,12 +303,12 @@ class BaseProcess(Process):
 
 
 class StandardSample(Entity):
-
     processes = Quantity(
         links=['http://purl.obolibrary.org/obo/BFO_0000015'],
         type=Reference(BaseProcess.m_def),
         shape=['*'],
-        a_eln=dict(component='ReferenceEditQuantity'))
+        a_eln=dict(component='ReferenceEditQuantity'),
+    )
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
@@ -308,8 +321,10 @@ class StandardSample(Entity):
 
 
 class LayerProperties(ArchiveSection):
-    m_def = Section(links=['https://purl.archive.org/tfsco/TFSCO_00000007'],
-                    label_quantity='layer_material_name')
+    m_def = Section(
+        links=['https://purl.archive.org/tfsco/TFSCO_00000007'],
+        label_quantity='layer_material_name',
+    )
 
     layer_type = Quantity(
         links=['https://purl.archive.org/tfsco/TFSCO_00000007'],
@@ -318,41 +333,54 @@ class LayerProperties(ArchiveSection):
         a_eln=dict(
             component='EnumEditQuantity',
             props=dict(
-                suggestions=['Hole Transport Layer',
-                             'Electron Transport Layer',
-                             'Absorber Layer',
-                             'Buffer Layer', 'A.R.C.',
-                             'Back reflection',
-                             'Down conversion',
-                             'Encapsulation',
-                             'Light management',
-                             'Upconversion',
-                             'Back Contact',
-                             'Passivation'])
-        ))
+                suggestions=[
+                    'Hole Transport Layer',
+                    'Electron Transport Layer',
+                    'Absorber Layer',
+                    'Buffer Layer',
+                    'A.R.C.',
+                    'Back reflection',
+                    'Down conversion',
+                    'Encapsulation',
+                    'Light management',
+                    'Upconversion',
+                    'Back Contact',
+                    'Passivation',
+                ]
+            ),
+        ),
+    )
 
     layer_material_name = Quantity(
         type=str,
         # links=["https://www.helmholtz-berlin.de"],
         description=(
-            'The chemical formula using common abreviations. This will be used to set layer material, if not set, e.g. MAPbI3.'),
-        a_eln=dict(component='StringEditQuantity'))
+            'The chemical formula using common abreviations. This will be used to set layer material, if not set, e.g. MAPbI3.'
+        ),
+        a_eln=dict(component='StringEditQuantity'),
+    )
 
     layer_material = Quantity(
-        type=str, description=(
+        type=str,
+        description=(
             'The chemical formula of the layer. This will be used directly and '
             'indirectly in the search. The formula will be used itself as well as '
-            'the extracted chemical elements.'),  # a_eln=dict(
+            'the extracted chemical elements.'
+        ),  # a_eln=dict(
         # component='StringEditQuantity')
     )
 
 
 class LayerDeposition(BaseProcess):
-    m_def = Section(links=['https://purl.archive.org/tfsco/TFSCO_00000067'],
-                    label_quantity='layer')
+    m_def = Section(
+        links=['https://purl.archive.org/tfsco/TFSCO_00000067'], label_quantity='layer'
+    )
 
-    layer = SubSection(links=['http://purl.obolibrary.org/obo/RO_0002234'],
-                       section_def=LayerProperties, repeats=True)
+    layer = SubSection(
+        links=['http://purl.obolibrary.org/obo/RO_0002234'],
+        section_def=LayerProperties,
+        repeats=True,
+    )
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
@@ -377,15 +405,22 @@ class LayerDeposition(BaseProcess):
                 layer.layer_material = ''
 
                 from .helper.formula_normalizer import PerovskiteFormulaNormalizer
-                formulas = [PerovskiteFormulaNormalizer(
-                    formula.replace("x", "").strip()).clean_formula()
-                    for formula in layer_material_name.split(",")]
+
+                formulas = [
+                    PerovskiteFormulaNormalizer(
+                        formula.replace('x', '').strip()
+                    ).clean_formula()
+                    for formula in layer_material_name.split(',')
+                ]
                 try:
                     elements = [f for formula in formulas for f in formula[1]]
                     print(elements)
                     elements_final.extend(list(set(elements)))
-                    lm_tmp = ",".join([formulas[i][0] for i, _ in enumerate(formulas)]
-                                      ) if isinstance(formulas, list) else None
+                    lm_tmp = (
+                        ','.join([formulas[i][0] for i, _ in enumerate(formulas)])
+                        if isinstance(formulas, list)
+                        else None
+                    )
                     layer.layer_material = lm_tmp
 
                 except BaseException as e:
@@ -402,10 +437,10 @@ class LayerDeposition(BaseProcess):
 
             layer_type = layer.layer_type
             if layer_type:
-
                 if layer_material or layer_material_name:
-
-                    layer_material_name_tmp = layer_material_name if layer_material_name else layer_material
+                    layer_material_name_tmp = (
+                        layer_material_name if layer_material_name else layer_material
+                    )
 
                     if layer_type:
                         device_stack.append(layer_material_name_tmp)
@@ -419,10 +454,13 @@ class LayerDeposition(BaseProcess):
                         absorber.append(layer_material_name_tmp)
 
                 if layer_type == 'Absorber Layer':
-                    archive.results.properties.optoelectronic.solar_cell.absorber_fabrication\
-                        = [self.method]
+                    archive.results.properties.optoelectronic.solar_cell.absorber_fabrication = [
+                        self.method
+                    ]
         archive.results.properties.optoelectronic.solar_cell.device_stack = device_stack
-        archive.results.properties.optoelectronic.solar_cell.hole_transport_layer = hole_transport_layer
+        archive.results.properties.optoelectronic.solar_cell.hole_transport_layer = (
+            hole_transport_layer
+        )
         archive.results.properties.optoelectronic.solar_cell.electron_transport_layer = electron_transport_layer
         archive.results.properties.optoelectronic.solar_cell.back_contact = back_contact
         archive.results.properties.optoelectronic.solar_cell.absorber = absorber
@@ -430,25 +468,24 @@ class LayerDeposition(BaseProcess):
 
 
 class BaseMeasurement(Measurement):
+    m_def = Section(links=['http://purl.obolibrary.org/obo/OBI_0000070'])
 
-    m_def = Section(
-        links=['http://purl.obolibrary.org/obo/OBI_0000070']
+    atmosphere = SubSection(
+        links=['http://purl.obolibrary.org/obo/RO_0000057'],
+        section_def=Atmosphere,
+        repeats=True,
     )
-
-    atmosphere = SubSection(links=['http://purl.obolibrary.org/obo/RO_0000057'],
-                            section_def=Atmosphere, repeats=True)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
 
 
 class LibraryMeasurement(BaseMeasurement):
-
-    measurements = SubSection(
-        section_def=SingleLibraryMeasurement, repeats=True)
+    measurements = SubSection(section_def=SingleLibraryMeasurement, repeats=True)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
+
 
 # class MeasurementOnBatch(Measurement):
 

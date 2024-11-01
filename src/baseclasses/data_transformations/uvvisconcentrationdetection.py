@@ -29,7 +29,8 @@ from baseclasses.solar_energy import UVvisData, UVvisMeasurement
 class UVvisReference(SectionReference):
     reference = Quantity(
         type=Reference(UVvisMeasurement.m_def),
-        a_eln=dict(component='ReferenceEditQuantity', label='UVvis Measurement'))
+        a_eln=dict(component='ReferenceEditQuantity', label='UVvis Measurement'),
+    )
 
 
 class UVvisConcentrationDetection(Analysis, PlotSection):
@@ -38,43 +39,48 @@ class UVvisConcentrationDetection(Analysis, PlotSection):
     inputs = Analysis.inputs.m_copy()
     inputs.section_def = UVvisReference
 
-    material_name = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
+    material_name = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
     blank_substraction = Quantity(
         type=Reference(UVvisData.m_def),
         a_eln=dict(component='ReferenceEditQuantity'),
         description='If this calibration is computed with internal blank substraction, the user can provide a blank'
-                    'which gets substracted of each new measurement when later using this calibration.'
-                    'Please note that this blank also affects the minimum and maximum peak values of the calibration.')
+        'which gets substracted of each new measurement when later using this calibration.'
+        'Please note that this blank also affects the minimum and maximum peak values of the calibration.',
+    )
 
     blank_substraction_peak_value = Quantity(
         type=np.dtype(np.float64),
         default=0.0,
-        description='This value is computed automatically if a blank substraction is given and is 0 otherwise.')
+        description='This value is computed automatically if a blank substraction is given and is 0 otherwise.',
+    )
 
     minimum_peak_value = Quantity(
         type=np.dtype(np.float64),
-        description='The calibration curve can only be applied to peak intensities that are higher than this value.')
+        description='The calibration curve can only be applied to peak intensities that are higher than this value.',
+    )
 
     maximum_peak_value = Quantity(
         type=np.dtype(np.float64),
-        description='The calibration curve can only be applied to peak intensities that are lower than this value.')
+        description='The calibration curve can only be applied to peak intensities that are lower than this value.',
+    )
 
     slope = Quantity(
         type=np.dtype(np.float64),
         description='The slope of the calibration curve.',
-        a_eln=dict(component='NumberEditQuantity'))
+        a_eln=dict(component='NumberEditQuantity'),
+    )
 
     intercept = Quantity(
         type=np.dtype(np.float64),
         description='The intercept of the calibration curve.',
-        a_eln=dict(component='NumberEditQuantity'))
+        a_eln=dict(component='NumberEditQuantity'),
+    )
 
     r2 = Quantity(
         type=np.dtype(np.float64),
-        description='The R**2 to assess how well the calibration curve reflects the underlying intensity-concentration values.')
+        description='The R**2 to assess how well the calibration curve reflects the underlying intensity-concentration values.',
+    )
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
@@ -90,7 +96,9 @@ class UVvisConcentrationDetection(Analysis, PlotSection):
         for uvvis_reference in self.inputs:
             for uvvisdata in uvvis_reference.reference.measurements:
                 if uvvisdata.concentration is None or uvvisdata.peak_value is None:
-                    logger.error('Please provide concentration and area data for each UVvis Measurement.')
+                    logger.error(
+                        'Please provide concentration and area data for each UVvis Measurement.'
+                    )
                 else:
                     concentrations.append(uvvisdata.concentration)
                     peak_values.append(uvvisdata.peak_value)
@@ -99,11 +107,17 @@ class UVvisConcentrationDetection(Analysis, PlotSection):
             self.minimum_peak_value = min(peak_values)
             self.maximum_peak_value = max(peak_values)
             if self.blank_substraction is not None:
-                self.minimum_peak_value = self.minimum_peak_value + self.blank_substraction.peak_value
-                self.maximum_peak_value = self.maximum_peak_value + self.blank_substraction.peak_value
+                self.minimum_peak_value = (
+                    self.minimum_peak_value + self.blank_substraction.peak_value
+                )
+                self.maximum_peak_value = (
+                    self.maximum_peak_value + self.blank_substraction.peak_value
+                )
 
             try:
-                concentration_values = np.array([measure.magnitude for measure in concentrations])
+                concentration_values = np.array(
+                    [measure.magnitude for measure in concentrations]
+                )
                 linear_regression = stats.linregress(peak_values, concentration_values)
                 self.slope = linear_regression.slope
                 self.intercept = linear_regression.intercept
@@ -113,13 +127,30 @@ class UVvisConcentrationDetection(Analysis, PlotSection):
                 self.slope = 0
                 self.intercept = 0
 
-            fig = go.Figure(data=[go.Scatter(name='Calibration Curve', x=peak_values, y=concentrations, mode='markers')])
-            fig.add_traces(go.Scatter(x=[self.minimum_peak_value, self.maximum_peak_value],
-                                      y=[self.intercept + self.slope * self.minimum_peak_value,
-                                         self.intercept + self.slope * self.maximum_peak_value],
-                                      mode='lines'))
-            fig.update_layout(xaxis_title='Peak Values', xaxis={'fixedrange': False},
-                              yaxis_title=f'Concentrations [{concentrations[0].units}]',
-                              title_text='Calibration Curve')
+            fig = go.Figure(
+                data=[
+                    go.Scatter(
+                        name='Calibration Curve',
+                        x=peak_values,
+                        y=concentrations,
+                        mode='markers',
+                    )
+                ]
+            )
+            fig.add_traces(
+                go.Scatter(
+                    x=[self.minimum_peak_value, self.maximum_peak_value],
+                    y=[
+                        self.intercept + self.slope * self.minimum_peak_value,
+                        self.intercept + self.slope * self.maximum_peak_value,
+                    ],
+                    mode='lines',
+                )
+            )
+            fig.update_layout(
+                xaxis_title='Peak Values',
+                xaxis={'fixedrange': False},
+                yaxis_title=f'Concentrations [{concentrations[0].units}]',
+                title_text='Calibration Curve',
+            )
             self.figures = [PlotlyFigure(label='figure 1', figure=fig.to_plotly_json())]
-

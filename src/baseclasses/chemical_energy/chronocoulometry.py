@@ -24,22 +24,18 @@ from .voltammetry import Voltammetry
 
 
 class CCProperties(CAProperties):
-
     charge_limit = Quantity(
         type=np.dtype(np.float64),
         unit=('mC'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mC'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mC'),
+    )
 
 
 class Chronocoulometry(Voltammetry):
+    m_def = Section(links=['https://w3id.org/nfdi4cat/voc4cat_0007212'])
 
-    m_def = Section(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007212']
-        )
-
-    properties = SubSection(
-        section_def=CCProperties)
+    properties = SubSection(section_def=CCProperties)
 
     def normalize(self, archive, logger):
-        self.method = "Chronocoulometry"
+        self.method = 'Chronocoulometry'
         super().normalize(archive, logger)

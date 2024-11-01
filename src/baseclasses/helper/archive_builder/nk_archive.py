@@ -28,16 +28,16 @@ def get_nk_archive(nk_data):
     energy_data = np.array(nk_data[energy_unit])
     if energy_unit.lower() == 'ev':
         energy_data = 1239.84193 / energy_data
-        energy_unit = "nm"
+        energy_unit = 'nm'
     energy_data = energy_data * ureg(energy_unit)
 
     k_data_format = nk_data.columns[2].strip()
     k_data = np.array(nk_data[k_data_format])
-    if k_data_format.lower() == "alpha":
-        k_data = 1e-4 / (4*np.pi) * energy_data * (k_data*ureg("1/um"))
+    if k_data_format.lower() == 'alpha':
+        k_data = 1e-4 / (4 * np.pi) * energy_data * (k_data * ureg('1/um'))
 
     return NKDataResult(
         wavelength=energy_data,
         n_data=DataWithStatistics(data=nk_data['n']),
-        k_data=DataWithStatistics(data=k_data)
+        k_data=DataWithStatistics(data=k_data),
     )

@@ -25,99 +25,126 @@ from .. import BaseMeasurement, LibraryMeasurement
 
 class XRRData(ArchiveSection):
     m_def = Section(
-        label_quantity='name', a_plot=[
+        label_quantity='name',
+        a_plot=[
             {
-                'x': 'angle', 'y': 'intensity', 'layout': {
-                    'yaxis': {
-                        "fixedrange": False, 'type': 'log'}, 'xaxis': {
-                        "fixedrange": False}}, "config": {
-                            "scrollZoom": True, 'staticPlot': False, }}])
+                'x': 'angle',
+                'y': 'intensity',
+                'layout': {
+                    'yaxis': {'fixedrange': False, 'type': 'log'},
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {
+                    'scrollZoom': True,
+                    'staticPlot': False,
+                },
+            }
+        ],
+    )
 
-    name = Quantity(
-        type=str)
+    name = Quantity(type=str)
 
-    metadata = Quantity(
-        type=str, a_browser=dict(adaptor='RawFileAdaptor'))
+    metadata = Quantity(type=str, a_browser=dict(adaptor='RawFileAdaptor'))
 
-    angle_type = Quantity(
-        type=str)
+    angle_type = Quantity(type=str)
 
     angle = Quantity(
-        type=np.dtype(
-            np.float64), shape=['*'], unit='degree', a_plot=[
+        type=np.dtype(np.float64),
+        shape=['*'],
+        unit='degree',
+        a_plot=[
             {
-                'x': 'angle', 'y': 'intensity', 'layout': {
-                    'yaxis': {
-                        "fixedrange": False, 'type': 'log'}, 'xaxis': {
-                            "fixedrange": False}}, "config": {
-                    "editable": True, "scrollZoom": True}}])
+                'x': 'angle',
+                'y': 'intensity',
+                'layout': {
+                    'yaxis': {'fixedrange': False, 'type': 'log'},
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
+    )
 
     intensity = Quantity(
-        type=np.dtype(
-            np.float64), shape=['*'], a_plot=[
+        type=np.dtype(np.float64),
+        shape=['*'],
+        a_plot=[
             {
-                'x': 'angle', 'y': 'intensity', 'layout': {
-                    'yaxis': {
-                        "fixedrange": False, 'type': 'log'}, 'xaxis': {
-                            "fixedrange": False}}, "config": {
-                    "editable": True, "scrollZoom": True}}])
+                'x': 'angle',
+                'y': 'intensity',
+                'layout': {
+                    'yaxis': {'fixedrange': False, 'type': 'log'},
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
+    )
 
 
 class XRRFittedData(XRRData):
     m_def = Section(
-        label_quantity='model', a_plot=[
+        label_quantity='model',
+        a_plot=[
             {
-                'x': 'angle', 'y': 'intensity', 'layout': {
-                    'yaxis': {
-                        "fixedrange": False, 'type': 'log'}, 'xaxis': {
-                        "fixedrange": False}}, "config": {
-                            "scrollZoom": True, 'staticPlot': False, }}])
+                'x': 'angle',
+                'y': 'intensity',
+                'layout': {
+                    'yaxis': {'fixedrange': False, 'type': 'log'},
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {
+                    'scrollZoom': True,
+                    'staticPlot': False,
+                },
+            }
+        ],
+    )
 
-    model = Quantity(
-        type=str, a_eln=dict(component='StringEditQuantity'))
+    model = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
     critical_angle = Quantity(
-        type=np.dtype(
-            np.float64), unit=('degree'), a_eln=dict(
-            component='NumberEditQuantity', defaultDisplayUnit='degree'))
+        type=np.dtype(np.float64),
+        unit=('degree'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='degree'),
+    )
 
     apparent_density = Quantity(
-        type=np.dtype(
-            np.float64),
+        type=np.dtype(np.float64),
         unit=('g/cm**3'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='g/cm**3'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='g/cm**3'),
+    )
 
     apparent_roughness = Quantity(
         type=np.dtype(np.float64),
         unit=('nm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
+    )
 
     chi_squared = Quantity(
-        type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
 
     diffuse_scattering = Quantity(
-        type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
 
     detector_noise = Quantity(
-        type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
 
 
 class XRR(BaseMeasurement):
-    '''XRR Measurement'''
+    """XRR Measurement"""
 
-    m_def = Section(
-        a_eln=dict(hide=['certified_values', 'certification_institute']))
+    m_def = Section(a_eln=dict(hide=['certified_values', 'certification_institute']))
 
     data_file = Quantity(
         type=str,
         shape=['*'],
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
     # data = SubSection(
     #     section_def=XRRData)
@@ -126,16 +153,15 @@ class XRR(BaseMeasurement):
     #     section_def=XRRFittedData, repeats=True)
 
     def normalize(self, archive, logger):
-        self.method = "XRR"
+        self.method = 'XRR'
         super().normalize(archive, logger)
 
 
 class XRRLibrary(LibraryMeasurement):
-    '''XRR Measurement'''
+    """XRR Measurement"""
 
-    m_def = Section(
-        a_eln=dict(hide=['certified_values', 'certification_institute']))
+    m_def = Section(a_eln=dict(hide=['certified_values', 'certification_institute']))
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
-        self.method = "XRR"
+        self.method = 'XRR'

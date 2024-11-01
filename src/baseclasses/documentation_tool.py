@@ -25,7 +25,7 @@ from nomad.metainfo import Quantity, SubSection
 
 from baseclasses.chemical_energy import SampleIDCENOME, export_lab_id
 
-jupyter_string = '''
+jupyter_string = """
 {
  "cells": [
   {
@@ -178,114 +178,120 @@ jupyter_string = '''
  "nbformat": 4,
  "nbformat_minor": 5
 }
-'''
+"""
 
 
 def get_sample(number_of_substances):
-    columns = ["id",
-               "name",
-               "chemical_composition_or_formula",
-               "component_description",
-               "producer",
-               "project_name_long",
-               "expected_structure_links",
-               "expected_structure_description",
-               "description",
-               "substrate_type",
-               "substrate_dimension",
-               "active_area_cm**2",
-               "mass_coverage_ug_cm**2",
-               "synthesis_method",
-               "synthesis_description"
-               ]
-    substance = ["substance_name", "concentration_M", "concentration_g_per_l", "amount_relative"]
+    columns = [
+        'id',
+        'name',
+        'chemical_composition_or_formula',
+        'component_description',
+        'producer',
+        'project_name_long',
+        'expected_structure_links',
+        'expected_structure_description',
+        'description',
+        'substrate_type',
+        'substrate_dimension',
+        'active_area_cm**2',
+        'mass_coverage_ug_cm**2',
+        'synthesis_method',
+        'synthesis_description',
+    ]
+    substance = [
+        'substance_name',
+        'concentration_M',
+        'concentration_g_per_l',
+        'amount_relative',
+    ]
     for i in range(number_of_substances):
-        columns.extend([s + "_" + str(i) for s in substance])
+        columns.extend([s + '_' + str(i) for s in substance])
     return pd.DataFrame(columns=columns)
 
 
 def get_env(number_of_substances):
-    columns = ["id",
-               "name",
-               "ph_value",
-               "description",
-               "solvent_name",
-               "purging_gas_name",
-               "purging_temperature",
-               "purging_time",
-               ]
-    substance = ["substance_name", "concentration_M", "concentration_g_per_l", "amount_relative"]
+    columns = [
+        'id',
+        'name',
+        'ph_value',
+        'description',
+        'solvent_name',
+        'purging_gas_name',
+        'purging_temperature',
+        'purging_time',
+    ]
+    substance = [
+        'substance_name',
+        'concentration_M',
+        'concentration_g_per_l',
+        'amount_relative',
+    ]
     for i in range(number_of_substances):
-        columns.extend([s + "_" + str(i) for s in substance])
+        columns.extend([s + '_' + str(i) for s in substance])
 
     return pd.DataFrame(columns=columns)
 
 
 def get_setup():
-    columns = ["id",
-               "name",
-               "setup",
-               "reference_electrode",
-               "counter_electrode",
-               "description"
-               ]
+    columns = [
+        'id',
+        'name',
+        'setup',
+        'reference_electrode',
+        'counter_electrode',
+        'description',
+    ]
 
     for i in range(5):
-        columns.extend(["equipment" + "_" + str(i)])
+        columns.extend(['equipment' + '_' + str(i)])
 
     return pd.DataFrame(columns=columns)
 
 
 class DocumentationTool(Entity):
-
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor')
+        a_browser=dict(adaptor='RawFileAdaptor'),
     )
 
     adding_tool = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor')
+        a_browser=dict(adaptor='RawFileAdaptor'),
     )
 
     create_entries = Quantity(
-        type=bool,
-        default=False,
-        a_eln=dict(component='ActionEditQuantity')
+        type=bool, default=False, a_eln=dict(component='ActionEditQuantity')
     )
 
     number_of_substances_per_env = Quantity(
-        type=np.dtype(np.int64),
-        default=6,
-        a_eln=dict(component='NumberEditQuantity')
+        type=np.dtype(np.int64), default=6, a_eln=dict(component='NumberEditQuantity')
     )
 
     number_of_substances_per_synthesis = Quantity(
-        type=np.dtype(np.int64),
-        default=6,
-        a_eln=dict(component='NumberEditQuantity')
+        type=np.dtype(np.int64), default=6, a_eln=dict(component='NumberEditQuantity')
     )
 
-    identifier = SubSection(
-        section_def=SampleIDCENOME)
+    identifier = SubSection(section_def=SampleIDCENOME)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
 
         if not self.data_file:
-
             with archive.m_context.raw_file(archive.metadata.mainfile) as f:
                 path = os.path.dirname(f.name)
 
             samples = get_sample(self.number_of_substances_per_synthesis)
             envs = get_env(self.number_of_substances_per_env)
             setups = get_setup()
-            file_name = self.name.replace(" ", "_")+".xlsx"
-            jupyter_string_copy = jupyter_string.replace("docs.xlsx", file_name)
-            jupyter_string_copy = jupyter_string_copy.replace("<entry_id>", archive.metadata.entry_id)
-            jupyter_file_name = file_name + ".ipynb"
+            file_name = self.name.replace(' ', '_') + '.xlsx'
+            jupyter_string_copy = jupyter_string.replace('docs.xlsx', file_name)
+            jupyter_string_copy = jupyter_string_copy.replace(
+                '<entry_id>', archive.metadata.entry_id
+            )
+            jupyter_file_name = file_name + '.ipynb'
             with archive.m_context.raw_file(jupyter_file_name, 'w') as outfile:
                 outfile.write(jupyter_string_copy)
                 self.adding_tool = jupyter_file_name
@@ -296,6 +302,6 @@ class DocumentationTool(Entity):
                 setups.to_excel(writer, sheet_name='setups', index=False)
             self.data_file = file_name
 
-        self.method = "Documentation"
+        self.method = 'Documentation'
 
         export_lab_id(archive, self.lab_id)

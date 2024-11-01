@@ -25,60 +25,64 @@ from baseclasses.chemical_energy import CESample
 
 
 class Grid(ArchiveSection):
-
     number_of_cells = Quantity(
         type=np.dtype(np.float64),
         a_eln=dict(
             component='NumberEditQuantity',
-        ))
+        ),
+    )
 
     cell_area = Quantity(
         type=np.dtype(np.float64),
-        unit=("cm**2"),
+        unit=('cm**2'),
         a_eln=dict(
-            component='NumberEditQuantity', defaultDisplayUnit='cm**2',
-        ))
+            component='NumberEditQuantity',
+            defaultDisplayUnit='cm**2',
+        ),
+    )
 
     width = Quantity(
         type=np.dtype(np.float64),
         a_eln=dict(
             component='NumberEditQuantity',
-        ))
+        ),
+    )
 
     height = Quantity(
         type=np.dtype(np.float64),
         a_eln=dict(
             component='NumberEditQuantity',
-        ))
+        ),
+    )
 
 
 class CatalyticSample(CESample):
-
     surface_area = Quantity(
         type=np.dtype(np.float64),
-        unit=("cm**2"),
+        unit=('cm**2'),
         a_eln=dict(
-            component='NumberEditQuantity', defaultDisplayUnit='cm**2',
-        ))
+            component='NumberEditQuantity',
+            defaultDisplayUnit='cm**2',
+        ),
+    )
 
     mass = Quantity(
         type=np.dtype(np.float64),
-        unit=("mg"),
+        unit=('mg'),
         a_eln=dict(
-            component='NumberEditQuantity', defaultDisplayUnit='mg',
-        ))
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mg',
+        ),
+    )
 
-    sample_id = SubSection(
-        section_def=SampleID)
+    sample_id = SubSection(section_def=SampleID)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
 
 
 class CatalyticSampleWithGrid(CatalyticSample):
-
-    grid_information = SubSection(
-        section_def=Grid)
+    grid_information = SubSection(section_def=Grid)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)

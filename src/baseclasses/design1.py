@@ -27,7 +27,6 @@ from baseclasses.helper.utilities import rewrite_json
 
 
 class Factor(ArchiveSection):
-
     m_def = Section(label_quantity='label')
 
     label = Quantity(
@@ -35,18 +34,12 @@ class Factor(ArchiveSection):
     )
 
     active = Quantity(
-        type=bool,
-        default=False,
-        a_eln=dict(component='BoolEditQuantity'))
-
-    name = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
-
-    step = Quantity(
-        type=np.dtype(np.int64),
-        a_eln=dict(component='NumberEditQuantity')
+        type=bool, default=False, a_eln=dict(component='BoolEditQuantity')
     )
+
+    name = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
+
+    step = Quantity(type=np.dtype(np.int64), a_eln=dict(component='NumberEditQuantity'))
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
@@ -57,99 +50,126 @@ class Factor(ArchiveSection):
             self.label = str(self.step) + ' ' + self.label
 
         if self.active:
-            self.label = self.label + " active"
+            self.label = self.label + ' active'
 
 
 class DiscreteFactor(Factor):
-    m_def = Section(label_quantity='label',
-                    a_eln=dict(
-                        properties=dict(
-                            order=[
-                                "name",
-                                "active",
-                                "step",
-                                "default_value", "unit", "minimum_value", "maximum_value", "values"])))
+    m_def = Section(
+        label_quantity='label',
+        a_eln=dict(
+            properties=dict(
+                order=[
+                    'name',
+                    'active',
+                    'step',
+                    'default_value',
+                    'unit',
+                    'minimum_value',
+                    'maximum_value',
+                    'values',
+                ]
+            )
+        ),
+    )
 
     values = Quantity(
         type=str,
         shape=['*'],
         a_eln=dict(
             component='StringEditQuantity',
-        ))
+        ),
+    )
 
     default_value = Quantity(
         type=str,
         a_eln=dict(
             component='StringEditQuantity',
-        ))
+        ),
+    )
 
 
 class ContinuousFactor(Factor):
-    m_def = Section(label_quantity='label',
-                    a_eln=dict(
-                        properties=dict(
-                            order=[
-                                "name",
-                                "active",
-                                "step",
-                                "default_value", "unit", "minimum_value", "maximum_value", "values"])))
+    m_def = Section(
+        label_quantity='label',
+        a_eln=dict(
+            properties=dict(
+                order=[
+                    'name',
+                    'active',
+                    'step',
+                    'default_value',
+                    'unit',
+                    'minimum_value',
+                    'maximum_value',
+                    'values',
+                ]
+            )
+        ),
+    )
 
-    unit = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
+    unit = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
     minimum_value = Quantity(
         type=np.dtype(np.float64),
         a_eln=dict(
             component='NumberEditQuantity',
-        ))
+        ),
+    )
 
     maximum_value = Quantity(
         type=np.dtype(np.float64),
         a_eln=dict(
             component='NumberEditQuantity',
-        ))
+        ),
+    )
 
     default_value = Quantity(
         type=np.dtype(np.float64),
         a_eln=dict(
             component='NumberEditQuantity',
-        ))
+        ),
+    )
 
 
 class Design(Entity):
-
     create_design_template = Quantity(
-        type=bool,
-        default=False,
-        a_eln=dict(component='ActionEditQuantity')
+        type=bool, default=False, a_eln=dict(component='ActionEditQuantity')
     )
 
     design_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
-    continuous_factors = SubSection(
-        section_def=ContinuousFactor, repeats=True)
+    continuous_factors = SubSection(section_def=ContinuousFactor, repeats=True)
 
-    discrete_factors = SubSection(
-        section_def=DiscreteFactor, repeats=True)
+    discrete_factors = SubSection(section_def=DiscreteFactor, repeats=True)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
 
-        self.method = "Design"
+        self.method = 'Design'
 
         if self.create_design_template and not self.design_file:
             with archive.m_context.raw_file(archive.metadata.mainfile) as f:
                 path = os.path.dirname(f.name)
             self.create_design_template = False
-            rewrite_json(["data", "create_design_template"], archive, False)
+            rewrite_json(['data', 'create_design_template'], archive, False)
             import pandas as pd
+
             data = []
-            columns = [f.get("label") for f in self.continuous_factors + self.discrete_factors]
-            index = ["active", "unit", "minimum_value", "maximum_value", "values", "default_value"]
+            columns = [
+                f.get('label') for f in self.continuous_factors + self.discrete_factors
+            ]
+            index = [
+                'active',
+                'unit',
+                'minimum_value',
+                'maximum_value',
+                'values',
+                'default_value',
+            ]
             for idx in index:
                 row = []
                 for f in self.continuous_factors + self.discrete_factors:
@@ -158,6 +178,6 @@ class Design(Entity):
 
             df = pd.DataFrame(data, index=index, columns=columns)
             df = df.sort_values(by=df.index[0], ascending=False, axis=1)
-            file_name = self.name.replace(" ", "_")+".tsv"
-            df.to_csv(os.path.join(path, file_name), sep="\t")
+            file_name = self.name.replace(' ', '_') + '.tsv'
+            df.to_csv(os.path.join(path, file_name), sep='\t')
             self.design_file = file_name

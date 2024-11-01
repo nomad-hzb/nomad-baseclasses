@@ -28,40 +28,49 @@ from ..chemical import Chemical
 
 class CleaningTechnique(ArchiveSection):
     time = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000165', 'https://purl.archive.org/tfsco/TFSCO_00005085'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000165',
+            'https://purl.archive.org/tfsco/TFSCO_00005085',
+        ],
+        type=np.dtype(np.float64),
         unit=('minute'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='minute', props=dict(minValue=0)))
+            defaultDisplayUnit='minute',
+            props=dict(minValue=0),
+        ),
+    )
 
 
 class SolutionCleaning(CleaningTechnique):
-    '''Base class for cleaning of a sample'''
+    """Base class for cleaning of a sample"""
+
     m_def = Section(
-        links=['https://purl.archive.org/tfsco/TFSCO_00001042'],
-        label_quantity='name')
-    name = Quantity(
-        type=str
+        links=['https://purl.archive.org/tfsco/TFSCO_00001042'], label_quantity='name'
     )
+    name = Quantity(type=str)
     solvent = Quantity(
         links=['https://purl.archive.org/tfsco/TFSCO_00000026'],
         type=Reference(Chemical.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
+        a_eln=dict(component='ReferenceEditQuantity'),
+    )
 
     solvent_2 = SubSection(
         links=['http://purl.obolibrary.org/obo/RO_0000057'],
-        section_def=PubChemPureSubstanceSectionCustom)
+        section_def=PubChemPureSubstanceSectionCustom,
+    )
 
     temperature = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000146', 'https://purl.archive.org/tfsco/TFSCO_00002111'],
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000146',
+            'https://purl.archive.org/tfsco/TFSCO_00002111',
+        ],
         type=np.dtype(np.float64),
         unit=('°C'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
 
     def normalize(self, archive, logger):
-
         if self.solvent:
             if self.solvent.name:
                 self.name = self.solvent.name
@@ -72,50 +81,61 @@ class SolutionCleaning(CleaningTechnique):
 
 
 class UVCleaning(CleaningTechnique):
-    '''Base class for cleaning of a sample'''
+    """Base class for cleaning of a sample"""
+
     m_def = Section(
         links=['https://purl.archive.org/tfsco/TFSCO_00001043'],
     )
 
     pressure = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0001025', 'https://purl.archive.org/tfsco/TFSCO_00005040'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0001025',
+            'https://purl.archive.org/tfsco/TFSCO_00005040',
+        ],
+        type=np.dtype(np.float64),
         unit=('mbar'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='mbar',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
 
 class PlasmaCleaning(CleaningTechnique):
-    '''Base class for cleaning of a sample'''
+    """Base class for cleaning of a sample"""
+
     m_def = Section(
         links=['https://purl.archive.org/tfsco/TFSCO_00001044'],
     )
 
     pressure = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0001025', 'https://purl.archive.org/tfsco/TFSCO_00005040'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0001025',
+            'https://purl.archive.org/tfsco/TFSCO_00005040',
+        ],
+        type=np.dtype(np.float64),
         unit=('mbar'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='mbar',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     power = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0001024', 'https://purl.archive.org/tfsco/TFSCO_00002104'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0001024',
+            'https://purl.archive.org/tfsco/TFSCO_00002104',
+        ],
+        type=np.dtype(np.float64),
         unit=('W'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='W',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     plasma_type = Quantity(
         links=['https://purl.archive.org/tfsco/TFSCO_00005019'],
@@ -123,19 +143,18 @@ class PlasmaCleaning(CleaningTechnique):
         shape=[],
         a_eln=dict(
             component='EnumEditQuantity',
-            props=dict(
-                suggestions=['Oxygen', 'Nitrogen', 'Argon'])
-        ))
+            props=dict(suggestions=['Oxygen', 'Nitrogen', 'Argon']),
+        ),
+    )
 
 
 class Cleaning(BaseProcess):
     m_def = Section(
         links=['https://purl.archive.org/tfsco/TFSCO_00000068'],
-        a_eln=dict(
-            hide=[
-                'lab_id', 'user', 'author']))
+        a_eln=dict(hide=['lab_id', 'user', 'author']),
+    )
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
 
-        self.method = "Cleaning"
+        self.method = 'Cleaning'

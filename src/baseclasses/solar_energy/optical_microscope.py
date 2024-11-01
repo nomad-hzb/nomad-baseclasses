@@ -25,10 +25,9 @@ from ..characterizations.electron_microscopy.microscope import (
 
 
 class OpticalMicroscope(OpticalMicroscopeTechnique):
-
     batch = Quantity(
-        type=Reference(Batch.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
+        type=Reference(Batch.m_def), a_eln=dict(component='ReferenceEditQuantity')
+    )
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)

@@ -25,17 +25,15 @@ from .. import BaseMeasurement
 
 
 class Raman(BaseMeasurement):
-
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
     minimal_height = Quantity(
-        type=np.dtype(
-            np.float64),
-        a_eln=dict(
-            component='NumberEditQuantity'))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
 
     intensity = Quantity(
         type=np.dtype(np.float64),
@@ -45,12 +43,11 @@ class Raman(BaseMeasurement):
                 'label': 'Intensity',
                 'x': 'raman_shift',
                 'y': 'intensity',
-                'layout': {'yaxis': {'type': 'lin', "title": "Intensity"}},
-                "config": {
-                    "editable": True,
-                    "scrollZoom": True
-                }
-            }])
+                'layout': {'yaxis': {'type': 'lin', 'title': 'Intensity'}},
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
+    )
 
     raman_shift = Quantity(
         type=np.dtype(np.float64),
@@ -61,12 +58,11 @@ class Raman(BaseMeasurement):
                 'label': 'Intensity',
                 'x': 'raman_shift',
                 'y': 'intensity',
-                'layout': {'yaxis': {'type': 'lin', "title": "Intensity"}},
-                "config": {
-                    "editable": True,
-                    "scrollZoom": True
-                }
-            }])
+                'layout': {'yaxis': {'type': 'lin', 'title': 'Intensity'}},
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
+    )
 
     peaks_raman = Quantity(
         type=np.dtype(np.float64),
@@ -88,14 +84,15 @@ class Raman(BaseMeasurement):
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
-        self.method = "Raman Spectroscopy"
+        self.method = 'Raman Spectroscopy'
 
-        if self.data_file and os.path.splitext(self.data_file)[-1] == ".txt":
+        if self.data_file and os.path.splitext(self.data_file)[-1] == '.txt':
             try:
                 import pandas as pd
                 from scipy import signal
+
                 with archive.m_context.raw_file(self.data_file) as f:
-                    data = pd.read_csv(f.name, sep="\t", header=None)
+                    data = pd.read_csv(f.name, sep='\t', header=None)
                     self.intensity = data[1]
                     self.raman_shift = data[0]
                     height = self.minimal_height if self.minimal_height else 40

@@ -21,8 +21,8 @@ from nomad.metainfo import Quantity
 
 
 class PreparationProtocol(Entity):
-
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )

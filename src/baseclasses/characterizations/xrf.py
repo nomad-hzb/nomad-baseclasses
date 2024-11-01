@@ -24,154 +24,149 @@ from .. import BaseMeasurement, LibraryMeasurement, SingleLibraryMeasurement
 
 
 class XRFData(ArchiveSection):
-    m_def = Section(
-        label_quantity='name')
+    m_def = Section(label_quantity='name')
 
-    name = Quantity(
-        type=str)
+    name = Quantity(type=str)
 
-    intensity = Quantity(
-        type=np.dtype(
-            np.float64), shape=['*'])
+    intensity = Quantity(type=np.dtype(np.float64), shape=['*'])
 
 
 class XRFComposition(ArchiveSection):
-    m_def = Section(
-        label_quantity='name')
+    m_def = Section(label_quantity='name')
 
     # name = Quantity(
     #     type=str,
     #     a_eln=dict(component='StringEditQuantity'))
 
     amount = Quantity(
-        type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
 
 
 class XRFLayer(ArchiveSection):
-    m_def = Section(
-        label_quantity='layer')
+    m_def = Section(label_quantity='layer')
 
-    layer = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
+    layer = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
     thickness = Quantity(
         type=np.dtype(np.float64),
         unit=('nm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
+    )
 
-    composition = SubSection(
-        section_def=XRFComposition, repeats=True)
+    composition = SubSection(section_def=XRFComposition, repeats=True)
 
 
 class XRFProperties(ArchiveSection):
-
     xray_energy = Quantity(
         type=np.dtype(np.float64),
         unit=('eV'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='eV'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='eV'),
+    )
 
     current = Quantity(
         type=np.dtype(np.float64),
         unit=('uA'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='uA'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='uA'),
+    )
 
     spot_size = Quantity(
         type=np.dtype(np.float64),
         unit=('mm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm'),
+    )
 
     integration_time = Quantity(
         type=np.dtype(np.float64),
         unit=('s'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
+    )
 
-    filter_settings = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
+    filter_settings = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
 
 class XRF(BaseMeasurement):
-    '''UV vis Measurement'''
+    """UV vis Measurement"""
 
-    m_def = Section(
-        a_eln=dict(hide=['certified_values', 'certification_institute']))
+    m_def = Section(a_eln=dict(hide=['certified_values', 'certification_institute']))
 
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
     # data = SubSection(
     #     section_def=XRFData)
 
-    composition = SubSection(
-        section_def=XRFComposition, repeats=True)
+    composition = SubSection(section_def=XRFComposition, repeats=True)
 
-    properties = SubSection(
-        section_def=XRFProperties)
+    properties = SubSection(section_def=XRFProperties)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
-        self.method = "XRF"
+        self.method = 'XRF'
 
 
 class XRFSingleLibraryMeasurement(SingleLibraryMeasurement):
-    m_def = Section(label_quantity='name',
-                    a_eln=dict(properties=dict(
-                        order=[
-                            "name", "data_file", "position_x_relative", "position_y_relative", "position_index", "thickness", "position_x", "position_y"
-                        ]))
-                    )
+    m_def = Section(
+        label_quantity='name',
+        a_eln=dict(
+            properties=dict(
+                order=[
+                    'name',
+                    'data_file',
+                    'position_x_relative',
+                    'position_y_relative',
+                    'position_index',
+                    'thickness',
+                    'position_x',
+                    'position_y',
+                ]
+            )
+        ),
+    )
 
     # data = SubSection(
     #     section_def=XRFData)
 
-    layer = SubSection(
-        section_def=XRFLayer, repeats=True)
+    layer = SubSection(section_def=XRFLayer, repeats=True)
 
 
 class XRFLibrary(LibraryMeasurement):
-    '''UV vis Measurement'''
+    """UV vis Measurement"""
 
-    m_def = Section(
-        a_eln=dict(hide=['certified_values', 'certification_institute']))
+    m_def = Section(a_eln=dict(hide=['certified_values', 'certification_institute']))
 
-    data_folder = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
+    data_folder = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
     images = Quantity(
         type=str,
-        shape=["*"],
+        shape=['*'],
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
     composition_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
-    energy = Quantity(
-        type=np.dtype(
-            np.float64), unit=('nm'), shape=['*'])
+    energy = Quantity(type=np.dtype(np.float64), unit=('nm'), shape=['*'])
 
-    material_names = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
+    material_names = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
-    properties = SubSection(
-        section_def=XRFProperties)
+    properties = SubSection(section_def=XRFProperties)
 
-    measurements = SubSection(
-        section_def=XRFSingleLibraryMeasurement, repeats=True)
+    measurements = SubSection(section_def=XRFSingleLibraryMeasurement, repeats=True)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
-        self.method = "XRF"
+        self.method = 'XRF'

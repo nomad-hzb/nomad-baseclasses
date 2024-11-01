@@ -24,99 +24,113 @@ from .wet_chemical_deposition import WetChemicalDeposition
 
 
 class SlotDieCoatingProperties(ArchiveSection):
-
     flow_rate = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00005039',
-               'https://purl.archive.org/tfsco/TFSCO_00005048'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00005039',
+            'https://purl.archive.org/tfsco/TFSCO_00005048',
+        ],
+        type=np.dtype(np.float64),
         unit=('ml/minute'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='ml/minute', props=dict(minValue=0)))
+            defaultDisplayUnit='ml/minute',
+            props=dict(minValue=0),
+        ),
+    )
 
     slot_die_head_width = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00005038',
-               'https://purl.archive.org/tfsco/TFSCO_00005047'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00005038',
+            'https://purl.archive.org/tfsco/TFSCO_00005047',
+        ],
+        type=np.dtype(np.float64),
         unit=('mm'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='mm',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     slot_die_shim_width = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00005035',
-               'https://purl.archive.org/tfsco/TFSCO_00005045'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00005035',
+            'https://purl.archive.org/tfsco/TFSCO_00005045',
+        ],
+        type=np.dtype(np.float64),
         unit=('mm'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='mm',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     slot_die_shim_thickness = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00005036',
-               'https://purl.archive.org/tfsco/TFSCO_00005046'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00005036',
+            'https://purl.archive.org/tfsco/TFSCO_00005046',
+        ],
+        type=np.dtype(np.float64),
         unit=('mm'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='mm',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     slot_die_head_distance_to_thinfilm = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00005034',
-               'https://purl.archive.org/tfsco/TFSCO_00005044'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00005034',
+            'https://purl.archive.org/tfsco/TFSCO_00005044',
+        ],
+        type=np.dtype(np.float64),
         unit=('mm'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='mm',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     slot_die_head_speed = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00005033',
-               'https://purl.archive.org/tfsco/TFSCO_00005033'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00005033',
+            'https://purl.archive.org/tfsco/TFSCO_00005033',
+        ],
+        type=np.dtype(np.float64),
         unit=('mm/s'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='mm/s',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     temperature = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0000146',
-               'https://purl.archive.org/tfsco/TFSCO_00002111'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000146',
+            'https://purl.archive.org/tfsco/TFSCO_00002111',
+        ],
+        type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='°C',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
 
 class SlotDieCoating(WetChemicalDeposition):
-    '''Spin Coating'''
-    m_def = Section(
-        links=['https://purl.archive.org/tfsco/TFSCO_00000075']
-    )
+    """Spin Coating"""
+
+    m_def = Section(links=['https://purl.archive.org/tfsco/TFSCO_00000075'])
 
     properties = SubSection(section_def=SlotDieCoatingProperties)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
 
-        self.method = "Slot Die Coating"
+        self.method = 'Slot Die Coating'

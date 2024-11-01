@@ -27,181 +27,188 @@ from .. import BaseMeasurement, LibraryMeasurement, SingleLibraryMeasurement
 class TRPLPropertiesBasic(ArchiveSection):
     m_def = Section(label_quantity='name')
 
-    name = Quantity(
-        type=str)
+    name = Quantity(type=str)
 
     repetition_rate = Quantity(
-        type=np.dtype(
-            np.float64),
+        type=np.dtype(np.float64),
         unit=('MHz'),
         shape=[],
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='MHz',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     spotsize = Quantity(
-        type=np.dtype(
-            np.float64),
+        type=np.dtype(np.float64),
         unit=('cm^2'),
         shape=[],
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='cm^2', props=dict(minValue=0)))
+            defaultDisplayUnit='cm^2',
+            props=dict(minValue=0),
+        ),
+    )
 
     integration_time = Quantity(
         type=np.dtype(np.float64),
         unit=('s'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
+    )
 
     laser_power = Quantity(
-        type=np.dtype(
-            np.float64),
+        type=np.dtype(np.float64),
         unit=('nW'),
         shape=[],
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='nW',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     excitation_peak_wavelength = Quantity(
-        type=np.dtype(
-            np.float64), unit=('nm'), shape=[], a_eln=dict(
-            component='NumberEditQuantity', defaultDisplayUnit='nm', props=dict(
-                minValue=0)))
-
-    detection_wavelength = Quantity(
-        type=np.dtype(
-            np.float64), unit=('nm'), shape=[], a_eln=dict(
-            component='NumberEditQuantity', defaultDisplayUnit='nm', props=dict(
-                minValue=0)))
-
-    excitation_FWHM = Quantity(
-        type=np.dtype(
-            np.float64),
+        type=np.dtype(np.float64),
         unit=('nm'),
         shape=[],
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='nm',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
+
+    detection_wavelength = Quantity(
+        type=np.dtype(np.float64),
+        unit=('nm'),
+        shape=[],
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='nm',
+            props=dict(minValue=0),
+        ),
+    )
+
+    excitation_FWHM = Quantity(
+        type=np.dtype(np.float64),
+        unit=('nm'),
+        shape=[],
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='nm',
+            props=dict(minValue=0),
+        ),
+    )
 
     excitation_attenuation_filter = Quantity(
-        type=np.dtype(np.float64),
-        shape=[],
-        a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.float64), shape=[], a_eln=dict(component='NumberEditQuantity')
+    )
 
     ns_per_bin = Quantity(
-        type=np.dtype(
-            np.float64),
+        type=np.dtype(np.float64),
         unit=('ns'),
         shape=[],
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='ns',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
 
 class TRPLProperties(TRPLPropertiesBasic):
-    m_def = Section(label_quantity='name',
-                    a_plot=[{
-                        'x': 'time',
-                             'y': 'counts',
-                             'layout': {'yaxis': {"fixedrange": False},
-                                        'xaxis': {"fixedrange": False}},
-                             "config": {"scrollZoom": True,
-                                        'staticPlot': False,
-                                        }}])
+    m_def = Section(
+        label_quantity='name',
+        a_plot=[
+            {
+                'x': 'time',
+                'y': 'counts',
+                'layout': {
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {
+                    'scrollZoom': True,
+                    'staticPlot': False,
+                },
+            }
+        ],
+    )
 
     signal_attenuation_filter = Quantity(
-        type=np.dtype(np.float64),
-        shape=[],
-        a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.float64), shape=[], a_eln=dict(component='NumberEditQuantity')
+    )
 
     time = Quantity(
         type=np.dtype(np.float64),
         shape=['*'],
         unit=('ns'),
         description='Counts of the trpl measurement per bin.',
-        a_plot={
-            'x': 'time', 'y': 'counts'
-        })
+        a_plot={'x': 'time', 'y': 'counts'},
+    )
 
     counts = Quantity(
         type=np.dtype(np.float64),
         shape=['*'],
         description='Counts of the trpl measurement per bin.',
-        a_plot={
-            'x': 'time', 'y': 'counts'
-        })
+        a_plot={'x': 'time', 'y': 'counts'},
+    )
 
 
 class TimeResolvedPhotoluminescence(BaseMeasurement):
-
     m_def = Section(label_quantity='file_name', validate=False)
 
     data_file = Quantity(
         type=str,
         shape=['*'],
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
-    trpl_properties = SubSection(
-        section_def=TRPLProperties, repeats=True)
+    trpl_properties = SubSection(section_def=TRPLProperties, repeats=True)
 
     def normalize(self, archive, logger):
-        self.method = "Time-Resolved Photoluminescence"
+        self.method = 'Time-Resolved Photoluminescence'
         super().normalize(archive, logger)
 
 
 class TRPLDataSimple(ArchiveSection):
     m_def = Section(label_quantity='name')
 
-    name = Quantity(
-        type=str)
+    name = Quantity(type=str)
 
-    counts = Quantity(
-        type=np.dtype(
-            np.int32), shape=['*'])
+    counts = Quantity(type=np.dtype(np.int32), shape=['*'])
 
 
 class TimeResolvedPhotoluminescenceSingleLibraryMeasurement(SingleLibraryMeasurement):
-    m_def = Section(label_quantity='name',
-                    a_eln=dict(properties=dict(
-                        order=[
-                            "name", "position_x", "position_y"
-                        ]))
-                    )
+    m_def = Section(
+        label_quantity='name',
+        a_eln=dict(properties=dict(order=['name', 'position_x', 'position_y'])),
+    )
 
-    data = SubSection(
-        section_def=TRPLDataSimple)
+    data = SubSection(section_def=TRPLDataSimple)
 
 
 class TimeResolvedPhotoluminescenceMeasurementLibrary(LibraryMeasurement):
-    '''UV vis Measurement'''
+    """UV vis Measurement"""
 
-    m_def = Section(
-        a_eln=dict(hide=['certified_values', 'certification_institute']))
+    m_def = Section(a_eln=dict(hide=['certified_values', 'certification_institute']))
 
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
-    time = Quantity(
-        type=np.dtype(
-            np.float64), unit=('ps'), shape=['*'])
+    time = Quantity(type=np.dtype(np.float64), unit=('ps'), shape=['*'])
 
-    properties = SubSection(
-        section_def=TRPLPropertiesBasic)
+    properties = SubSection(section_def=TRPLPropertiesBasic)
 
     measurements = SubSection(
-        section_def=TimeResolvedPhotoluminescenceSingleLibraryMeasurement, repeats=True)
+        section_def=TimeResolvedPhotoluminescenceSingleLibraryMeasurement, repeats=True
+    )
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
-        self.method = "TRPL Measurement Mapping"
+        self.method = 'TRPL Measurement Mapping'

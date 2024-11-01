@@ -24,22 +24,22 @@ from baseclasses.solar_energy.plmeasurement import PLData, PLProperties
 
 
 def get_pl_archive(pl_dict, mainfile, plm):
-    plm.name = pl_dict.get("name")
+    plm.name = pl_dict.get('name')
     plm.file_name = os.path.basename(mainfile)
     plm.properties = PLProperties(
-        integration_time=pl_dict.get("integration_time"),
-        number_of_averages=pl_dict.get("number_of_averages"),
-        spot_size=pl_dict.get("spot_size"),
-        wavelength_start=pl_dict.get("wavelength_start"),
-        wavelength_stop=pl_dict.get("wavelength_stop"),
-        wavelength_step_size=pl_dict.get("wavelength_step_size"),
-        lamp=pl_dict.get("lamp"),
-        temperature=pl_dict.get("temperature")
+        integration_time=pl_dict.get('integration_time'),
+        number_of_averages=pl_dict.get('number_of_averages'),
+        spot_size=pl_dict.get('spot_size'),
+        wavelength_start=pl_dict.get('wavelength_start'),
+        wavelength_stop=pl_dict.get('wavelength_stop'),
+        wavelength_step_size=pl_dict.get('wavelength_step_size'),
+        lamp=pl_dict.get('lamp'),
+        temperature=pl_dict.get('temperature'),
     )
 
-    data = pl_dict.get("data")
+    data = pl_dict.get('data')
     if data is not None:
         plm.data = PLData(
-            wavelength=np.array(data.get("wavelength")),
-            intensity=np.array(data.get("intensity"))
+            wavelength=np.array(data.get('wavelength')),
+            intensity=np.array(data.get('intensity')),
         )

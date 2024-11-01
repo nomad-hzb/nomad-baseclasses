@@ -33,24 +33,28 @@ class Reactant(ArchiveSection):
 
 
 class Feed(ArchiveSection):
-    m_def = Section(a_plot=[
-        {
-            "label": "Feed", 'x': 'runs', 'y': ['reactants/:/amount'],
-            'layout': {"showlegend": True,
-                       'yaxis': {
-                           "fixedrange": False}, 'xaxis': {
-                           "fixedrange": False}}, "config": {
-                "editable": True, "scrollZoom": True}}])
-    flow_volume = Quantity(
-        type=np.dtype(
-            np.float64), shape=['*'], unit='ml/minute')
+    m_def = Section(
+        a_plot=[
+            {
+                'label': 'Feed',
+                'x': 'runs',
+                'y': ['reactants/:/amount'],
+                'layout': {
+                    'showlegend': True,
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ]
+    )
+    flow_volume = Quantity(type=np.dtype(np.float64), shape=['*'], unit='ml/minute')
     runs = Quantity(type=np.dtype(np.float64), shape=['*'])
 
     reactants = SubSection(section_def=Reactant, repeats=True)
 
 
 class Product(ArchiveSection):
-
     m_def = Section(label_quantity='name')
     name = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
@@ -61,44 +65,47 @@ class Product(ArchiveSection):
 
 
 class CatalyticReactionData(ArchiveSection):
-    m_def = Section(a_plot=[
-        {
-            "label": "Relative exchange rate",
-            'x': 'runs',
-            'y': 'products/:/relative_rate',
-            'layout': {"showlegend": True,
-                       'yaxis': {
-                           "fixedrange": False}, 'xaxis': {
-                           "fixedrange": False}}, "config": {
-                "editable": True, "scrollZoom": True}},
-        {
-            "label": "Selectivity",
-            'x': 'runs',
-            'y': ['c_balance', 'products/:/selectivity'],
-            'layout': {"showlegend": True,
-                       'yaxis': {
-                           "fixedrange": False}, 'xaxis': {
-                           "fixedrange": False}}, "config": {
-                "editable": True, "scrollZoom": True}},
-        {
-            "label": "Exchange ",
-            'x': 'runs',
-            'y': 'products/:/exchange',
-            'layout': {"showlegend": True,
-                       'yaxis': {
-                           "fixedrange": False}, 'xaxis': {
-                           "fixedrange": False}}, "config": {
-                "editable": True, "scrollZoom": True}}
-    ]
+    m_def = Section(
+        a_plot=[
+            {
+                'label': 'Relative exchange rate',
+                'x': 'runs',
+                'y': 'products/:/relative_rate',
+                'layout': {
+                    'showlegend': True,
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {'editable': True, 'scrollZoom': True},
+            },
+            {
+                'label': 'Selectivity',
+                'x': 'runs',
+                'y': ['c_balance', 'products/:/selectivity'],
+                'layout': {
+                    'showlegend': True,
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {'editable': True, 'scrollZoom': True},
+            },
+            {
+                'label': 'Exchange ',
+                'x': 'runs',
+                'y': 'products/:/exchange',
+                'layout': {
+                    'showlegend': True,
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {'editable': True, 'scrollZoom': True},
+            },
+        ]
     )
 
-    temperature = Quantity(
-        type=np.dtype(
-            np.float64), shape=['*'], unit='°C')
+    temperature = Quantity(type=np.dtype(np.float64), shape=['*'], unit='°C')
 
-    c_balance = Quantity(
-        type=np.dtype(
-            np.float64), shape=['*'])
+    c_balance = Quantity(type=np.dtype(np.float64), shape=['*'])
 
     runs = Quantity(type=np.dtype(np.float64), shape=['*'])
 
@@ -106,27 +113,27 @@ class CatalyticReactionData(ArchiveSection):
 
 
 class CatalyticReaction(MeasurementOnSample):
-
     reaction = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
     feed = SubSection(section_def=Feed)
     data = SubSection(section_def=CatalyticReactionData)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
-        self.method = "Catalytic Reaction"
+        self.method = 'Catalytic Reaction'
 
-        if not self.data_file or os.path.splitext(
-                self.data_file)[-1] != ".csv":
+        if not self.data_file or os.path.splitext(self.data_file)[-1] != '.csv':
             return
 
         with archive.m_context.raw_file(self.data_file) as f:
             import pandas as pd
+
             data = pd.read_csv(f.name).dropna(axis=1, how='all')
         feed = Feed()
         cat_data = CatalyticReactionData()
@@ -134,26 +141,24 @@ class CatalyticReaction(MeasurementOnSample):
         products = []
         number_of_runs = 0
         for col in data.columns:
-
             if len(data[col]) < 1:
                 continue
-            col_split = col.split(" ")
+            col_split = col.split(' ')
             if len(col_split) < 2:
                 continue
 
             number_of_runs = max(len(data[col]), number_of_runs)
 
-            if col_split[0] == "x":
-                reactant = Reactant(name=col_split[1],
-                                    amount=data[col])
+            if col_split[0] == 'x':
+                reactant = Reactant(name=col_split[1], amount=data[col])
                 reactants.append(reactant)
-            if col_split[0] == "temperature":
+            if col_split[0] == 'temperature':
                 cat_data.temperature = data[col]
 
-            if col_split[0] == "C-balance":
+            if col_split[0] == 'C-balance':
                 cat_data.c_balance = data[col]
 
-            if col_split[0] == "GHSV":
+            if col_split[0] == 'GHSV':
                 feed.flow_volume = data[col]
 
             if len(col_split) < 3 or col_split[2] != '(%)':
@@ -167,16 +172,16 @@ class CatalyticReaction(MeasurementOnSample):
 
             products.append(product)
 
-            if col_split[0] == "x_p":
+            if col_split[0] == 'x_p':
                 product.exchange = data[col]
 
-            if col_split[0] == "S_p":
+            if col_split[0] == 'S_p':
                 product.selectivity = data[col]
 
-            if col_split[0] == "x_r":
+            if col_split[0] == 'x_r':
                 product.relative_rate = data[col]
 
-            if col_split[0] == "r":
+            if col_split[0] == 'r':
                 product.absolute_rate = data[col]
 
         for p in products:

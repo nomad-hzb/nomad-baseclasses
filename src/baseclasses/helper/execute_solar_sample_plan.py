@@ -39,49 +39,56 @@ from ..wet_chemical_deposition import PrecursorSolution
 
 def log_error(plan_obj, logger, msg):
     if logger:
-        logger.error(
-            msg, normalizer=plan_obj.__class__.__name__,
-            section='system')
+        logger.error(msg, normalizer=plan_obj.__class__.__name__, section='system')
     else:
         raise Exception
 
 
 def set_value(section, path, value, unit):
-    path_split = path.split("/")
+    path_split = path.split('/')
     next_key = path_split[0]
     if len(path_split) == 1:
         getattr(type(section), next_key)  # to raise an error if key is not defined
-        if unit and unit != "None":
+        if unit and unit != 'None':
             q = ureg.Quantity(float(value), ureg(unit))
-            setattr(section, next_key,  q)
-        elif next_key == "datetime":
-            setattr(section, next_key, convert_datetime(value, datetime_format='%d/%m/%Y %H:%M', utc=False))
+            setattr(section, next_key, q)
+        elif next_key == 'datetime':
+            setattr(
+                section,
+                next_key,
+                convert_datetime(value, datetime_format='%d/%m/%Y %H:%M', utc=False),
+            )
         else:
             setattr(section, next_key, value)
     elif isinstance(section, list):
-        set_value(section[np.int64(next_key)], "/".join(path_split[1:]), value, unit)
+        set_value(section[np.int64(next_key)], '/'.join(path_split[1:]), value, unit)
     elif isinstance(section, PrecursorSolution) or isinstance(section, OtherSolution):
         if not section.solution_details:
             section.solution_details = section.solution.m_copy(deep=True)
-        set_value(section[next_key], "/".join(path_split[1:]), value, unit)
-    elif isinstance(section[next_key], PubChemPureSubstanceSectionCustom) and (next_key in ["anti_solvent_2", "chemcial_2"]):
+        set_value(section[next_key], '/'.join(path_split[1:]), value, unit)
+    elif isinstance(section[next_key], PubChemPureSubstanceSectionCustom) and (
+        next_key in ['anti_solvent_2', 'chemcial_2']
+    ):
         pubchem = PubChemPureSubstanceSectionCustom(load_data=False)
         setattr(section, next_key, pubchem)
-        set_value(section[next_key], "/".join(path_split[1:]), value, unit)
+        set_value(section[next_key], '/'.join(path_split[1:]), value, unit)
     else:
-        set_value(section[next_key], "/".join(path_split[1:]), value, unit)
+        set_value(section[next_key], '/'.join(path_split[1:]), value, unit)
 
 
 def set_process_parameters(process, parameters, i, plan_obj, logger):
     names = []
     for p in parameters:
         if p[0] == i:
-            names.append(str(p[2]).replace("/", ""))
+            names.append(str(p[2]).replace('/', ''))
             try:
                 set_value(process, p[1], p[2], p[3])
             except Exception:
-                log_error(plan_obj, logger,
-                          f"Could not set {p[1]} to {p[2]} {p[3]}, likely due to a faulty path or unit")
+                log_error(
+                    plan_obj,
+                    logger,
+                    f'Could not set {p[1]} to {p[2]} {p[3]}, likely due to a faulty path or unit',
+                )
     process.name += f" {','.join(names)}"
 
 
@@ -97,7 +104,8 @@ def add_sample(plan_obj, archive, idx1, idx2, sample_cls):
         lab_id=sample_id,
         datetime=plan_obj.datetime,
         substrate=subs,
-        architecture=architecture)
+        architecture=architecture,
+    )
     create_archive(sample, archive, file_name, overwrite=True)
     entry_id = get_entry_id_from_file_name(file_name, archive)
     return entry_id
@@ -106,17 +114,26 @@ def add_sample(plan_obj, archive, idx1, idx2, sample_cls):
 def add_batch(plan_obj, archive, batch_cls, sample_refs, is_subbatch, idx1=None):
     file_name = f'{plan_obj.lab_id}'
     if is_subbatch:
-        file_name += f"_{idx1}"
+        file_name += f'_{idx1}'
     file_name += '.archive.json'
     batch_id = plan_obj.lab_id
     if is_subbatch:
-        batch_id += f"_{idx1}"
+        batch_id += f'_{idx1}'
     batch = batch_cls(
-        name=f'{plan_obj.name} {plan_obj.lab_id}_{idx1}' if is_subbatch else f'{plan_obj.name} {plan_obj.lab_id}',
+        name=f'{plan_obj.name} {plan_obj.lab_id}_{idx1}'
+        if is_subbatch
+        else f'{plan_obj.name} {plan_obj.lab_id}',
         datetime=plan_obj.datetime,
         lab_id=batch_id,
-        entities=[CompositeSystemReference(reference=sample_ref) for sublist in sample_refs for sample_ref in sublist],
-        description=plan_obj.description if plan_obj.description and not is_subbatch else None)
+        entities=[
+            CompositeSystemReference(reference=sample_ref)
+            for sublist in sample_refs
+            for sample_ref in sublist
+        ],
+        description=plan_obj.description
+        if plan_obj.description and not is_subbatch
+        else None,
+    )
     if is_subbatch and plan_obj.substrates_per_subbatch == 1:
         return
     create_archive(batch, archive, file_name, overwrite=True)
@@ -126,47 +143,55 @@ def add_batch(plan_obj, archive, batch_cls, sample_refs, is_subbatch, idx1=None)
 
 def create_documentation(plan_obj, archive, md, solution_list):
     from markdown2 import Markdown
+
     markdowner = Markdown()
-    md = md.replace("_", "\\_")
-    sol = f"<b> Solutions for batch {plan_obj.lab_id}</b><br><br>"
+    md = md.replace('_', '\\_')
+    sol = f'<b> Solutions for batch {plan_obj.lab_id}</b><br><br>'
     sol += get_solutions(solution_list)
     html = markdowner.convert(md)
-    summary_html = "----------start summary----------<br>" + str(sol) + "<br>" + str(html) +\
-        "<br>----------end summary----------"
+    summary_html = (
+        '----------start summary----------<br>'
+        + str(sol)
+        + '<br>'
+        + str(html)
+        + '<br>----------end summary----------'
+    )
     desc_tmp = plan_obj.description
     if desc_tmp is not None:
-        pos_start = desc_tmp.find("----------start summary----------")
-        pos_end = desc_tmp.find("----------end summary----------")
+        pos_start = desc_tmp.find('----------start summary----------')
+        pos_end = desc_tmp.find('----------end summary----------')
         if pos_start > 0 and pos_end > 0:
-            desc_tmp = desc_tmp[:pos_start] + desc_tmp[pos_end + 31:]
+            desc_tmp = desc_tmp[:pos_start] + desc_tmp[pos_end + 31 :]
 
-    plan_obj.description = desc_tmp +\
-        summary_html if desc_tmp is not None else summary_html
-    output = f"batch_plan_{plan_obj.lab_id}.html"
+    plan_obj.description = (
+        desc_tmp + summary_html if desc_tmp is not None else summary_html
+    )
+    output = f'batch_plan_{plan_obj.lab_id}.html'
     with archive.m_context.raw_file(output, 'w') as outfile:
-        outfile.write(str(sol) + "<br>" + str(html))
+        outfile.write(str(sol) + '<br>' + str(html))
     plan_obj.batch_plan_pdf = output
 
 
 def add_process(plan_obj, archive, step, process, idx1, idx2):
-    file_name_base = f'{plan_obj.lab_id}_{idx1}' if \
-        step.vary_parameters else \
-        f'{plan_obj.lab_id}'
+    file_name_base = (
+        f'{plan_obj.lab_id}_{idx1}' if step.vary_parameters else f'{plan_obj.lab_id}'
+    )
     if plan_obj.substrates_per_subbatch == 1 and step.vary_parameters:
-        file_name_base += "_0"
-    file_name = f"{file_name_base}.archive.json"
+        file_name_base += '_0'
+    file_name = f'{file_name_base}.archive.json'
     entry_id = get_entry_id_from_file_name(file_name, archive)
 
-    process.name = process.name.replace(
-        "Standard", "").replace("-", "").strip()
+    process.name = process.name.replace('Standard', '').replace('-', '').strip()
     if plan_obj.substrates_per_subbatch == 1 and step.vary_parameters:
-        process.samples = [CompositeSystemReference(reference=get_reference(
-            archive.metadata.upload_id, entry_id))]
+        process.samples = [
+            CompositeSystemReference(
+                reference=get_reference(archive.metadata.upload_id, entry_id)
+            )
+        ]
     else:
-        process.batch = get_reference(
-            archive.metadata.upload_id, entry_id)
+        process.batch = get_reference(archive.metadata.upload_id, entry_id)
 
-    if "name" in process:
+    if 'name' in process:
         name = f'{process.name}'
     else:
         name = f'{process.method}'
@@ -175,10 +200,11 @@ def add_process(plan_obj, archive, step, process, idx1, idx2):
         name = f'{name} {file_name_base}'
 
     # file_name_process = f'{name.replace(" ","_")}_{file_name_base}_{randStr()}.archive.json'
-    file_name_process = f'{idx2+1}_{name.replace("  ","_").replace(" ","_")}.archive.json'
+    file_name_process = (
+        f'{idx2+1}_{name.replace("  ","_").replace(" ","_")}.archive.json'
+    )
     process.positon_in_experimental_plan = idx2 + 1
-    entry_id = get_entry_id_from_file_name(
-        file_name_process, archive)
+    entry_id = get_entry_id_from_file_name(file_name_process, archive)
 
     if not process.datetime:
         process.datetime = plan_obj.datetime if plan_obj.datetime else ''
@@ -188,38 +214,52 @@ def add_process(plan_obj, archive, step, process, idx1, idx2):
 
 def set_false(plan_obj, archive):
     plan_obj.load_standard_processes = False
-    rewrite_json(["data", "load_standard_processes"], archive, False)
+    rewrite_json(['data', 'load_standard_processes'], archive, False)
     plan_obj.create_samples_and_processes = False
-    rewrite_json(["data", "create_samples_and_processes"], archive, False)
+    rewrite_json(['data', 'create_samples_and_processes'], archive, False)
 
 
 def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=None):
     if plan_obj.plan_is_created:
         set_false(plan_obj, archive)
-        log_error(plan_obj, logger, "The experimental plan has already been created. This can not been undone without deleting the files! If you did that uncheck the plan_is_created checkbox.")
+        log_error(
+            plan_obj,
+            logger,
+            'The experimental plan has already been created. This can not been undone without deleting the files! If you did that uncheck the plan_is_created checkbox.',
+        )
         return
 
     if plan_obj.standard_plan is not None:
         plan_obj.solar_cell_properties = SolarCellProperties(
             substrate=plan_obj.standard_plan.substrate,
-            architecture=plan_obj.standard_plan.architecture
+            architecture=plan_obj.standard_plan.architecture,
         )
 
-    if not (plan_obj.number_of_substrates >= 0
-            and plan_obj.number_of_substrates % plan_obj.substrates_per_subbatch == 0
-            ):
+    if not (
+        plan_obj.number_of_substrates >= 0
+        and plan_obj.number_of_substrates % plan_obj.substrates_per_subbatch == 0
+    ):
         set_false(plan_obj, archive)
-        log_error(plan_obj, logger,
-                  f"Number of substrates is {plan_obj.number_of_substrates} and substrates per subbatch is {plan_obj.substrates_per_subbatch}, which does not devide!")
+        log_error(
+            plan_obj,
+            logger,
+            f'Number of substrates is {plan_obj.number_of_substrates} and substrates per subbatch is {plan_obj.substrates_per_subbatch}, which does not devide!',
+        )
         return
 
-    number_of_subbatches = plan_obj.number_of_substrates // plan_obj.substrates_per_subbatch
+    number_of_subbatches = (
+        plan_obj.number_of_substrates // plan_obj.substrates_per_subbatch
+    )
 
     # standard process integration
     if plan_obj.load_standard_processes:
         set_false(plan_obj, archive)
         if plan_obj.plan_is_loaded:
-            log_error(plan_obj, logger, "The experimental plan has already been loaded. Uncheck the plan_is_loaded checkbox, reloading will overwrite manual entered data!")
+            log_error(
+                plan_obj,
+                logger,
+                'The experimental plan has already been loaded. Uncheck the plan_is_loaded checkbox, reloading will overwrite manual entered data!',
+            )
             return
         parameters_before = []
         parameters_linear = []
@@ -229,28 +269,54 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=N
                 continue
             for parameter in step.parameters:
                 if not parameter.parameter_values:
-                    log_error(plan_obj, logger, f"Parameter {parameter.parameter_path} has no values!")
+                    log_error(
+                        plan_obj,
+                        logger,
+                        f'Parameter {parameter.parameter_path} has no values!',
+                    )
                     return
                 if len(parameter.parameter_values) > number_of_subbatches:
-                    log_error(plan_obj, logger, f"Parameter {parameter.parameter_path} has too many values!")
+                    log_error(
+                        plan_obj,
+                        logger,
+                        f'Parameter {parameter.parameter_path} has too many values!',
+                    )
                     return
                 if len(parameter.parameter_values) == 1:
                     parameters_single.append(
-                        (i, parameter.parameter_path, parameter.parameter_values[0], parameter.parameter_unit))
+                        (
+                            i,
+                            parameter.parameter_path,
+                            parameter.parameter_values[0],
+                            parameter.parameter_unit,
+                        )
+                    )
                 elif len(parameter.parameter_values) == number_of_subbatches:
                     step.vary_parameters = True
-                    parameters_linear.append([(i, parameter.parameter_path, val, parameter.parameter_unit)
-                                             for val in parameter.parameter_values])
+                    parameters_linear.append(
+                        [
+                            (i, parameter.parameter_path, val, parameter.parameter_unit)
+                            for val in parameter.parameter_values
+                        ]
+                    )
                 else:
                     step.vary_parameters = True
-                    parameters_before.append([(i, parameter.parameter_path, val, parameter.parameter_unit)
-                                             for val in parameter.parameter_values])
+                    parameters_before.append(
+                        [
+                            (i, parameter.parameter_path, val, parameter.parameter_unit)
+                            for val in parameter.parameter_values
+                        ]
+                    )
 
         parameters = [[] for x in range(number_of_subbatches)]
         if parameters_before:
             parameters = [list(p) for p in list(itertools.product(*parameters_before))]
             if len(parameters) != number_of_subbatches:
-                log_error(plan_obj, logger, 'Not the correct amount of varied parameters given for tensor product')
+                log_error(
+                    plan_obj,
+                    logger,
+                    'Not the correct amount of varied parameters given for tensor product',
+                )
                 return
 
         for params in parameters_linear:
@@ -269,18 +335,24 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=N
                 for j in range(number_of_subbatches):
                     process = step.process_reference.m_resolved().m_copy(deep=True)
                     set_process_parameters(process, parameters[j], i, plan_obj, logger)
-                    set_process_parameters(process, parameters_single, i, plan_obj, logger)
+                    set_process_parameters(
+                        process, parameters_single, i, plan_obj, logger
+                    )
                     batch_processes.append(process)
                 plan_obj.plan[i].batch_processes = batch_processes
             else:
                 plan_obj.plan[i].batch_processes = [
-                    step.process_reference.m_resolved().m_copy(deep=True)] * number_of_subbatches
+                    step.process_reference.m_resolved().m_copy(deep=True)
+                ] * number_of_subbatches
         plan_obj.plan_is_loaded = True
-        rewrite_json(["data", "plan_is_loaded"], archive, True)
+        rewrite_json(['data', 'plan_is_loaded'], archive, True)
 
     # process, sample and batch creation
-    if plan_obj.create_samples_and_processes \
-            and plan_obj.lab_id and plan_obj.solar_cell_properties:
+    if (
+        plan_obj.create_samples_and_processes
+        and plan_obj.lab_id
+        and plan_obj.solar_cell_properties
+    ):
         set_false(plan_obj, archive)
 
         # create samples and batches
@@ -289,35 +361,40 @@ def execute_solar_sample_plan(plan_obj, archive, sample_cls, batch_cls, logger=N
             sample_refs_subbatch = []
             for idx2 in range(plan_obj.substrates_per_subbatch):
                 entry_id = add_sample(plan_obj, archive, idx1, idx2, sample_cls)
-                sample_refs_subbatch.append(get_reference(
-                    archive.metadata.upload_id, entry_id))
+                sample_refs_subbatch.append(
+                    get_reference(archive.metadata.upload_id, entry_id)
+                )
             sample_refs.append(sample_refs_subbatch)
             add_batch(plan_obj, archive, batch_cls, [sample_refs_subbatch], True, idx1)
 
         batch_entry_id = add_batch(plan_obj, archive, batch_cls, sample_refs, False)
-        plan_obj.batch_reference = get_reference(archive.metadata.upload_id, batch_entry_id)
+        plan_obj.batch_reference = get_reference(
+            archive.metadata.upload_id, batch_entry_id
+        )
 
         # create processes
-        md = f"# Batch plan of batch {plan_obj.lab_id}\n\n"
+        md = f'# Batch plan of batch {plan_obj.lab_id}\n\n'
         solution_list = []
         for idx2, step in enumerate(plan_obj.plan):
             for idx1, batch_process in enumerate(step.batch_processes):
                 if not batch_process.present:
                     continue
-                file_name_base = add_process(plan_obj, archive, step, batch_process, idx1, idx2)
-                md = add_section_markdown(md,  idx2, idx1, batch_process, file_name_base)
-                if "solution" not in batch_process:
+                file_name_base = add_process(
+                    plan_obj, archive, step, batch_process, idx1, idx2
+                )
+                md = add_section_markdown(md, idx2, idx1, batch_process, file_name_base)
+                if 'solution' not in batch_process:
                     continue
-                for s in getattr(batch_process, "solution", []):
-                    if getattr(s, "solution_details"):
-                        solution_list.append(s["solution_details"])
-                    elif getattr(s, "solution"):
-                        solution_list.append(s["solution"])
+                for s in getattr(batch_process, 'solution', []):
+                    if getattr(s, 'solution_details'):
+                        solution_list.append(s['solution_details'])
+                    elif getattr(s, 'solution'):
+                        solution_list.append(s['solution'])
 
         create_documentation(plan_obj, archive, md, solution_list)
 
         plan_obj.plan_is_created = True
-        rewrite_json(["data", "plan_is_created"], archive, True)
-        rewrite_json(["data", "description"], archive, plan_obj.description)
+        rewrite_json(['data', 'plan_is_created'], archive, True)
+        rewrite_json(['data', 'description'], archive, plan_obj.description)
 
     set_false(plan_obj, archive)

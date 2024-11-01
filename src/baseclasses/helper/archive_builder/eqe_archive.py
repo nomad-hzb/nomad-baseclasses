@@ -21,14 +21,19 @@ from nomad.units import ureg
 
 
 def get_eqe_archive(eqe_dict, mainfile, eqem, logger):
-
     eqem.measured = True
     eqem.bandgap_eqe = eqe_dict['bandgap']
     eqem.integrated_jsc = eqe_dict['jsc'] * ureg('A/m**2')
-    eqem.integrated_j0rad = eqe_dict['j0rad'] * ureg(
-        'A/m**2') if 'j0rad' in eqe_dict else logger.warning('The j0rad could not be calculated.')
-    eqem.voc_rad = eqe_dict['voc_rad'] if 'voc_rad' in eqe_dict else logger.warning(
-        'The voc_rad could not be calculated.')
+    eqem.integrated_j0rad = (
+        eqe_dict['j0rad'] * ureg('A/m**2')
+        if 'j0rad' in eqe_dict
+        else logger.warning('The j0rad could not be calculated.')
+    )
+    eqem.voc_rad = (
+        eqe_dict['voc_rad']
+        if 'voc_rad' in eqe_dict
+        else logger.warning('The voc_rad could not be calculated.')
+    )
     eqem.urbach_energy = eqe_dict.get('urbach_e')
     eqem.photon_energy_array = np.array(eqe_dict['interpolated_photon_energy'])
     eqem.raw_photon_energy_array = np.array(eqe_dict['photon_energy_raw'])
@@ -36,7 +41,5 @@ def get_eqe_archive(eqe_dict, mainfile, eqem, logger):
     eqem.raw_eqe_array = np.array(eqe_dict['eqe_raw'])
 
     if eqem.photon_energy_array is not None:
-        eqem.wavelength_array = eqem.photon_energy_array.to(
-            'nm', 'sp')  # pylint: disable=E1101
-        eqem.raw_wavelength_array = eqem.raw_photon_energy_array.to(
-            'nm', 'sp')  # pylint: disable=E1101
+        eqem.wavelength_array = eqem.photon_energy_array.to('nm', 'sp')  # pylint: disable=E1101
+        eqem.raw_wavelength_array = eqem.raw_photon_energy_array.to('nm', 'sp')  # pylint: disable=E1101

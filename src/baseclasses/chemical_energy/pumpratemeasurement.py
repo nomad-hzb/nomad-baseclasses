@@ -25,61 +25,85 @@ from .potentiostat_measurement import PotentiostatMeasurement
 
 
 class PumpRateMeasurement(BaseMeasurement):
-
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
     electro_chemistry_measurement = Quantity(
         type=Reference(PotentiostatMeasurement.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
+        a_eln=dict(component='ReferenceEditQuantity'),
+    )
 
     environment = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007223'],
         type=Reference(Environment.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
+        a_eln=dict(component='ReferenceEditQuantity'),
+    )
 
     setup = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007230'],
         type=Reference(ElectroChemicalSetup.m_def),
-        a_eln=dict(component='ReferenceEditQuantity'))
+        a_eln=dict(component='ReferenceEditQuantity'),
+    )
 
-    time = Quantity(
-        type=np.dtype(np.float64),
-        shape=['*'],
-        unit='s')
+    time = Quantity(type=np.dtype(np.float64), shape=['*'], unit='s')
 
     flow_rate_set = Quantity(
-        type=np.dtype(
-            np.float64), shape=['n_values'], unit='uL/minute', a_plot=[
+        type=np.dtype(np.float64),
+        shape=['n_values'],
+        unit='uL/minute',
+        a_plot=[
             {
-                "label": "Current", 'x': 'time', 'y': 'flow_rate_set', 'layout': {
-                    'yaxis': {
-                         "fixedrange": False}, 'xaxis': {
-                        "fixedrange": False}}, "config": {
-                    "editable": True, "scrollZoom": True}}])
+                'label': 'Current',
+                'x': 'time',
+                'y': 'flow_rate_set',
+                'layout': {
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
+    )
 
     flow_rate_measured = Quantity(
-        type=np.dtype(
-            np.float64), shape=['n_values'], unit='uL/minute', a_plot=[
+        type=np.dtype(np.float64),
+        shape=['n_values'],
+        unit='uL/minute',
+        a_plot=[
             {
-                "label": "Current", 'x': 'time', 'y': 'flow_rate_set', 'layout': {
-                    'yaxis': {
-                         "fixedrange": False}, 'xaxis': {
-                        "fixedrange": False}}, "config": {
-                    "editable": True, "scrollZoom": True}}])
+                'label': 'Current',
+                'x': 'time',
+                'y': 'flow_rate_set',
+                'layout': {
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
+    )
 
     pressure = Quantity(
-        type=np.dtype(
-            np.float64), shape=['n_values'], unit='hPa', a_plot=[
+        type=np.dtype(np.float64),
+        shape=['n_values'],
+        unit='hPa',
+        a_plot=[
             {
-                "label": "Current", 'x': 'time', 'y': 'pressure', 'layout': {
-                    'yaxis': {
-                         "fixedrange": False}, 'xaxis': {
-                        "fixedrange": False}}, "config": {
-                    "editable": True, "scrollZoom": True}}])
+                'label': 'Current',
+                'x': 'time',
+                'y': 'pressure',
+                'layout': {
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
+    )
 
     def normalize(self, archive, logger):
-        self.method = "Pump Rate Measurement"
+        self.method = 'Pump Rate Measurement'
         super().normalize(archive, logger)

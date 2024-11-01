@@ -26,49 +26,33 @@ from .. import BaseMeasurement
 class TemperatureSensors(ArchiveSection):
     m_def = Section(label_quantity='name')
 
-    name = Quantity(
-        type=str)
+    name = Quantity(type=str)
 
-    temperature = Quantity(
-        type=np.dtype(np.float64),
-        unit=('°C'),
-        shape=['*'])
+    temperature = Quantity(type=np.dtype(np.float64), unit=('°C'), shape=['*'])
 
 
 class EnvironmentData(ArchiveSection):
-    time = Quantity(
-        type=np.dtype(np.float64),
-        unit=('s'),
-        shape=['*'])
+    time = Quantity(type=np.dtype(np.float64), unit=('s'), shape=['*'])
 
-    datetime = Quantity(
-        type=Datetime,
-        shape=['*'])
+    datetime = Quantity(type=Datetime, shape=['*'])
 
-    temperature = Quantity(
-        type=np.dtype(np.float64),
-        unit=('°C'),
-        shape=['*'])
+    temperature = Quantity(type=np.dtype(np.float64), unit=('°C'), shape=['*'])
 
-    humidity = Quantity(
-        type=np.dtype(np.float64),
-        shape=['*'])
+    humidity = Quantity(type=np.dtype(np.float64), shape=['*'])
 
-    pressure = Quantity(
-        type=np.dtype(np.float64),
-        unit=('mbar'),
-        shape=['*'])
+    pressure = Quantity(type=np.dtype(np.float64), unit=('mbar'), shape=['*'])
 
     temperature_sensors = SubSection(section_def=TemperatureSensors, repeats=True)
 
 
 class EnvironmentMeasurement(BaseMeasurement):
-    '''Base class for environment measurement'''
+    """Base class for environment measurement"""
 
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
     data = SubSection(section_def=EnvironmentData)
 
@@ -76,4 +60,4 @@ class EnvironmentMeasurement(BaseMeasurement):
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
-        self.method = "Environment measurement"
+        self.method = 'Environment measurement'

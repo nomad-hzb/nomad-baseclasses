@@ -22,13 +22,16 @@ from baseclasses.assays import EnvironmentData, TemperatureSensors
 
 
 def get_environment_archive(env_data, env_entry):
-
     env_entry.data = EnvironmentData(
-        time=env_data["Time [s]"],
-        datetime=pd.to_datetime(env_data["Date"] + env_data["Time"], format='%b %d %Y%H:%M:%S').to_list(),
-        humidity=env_data["Humidity[%]"],
+        time=env_data['Time [s]'],
+        datetime=pd.to_datetime(
+            env_data['Date'] + env_data['Time'], format='%b %d %Y%H:%M:%S'
+        ).to_list(),
+        humidity=env_data['Humidity[%]'],
         temperature=env_data['Temperature[°C]'],
         temperature_sensors=[
             TemperatureSensors(temperature=env_data[col], name=col)
-            for col in env_data.columns if col.startswith("TH")
-        ])
+            for col in env_data.columns
+            if col.startswith('TH')
+        ],
+    )

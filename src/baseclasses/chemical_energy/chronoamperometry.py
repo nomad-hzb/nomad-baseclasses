@@ -24,108 +24,124 @@ from .voltammetry import Voltammetry, VoltammetryCycle
 
 
 class CAProperties(PotentiostatProperties):
-
     pre_step_potential = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(np.float64),
         unit=('V'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
 
     pre_step_potential_measured_against = Quantity(
         type=MEnum('Eoc', 'Eref'),
         shape=[],
         a_eln=dict(
             component='EnumEditQuantity',
-        ))
+        ),
+    )
 
     pre_step_delay_time = Quantity(
         type=np.dtype(np.float64),
         unit=('s'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
+    )
 
     step_1_potential = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(np.float64),
         unit=('V'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
 
     step_1_potential_measured_against = Quantity(
         type=MEnum('Eoc', 'Eref'),
         shape=[],
         a_eln=dict(
             component='EnumEditQuantity',
-        ))
+        ),
+    )
 
     step_1_time = Quantity(
         type=np.dtype(np.float64),
         unit=('s'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
+    )
 
     step_2_potential = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(np.float64),
         unit=('V'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
 
     step_2_potential_measured_against = Quantity(
         type=MEnum('Eoc', 'Eref'),
         shape=[],
         a_eln=dict(
             component='EnumEditQuantity',
-        ))
+        ),
+    )
 
     step_2_time = Quantity(
         type=np.dtype(np.float64),
         unit=('s'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
+    )
 
     sample_period = Quantity(
         type=np.dtype(np.float64),
         unit=('s'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
+    )
 
 
 class CAPropertiesWithData(CAProperties):
-    m_def = Section(label_quantity='name',
-                    a_plot=[{'label': 'Current',
-                             'x': 'data/time',
-                             'y': 'data/current',
-                             'layout': {'yaxis': {"fixedrange": False},
-                                        'xaxis': {"fixedrange": False}},
-                             "config": {"scrollZoom": True,
-                                        'staticPlot': False,
-                                        }}])
+    m_def = Section(
+        label_quantity='name',
+        a_plot=[
+            {
+                'label': 'Current',
+                'x': 'data/time',
+                'y': 'data/current',
+                'layout': {
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {
+                    'scrollZoom': True,
+                    'staticPlot': False,
+                },
+            }
+        ],
+    )
 
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
     name = Quantity(
         type=str,
         description='A short human readable and descriptive name.',
-        a_eln=dict(component='StringEditQuantity', label='Short name'))
+        a_eln=dict(component='StringEditQuantity', label='Short name'),
+    )
 
     datetime = Quantity(
         type=Datetime,
         description='The date and time associated with this section.',
-        a_eln=dict(component='DateTimeEditQuantity'))
+        a_eln=dict(component='DateTimeEditQuantity'),
+    )
 
-    data = SubSection(
-        section_def=VoltammetryCycle)
+    data = SubSection(section_def=VoltammetryCycle)
 
 
 class Chronoamperometry(Voltammetry):
+    m_def = Section(links=['https://w3id.org/nfdi4cat/voc4cat_0007207'])
 
-    m_def = Section(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0007207']
-    )
-
-    properties = SubSection(
-        section_def=CAProperties)
+    properties = SubSection(section_def=CAProperties)
 
     def normalize(self, archive, logger):
-        self.method = "Chronoamperometry"
+        self.method = 'Chronoamperometry'
         super().normalize(archive, logger)
 
 

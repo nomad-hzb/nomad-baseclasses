@@ -17,44 +17,38 @@ from .data_baseclasses import DataWithStatistics
 
 
 class NKDataResult(AnalysisResult):
-    n_data = SubSection(
-        section_def=DataWithStatistics,
-        description='The n data.'
-    )
+    n_data = SubSection(section_def=DataWithStatistics, description='The n data.')
 
     k_data = SubSection(
         section_def=DataWithStatistics,
         description='The k data.',
     )
 
-    wavelength = Quantity(
-        type=np.dtype(np.float64),
-        unit=('nm'),
-        shape=['*'])
+    wavelength = Quantity(type=np.dtype(np.float64), unit=('nm'), shape=['*'])
 
     m_def = Section(
-        a_plot=[{
-            'label': 'n data over wavelength',
-            'x': 'wavelength',
-            'y': 'n_data/data',
-            'layout': {
-                'yaxis': {
-                    "fixedrange": False},
-                'xaxis': {
-                    "fixedrange": False}},
-        },
+        a_plot=[
+            {
+                'label': 'n data over wavelength',
+                'x': 'wavelength',
+                'y': 'n_data/data',
+                'layout': {
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+            },
             {
                 'label': 'k data over wavelength',
                 'x': 'wavelength',
                 'y': 'k_data/data',
                 'layout': {
-                    'yaxis': {
-                        "fixedrange": False},
-                    'xaxis': {
-                        "fixedrange": False}},
-        }
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+            },
         ],
-        a_eln=dict(overview=True))
+        a_eln=dict(overview=True),
+    )
 
     def normalize(self, archive, logger):
         self.n_data.normalize(archive, logger)
@@ -64,15 +58,15 @@ class NKDataResult(AnalysisResult):
 class NKData(Entity):
     chemical_composition_or_formulas = Quantity(
         type=str,
-        description=(
-            'A list of the elements involved'),
-        a_eln=dict(component='StringEditQuantity'))
+        description=('A list of the elements involved'),
+        a_eln=dict(component='StringEditQuantity'),
+    )
 
     data_file = Quantity(
         type=str,
         description='The Data file providing the input data.',
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor')
+        a_browser=dict(adaptor='RawFileAdaptor'),
     )
 
     data_reference = Quantity(
@@ -80,7 +74,7 @@ class NKData(Entity):
         description='A link/URL to the reference of the data file in literature.',
         a_eln=ELNAnnotation(
             component='URLEditQuantity',
-        )
+        ),
     )
 
     reference = Quantity(
@@ -105,6 +99,7 @@ class NKData(Entity):
 
         if self.chemical_composition_or_formulas:
             from baseclasses.helper.utilities import get_elements_from_formula
+
             formula_split = self.chemical_composition_or_formulas.split(',')
             elements_final = []
             for formula in formula_split:
@@ -112,7 +107,9 @@ class NKData(Entity):
                     elements = get_elements_from_formula(formula.strip())
                     elements_final.extend(elements)
                 except Exception as e:
-                    logger.warn(f'could not analyse layer material {formula}', exc_info=e)
+                    logger.warn(
+                        f'could not analyse layer material {formula}', exc_info=e
+                    )
             archive.results.material.elements = elements_final
 
         self.data.normalize(archive, logger)

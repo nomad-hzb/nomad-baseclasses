@@ -27,127 +27,165 @@ from .. import BaseMeasurement, LibraryMeasurement, SingleLibraryMeasurement
 class UVvisDataSimple(ArchiveSection):
     m_def = Section(label_quantity='name')
 
-    name = Quantity(
-        type=str)
+    name = Quantity(type=str)
 
     intensity = Quantity(
         links=['https://purl.archive.org/tfsco/TFSCO_00001128'],
-        type=np.dtype(
-            np.float64), shape=['*'])
+        type=np.dtype(np.float64),
+        shape=['*'],
+    )
 
 
 class UVvisData(UVvisDataSimple):
-    m_def = Section(label_quantity='name',
-                    a_plot=[{
-                        'x': 'wavelength',
-                             'y': 'intensity',
-                             'layout': {'yaxis': {"fixedrange": False},
-                                        'xaxis': {"fixedrange": False}},
-                             "config": {"scrollZoom": True,
-                                        'staticPlot': False,
-                                        }}])
+    m_def = Section(
+        label_quantity='name',
+        a_plot=[
+            {
+                'x': 'wavelength',
+                'y': 'intensity',
+                'layout': {
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {
+                    'scrollZoom': True,
+                    'staticPlot': False,
+                },
+            }
+        ],
+    )
 
     datetime = Quantity(
         type=Datetime,
         description='The date and time associated with this section.',
-        a_eln=dict(component='DateTimeEditQuantity'))
+        a_eln=dict(component='DateTimeEditQuantity'),
+    )
 
     wavelength = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0001242','https://purl.archive.org/tfsco/TFSCO_00002040'],
-        type=np.dtype(
-            np.float64), shape=['*'], unit='nm', a_plot=[
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0001242',
+            'https://purl.archive.org/tfsco/TFSCO_00002040',
+        ],
+        type=np.dtype(np.float64),
+        shape=['*'],
+        unit='nm',
+        a_plot=[
             {
-                'x': 'wavelength', 'y': 'intensity', 'layout': {
-                    'yaxis': {
-                        "fixedrange": False}, 'xaxis': {
-                            "fixedrange": False}}, "config": {
-                    "editable": True, "scrollZoom": True}}])
+                'x': 'wavelength',
+                'y': 'intensity',
+                'layout': {
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
+    )
 
 
 class UVvisProperties(ArchiveSection):
-
     integration_time = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00002076','https://purl.archive.org/tfsco/TFSCO_00002093'],
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00002076',
+            'https://purl.archive.org/tfsco/TFSCO_00002093',
+        ],
         type=np.dtype(np.float64),
         unit=('s'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
+    )
 
     number_of_averages = Quantity(
         links=['https://purl.archive.org/tfsco/TFSCO/TFSCO_00003003'],
         type=np.dtype(np.int64),
-        a_eln=dict(component='NumberEditQuantity'))
+        a_eln=dict(component='NumberEditQuantity'),
+    )
 
     spot_size = Quantity(
         type=np.dtype(np.float64),
         unit=('mm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm'),
+    )
 
 
 class UVvisMeasurement(BaseMeasurement):
-    '''UV vis Measurement'''
+    """UV vis Measurement"""
 
     m_def = Section(
         links=['https://purl.archive.org/tfsco/TFSCO_00005001'],
-        a_eln=dict(hide=['certified_values', 'certification_institute']))
+        a_eln=dict(hide=['certified_values', 'certification_institute']),
+    )
 
     data_file = Quantity(
         type=str,
         shape=['*'],
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
-    measurements = SubSection(
-        section_def=UVvisData, repeats=True)
+    measurements = SubSection(section_def=UVvisData, repeats=True)
 
     def normalize(self, archive, logger):
-        self.method = "UVvis Measurement"
+        self.method = 'UVvis Measurement'
         super().normalize(archive, logger)
 
 
 class UVvisSingleLibraryMeasurement(SingleLibraryMeasurement):
-    m_def = Section(label_quantity='name',
-                    a_eln=dict(properties=dict(
-                        order=[
-                            "name", "position_x_relative", "position_y_relative", "position_index", "position_x", "position_y"
-                        ]))
-                    )
+    m_def = Section(
+        label_quantity='name',
+        a_eln=dict(
+            properties=dict(
+                order=[
+                    'name',
+                    'position_x_relative',
+                    'position_y_relative',
+                    'position_index',
+                    'position_x',
+                    'position_y',
+                ]
+            )
+        ),
+    )
 
-    data = SubSection(
-        section_def=UVvisDataSimple)
+    data = SubSection(section_def=UVvisDataSimple)
 
 
 class UVvisMeasurementLibrary(LibraryMeasurement):
-    '''UV vis Measurement'''
+    """UV vis Measurement"""
 
-    m_def = Section(
-        a_eln=dict(hide=['certified_values', 'certification_institute']))
-    
+    m_def = Section(a_eln=dict(hide=['certified_values', 'certification_institute']))
+
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
     reference_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
-    
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
+
     dark_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
     wavelength = Quantity(
-        links=['http://purl.obolibrary.org/obo/PATO_0001242','https://purl.archive.org/tfsco/TFSCO_00002040'],
-        type=np.dtype(
-            np.float64), unit=('nm'), shape=['*'])
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0001242',
+            'https://purl.archive.org/tfsco/TFSCO_00002040',
+        ],
+        type=np.dtype(np.float64),
+        unit=('nm'),
+        shape=['*'],
+    )
 
-    properties = SubSection(
-        section_def=UVvisProperties)
+    properties = SubSection(section_def=UVvisProperties)
 
-    measurements = SubSection(
-        section_def=UVvisSingleLibraryMeasurement, repeats=True)
+    measurements = SubSection(section_def=UVvisSingleLibraryMeasurement, repeats=True)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
-        self.method = "UVvis Measurement Mapping"
+        self.method = 'UVvis Measurement Mapping'

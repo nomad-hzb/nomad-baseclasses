@@ -26,7 +26,8 @@ class Chemical(Substance):
         shape=[],
         a_eln=dict(
             component='EnumEditQuantity',
-        ))
+        ),
+    )
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)

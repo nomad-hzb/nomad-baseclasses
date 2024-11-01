@@ -28,112 +28,116 @@ from .. import BaseMeasurement, LibraryMeasurement, SingleLibraryMeasurement
 class PLDataSimple(ArchiveSection):
     m_def = Section(label_quantity='name')
 
-    name = Quantity(
-        type=str)
+    name = Quantity(type=str)
 
-    intensity = Quantity(
-        type=np.dtype(
-            np.float64), shape=['*'])
+    intensity = Quantity(type=np.dtype(np.float64), shape=['*'])
 
 
 class PLData(PLDataSimple):
-    wavelength = Quantity(
-        type=np.dtype(
-            np.float64), unit=('nm'), shape=['*'])
+    wavelength = Quantity(type=np.dtype(np.float64), unit=('nm'), shape=['*'])
 
 
 class PLProperties(ArchiveSection):
-
     integration_time = Quantity(
         type=np.dtype(np.float64),
         unit=('s'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
+    )
 
     number_of_averages = Quantity(
-        type=np.dtype(np.int64),
-        a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.int64), a_eln=dict(component='NumberEditQuantity')
+    )
 
     spot_size = Quantity(
         type=np.dtype(np.float64),
         unit=('mm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm'),
+    )
 
     wavelength_start = Quantity(
         type=np.dtype(np.float64),
         unit=('nm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
+    )
 
     wavelength_stop = Quantity(
         type=np.dtype(np.float64),
         unit=('nm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
+    )
 
     wavelength_step_size = Quantity(
         type=np.dtype(np.float64),
         unit=('nm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
+    )
 
     temperature = Quantity(
         type=np.dtype(np.float64),
         unit=('K'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
 
-    lamp = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
+    lamp = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
 
 class PLPropertiesLibrary(ArchiveSection):
-
     integration_time = Quantity(
         type=np.dtype(np.float64),
         unit=('s'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
+    )
 
     number_of_averages = Quantity(
-        type=np.dtype(np.int64),
-        a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.int64), a_eln=dict(component='NumberEditQuantity')
+    )
 
     spot_size = Quantity(
         type=np.dtype(np.float64),
         unit=('mm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm'),
+    )
 
     long_pass_filter = Quantity(
         type=np.dtype(np.float64),
         unit=('nm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
+    )
 
     laser_wavelength = Quantity(
         type=np.dtype(np.float64),
         unit=('nm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
+    )
 
     laser_power = Quantity(
         type=np.dtype(np.float64),
         unit=('W'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='W'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='W'),
+    )
 
     power_density = Quantity(
         type=np.dtype(np.float64),
         unit=('W/m**2'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='W/m**2'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='W/m**2'),
+    )
 
     photon_flux = Quantity(
         type=np.dtype(np.float64),
         unit=('1/(m**2*s)'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='1/(m**2*s)'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='1/(m**2*s)'),
+    )
 
     # Function to calculate power density and photon flux
 
     def calculate_laser_parameters(self):
         # Constants
-        h = 6.626e-34 * ureg("J*s")  # Planck's constant in Js
-        c = 299_792_458 * ureg("m/s")  # Speed of light in m/s
+        h = 6.626e-34 * ureg('J*s')  # Planck's constant in Js
+        c = 299_792_458 * ureg('m/s')  # Speed of light in m/s
 
         # Calculate spot area
         radius = self.spot_size / 2
-        area = math.pi * (radius ** 2)
+        area = math.pi * (radius**2)
 
         # Calculate power density
         power_density = self.laser_power / area
@@ -152,65 +156,67 @@ class PLPropertiesLibrary(ArchiveSection):
 
 
 class PLMeasurement(BaseMeasurement):
-    '''PL Measurement'''
+    """PL Measurement"""
 
-    m_def = Section(
-        a_eln=dict(hide=['certified_values', 'certification_institute']))
+    m_def = Section(a_eln=dict(hide=['certified_values', 'certification_institute']))
 
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
-    properties = SubSection(
-        section_def=PLProperties)
+    properties = SubSection(section_def=PLProperties)
 
-    data = SubSection(
-        section_def=PLData)
+    data = SubSection(section_def=PLData)
 
     def normalize(self, archive, logger):
-        self.method = "PL Measurement"
+        self.method = 'PL Measurement'
         super().normalize(archive, logger)
 
 
 class PLSingleLibraryMeasurement(SingleLibraryMeasurement):
-    m_def = Section(label_quantity='name',
-                    a_eln=dict(properties=dict(
-                        order=[
-                            "name", "position_x_relative", "position_y_relative", "position_index", "position_x", "position_y"
-                        ]))
-                    )
+    m_def = Section(
+        label_quantity='name',
+        a_eln=dict(
+            properties=dict(
+                order=[
+                    'name',
+                    'position_x_relative',
+                    'position_y_relative',
+                    'position_index',
+                    'position_x',
+                    'position_y',
+                ]
+            )
+        ),
+    )
 
-    data = SubSection(
-        section_def=PLDataSimple)
+    data = SubSection(section_def=PLDataSimple)
 
 
 class PLMeasurementLibrary(LibraryMeasurement):
-    '''PL Measurement'''
+    """PL Measurement"""
 
-    m_def = Section(
-        a_eln=dict(hide=['certified_values', 'certification_institute']))
+    m_def = Section(a_eln=dict(hide=['certified_values', 'certification_institute']))
 
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
     # reference_file = Quantity(
     #     type=str,
     #     a_eln=dict(component='FileEditQuantity'),
     #     a_browser=dict(adaptor='RawFileAdaptor'))
 
-    wavelength = Quantity(
-        type=np.dtype(
-            np.float64), unit=('nm'), shape=['*'])
+    wavelength = Quantity(type=np.dtype(np.float64), unit=('nm'), shape=['*'])
 
-    properties = SubSection(
-        section_def=PLPropertiesLibrary)
+    properties = SubSection(section_def=PLPropertiesLibrary)
 
-    measurements = SubSection(
-        section_def=PLSingleLibraryMeasurement, repeats=True)
+    measurements = SubSection(section_def=PLSingleLibraryMeasurement, repeats=True)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
-        self.method = "PL Measurement Mapping"
+        self.method = 'PL Measurement Mapping'

@@ -5,20 +5,22 @@ from nomad.metainfo import Quantity
 
 class DataWithStatistics(ArchiveSection):
     mean = Quantity(
-        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
 
     variance = Quantity(
-        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
 
     minimum = Quantity(
-        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
 
     maximum = Quantity(
-        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
 
-    data = Quantity(
-        type=np.dtype(np.float64),
-        shape=['*'])
+    data = Quantity(type=np.dtype(np.float64), shape=['*'])
 
     def normalize(self, archive, logger):
         self.mean = np.mean(self.data)

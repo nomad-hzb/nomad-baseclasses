@@ -23,59 +23,60 @@ from .. import BaseMeasurement
 
 
 class PLIproperties(ArchiveSection):
-    lamp = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
+    lamp = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
     integration_time = Quantity(
         type=np.dtype(np.float64),
         unit=('s'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ms'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ms'),
+    )
 
     excitation_wavelength = Quantity(
         type=np.dtype(np.float64),
         unit=('nm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
+    )
 
     excitation_current = Quantity(
         type=np.dtype(np.float64),
         unit=('A'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA'),
+    )
 
     light_intensity = Quantity(
         type=np.dtype(np.float64),
         unit=('W/m^2'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mW/cm^2'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mW/cm^2'),
+    )
 
     number_of_averages = Quantity(
-        type=np.dtype(np.int64),
-        a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.int64), a_eln=dict(component='NumberEditQuantity')
+    )
 
     long_pass_filter = Quantity(
-        type=str,
-        shape=["*"],
-        a_eln=dict(component='StringEditQuantity'))
+        type=str, shape=['*'], a_eln=dict(component='StringEditQuantity')
+    )
 
     image_pixel_length = Quantity(
         type=np.dtype(np.float64),
         unit=('um'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='um'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='um'),
+    )
 
 
 class PLImaging(BaseMeasurement):
-    '''PL Imaging'''
+    """PL Imaging"""
 
-    m_def = Section(
-        a_eln=dict(hide=['certified_values', 'certification_institute']))
+    m_def = Section(a_eln=dict(hide=['certified_values', 'certification_institute']))
 
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
-    properties = SubSection(
-        section_def=PLIproperties)
+    properties = SubSection(section_def=PLIproperties)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
-        self.method = "PL Imaging"
+        self.method = 'PL Imaging'

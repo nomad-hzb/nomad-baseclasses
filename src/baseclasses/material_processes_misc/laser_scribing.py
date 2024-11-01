@@ -24,71 +24,74 @@ from .. import BaseProcess
 
 
 class LaserScribingProperties(ArchiveSection):
-
     laser_wavelength = Quantity(
-        type=np.dtype(
-            np.float64),
+        type=np.dtype(np.float64),
         unit=('nm'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='nm', props=dict(minValue=0)))
+            defaultDisplayUnit='nm',
+            props=dict(minValue=0),
+        ),
+    )
 
     laser_pulse_time = Quantity(
-        type=np.dtype(
-            np.float64),
+        type=np.dtype(np.float64),
         unit=('ps'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='ps', props=dict(minValue=0)))
+            defaultDisplayUnit='ps',
+            props=dict(minValue=0),
+        ),
+    )
 
     laser_pulse_frequency = Quantity(
-        type=np.dtype(
-            np.float64),
+        type=np.dtype(np.float64),
         unit=('kHz'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='kHz', props=dict(minValue=0)))
+            defaultDisplayUnit='kHz',
+            props=dict(minValue=0),
+        ),
+    )
 
     speed = Quantity(
-        type=np.dtype(
-            np.float64),
+        type=np.dtype(np.float64),
         unit=('mm/s'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='mm/s',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     fluence = Quantity(
-        type=np.dtype(
-            np.float64),
+        type=np.dtype(np.float64),
         unit=('J/cm**2'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='J/cm**2',
-            props=dict(
-                minValue=0)))
+            props=dict(minValue=0),
+        ),
+    )
 
     power_in_percent = Quantity(
-        type=np.dtype(
-            np.float64),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            props=dict(
-                minValue=0)))
+        type=np.dtype(np.float64),
+        a_eln=dict(component='NumberEditQuantity', props=dict(minValue=0)),
+    )
 
 
 class LaserScribing(BaseProcess):
-    '''Baseclass for laser scribing of ITO substrates'''
+    """Baseclass for laser scribing of ITO substrates"""
 
     recipe_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
     properties = SubSection(section_def=LaserScribingProperties)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
 
-        self.method = "Laser Scribing"
+        self.method = 'Laser Scribing'

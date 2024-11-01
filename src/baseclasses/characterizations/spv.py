@@ -25,11 +25,11 @@ from .. import BaseMeasurement
 
 
 class SPV(BaseMeasurement):
-
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
     energy = Quantity(
         type=np.dtype(np.float64),
@@ -40,12 +40,11 @@ class SPV(BaseMeasurement):
                 'label': 'Voltage',
                 'x': 'energy',
                 'y': 'volt',
-                'layout': {'yaxis': {'type': 'lin', "title": "Voltage"}},
-                "config": {
-                    "editable": True,
-                    "scrollZoom": True
-                }
-            }])
+                'layout': {'yaxis': {'type': 'lin', 'title': 'Voltage'}},
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
+    )
 
     wavelength = Quantity(
         type=np.dtype(np.float64),
@@ -56,12 +55,11 @@ class SPV(BaseMeasurement):
                 'label': 'Voltage',
                 'x': 'wavelength',
                 'y': 'volt',
-                'layout': {'yaxis': {'type': 'lin', "title": "Voltage"}},
-                "config": {
-                    "editable": True,
-                    "scrollZoom": True
-                }
-            }])
+                'layout': {'yaxis': {'type': 'lin', 'title': 'Voltage'}},
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
+    )
 
     volt = Quantity(
         type=np.dtype(np.float64),
@@ -72,12 +70,11 @@ class SPV(BaseMeasurement):
                 'label': 'Voltage',
                 'x': 'wavelength',
                 'y': 'volt',
-                'layout': {'yaxis': {'type': 'lin', "title": "Voltage"}},
-                "config": {
-                    "editable": True,
-                    "scrollZoom": True
-                }
-            }])
+                'layout': {'yaxis': {'type': 'lin', 'title': 'Voltage'}},
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
+    )
 
     def derive_n_values(self):
         if self.energy or self.wavelength or self.volt:
@@ -88,13 +85,14 @@ class SPV(BaseMeasurement):
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
-        self.method = "SPV"
+        self.method = 'SPV'
 
-        if self.data_file and os.path.splitext(self.data_file)[-1] == ".dat":
+        if self.data_file and os.path.splitext(self.data_file)[-1] == '.dat':
             try:
                 import pandas as pd
+
                 with archive.m_context.raw_file(self.data_file) as f:
-                    data = pd.read_csv(f.name, sep="\t", header=2)
+                    data = pd.read_csv(f.name, sep='\t', header=2)
                     self.energy = np.array(data.iloc[:, 0])
                     self.wavelength = np.array(data.iloc[:, 1])
                     self.volt = np.array(data.iloc[:, 2])

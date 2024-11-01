@@ -30,54 +30,61 @@ from ..helper.utilities import get_reference
 
 
 class UVvisDataConcentration(UVvisData, PlotSection):
-
     m_def = Section(a_eln=dict(overview=True))
 
     concentration = Quantity(
         type=np.dtype(np.float64),
         unit=('ug/ml'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ug/ml'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ug/ml'),
+    )
 
     calibration_measurement = Quantity(
-        type=bool,
-        default=False,
-        a_eln=dict(component='BoolEditQuantity'))
+        type=bool, default=False, a_eln=dict(component='BoolEditQuantity')
+    )
 
     peak_value = Quantity(
         type=np.dtype(np.float64),
         description='The peak value of the wavelength-intensity graph. '
-                    'It can be set or it gets automatically computed when saving. '
-                    'To recompute it, remove the current value.',
-        a_eln=dict(component='NumberEditQuantity'))
+        'It can be set or it gets automatically computed when saving. '
+        'To recompute it, remove the current value.',
+        a_eln=dict(component='NumberEditQuantity'),
+    )
 
     peak_wavelength = Quantity(
         type=np.dtype(np.float64),
         unit='nm',
         default=0,
         description='The wavelength value of the automatically computed peak.',
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
+    )
 
     chemical_composition_or_formulas = Quantity(
         type=str,
         description='A list of the elements involved',
-        a_eln=dict(component='StringEditQuantity', label='Material'))
+        a_eln=dict(component='StringEditQuantity', label='Material'),
+    )
 
     estimated_peak_center = Quantity(
         type=np.dtype(np.float64),
         unit='nm',
         description='The wavelength value where the peak is estimated. This value is usually based on the material.',
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
+    )
 
     peak_search_range = Quantity(
         type=np.dtype(np.float64),
         unit='nm',
         description='This value sets the range where to search for the peak around the estimated peak center.',
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
+    )
 
     reference = Quantity(
         type=Reference(Analysis.m_def),
-        description=('References the calibration that was used to calculate the concentration.'),
-        a_eln=dict(component='ReferenceEditQuantity', label='Concentration Detection'))
+        description=(
+            'References the calibration that was used to calculate the concentration.'
+        ),
+        a_eln=dict(component='ReferenceEditQuantity', label='Concentration Detection'),
+    )
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
@@ -89,6 +96,7 @@ class UVvisDataConcentration(UVvisData, PlotSection):
             archive.results.material = Material()
             try:
                 from nomad.atomutils import Formula
+
                 formula = Formula(self.chemical_composition_or_formulas)
                 formula.populate(section=archive.results.material)
             except Exception as e:
@@ -104,14 +112,22 @@ class UVvisDataConcentration(UVvisData, PlotSection):
         if self.intensity is not None and self.wavelength is not None:
             if self.chemical_composition_or_formulas is not None:
                 if self.estimated_peak_center is not None:
-                    search_area_start = (self.estimated_peak_center - self.peak_search_range)
-                    search_area_end = (self.estimated_peak_center + self.peak_search_range)
+                    search_area_start = (
+                        self.estimated_peak_center - self.peak_search_range
+                    )
+                    search_area_end = (
+                        self.estimated_peak_center + self.peak_search_range
+                    )
                 else:
                     search_area_start = min(self.wavelength)
                     search_area_end = max(self.wavelength)
-                peak_area_df = pd.DataFrame({'intensity': self.intensity, 'wavelength': self.wavelength})
-                peak_area_df = peak_area_df.loc[(peak_area_df['wavelength'] >= search_area_start.magnitude) & (
-                    peak_area_df['wavelength'] <= search_area_end.magnitude)]
+                peak_area_df = pd.DataFrame(
+                    {'intensity': self.intensity, 'wavelength': self.wavelength}
+                )
+                peak_area_df = peak_area_df.loc[
+                    (peak_area_df['wavelength'] >= search_area_start.magnitude)
+                    & (peak_area_df['wavelength'] <= search_area_end.magnitude)
+                ]
                 # since the search area can be set manually we assume that the peak is always the highest value in that range
                 peak_index = np.argmax(peak_area_df['intensity'])
                 peak = peak_area_df.iloc[peak_index]
@@ -120,27 +136,49 @@ class UVvisDataConcentration(UVvisData, PlotSection):
                 self.peak_wavelength = peak['wavelength']
 
             fig = go.Figure(
-                data=[go.Scatter(name='UVvis', x=self.wavelength, y=self.intensity, mode='lines')])
-            fig.update_layout(xaxis_title=f'Wavelength [{self.wavelength.units}]',
-                              yaxis_title='Intensity',
-                              title_text='UVvis')
+                data=[
+                    go.Scatter(
+                        name='UVvis', x=self.wavelength, y=self.intensity, mode='lines'
+                    )
+                ]
+            )
+            fig.update_layout(
+                xaxis_title=f'Wavelength [{self.wavelength.units}]',
+                yaxis_title='Intensity',
+                title_text='UVvis',
+            )
             fig.update_layout(xaxis={'fixedrange': False})
             if self.peak_value is not None and self.peak_wavelength is not None:
-                fig.add_traces(go.Scatter(x=[self.peak_wavelength.magnitude], y=[self.peak_value], mode='markers'))
+                fig.add_traces(
+                    go.Scatter(
+                        x=[self.peak_wavelength.magnitude],
+                        y=[self.peak_value],
+                        mode='markers',
+                    )
+                )
             self.figures = [PlotlyFigure(label='figure 1', figure=fig.to_plotly_json())]
 
-        if self.chemical_composition_or_formulas and self.peak_value and not self.calibration_measurement:
+        if (
+            self.chemical_composition_or_formulas
+            and self.peak_value
+            and not self.calibration_measurement
+        ):
             if self.reference is None:
-                self.reference = get_concentration_reference(archive, logger,
-                                                             self.chemical_composition_or_formulas,
-                                                             self.peak_value)
+                self.reference = get_concentration_reference(
+                    archive,
+                    logger,
+                    self.chemical_composition_or_formulas,
+                    self.peak_value,
+                )
 
             if isinstance(self.reference, MProxy):
                 self.reference.m_resolved()
-                self.concentration = calculate_concentration(self.reference['slope'],
-                                                             self.reference['intercept'],
-                                                             self.peak_value,
-                                                             self.reference['blank_substraction_peak_value'])
+                self.concentration = calculate_concentration(
+                    self.reference['slope'],
+                    self.reference['intercept'],
+                    self.peak_value,
+                    self.reference['blank_substraction_peak_value'],
+                )
 
 
 def calculate_concentration(slope, intercept, peak_value, blank_value):
@@ -168,8 +206,12 @@ def get_concentration_reference(data_archive, logger, material, peak_value):
     }
     pagination = MetadataPagination()
     pagination.page_size = 100
-    search_result = search(owner='all', query=query, pagination=pagination,
-                           user_id=data_archive.metadata.main_author.user_id)
+    search_result = search(
+        owner='all',
+        query=query,
+        pagination=pagination,
+        user_id=data_archive.metadata.main_author.user_id,
+    )
 
     matching_calibrations = []
     extrapolation_calibrations = []
@@ -177,9 +219,11 @@ def get_concentration_reference(data_archive, logger, material, peak_value):
     for res in search_result.data:
         try:
             # Open Archives
-            with files.UploadFiles.get(upload_id=res["upload_id"]).read_archive(entry_id=res["entry_id"]) as archive:
-                entry_id = res["entry_id"]
-                entry_data = archive[entry_id]["data"]
+            with files.UploadFiles.get(upload_id=res['upload_id']).read_archive(
+                entry_id=res['entry_id']
+            ) as archive:
+                entry_id = res['entry_id']
+                entry_data = archive[entry_id]['data']
                 entry = {}
                 try:
                     entry['entry_id'] = entry_id
@@ -191,12 +235,16 @@ def get_concentration_reference(data_archive, logger, material, peak_value):
                     entry['material_name'] = None
 
                 if entry['material_name'] == material:
-                    if entry['minimum_peak_value'] <= peak_value <= entry['maximum_peak_value']:
+                    if (
+                        entry['minimum_peak_value']
+                        <= peak_value
+                        <= entry['maximum_peak_value']
+                    ):
                         matching_calibrations.append(entry)
                     else:
                         extrapolation_calibrations.append(entry)
         except Exception as e:
-            logger.error("Error in processing data: ", e)
+            logger.error('Error in processing data: ', e)
 
     calibration_reference = None
     if len(matching_calibrations) == 0 and len(extrapolation_calibrations) == 0:
@@ -208,7 +256,9 @@ def get_concentration_reference(data_archive, logger, material, peak_value):
             calibration_index = 0
             if len(extrapolation_calibrations) > 1:
                 # find calibration with the peak area that is closest to the peak value of the current measurement
-                minimum_distance = abs(peak_value - extrapolation_calibrations[0]['minimum_peak_value'])
+                minimum_distance = abs(
+                    peak_value - extrapolation_calibrations[0]['minimum_peak_value']
+                )
                 for index, calibration in enumerate(extrapolation_calibrations):
                     distance_start = abs(peak_value - calibration['minimum_peak_value'])
                     distance_end = abs(peak_value - calibration['maximum_peak_value'])
@@ -217,17 +267,23 @@ def get_concentration_reference(data_archive, logger, material, peak_value):
                         minimum_distance = distance
                         calibration_index = index
             calibration_entry = extrapolation_calibrations[calibration_index]
-            logger.warn('For the given peak value no UVvisConcentrationDetections exist.'
-                        'The calibration is extrapolated based on the given material.'
-                        'The computation of the concentration is based on the calibration linked in '
-                        'the \'Concentration Detection\' reference section.')
+            logger.warn(
+                'For the given peak value no UVvisConcentrationDetections exist.'
+                'The calibration is extrapolated based on the given material.'
+                'The computation of the concentration is based on the calibration linked in '
+                "the 'Concentration Detection' reference section."
+            )
 
         # reference used UVvisConcentrationDetection
-        calibration_reference = get_reference(calibration_entry['upload_id'], calibration_entry['entry_id'])
+        calibration_reference = get_reference(
+            calibration_entry['upload_id'], calibration_entry['entry_id']
+        )
 
     if len(matching_calibrations) > 1:
-        logger.warn('For the chosen material and peak value multiple UVvisConcentrationDetections exist.'
-                    'The computation of the concentration is based on the calibration linked in '
-                    'the \'Concentration Detection\' reference section.')
+        logger.warn(
+            'For the chosen material and peak value multiple UVvisConcentrationDetections exist.'
+            'The computation of the concentration is based on the calibration linked in '
+            "the 'Concentration Detection' reference section."
+        )
 
     return calibration_reference

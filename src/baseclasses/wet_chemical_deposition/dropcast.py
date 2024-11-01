@@ -25,47 +25,47 @@ from .wet_chemical_deposition import WetChemicalDeposition
 
 class DropCastingProperties(ArchiveSection):
     suspension_concentration = Quantity(
-        type=np.dtype(
-            np.float64),
-        a_eln=dict(
-            component='NumberEditQuantity'))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
 
     dropcast_amount = Quantity(
-        links = ['http://purl.obolibrary.org/obo/PATO_0000918', 'https://purl.archive.org/tfsco/TFSCO_00002158'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000918',
+            'https://purl.archive.org/tfsco/TFSCO_00002158',
+        ],
+        type=np.dtype(np.float64),
         unit=('ml'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='ml'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'),
+    )
 
     temperature = Quantity(
-        links = ['http://purl.obolibrary.org/obo/PATO_0000146', 'https://purl.archive.org/tfsco/TFSCO_00002111'],
-        type=np.dtype(
-            np.float64),
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000146',
+            'https://purl.archive.org/tfsco/TFSCO_00002111',
+        ],
+        type=np.dtype(np.float64),
         unit=('°C'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='°C'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
 
     atmosphere = Quantity(
-        links = ['https://purl.archive.org/tfsco/TFSCO_00001012'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00001012'],
         type=str,
         a_eln=dict(
             component='EnumEditQuantity',
-            props=dict(suggestions=["N2O flow", "ambient"])
-        ))
+            props=dict(suggestions=['N2O flow', 'ambient']),
+        ),
+    )
 
 
 class DropCasting(WetChemicalDeposition):
     m_def = Section(
-        links = ['https://purl.archive.org/tfsco/TFSCO_00002059'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00002059'],
     )
 
-    properties = SubSection(
-        section_def=DropCastingProperties)
+    properties = SubSection(section_def=DropCastingProperties)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
 
-        self.method = "Drop Casting"
+        self.method = 'Drop Casting'

@@ -37,43 +37,43 @@ from .cesample import export_lab_id
 class CPOERReference(SectionReference):
     reference = Quantity(
         type=Reference(Chronopotentiometry.m_def),
-        a_eln=dict(component='ReferenceEditQuantity', label='OER Chronopotentiometry Measurement'))
+        a_eln=dict(
+            component='ReferenceEditQuantity',
+            label='OER Chronopotentiometry Measurement',
+        ),
+    )
 
 
 class CPOERAnalysisResult(AnalysisResult):
-    voltage_avg_first5 = Quantity(
-        type=np.dtype(np.float64),
-        unit=('V'))
-    voltage_avg_last5 = Quantity(
-        type=np.dtype(np.float64),
-        unit=('V'))
-    voltage_difference = Quantity(
-        type=np.dtype(np.float64),
-        unit=('V'))
+    voltage_avg_first5 = Quantity(type=np.dtype(np.float64), unit=('V'))
+    voltage_avg_last5 = Quantity(type=np.dtype(np.float64), unit=('V'))
+    voltage_difference = Quantity(type=np.dtype(np.float64), unit=('V'))
     j = Quantity(
-        type=np.dtype(np.float64),
-        description='current density',
-        unit=('A/cm^2'))
+        type=np.dtype(np.float64), description='current density', unit=('A/cm^2')
+    )
     current_density_string = Quantity(
         type=str,
-        description='string representation of j (needed for terms in explore view)',)
-    experiment_duration = Quantity(
-        type=np.dtype(np.float64),
-        unit=('s'))
+        description='string representation of j (needed for terms in explore view)',
+    )
+    experiment_duration = Quantity(type=np.dtype(np.float64), unit=('s'))
     reaction_type = Quantity(
         type=str,
-        description='At the moment only OER CP is supported. In the future maybe also NRR CP.')
+        description='At the moment only OER CP is supported. In the future maybe also NRR CP.',
+    )
     voltage_shift = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(np.float64),
-        unit=('V'))
+        unit=('V'),
+    )
     resistance = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007222'],
         type=np.dtype(np.float64),
-        unit=('ohm'))
+        unit=('ohm'),
+    )
     samples = SubSection(
         section_def=CompositeSystemReference,
-        repeats=True,)
+        repeats=True,
+    )
 
     def normalize(self, archive, logger):
         self.current_density_string = format(self.j, '~')
@@ -108,7 +108,9 @@ class CPAnalysis(Analysis):
 
             cycle_number = len(self.inputs)
             if cycle_number > 1:
-                time_one_cycle = self.inputs[1].reference.datetime - first_oer_run.datetime
+                time_one_cycle = (
+                    self.inputs[1].reference.datetime - first_oer_run.datetime
+                )
                 experiment_duration = cycle_number * time_one_cycle.total_seconds()
             else:
                 experiment_duration = first_oer_run.time[-1]
@@ -122,21 +124,28 @@ class CPAnalysis(Analysis):
                         archive.results.material = Material()
                     try:
                         from nomad.atomutils import Formula
-                        formula = Formula(sample.reference.chemical_composition_or_formulas)
+
+                        formula = Formula(
+                            sample.reference.chemical_composition_or_formulas
+                        )
                         formula.populate(section=archive.results.material)
                     except Exception as e:
                         logger.warn('Could not analyse material', exc_info=e)
 
-            self.outputs = [CPOERAnalysisResult(name=first_oer_run.name,
-                                                voltage_avg_first5=voltage_avg_first5,
-                                                voltage_avg_last5=voltage_avg_last5,
-                                                voltage_difference=voltage_difference,
-                                                j=current_density,
-                                                experiment_duration=experiment_duration,
-                                                reaction_type=first_oer_run.method,
-                                                samples=first_oer_run.samples,
-                                                voltage_shift=first_oer_run.voltage_shift,
-                                                resistance=first_oer_run.resistance)]
+            self.outputs = [
+                CPOERAnalysisResult(
+                    name=first_oer_run.name,
+                    voltage_avg_first5=voltage_avg_first5,
+                    voltage_avg_last5=voltage_avg_last5,
+                    voltage_difference=voltage_difference,
+                    j=current_density,
+                    experiment_duration=experiment_duration,
+                    reaction_type=first_oer_run.method,
+                    samples=first_oer_run.samples,
+                    voltage_shift=first_oer_run.voltage_shift,
+                    resistance=first_oer_run.resistance,
+                )
+            ]
             self.outputs[0].normalize(archive, logger)
         super().normalize(archive, logger)
 
@@ -144,17 +153,29 @@ class CPAnalysis(Analysis):
 def get_all_cp_in_upload(data_archive, upload_id):
     from nomad.app.v1.models import MetadataPagination
     from nomad.search import search
+
     query = {
         'section_defs.definition_qualified_name': 'baseclasses.chemical_energy.chronopotentiometry.Chronopotentiometry',
         'results.eln.methods': 'OER Chronopotentiometry',
-        'upload_id': upload_id
+        'upload_id': upload_id,
     }
     pagination = MetadataPagination()
     pagination.page_size = 10000
-    search_result = search(owner='all', query=query, pagination=pagination,
-                           user_id=data_archive.metadata.main_author.user_id)
+    search_result = search(
+        owner='all',
+        query=query,
+        pagination=pagination,
+        user_id=data_archive.metadata.main_author.user_id,
+    )
 
     lst = search_result.data
-    lst.sort(key=lambda cp_entry: datetime.strptime(cp_entry["data"]["datetime"], "%Y-%m-%dT%H:%M:%S%z"))
-    refs = [[cp_entry["data"]["data_file"], get_reference(upload_id, cp_entry["entry_id"])] for cp_entry in lst]
+    lst.sort(
+        key=lambda cp_entry: datetime.strptime(
+            cp_entry['data']['datetime'], '%Y-%m-%dT%H:%M:%S%z'
+        )
+    )
+    refs = [
+        [cp_entry['data']['data_file'], get_reference(upload_id, cp_entry['entry_id'])]
+        for cp_entry in lst
+    ]
     return refs

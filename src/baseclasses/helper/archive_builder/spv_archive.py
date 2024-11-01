@@ -23,11 +23,7 @@ import pandas as pd
 
 from baseclasses.solar_energy import trSPVData, trSPVProperties, trSPVVoltage
 
-filter_to_intensity = {
-    3: 10000,
-    36: 1000,
-    167: 100
-}
+filter_to_intensity = {3: 10000, 36: 1000, 167: 100}
 
 
 def get_spv_archive(spv_dict, spv_data, main_file_path, spv_entry):
@@ -36,9 +32,17 @@ def get_spv_archive(spv_dict, spv_data, main_file_path, spv_entry):
     try:
         lab_id = spv_entry.samples[0].lab_id
         try:
-            mapping = pd.read_csv(os.path.join(directory, "sample_capacitance.csv"), index_col=0, header=None)
+            mapping = pd.read_csv(
+                os.path.join(directory, 'sample_capacitance.csv'),
+                index_col=0,
+                header=None,
+            )
         except:
-            mapping = pd.read_excel(os.path.join(directory, "sample_capacitance.xlsx"), index_col=0, header=None)
+            mapping = pd.read_excel(
+                os.path.join(directory, 'sample_capacitance.xlsx'),
+                index_col=0,
+                header=None,
+            )
 
         capacitance = mapping.loc[lab_id]
     except Exception as e:
@@ -46,22 +50,21 @@ def get_spv_archive(spv_dict, spv_data, main_file_path, spv_entry):
 
     measurements = []
     for col in spv_data.columns[1:]:
-        measurements.append(trSPVVoltage(
-            measurement=spv_data[col],
-            laser_energy=float(col)
-        ))
+        measurements.append(
+            trSPVVoltage(measurement=spv_data[col], laser_energy=float(col))
+        )
     spv_entry.data = trSPVData(
-        time=spv_data[spv_data.columns[0]],
-        voltages=measurements)
+        time=spv_data[spv_data.columns[0]], voltages=measurements
+    )
 
     res = re.search(r'TD[^_]*_', main_file)
     filter_setup = res.group()[2:-1]
 
     spv_entry.properties = trSPVProperties(
-        number_of_transients=spv_dict["Number of Transients"],
-        number_of_averages=spv_dict["Number of Averages"],
-        points_per_transient=spv_dict["Points per Transients"],
+        number_of_transients=spv_dict['Number of Transients'],
+        number_of_averages=spv_dict['Number of Averages'],
+        points_per_transient=spv_dict['Points per Transients'],
         laser_pulse_intensity=filter_to_intensity.get(int(filter_setup)),
         filter_setup=filter_setup,
-        capacitance=capacitance
+        capacitance=capacitance,
     )

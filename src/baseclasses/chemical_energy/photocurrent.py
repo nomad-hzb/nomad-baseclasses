@@ -31,147 +31,137 @@ class PhotoCurrentProperties(ArchiveSection):
         type=str,
         a_eln=dict(
             component='StringEditQuantity',
-        ))
+        ),
+    )
 
     ref_electrode = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007204'],
         type=str,
         a_eln=dict(
             component='StringEditQuantity',
-        ))
+        ),
+    )
 
     counter_electrode = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007203'],
         type=str,
         a_eln=dict(
             component='StringEditQuantity',
-        ))
+        ),
+    )
 
     electrolyte = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007224'],
         type=str,
         a_eln=dict(
             component='StringEditQuantity',
-        ))
+        ),
+    )
 
     electrolyte_concentration = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007244'],
         type=np.dtype(np.float64),
         unit='mol',
-
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='mol'
-
-        ))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mol'),
+    )
 
     modulation_frequency = Quantity(
         type=np.dtype(np.float64),
         unit='Hz',
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='Hz'
-        ))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='Hz'),
+    )
 
     lock_in_phase = Quantity(
         type=str,
         a_eln=dict(
             component='StringEditQuantity',
-        ))
+        ),
+    )
 
     potentiostat_i_range = Quantity(
         type=np.dtype(np.float64),
         unit='uA',
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='uA'
-        ))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='uA'),
+    )
 
     analog_output_conversion = Quantity(
         type=np.dtype(np.float64),
         unit='V/mA',
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='V/mA'
-        ))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V/mA'),
+    )
 
     average_number = Quantity(
-        type=np.dtype(np.float64),
-        a_eln=dict(
-            component='NumberEditQuantity'
-        ))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
 
 
 class PhotoCurrent(BaseMeasurement):
-
-    photo_current_properties = SubSection(
-        section_def=PhotoCurrentProperties)
+    photo_current_properties = SubSection(section_def=PhotoCurrentProperties)
 
     data_files = Quantity(
         type=str,
-        shape=["*"],
+        shape=['*'],
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
     reference_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
     electro_measurements = Quantity(
         type=Reference(Voltammetry),
         shape=['*'],
-        a_eln=dict(component='ReferenceEditQuantity'))
+        a_eln=dict(component='ReferenceEditQuantity'),
+    )
 
     energy = Quantity(
-        type=np.dtype(
-            np.float64),
+        type=np.dtype(np.float64),
         shape=['n_values'],
         unit='eV',
         a_plot=[
             {
-                "label": "Energy",
+                'label': 'Energy',
                 'x': 'wavelength',
                 'y': 'voltage',
-                'layout': {
-                    'yaxis': {
-                        'type': 'lin',
-                        "title": "Energy"}},
-                "config": {
-                    "editable": True,
-                    "scrollZoom": True}}])
+                'layout': {'yaxis': {'type': 'lin', 'title': 'Energy'}},
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
+    )
 
     wavelength = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0000176'],
-        type=np.dtype(
-            np.float64),
+        type=np.dtype(np.float64),
         shape=['n_values'],
         unit='nm',
         a_plot=[
             {
-                "label": "Wavelength",
+                'label': 'Wavelength',
                 'x': 'wavelength',
                 'y': 'voltage',
-                'layout': {
-                    'yaxis': {
-                        'type': 'lin',
-                        "title": "Wavelength"}},
-                "config": {
-                    "editable": True,
-                    "scrollZoom": True}}])
+                'layout': {'yaxis': {'type': 'lin', 'title': 'Wavelength'}},
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
+    )
 
     voltage = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
         type=np.dtype(np.float64),
         shape=['n_values'],
         unit='V',
-        a_plot=[{"label": "Voltage",
-                 'x': 'energy', 'y': 'voltage', 'layout': {'yaxis': {'type': 'lin', "title": "Voltage"}},
-                 "config": {
-                     "editable": True,
-                     "scrollZoom": True
-                 }
-                 }]
+        a_plot=[
+            {
+                'label': 'Voltage',
+                'x': 'energy',
+                'y': 'voltage',
+                'layout': {'yaxis': {'type': 'lin', 'title': 'Voltage'}},
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
     )
 
     def derive_n_values(self):
@@ -183,17 +173,17 @@ class PhotoCurrent(BaseMeasurement):
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
-        self.method = "Photo Current"
+        self.method = 'Photo Current'
 
         if self.data_files and len(self.data_files) > 0:
             for data_file in self.data_files:
                 try:
                     with archive.m_context.raw_file(data_file) as f:
-                        if os.path.splitext(data_file)[-1] == ".mps":
+                        if os.path.splitext(data_file)[-1] == '.mps':
                             from ..helper.mps_file_parser import read_mps_file
+
                             self.electro_meta_data = read_mps_file(f.name)
-                            self.electro_meta_data_file_name = os.path.basename(
-                                f.name)
+                            self.electro_meta_data_file_name = os.path.basename(f.name)
 
                 except Exception as e:
                     logger.error(e)
@@ -201,13 +191,14 @@ class PhotoCurrent(BaseMeasurement):
             for data_file in self.data_files:
                 try:
                     with archive.m_context.raw_file(data_file) as f:
-
-                        if os.path.splitext(data_file)[-1] == ".txt":
+                        if os.path.splitext(data_file)[-1] == '.txt':
                             import pandas as pd
+
                             data = pd.read_csv(
-                                f.name, delimiter="\t", header=0, skipfooter=1)
-                            self.energy = np.array(data["Energy(eV)"])
-                            self.wavelength = np.array(data["Wavelength(nm)"])
-                            self.voltage = np.array(data["Voltage(V)"])
+                                f.name, delimiter='\t', header=0, skipfooter=1
+                            )
+                            self.energy = np.array(data['Energy(eV)'])
+                            self.wavelength = np.array(data['Wavelength(nm)'])
+                            self.voltage = np.array(data['Voltage(V)'])
                 except Exception as e:
                     logger.error(e)

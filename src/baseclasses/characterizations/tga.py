@@ -22,13 +22,14 @@ from .. import BaseMeasurement
 
 
 class TGA(BaseMeasurement):
-    '''Thermogravimetric analysis'''
+    """Thermogravimetric analysis"""
 
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'))
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
-        self.method = "Thermogravimetric analysis"
+        self.method = 'Thermogravimetric analysis'
