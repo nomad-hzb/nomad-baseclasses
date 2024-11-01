@@ -113,7 +113,7 @@ class XRF(BaseMeasurement):
         section_def=XRFProperties)
 
     def normalize(self, archive, logger):
-        super(XRF, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "XRF"
 
 
@@ -173,5 +173,5 @@ class XRFLibrary(LibraryMeasurement):
         section_def=XRFSingleLibraryMeasurement, repeats=True)
 
     def normalize(self, archive, logger):
-        super(XRFLibrary, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "XRF"

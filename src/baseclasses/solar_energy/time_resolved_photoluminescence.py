@@ -155,7 +155,7 @@ class TimeResolvedPhotoluminescence(BaseMeasurement):
 
     def normalize(self, archive, logger):
         self.method = "Time-Resolved Photoluminescence"
-        super(TimeResolvedPhotoluminescence, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
 
 class TRPLDataSimple(ArchiveSection):
@@ -203,5 +203,5 @@ class TimeResolvedPhotoluminescenceMeasurementLibrary(LibraryMeasurement):
         section_def=TimeResolvedPhotoluminescenceSingleLibraryMeasurement, repeats=True)
 
     def normalize(self, archive, logger):
-        super(TimeResolvedPhotoluminescenceMeasurementLibrary, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "TRPL Measurement Mapping"

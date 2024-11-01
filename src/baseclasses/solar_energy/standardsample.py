@@ -86,4 +86,4 @@ class StandardSampleSolarCell(StandardSample):
                     'Schottky'])))
 
     def normalize(self, archive, logger):
-        super(StandardSampleSolarCell, self).normalize(archive, logger)
+        super().normalize(archive, logger)

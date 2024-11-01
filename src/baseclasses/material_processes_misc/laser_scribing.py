@@ -89,6 +89,6 @@ class LaserScribing(BaseProcess):
     properties = SubSection(section_def=LaserScribingProperties)
 
     def normalize(self, archive, logger):
-        super(LaserScribing, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         self.method = "Laser Scribing"

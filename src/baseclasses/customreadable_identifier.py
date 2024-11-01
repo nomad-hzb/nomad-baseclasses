@@ -31,4 +31,4 @@ class ReadableIdentifiersCustom(ReadableIdentifiers):
         if self.sample_id and self.lab_id is None:
             self.lab_id = self.sample_id
 
-        super(ReadableIdentifiersCustom, self).normalize(archive, logger)
+        super().normalize(archive, logger)

@@ -164,7 +164,7 @@ class Sputtering(LayerDeposition):
         section_def=SputteringProcess, repeats=True)
 
     def normalize(self, archive, logger):
-        super(Sputtering, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         self.method = "Sputtering"
 
@@ -307,6 +307,6 @@ class MultiTargetSputtering(LayerDeposition):
         section_def=MultiTargetSputteringProcess)
 
     def normalize(self, archive, logger):
-        super(MultiTargetSputtering, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         self.method = "Multi Target Sputtering"

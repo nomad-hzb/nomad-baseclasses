@@ -273,7 +273,7 @@ class MPPTrackingHsprintCustom(BaseMeasurement):
 
     def normalize(self, archive, logger):
         self.method = "MPP Tracking"
-        super(MPPTrackingHsprintCustom, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         # calculate averages and best pixels
         best_pixels = []

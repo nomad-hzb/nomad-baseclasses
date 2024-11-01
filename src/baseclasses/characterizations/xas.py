@@ -89,7 +89,7 @@ class XAS(BaseMeasurement):
             }])
 
     def normalize(self, archive, logger):
-        super(XAS, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
 
 class XASFluorescence(XAS):
@@ -122,7 +122,7 @@ class XASFluorescence(XAS):
 
     def normalize(self, archive, logger):
         self.method = "XAS Fluoresence"
-        super(XASFluorescence, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         if self.k1 is not None and self.k0 is not None:
             self.absorbance_of_the_reference = -np.log(self.k1 / self.k0)
@@ -161,7 +161,7 @@ class XASTransmission(XAS):
 
     def normalize(self, archive, logger):
         self.method = "XAS Transmission"
-        super(XASTransmission, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         if self.k1 is not None and self.k0 is not None:
             self.absorbance_of_the_sample = -np.log(self.k1 / self.k0)

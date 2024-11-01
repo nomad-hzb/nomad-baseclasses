@@ -80,7 +80,7 @@ class UVvisDataConcentration(UVvisData, PlotSection):
         a_eln=dict(component='ReferenceEditQuantity', label='Concentration Detection'))
 
     def normalize(self, archive, logger):
-        super(UVvisDataConcentration, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         if self.chemical_composition_or_formulas:
             if not archive.results:

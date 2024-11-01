@@ -73,7 +73,7 @@ class CENECCElectrodeRecipeID(ReadableIdentifiersCustom):
         ))
 
     def normalize(self, archive, logger):
-        super(CENECCElectrodeRecipeID, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         if archive.data.lab_id:
             return
@@ -153,7 +153,7 @@ class CENECCElectrodeRecipe(CESample):
 
     def normalize(self, archive, logger):
         self.chemical_composition_or_formulas = self.electrode_recipe_id.element
-        super(CENECCElectrodeRecipe, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         export_lab_id(archive, self.lab_id)
 
 
@@ -197,7 +197,7 @@ class CENECCElectrodeID(ReadableIdentifiersCustom):
         if author and self.owner is None:
             self.owner = ' '.join([author.first_name, author.last_name])
 
-        super(CENECCElectrodeID, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         if archive.data.lab_id:
             return
@@ -224,7 +224,7 @@ class CENECCElectrode(CESample):
 
     def normalize(self, archive, logger):
         self.chemical_composition_or_formulas = self.electrode_id.recipe.electrode_recipe_id.element
-        super(CENECCElectrode, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         export_lab_id(archive, self.lab_id)
         if archive.data == self and self.name:
             archive.metadata.entry_name = self.name

@@ -42,4 +42,4 @@ class Chronocoulometry(Voltammetry):
 
     def normalize(self, archive, logger):
         self.method = "Chronocoulometry"
-        super(Chronocoulometry, self).normalize(archive, logger)
+        super().normalize(archive, logger)

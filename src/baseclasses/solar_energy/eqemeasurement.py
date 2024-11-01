@@ -394,7 +394,7 @@ class SolarCellEQE(PlotSection):
     )
 
     def normalize(self, archive, logger):
-        super(SolarCellEQE, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
 
 class SolarCellEQECustom(SolarCellEQE):
@@ -446,4 +446,4 @@ class EQEMeasurement(BaseMeasurement):
 
     def normalize(self, archive, logger):
         self.method = "EQE Measurement"
-        super(EQEMeasurement, self).normalize(archive, logger)
+        super().normalize(archive, logger)

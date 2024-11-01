@@ -16,5 +16,5 @@ class SolutionManufacturing(Activity):
         a_eln=dict(component='ReferenceEditQuantity'))
 
     def normalize(self, archive, logger):
-        super(SolutionManufacturing, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "Solutin Manufacturing"

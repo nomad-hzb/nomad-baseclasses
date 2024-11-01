@@ -31,4 +31,4 @@ class OpticalMicroscope(OpticalMicroscopeTechnique):
         a_eln=dict(component='ReferenceEditQuantity'))
 
     def normalize(self, archive, logger):
-        super(OpticalMicroscope, self).normalize(archive, logger)
+        super().normalize(archive, logger)

@@ -30,5 +30,5 @@ class TGA(BaseMeasurement):
         a_browser=dict(adaptor='RawFileAdaptor'))
 
     def normalize(self, archive, logger):
-        super(TGA, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "Thermogravimetric analysis"

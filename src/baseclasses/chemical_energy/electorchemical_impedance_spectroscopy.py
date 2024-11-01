@@ -253,9 +253,7 @@ class ElectrochemicalImpedanceSpectroscopy(PotentiostatMeasurement):
 
     def normalize(self, archive, logger):
         self.method = "Electrochemical Impedance Spectroscopy"
-        super(
-            ElectrochemicalImpedanceSpectroscopy,
-            self).normalize(
+        super().normalize(
             archive,
             logger)
 
@@ -270,6 +268,5 @@ class ElectrochemicalImpedanceSpectroscopyMultiple(PotentiostatMeasurement):
         section_def=EISPropertiesWithData, repeats=True)
 
     def normalize(self, archive, logger):
-        super(ElectrochemicalImpedanceSpectroscopyMultiple,
-              self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "Multiple Electrochemical Impedance Spectroscopy"

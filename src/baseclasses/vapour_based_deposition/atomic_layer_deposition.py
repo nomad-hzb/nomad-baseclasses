@@ -217,6 +217,6 @@ class AtomicLayerDeposition(LayerDeposition):
         section_def=ALDProperties)
 
     def normalize(self, archive, logger):
-        super(AtomicLayerDeposition, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         self.method = "Atomic Layer Deposition"

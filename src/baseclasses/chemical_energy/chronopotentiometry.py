@@ -89,4 +89,4 @@ class Chronopotentiometry(Voltammetry):
     def normalize(self, archive, logger):
         if self.method is None:
             self.method = "Chronopotentiometry"
-        super(Chronopotentiometry, self).normalize(archive, logger)
+        super().normalize(archive, logger)

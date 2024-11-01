@@ -127,7 +127,7 @@ class XRR(BaseMeasurement):
 
     def normalize(self, archive, logger):
         self.method = "XRR"
-        super(XRR, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
 
 class XRRLibrary(LibraryMeasurement):
@@ -137,5 +137,5 @@ class XRRLibrary(LibraryMeasurement):
         a_eln=dict(hide=['certified_values', 'certification_institute']))
 
     def normalize(self, archive, logger):
-        super(XRRLibrary, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "XRR"

@@ -100,4 +100,4 @@ class TEM_EDX(TEMMicroscopeTechnique):
     images = SubSection(section_def=EDXScan, label_quantity='file_name')
 
     def normalize(self, archive, logger):
-        super(TEM_EDX, self).normalize(archive, logger)
+        super().normalize(archive, logger)

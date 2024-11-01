@@ -226,7 +226,7 @@ class ExperimentalPlan(Entity):
     def normalize(self, archive, logger):
         if archive.results and archive.results.eln and archive.results.eln and archive.results.eln.lab_ids:
             archive.results.eln.lab_ids = []
-        super(ExperimentalPlan, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         if self.batch_id:
             self.lab_id = self.batch_id.lab_id

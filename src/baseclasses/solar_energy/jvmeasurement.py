@@ -215,7 +215,7 @@ class SolarCellJV(PlotSection):
             archive.results.properties.optoelectronic.solar_cell.illumination_intensity = self.light_intensity
 
     def normalize(self, archive, logger):
-        super(SolarCellJV, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         add_solar_cell(archive)
         self.update_results(archive)
@@ -274,7 +274,7 @@ class SolarCellJVCurve(SolarCellJV):
     )
 
     def normalize(self, archive, logger):
-        super(SolarCellJVCurve, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         if self.current_density is not None and self.efficiency is None and not self.dark:
             if self.voltage is not None:
                 (
@@ -394,7 +394,7 @@ class JVMeasurement(BaseMeasurement):
 
     def normalize(self, archive, logger):
         self.method = "JV Measurement"
-        super(JVMeasurement, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         max_idx = -1
         eff = -1

@@ -21,5 +21,5 @@ from .. import BaseMeasurement
 class OpticalMicorscopy(BaseMeasurement):
 
     def normalize(self, archive, logger):
-        super(OpticalMicorscopy, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "Optical Microscopy"

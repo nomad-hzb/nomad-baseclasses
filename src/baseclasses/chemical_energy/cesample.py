@@ -79,7 +79,7 @@ class SampleIDCE(ReadableIdentifiersCustom):
         ))
 
     def normalize(self, archive, logger):
-        super(SampleIDCE, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         from nomad.app.v1.models import MetadataPagination
 
         if self.institute and self.short_name and self.owner:
@@ -230,7 +230,7 @@ class CESample(CompositeSystem):
         a_eln=dict(component='StringEditQuantity'))
 
     def normalize(self, archive, logger):
-        super(CESample, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         if self.chemical_composition_or_formulas:
             if not archive.results:
                 archive.results = Results()
@@ -295,7 +295,7 @@ class SampleIDCENOMEdate(SampleIDCE2date):
                     'Jia Du', 'Maddalena Zoli', 'Frederik Stender'])))
 
     def normalize(self, archive, logger):
-        super(SampleIDCENOMEdate, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
 
 class SampleIDCENOME(SampleIDCE2):
@@ -332,7 +332,7 @@ class SampleIDCENOME(SampleIDCE2):
                     'Jia Du', 'Maddalena Zoli', 'Frederik Stender'])))
 
     def normalize(self, archive, logger):
-        super(SampleIDCENOME, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
 
 class CENSLISample(CESample):
@@ -340,7 +340,7 @@ class CENSLISample(CESample):
         section_def=SampleIDCE)
 
     def normalize(self, archive, logger):
-        super(CENSLISample, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
 
 class SubstanceWithConcentration(ArchiveSection):
@@ -473,7 +473,7 @@ class CENOMESample(CESample):
     expected_structure = SubSection(section_def=ExpectedStructure)
 
     def normalize(self, archive, logger):
-        super(CENOMESample, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         export_lab_id(archive, self.lab_id)
 
 
@@ -540,7 +540,7 @@ class Electrolyte(CESample):
                 ".", "") for subs in self.substances if
                 subs.substance is not None and subs.substance.molecular_formula is not None])
         self.chemical_composition_or_formulas = ','.join(formulas)
-        super(Electrolyte, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
 
 class Purging(ArchiveSection):
@@ -579,7 +579,7 @@ class Environment(Electrolyte):
         section_def=EnvironmentReference, repeats=True)
 
     def normalize(self, archive, logger):
-        super(Environment, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         export_lab_id(archive, self.lab_id)
 
 
@@ -643,7 +643,7 @@ class ElectroChemicalCell(CESample):
         if self.chemical_composition_or_formulas.startswith(","):
             self.chemical_composition_or_formulas = self.chemical_composition_or_formulas[1:]
 
-        super(ElectroChemicalCell, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
 
 class ElectroChemicalSetup(CESample):
@@ -695,5 +695,5 @@ class ElectroChemicalSetup(CESample):
         if self.chemical_composition_or_formulas.startswith(","):
             self.chemical_composition_or_formulas = self.chemical_composition_or_formulas[1:]
 
-        super(ElectroChemicalSetup, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         export_lab_id(archive, self.lab_id)

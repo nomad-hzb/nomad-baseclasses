@@ -82,4 +82,4 @@ class PumpRateMeasurement(BaseMeasurement):
 
     def normalize(self, archive, logger):
         self.method = "Pump Rate Measurement"
-        super(PumpRateMeasurement, self).normalize(archive, logger)
+        super().normalize(archive, logger)

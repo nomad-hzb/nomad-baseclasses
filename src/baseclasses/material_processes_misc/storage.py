@@ -47,7 +47,7 @@ class Storage(BaseProcess):
         a_eln=dict(component='NumberEditQuantity'))
 
     def normalize(self, archive, logger):
-        super(Storage, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         self.method = "Storage"
         if self.start_date and self.end_date:

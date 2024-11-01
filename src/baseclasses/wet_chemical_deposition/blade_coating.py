@@ -29,5 +29,5 @@ class BladeCoating(WetChemicalDeposition):
     )
 
     def normalize(self, archive, logger):
-        super(BladeCoating, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "Blade Coating"

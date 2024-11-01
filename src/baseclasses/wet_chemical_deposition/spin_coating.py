@@ -82,7 +82,7 @@ class SpinCoating(WetChemicalDeposition):
         a_eln=dict(component='ReferenceEditQuantity'))
 
     def normalize(self, archive, logger):
-        super(SpinCoating, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "Spin Coating"
 
         if self.recipe_steps is None and self.recipe and self.recipe.steps is not None:

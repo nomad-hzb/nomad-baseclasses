@@ -234,9 +234,7 @@ class SolcarCellSample(CompositeSystem):
         section_def=ReadableIdentifiersCustom)
 
     def normalize(self, archive, logger):
-        super(
-            SolcarCellSample,
-            self).normalize(
+        super().normalize(
             archive,
             logger)
 

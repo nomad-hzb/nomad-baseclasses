@@ -55,4 +55,4 @@ class OpenCircuitVoltage(Voltammetry):
 
     def normalize(self, archive, logger):
         self.method = "Open Circuit Voltage"
-        super(OpenCircuitVoltage, self).normalize(archive, logger)
+        super().normalize(archive, logger)

@@ -208,4 +208,4 @@ class TEM_Gatam_US1000(TEMMicroscopeTechnique):
                 return None
 
     def normalize(self, archive, logger):
-        super(TEM_Gatam_US1000, self).normalize(archive, logger)
+        super().normalize(archive, logger)

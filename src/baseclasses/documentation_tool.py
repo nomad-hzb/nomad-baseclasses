@@ -272,7 +272,7 @@ class DocumentationTool(Entity):
         section_def=SampleIDCENOME)
 
     def normalize(self, archive, logger):
-        super(DocumentationTool, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         if not self.data_file:
 

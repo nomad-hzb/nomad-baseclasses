@@ -11,5 +11,5 @@ class Crystallization(WetChemicalDeposition):
     '''Base class for Crystallization of a Crystal'''
 
     def normalize(self, archive, logger):
-        super(Crystallization, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "Crystallization"

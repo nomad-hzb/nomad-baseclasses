@@ -118,7 +118,7 @@ class XRD(BaseMeasurement):
     #     type=str)
 
     def normalize(self, archive, logger):
-        super(XRD, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "XRD"
 
 
@@ -129,5 +129,5 @@ class XRDLibrary(LibraryMeasurement):
         a_eln=dict(hide=['certified_values', 'certification_institute']))
 
     def normalize(self, archive, logger):
-        super(XRDLibrary, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "XRD"

@@ -91,7 +91,6 @@ class Cleaning(BaseProcess):
                 'lab_id', 'user', 'author']))
 
     def normalize(self, archive, logger):
-        super(Cleaning,
-              self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         self.method = "Cleaning"

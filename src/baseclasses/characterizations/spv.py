@@ -87,7 +87,7 @@ class SPV(BaseMeasurement):
     n_values = Quantity(type=int, derived=derive_n_values)
 
     def normalize(self, archive, logger):
-        super(SPV, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "SPV"
 
         if self.data_file and os.path.splitext(self.data_file)[-1] == ".dat":

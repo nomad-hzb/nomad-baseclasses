@@ -30,7 +30,7 @@ class XPS(BaseMeasurement):
         a_browser=dict(adaptor='RawFileAdaptor'))
 
     def normalize(self, archive, logger):
-        super(XPS, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "X-ray photoelectron spectroscopy"
 
 
@@ -41,5 +41,5 @@ class XPSLibrary(LibraryMeasurement):
         a_eln=dict(hide=['certified_values', 'certification_institute']))
 
     def normalize(self, archive, logger):
-        super(XPSLibrary, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "XPS"

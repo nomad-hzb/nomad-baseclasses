@@ -244,7 +244,7 @@ class PotentiostatMeasurement(BaseMeasurement):
         section_def=PotentiostatProperties)
 
     def normalize(self, archive, logger):
-        super(PotentiostatMeasurement, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         if self.pretreatment is not None:
             self.pretreatment.export_cycle(

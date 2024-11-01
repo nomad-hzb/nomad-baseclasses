@@ -23,5 +23,5 @@ class XPEEM(BaseMeasurement):
     '''Eqe Measurement'''
 
     def normalize(self, archive, logger):
-        super(XPEEM, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "XPEEM"

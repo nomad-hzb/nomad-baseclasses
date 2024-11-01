@@ -58,7 +58,7 @@ class PubChemPureSubstanceSectionCustom(PubChemPureSubstanceSection):
 
     def normalize(self, archive, logger):
         if self.load_data:
-            super(PubChemPureSubstanceSectionCustom, self).normalize(archive, logger)
+            super().normalize(archive, logger)
         else:
             super(PubChemPureSubstanceSection, self).normalize(archive, logger)
 
@@ -84,7 +84,7 @@ class Batch(Collection):
         section_def=ReadableIdentifiersCustom)
 
     def normalize(self, archive, logger):
-        super(Batch, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         if self.export_batch_ids and self.entities:
             self.export_batch_ids = False
@@ -238,7 +238,7 @@ class SingleLibraryMeasurement(ArchiveSection):
     # )
 
     def normalize(self, archive, logger):
-        super(SingleLibraryMeasurement, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         if self.position_x and self.position_y:
             self.name = f"{self.position_x},{self.position_y}"
 
@@ -286,7 +286,7 @@ class BaseProcess(Process):
 
         if self.batch:
             self.samples = self.batch.entities
-        super(BaseProcess, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
 
 class StandardSample(Entity):
@@ -298,7 +298,7 @@ class StandardSample(Entity):
         a_eln=dict(component='ReferenceEditQuantity'))
 
     def normalize(self, archive, logger):
-        super(StandardSample, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         # checked_processesocesses = []
         # if self.processes:
         #     for process in self.processes:
@@ -355,7 +355,7 @@ class LayerDeposition(BaseProcess):
                        section_def=LayerProperties, repeats=True)
 
     def normalize(self, archive, logger):
-        super(LayerDeposition, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         if not archive.results:
             archive.results = Results()
@@ -439,7 +439,7 @@ class BaseMeasurement(Measurement):
                             section_def=Atmosphere, repeats=True)
 
     def normalize(self, archive, logger):
-        super(BaseMeasurement, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
 
 class LibraryMeasurement(BaseMeasurement):
@@ -448,7 +448,7 @@ class LibraryMeasurement(BaseMeasurement):
         section_def=SingleLibraryMeasurement, repeats=True)
 
     def normalize(self, archive, logger):
-        super(LibraryMeasurement, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
 # class MeasurementOnBatch(Measurement):
 

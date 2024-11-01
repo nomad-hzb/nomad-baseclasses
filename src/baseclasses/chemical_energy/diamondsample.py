@@ -75,8 +75,6 @@ class DiamondSample(CENSLISample):
         section_def=DiamondProperties)
 
     def normalize(self, archive, logger):
-        super(
-            DiamondSample,
-            self).normalize(
+        super().normalize(
             archive,
             logger)

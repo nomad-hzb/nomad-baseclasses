@@ -23,5 +23,5 @@ class SXM(BaseMeasurement):
     '''Eqe Measurement'''
 
     def normalize(self, archive, logger):
-        super(SXM, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "Scanning X-ray Microscopy"

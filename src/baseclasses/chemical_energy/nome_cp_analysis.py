@@ -77,7 +77,7 @@ class CPOERAnalysisResult(AnalysisResult):
 
     def normalize(self, archive, logger):
         self.current_density_string = format(self.j, '~')
-        super(CPOERAnalysisResult, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
 
 class CPAnalysis(Analysis):
@@ -138,7 +138,7 @@ class CPAnalysis(Analysis):
                                                 voltage_shift=first_oer_run.voltage_shift,
                                                 resistance=first_oer_run.resistance)]
             self.outputs[0].normalize(archive, logger)
-        super(CPAnalysis, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
 
 def get_all_cp_in_upload(data_archive, upload_id):

@@ -23,5 +23,5 @@ class ConstantPotential(BaseMeasurement):
     '''Eqe Measurement'''
 
     def normalize(self, archive, logger):
-        super(ConstantPotential, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "EQE Measurement"

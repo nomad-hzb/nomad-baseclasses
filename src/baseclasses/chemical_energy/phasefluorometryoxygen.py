@@ -103,4 +103,4 @@ class PhaseFluorometryOxygen(BaseMeasurement):
 
     def normalize(self, archive, logger):
         self.method = "Phase Fluorometry"
-        super(PhaseFluorometryOxygen, self).normalize(archive, logger)
+        super().normalize(archive, logger)

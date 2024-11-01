@@ -77,7 +77,7 @@ class UVvisConcentrationDetection(Analysis, PlotSection):
         description='The R**2 to assess how well the calibration curve reflects the underlying intensity-concentration values.')
 
     def normalize(self, archive, logger):
-        super(UVvisConcentrationDetection, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         if self.blank_substraction is not None:
             self.blank_substraction_peak_value = self.blank_substraction.peak_value

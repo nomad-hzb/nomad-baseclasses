@@ -537,7 +537,7 @@ class PotentiometryGasChromatographyResults(ArchiveSection):
     def normalize(self, archive, logger):
         for gas_result in self.gas_results:
             gas_result.normalize(archive, logger)
-        super(PotentiometryGasChromatographyResults, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
 
 class CENECCExperimentID(ReadableIdentifiersCustom):
@@ -562,7 +562,7 @@ class CENECCExperimentID(ReadableIdentifiersCustom):
         if author and self.owner is None:
             self.owner = ' '.join([author.first_name, author.last_name])
 
-        super(CENECCExperimentID, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         if archive.data.lab_id:
             return
@@ -605,4 +605,4 @@ class PotentiometryGasChromatographyMeasurement(BaseMeasurement):
         self.experiment_id = CENECCExperimentID()
         self.experiment_id.normalize(archive, logger)
         self.potentiometry.normalize(archive, logger)
-        super(PotentiometryGasChromatographyMeasurement, self).normalize(archive, logger)
+        super().normalize(archive, logger)

@@ -77,5 +77,5 @@ class PLImaging(BaseMeasurement):
         section_def=PLIproperties)
 
     def normalize(self, archive, logger):
-        super(PLImaging, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "PL Imaging"

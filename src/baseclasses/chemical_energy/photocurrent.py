@@ -182,7 +182,7 @@ class PhotoCurrent(BaseMeasurement):
     n_values = Quantity(type=int, derived=derive_n_values)
 
     def normalize(self, archive, logger):
-        super(PhotoCurrent, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "Photo Current"
 
         if self.data_files and len(self.data_files) > 0:

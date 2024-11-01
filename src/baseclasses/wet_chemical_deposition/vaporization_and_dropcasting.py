@@ -50,5 +50,5 @@ class VaporizationAndDropCasting(WetChemicalDeposition):
         section_def=VaporizationProperties, repeats=True)
 
     def normalize(self, archive, logger):
-        super(VaporizationAndDropCasting, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "Vaporization and Drop Casting"

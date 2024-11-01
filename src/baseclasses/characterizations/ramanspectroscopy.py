@@ -87,7 +87,7 @@ class Raman(BaseMeasurement):
     n_values = Quantity(type=int, derived=derive_n_values)
 
     def normalize(self, archive, logger):
-        super(Raman, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "Raman Spectroscopy"
 
         if self.data_file and os.path.splitext(self.data_file)[-1] == ".txt":

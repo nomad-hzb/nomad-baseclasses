@@ -225,7 +225,7 @@ class MXeneSolution(CompositeSystem):
     properties = SubSection(section_def=MXeneSolutionProperties)
 
     def normalize(self, archive, logger):
-        super(MXeneSolution, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         if not archive.results:
             archive.results = Results()

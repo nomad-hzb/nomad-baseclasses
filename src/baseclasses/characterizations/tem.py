@@ -28,5 +28,5 @@ class TEM(BaseMeasurement):
         a_eln=dict(component='URLEditQuantity'))
 
     def normalize(self, archive, logger):
-        super(TEM, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "Transmission Electron Microscopy"

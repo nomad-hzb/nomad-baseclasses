@@ -273,7 +273,7 @@ class Voltammetry(PotentiostatMeasurement):
     n_values = Quantity(type=int, derived=derive_n_values)
 
     def normalize(self, archive, logger):
-        super(Voltammetry, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         # if self.metadata_file:
         #     try:

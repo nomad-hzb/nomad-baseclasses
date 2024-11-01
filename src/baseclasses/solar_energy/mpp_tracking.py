@@ -263,5 +263,5 @@ class MPPTracking(BaseMeasurement):
         section_def=MPPTrackingProperties)
 
     def normalize(self, archive, logger):
-        super(MPPTracking, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "MPP Tracking"

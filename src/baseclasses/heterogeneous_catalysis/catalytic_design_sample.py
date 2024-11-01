@@ -165,7 +165,7 @@ class DesignSample(BasicSample):
         section_def=DesignSampleID)
 
     def normalize(self, archive, logger):
-        super(DesignSample, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         if self.chemical_composition_or_formulas:
             if not archive.results:

@@ -102,6 +102,6 @@ class PVDeposition(LayerDeposition):
         section_def=PVDProcess)
 
     def normalize(self, archive, logger):
-        super(PVDeposition, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         self.method = "Physical Vapour Deposition"

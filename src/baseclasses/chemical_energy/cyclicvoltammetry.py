@@ -111,4 +111,4 @@ class CyclicVoltammetry(Voltammetry):
 
     def normalize(self, archive, logger):
         self.method = "Cyclic Voltammetry"
-        super(CyclicVoltammetry, self).normalize(archive, logger)
+        super().normalize(archive, logger)

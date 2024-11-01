@@ -81,4 +81,4 @@ class Massspectrometry(BaseMeasurement):
 
     def normalize(self, archive, logger):
         self.method = "Massspectrometry"
-        super(Massspectrometry, self).normalize(archive, logger)
+        super().normalize(archive, logger)

@@ -122,7 +122,7 @@ class MicroscopeTechnique(BaseMeasurement):
         pass
 
     def normalize(self, archive, logger):
-        super(MicroscopeTechnique, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         import tempfile
 
         if not self.detector_data and not self.detector_data_folder:
@@ -179,7 +179,7 @@ class TEMMicroscopeTechnique(MicroscopeTechnique):
         a_eln=dict(component='ReferenceEditQuantity'))
 
     def normalize(self, archive, logger):
-        super(TEMMicroscopeTechnique, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
 
 class SEMMicroscopeTechnique(MicroscopeTechnique):
@@ -189,7 +189,7 @@ class SEMMicroscopeTechnique(MicroscopeTechnique):
     #     a_eln=dict(component='ReferenceEditQuantity'))
 
     def normalize(self, archive, logger):
-        super(SEMMicroscopeTechnique, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
 
 class OpticalMicroscopeTechnique(MicroscopeTechnique):
@@ -199,4 +199,4 @@ class OpticalMicroscopeTechnique(MicroscopeTechnique):
     #     a_eln=dict(component='ReferenceEditQuantity'))
 
     def normalize(self, archive, logger):
-        super(OpticalMicroscopeTechnique, self).normalize(archive, logger)
+        super().normalize(archive, logger)

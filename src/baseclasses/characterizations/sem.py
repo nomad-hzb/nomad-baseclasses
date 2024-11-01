@@ -28,5 +28,5 @@ class SEM(BaseMeasurement):
         a_eln=dict(component='URLEditQuantity'))
 
     def normalize(self, archive, logger):
-        super(SEM, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "Scanning Electron Microscopy"

@@ -79,4 +79,4 @@ class LinearSweepVoltammetry(Voltammetry):
 
     def normalize(self, archive, logger):
         self.method = "Linear Sweep Voltammetry"
-        super(LinearSweepVoltammetry, self).normalize(archive, logger)
+        super().normalize(archive, logger)

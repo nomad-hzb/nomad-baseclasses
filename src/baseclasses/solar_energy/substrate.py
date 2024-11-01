@@ -73,9 +73,7 @@ class Substrate(Entity):
     #     ))
 
     def normalize(self, archive, logger):
-        super(
-            Substrate,
-            self).normalize(
+        super().normalize(
             archive,
             logger)
         add_solar_cell(archive)

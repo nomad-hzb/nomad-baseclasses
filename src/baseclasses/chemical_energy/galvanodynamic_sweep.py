@@ -57,4 +57,4 @@ class GalvanodynamicSweep(Voltammetry):
 
     def normalize(self, archive, logger):
         self.method = "Galvano dynamic sweep"
-        super(GalvanodynamicSweep, self).normalize(archive, logger)
+        super().normalize(archive, logger)

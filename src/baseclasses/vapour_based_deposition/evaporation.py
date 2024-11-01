@@ -264,6 +264,6 @@ class Evaporations(LayerDeposition):
         section_def=InorganicEvaporation, repeats=True)
 
     def normalize(self, archive, logger):
-        super(Evaporations, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         self.method = "Evaporation"

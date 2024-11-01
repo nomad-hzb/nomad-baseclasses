@@ -47,5 +47,5 @@ class DipCoating(WetChemicalDeposition):
         section_def=DipCoatingProperties)
 
     def normalize(self, archive, logger):
-        super(DipCoating, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "Dip Coating"

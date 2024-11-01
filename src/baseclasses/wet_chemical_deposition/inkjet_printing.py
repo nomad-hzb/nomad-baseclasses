@@ -340,5 +340,5 @@ class LP50InkjetPrinting(WetChemicalDeposition):
         section_def=LP50NozzleVoltageProfile)
 
     def normalize(self, archive, logger):
-        super(LP50InkjetPrinting, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "Inkjet printing"

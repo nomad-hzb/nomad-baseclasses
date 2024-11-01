@@ -259,6 +259,6 @@ class PECVDeposition(LayerDeposition):
 
     def normalize(self, archive, logger):
 
-        super(PECVDeposition, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         self.method = "Plasma Enhanced Chemical Vapour Deposition"

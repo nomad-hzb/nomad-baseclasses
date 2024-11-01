@@ -44,7 +44,7 @@ class DesignID(SampleID):
         ))
 
     def normalize(self, archive, logger):
-        super(DesignID, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         if self.sample_short_name is not None and self.design_number is not None:
             self.sample_id = f"{self.sample_short_name}-{self.design_number:04d}"
@@ -167,7 +167,7 @@ class Design(Entity):
         section_def=DesignID)
 
     def normalize(self, archive, logger):
-        super(Design, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         if self.active_factors is not None:
             for i, factor in enumerate(self.active_factors):

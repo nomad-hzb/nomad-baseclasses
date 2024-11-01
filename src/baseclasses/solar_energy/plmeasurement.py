@@ -146,7 +146,7 @@ class PLPropertiesLibrary(ArchiveSection):
         return power_density, photon_flux
 
     def normalize(self, archive, logger):
-        super(PLPropertiesLibrary, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         if self.laser_power and self.laser_wavelength and self.spot_size:
             self.power_density, self.photon_flux = self.calculate_laser_parameters()
 
@@ -170,7 +170,7 @@ class PLMeasurement(BaseMeasurement):
 
     def normalize(self, archive, logger):
         self.method = "PL Measurement"
-        super(PLMeasurement, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
 
 class PLSingleLibraryMeasurement(SingleLibraryMeasurement):
@@ -212,5 +212,5 @@ class PLMeasurementLibrary(LibraryMeasurement):
         section_def=PLSingleLibraryMeasurement, repeats=True)
 
     def normalize(self, archive, logger):
-        super(PLMeasurementLibrary, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "PL Measurement Mapping"

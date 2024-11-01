@@ -72,7 +72,7 @@ class CatalyticSample(CESample):
         section_def=SampleID)
 
     def normalize(self, archive, logger):
-        super(CatalyticSample, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
 
 class CatalyticSampleWithGrid(CatalyticSample):
@@ -81,4 +81,4 @@ class CatalyticSampleWithGrid(CatalyticSample):
         section_def=Grid)
 
     def normalize(self, archive, logger):
-        super(CatalyticSampleWithGrid, self).normalize(archive, logger)
+        super().normalize(archive, logger)

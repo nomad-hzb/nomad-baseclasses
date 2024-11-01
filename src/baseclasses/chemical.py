@@ -29,6 +29,6 @@ class Chemical(Substance):
         ))
 
     def normalize(self, archive, logger):
-        super(Chemical, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         if self.cas_name is not None:
             archive.metadata.entry_name = self.cas_name

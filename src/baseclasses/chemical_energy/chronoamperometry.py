@@ -126,7 +126,7 @@ class Chronoamperometry(Voltammetry):
 
     def normalize(self, archive, logger):
         self.method = "Chronoamperometry"
-        super(Chronoamperometry, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
 
 # class ChronoamperometryMultiple(PotentiostatMeasurement):

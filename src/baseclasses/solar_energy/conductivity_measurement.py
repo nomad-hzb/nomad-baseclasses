@@ -69,5 +69,5 @@ class ConductivityMeasurementLibrary(LibraryMeasurement):
         section_def=ConductivitySingleLibraryMeasurement, repeats=True)
 
     def normalize(self, archive, logger):
-        super(ConductivityMeasurementLibrary, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "Conductivity Measurement Mapping"

@@ -118,7 +118,7 @@ class CatalyticReaction(MeasurementOnSample):
     data = SubSection(section_def=CatalyticReactionData)
 
     def normalize(self, archive, logger):
-        super(CatalyticReaction, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "Catalytic Reaction"
 
         if not self.data_file or os.path.splitext(

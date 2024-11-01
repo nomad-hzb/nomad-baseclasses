@@ -190,4 +190,4 @@ class SEM_Microscope_Merlin(SEMMicroscopeTechnique):
                 return None
 
     def normalize(self, archive, logger):
-        super(SEM_Microscope_Merlin, self).normalize(archive, logger)
+        super().normalize(archive, logger)

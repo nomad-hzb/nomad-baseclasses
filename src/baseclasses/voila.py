@@ -30,9 +30,7 @@ class VoilaNotebook(Entity):
 
 
     def normalize(self, archive, logger):
-        super(
-            VoilaNotebook,
-            self).normalize(
+        super().normalize(
             archive,
             logger)
 

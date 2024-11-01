@@ -116,4 +116,4 @@ class trSPVMeasurement(BaseMeasurement):
                 and self.data is not None and self.data.voltages is not None:
             for voltage_data in self.data.voltages:
                 voltage_data.voltage = voltage_data.measurement * self.properties.capacitance
-        super(trSPVMeasurement, self).normalize(archive, logger)
+        super().normalize(archive, logger)

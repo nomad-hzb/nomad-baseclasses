@@ -101,7 +101,7 @@ class UVvisMeasurement(BaseMeasurement):
 
     def normalize(self, archive, logger):
         self.method = "UVvis Measurement"
-        super(UVvisMeasurement, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
 
 class UVvisSingleLibraryMeasurement(SingleLibraryMeasurement):
@@ -149,5 +149,5 @@ class UVvisMeasurementLibrary(LibraryMeasurement):
         section_def=UVvisSingleLibraryMeasurement, repeats=True)
 
     def normalize(self, archive, logger):
-        super(UVvisMeasurementLibrary, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "UVvis Measurement Mapping"

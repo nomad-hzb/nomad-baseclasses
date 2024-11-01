@@ -469,7 +469,7 @@ class Solution(CompositeSystem):
     solution_id = SubSection(section_def=ReadableIdentifiersCustom)
 
     def normalize(self, archive, logger):
-        super(Solution, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         if (not self.preparation):
             if self.temperature is not None or self.time is not None or self.speed is not None or self.solvent_ratio is not None:
                 self.preparation = SolutionPreparationStandard(

@@ -53,5 +53,5 @@ class GeneralProcess(BaseMeasurement):
             if self.search_sample_in_same_upload:
                 upload_id = archive.metadata.upload_id
             set_sample_reference(archive, self, sample_id, upload_id)
-        super(GeneralProcess, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 

@@ -33,7 +33,7 @@ class Ellipsometry(BaseMeasurement):
 
     def normalize(self, archive, logger):
         self.method = "Ellipsometry"
-        super(Ellipsometry, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
 
 class EllipsometryLibrary(LibraryMeasurement):
@@ -43,5 +43,5 @@ class EllipsometryLibrary(LibraryMeasurement):
         a_eln=dict(hide=['certified_values', 'certification_institute']))
 
     def normalize(self, archive, logger):
-        super(EllipsometryLibrary, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "Ellipsometry"

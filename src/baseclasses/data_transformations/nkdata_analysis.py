@@ -116,4 +116,4 @@ class NKData(Entity):
             archive.results.material.elements = elements_final
 
         self.data.normalize(archive, logger)
-        super(NKData, self).normalize(archive, logger)
+        super().normalize(archive, logger)

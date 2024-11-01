@@ -57,9 +57,7 @@ class CatalysisSample(CompositeSystem):
         section_def=CompositeSystemReference)
 
     def normalize(self, archive, logger):
-        super(
-            CatalysisSample,
-            self).normalize(
+        super().normalize(
             archive,
             logger)
        
@@ -72,8 +70,6 @@ class CatalysisLibrary(LibrarySample):
         a_eln=dict(component='ReferenceEditQuantity'))
 
     def normalize(self, archive, logger):
-        super(
-            CatalysisLibrary,
-            self).normalize(
+        super().normalize(
             archive,
             logger)

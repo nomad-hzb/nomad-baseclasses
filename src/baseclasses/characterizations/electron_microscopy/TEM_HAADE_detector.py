@@ -155,4 +155,4 @@ class TEM_HAADE(TEMMicroscopeTechnique):
                 return None
 
     def normalize(self, archive, logger):
-        super(TEM_HAADE, self).normalize(archive, logger)
+        super().normalize(archive, logger)

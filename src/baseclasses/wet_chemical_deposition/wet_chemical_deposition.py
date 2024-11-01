@@ -118,7 +118,7 @@ class WetChemicalDeposition(LayerDeposition):
     sintering = SubSection(section_def=Sintering, repeats=True)
 
     def normalize(self, archive, logger):
-        super(WetChemicalDeposition, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         if self.samples and self.solution:
             for wc_sol in self.solution:

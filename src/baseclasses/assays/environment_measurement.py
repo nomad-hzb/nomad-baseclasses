@@ -75,5 +75,5 @@ class EnvironmentMeasurement(BaseMeasurement):
     # properties = SubSection(section_def=XRDProperties)
 
     def normalize(self, archive, logger):
-        super(EnvironmentMeasurement, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         self.method = "Environment measurement"

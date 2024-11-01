@@ -49,7 +49,7 @@ class Factor(ArchiveSection):
     )
 
     def normalize(self, archive, logger):
-        super(Factor, self).normalize(archive, logger)
+        super().normalize(archive, logger)
         if self.name:
             self.label = self.name
 
@@ -137,7 +137,7 @@ class Design(Entity):
         section_def=DiscreteFactor, repeats=True)
 
     def normalize(self, archive, logger):
-        super(Design, self).normalize(archive, logger)
+        super().normalize(archive, logger)
 
         self.method = "Design"
 
