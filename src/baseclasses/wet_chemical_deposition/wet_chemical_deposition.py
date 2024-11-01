@@ -74,7 +74,8 @@ class PrecursorSolution(ArchiveSection):
 
         if self.solution_details and self.solution_details.name:
             if self.solution_volume:
-                self.name = self.solution_details.name + ' ' + str(self.solution_volume)
+                self.name = self.solution_details.name + \
+                    ' ' + str(self.solution_volume)
             else:
                 self.name = self.solution_details.name
 
@@ -115,6 +116,8 @@ class WetChemicalDeposition(LayerDeposition):
     sintering = SubSection(section_def=Sintering, repeats=True)
 
     def normalize(self, archive, logger):
+        if not self.method:
+            self.method = "Wet chemical deposition"
         super().normalize(archive, logger)
 
         if self.samples and self.solution:
