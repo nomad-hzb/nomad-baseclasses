@@ -76,7 +76,8 @@ class CPOERAnalysisResult(AnalysisResult):
     )
 
     def normalize(self, archive, logger):
-        self.current_density_string = format(self.j, '~')
+        rounded_current_density = round(self.j, 4)
+        self.current_density_string = format(rounded_current_density, '~')
         super().normalize(archive, logger)
 
 
@@ -117,7 +118,7 @@ class CPAnalysis(Analysis):
 
             for sample in first_oer_run.samples:
                 export_lab_id(archive, sample.lab_id)
-                if sample.reference.chemical_composition_or_formulas:
+                if sample.reference.chemical_composition_or_formulas is not None:
                     if not archive.results:
                         archive.results = Results()
                     if not archive.results.material:
