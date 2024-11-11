@@ -90,6 +90,34 @@ class CPAnalysis(Analysis):
     outputs = Analysis.outputs.m_copy()
     outputs.section_def = CPOERAnalysisResult
 
+    def get_current_density(self, properties):
+        current_density = None
+        current = properties.step_1_current
+        area = properties.sample_area
+        if current is not None and area is not None:
+            current_density = current / area
+        return current_density
+
+    def get_oer_analysis_result(self, first_oer_run, last_oer_run, experiment_duration):
+        voltage_avg_first5 = np.mean(np.array(first_oer_run.voltage[:5]))
+        voltage_avg_last5 = np.mean(np.array(last_oer_run.voltage[-5:]))
+        voltage_difference = voltage_avg_first5 - voltage_avg_last5
+
+        current_density = self.get_current_density(first_oer_run.properties)
+
+        return CPOERAnalysisResult(
+            name=first_oer_run.name,
+            voltage_avg_first5=voltage_avg_first5,
+            voltage_avg_last5=voltage_avg_last5,
+            voltage_difference=voltage_difference,
+            j=current_density,
+            experiment_duration=experiment_duration,
+            reaction_type=first_oer_run.method,
+            samples=first_oer_run.samples,
+            voltage_shift=first_oer_run.voltage_shift,
+            resistance=first_oer_run.resistance,
+        )
+
     def normalize(self, archive, logger):
         refs = get_all_cp_in_upload(archive, archive.metadata.upload_id)
         self.inputs = [CPOERReference(name=name, reference=ref) for [name, ref] in refs]
@@ -97,15 +125,6 @@ class CPAnalysis(Analysis):
         if self.inputs is not None and len(self.inputs) > 0:
             first_oer_run = self.inputs[0].reference
             last_oer_run = self.inputs[-1].reference
-
-            voltage_avg_first5 = np.mean(np.array(first_oer_run.voltage[:5]))
-            voltage_avg_last5 = np.mean(np.array(last_oer_run.voltage[-5:]))
-            voltage_difference = voltage_avg_first5 - voltage_avg_last5
-
-            current = first_oer_run.properties.step_1_current
-            area = first_oer_run.properties.sample_area
-            if current is not None and area is not None:
-                current_density = current / first_oer_run.properties.sample_area
 
             cycle_number = len(self.inputs)
             if cycle_number > 1:
@@ -133,21 +152,21 @@ class CPAnalysis(Analysis):
                     except Exception as e:
                         logger.warn('Could not analyse material', exc_info=e)
 
-            self.outputs = [
-                CPOERAnalysisResult(
-                    name=first_oer_run.name,
-                    voltage_avg_first5=voltage_avg_first5,
-                    voltage_avg_last5=voltage_avg_last5,
-                    voltage_difference=voltage_difference,
-                    j=current_density,
-                    experiment_duration=experiment_duration,
-                    reaction_type=first_oer_run.method,
-                    samples=first_oer_run.samples,
-                    voltage_shift=first_oer_run.voltage_shift,
-                    resistance=first_oer_run.resistance,
-                )
-            ]
-            self.outputs[0].normalize(archive, logger)
+            first_current_density = self.get_current_density(first_oer_run.properties)
+            last_current_density = self.get_current_density(last_oer_run.properties)
+
+            # if the loops are performed with different current densities every file should be displayed as one output
+            if first_current_density != last_current_density:
+                output_list = []
+                for cp_input in self.inputs:
+                    result = self.get_oer_analysis_result(cp_input.reference, cp_input.reference, experiment_duration)
+                    output_list.append(result)
+            else:
+                output_list = [self.get_oer_analysis_result(first_oer_run, last_oer_run, experiment_duration)]
+
+            self.outputs = output_list
+            for oer_cp_output in self.outputs:
+                oer_cp_output.normalize(archive, logger)
         super().normalize(archive, logger)
 
 
