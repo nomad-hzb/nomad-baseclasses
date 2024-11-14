@@ -9,41 +9,44 @@ from baseclasses.vapour_based_deposition.sputtering import (
 )
 from baseclasses import PubChemPureSubstanceSectionCustom
 
-def get_information():
-    #multisputtering.description = data.get('Notes')
-    pass
-
-
-def get_observables(observables_df):
-    observables = MultiTargetSputteringObservables()
-    observables.base_pressure = observables_df.loc['Base Pressure (mbar)', '1']
-    temperature = observables_df.loc['Temperature  °C', '1']
-    # we set room temperature to 25 based on the obolibrary link provided in the schema
-    observables.temperature = 25 if temperature == 'RT' else temperature
-    return observables
+def get_observables(observables_df, num_targets):
+    process_observables = []
+    observables_df.drop(columns=['Steps'], inplace=True)
+    for step_name, step in observables_df.items():
+        if step.isna().all():
+            continue
+        observables = MultiTargetSputteringObservables()
+        observables.step_number = f'step {step_name}'
+        observables.base_pressure = step.get('Base Pressure (mbar)')
+        temperature = step.get('Temperature  °C')
+        # we set room temperature to 25 based on the obolibrary link provided in the schema
+        observables.temperature = 25 if temperature == 'RT' else temperature
+        observables.bias_voltage = step.iloc[4:4+num_targets].tolist()
+        observables.bias_current = step.iloc[13:13+num_targets].tolist()
+        observables.notes = step.get('Notes') if not pd.isna(step.get('Notes')) else None
+        process_observables.append(observables)
+    return process_observables
 
 def get_process_properties(parameters_df, num_targets):
     process_properties = []
-    step_names = parameters_df.iloc[9:17]['Unnamed: 1'].tolist()
     parameters_df.drop(columns=['Unnamed: 1'], inplace=True)
-    for process_name, process in parameters_df.items():
-        if process.isna().all():
+    for step_name, step in parameters_df.items():
+        if step.isna().all():
             continue
         properties = MultiTargetSputteringProcess()
-        properties.process_number = f'step {process_name}'
-        properties.orientation = process.get('Orientation (°)')
-        properties.sputter_pressure = process.get('Sputter pressure (mB)')
-        properties.substrate_temperature = process.get('Substrate Temperature (°C)')
-        properties.ramp = process.get('Ramp (°C/min)')
-        time_obj = process.get('Time (hh:mm:ss)')
+        properties.step_number = f'step {step_name}'
+        properties.orientation = step.get('Orientation (°)')
+        properties.sputter_pressure = step.get('Sputter pressure (mB)')
+        properties.substrate_temperature = step.get('Substrate Temperature (°C)')
+        properties.ramp = step.get('Ramp (°C/min)')
+        time_obj = step.get('Time (hh:mm:ss)')
         total_seconds = time_obj.hour * 3600 + time_obj.minute * 60 + time_obj.second if not pd.isna(time_obj) else None
         properties.deposition_time = total_seconds
-        properties.power = [range(1,9), process.iloc[9:17].tolist()]
-        # TODO was passiert wenn weniger targets vorhanden?
-        properties.rotation_rate = process.get('Rotation (°/s)')
-        properties.z_position = process.get('Z position')
-        properties.flow_rate = process.get('Flow Rate (ml/min)')
-        gas = process.get('Gas')
+        properties.power = step.iloc[9:9+num_targets].tolist()
+        properties.rotation_rate = step.get('Rotation (°/s)')
+        properties.z_position = step.get('Z position')
+        properties.flow_rate = step.get('Flow Rate (ml/min)')
+        gas = step.get('Gas')
         properties.gas = PubChemPureSubstanceSectionCustom(name=gas) if not pd.isna(gas) else None
         process_properties.append(properties)
     return  process_properties
