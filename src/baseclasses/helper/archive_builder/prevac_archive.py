@@ -1,13 +1,12 @@
-from datetime import datetime
-import numpy as np
 import pandas as pd
 
+from baseclasses import PubChemPureSubstanceSectionCustom
 from baseclasses.vapour_based_deposition.sputtering import (
     MultiTargetSputteringObservables,
     MultiTargetSputteringProcess,
-    TargetProperties
+    TargetProperties,
 )
-from baseclasses import PubChemPureSubstanceSectionCustom
+
 
 def get_observables(observables_df, num_targets):
     process_observables = []

@@ -17,7 +17,6 @@
 #
 
 import numpy as np
-
 from nomad.datamodel.data import ArchiveSection
 from nomad.metainfo import MEnum, Quantity, Reference, Section, SubSection
 
