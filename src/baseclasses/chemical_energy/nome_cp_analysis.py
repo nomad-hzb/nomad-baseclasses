@@ -74,6 +74,10 @@ class CPOERAnalysisResult(AnalysisResult):
         section_def=CompositeSystemReference,
         repeats=True,
     )
+    inputs = SubSection(
+        section_def=CPOERReference,
+        repeats=True,
+    )
 
     def normalize(self, archive, logger):
         rounded_current_density = round(self.j, 4)
@@ -98,7 +102,26 @@ class CPAnalysis(Analysis):
             current_density = current / area
         return current_density
 
-    def get_oer_analysis_result(self, first_oer_run, last_oer_run, experiment_duration):
+    def group_by_current_density(self, inputs):
+        grouped_inputs = {}
+        for input_ref in inputs:
+            input_obj = input_ref.reference
+            current_density = self.get_current_density(input_obj.properties)
+            duration = input_obj.time[-1]
+
+            if current_density not in grouped_inputs:
+                grouped_inputs[current_density] = {
+                    'references': [],
+                    'experiment_duration': 0,
+                }
+
+            grouped_inputs[current_density]['references'].append(input_ref)
+            grouped_inputs[current_density]['experiment_duration'] += duration
+        return grouped_inputs
+
+    def get_oer_analysis_result(self, input_refs, experiment_duration):
+        first_oer_run = input_refs[0].reference
+        last_oer_run = input_refs[-1].reference
         voltage_avg_first5 = np.mean(np.array(first_oer_run.voltage[:5]))
         voltage_avg_last5 = np.mean(np.array(last_oer_run.voltage[-5:]))
         voltage_difference = voltage_avg_first5 - voltage_avg_last5
@@ -116,6 +139,7 @@ class CPAnalysis(Analysis):
             samples=first_oer_run.samples,
             voltage_shift=first_oer_run.voltage_shift,
             resistance=first_oer_run.resistance,
+            inputs=input_refs,
         )
 
     def normalize(self, archive, logger):
@@ -123,19 +147,7 @@ class CPAnalysis(Analysis):
         self.inputs = [CPOERReference(name=name, reference=ref) for [name, ref] in refs]
 
         if self.inputs is not None and len(self.inputs) > 0:
-            first_oer_run = self.inputs[0].reference
-            last_oer_run = self.inputs[-1].reference
-
-            cycle_number = len(self.inputs)
-            if cycle_number > 1:
-                time_one_cycle = (
-                    self.inputs[1].reference.datetime - first_oer_run.datetime
-                )
-                experiment_duration = cycle_number * time_one_cycle.total_seconds()
-            else:
-                experiment_duration = first_oer_run.time[-1]
-
-            for sample in first_oer_run.samples:
+            for sample in self.inputs[0].reference.samples:
                 export_lab_id(archive, sample.lab_id)
                 if sample.reference.chemical_composition_or_formulas is not None:
                     if not archive.results:
@@ -152,17 +164,13 @@ class CPAnalysis(Analysis):
                     except Exception as e:
                         logger.warn('Could not analyse material', exc_info=e)
 
-            first_current_density = self.get_current_density(first_oer_run.properties)
-            last_current_density = self.get_current_density(last_oer_run.properties)
-
-            # if the loops are performed with different current densities every file should be displayed as one output
-            if first_current_density != last_current_density:
-                output_list = []
-                for cp_input in self.inputs:
-                    result = self.get_oer_analysis_result(cp_input.reference, cp_input.reference, experiment_duration)
-                    output_list.append(result)
-            else:
-                output_list = [self.get_oer_analysis_result(first_oer_run, last_oer_run, experiment_duration)]
+            grouped_inputs = self.group_by_current_density(self.inputs)
+            output_list = []
+            for current_density, group in grouped_inputs.items():
+                result = self.get_oer_analysis_result(
+                    group['references'], group['experiment_duration']
+                )
+                output_list.append(result)
 
             self.outputs = output_list
             for oer_cp_output in self.outputs:
