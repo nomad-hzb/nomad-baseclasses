@@ -7,9 +7,26 @@ from nomad.units import ureg
 def get_electrolyser_properties(metadata):
     # TODO decide if we need that for e.g. ids or other properties
     #properties = ElectrolyserProperties()
-    user_name = metadata.get('Username')
-    device = metadata.get('Device under test')
     #properties.comments = metadata.get('Comments')
+    name = metadata.get('name')
+    comments = metadata.get('Comments')
+    torque = metadata.get('Torque_Nm')
+    user_name = metadata.get('User_Name')
+    cell_name = metadata.get('Cell_Name')
+    test_rig = metadata.get('Test_Rig')
+    membrane = metadata.get('Membrane')
+    electrolyte_anode = metadata.get('Electrolyte_Anode')
+    catalyst_anode = metadata.get('Catalyst_Anode')
+    area_anode = metadata.get('Electrode_Area_sqmm_Anode')
+    gasket_material_anode = metadata.get('Gasket_Material_Anode')
+    gasket_thickness_anode = metadata.get('Gasket_Thickness_mm_Anode')
+    electrode_material_anode = metadata.get('Electrode_Material_Anode')
+    electrolyte_cathode = metadata.get('Electrolyte_Cathode')
+    catalyst_cathode = metadata.get('Catalyst_Cathode')
+    gasket_material_cathode = metadata.get('Gasket_Material_Cathode')
+    gasket_thickness_cathode = metadata.get('Gasket_Thickness_sqmm_Cathode')
+    area_cathode = metadata.get('Electrode_Area_sqmm_Cathode')
+    electrode_material_cathode = metadata.get('Electrode_Material_Cathode')
     #return properties
 
 
