@@ -103,20 +103,21 @@ class CPAnalysis(Analysis):
         return current_density
 
     def group_by_current_density(self, inputs):
-        grouped_inputs = {}
+        grouped_inputs = []
+        recent_group = None
         for input_ref in inputs:
             input_obj = input_ref.reference
-            current_density = self.get_current_density(input_obj.properties)
+            current_density = round(self.get_current_density(input_obj.properties), 4)
             duration = input_obj.time[-1]
 
-            if current_density not in grouped_inputs:
-                grouped_inputs[current_density] = {
-                    'references': [],
-                    'experiment_duration': 0,
-                }
-
-            grouped_inputs[current_density]['references'].append(input_ref)
-            grouped_inputs[current_density]['experiment_duration'] += duration
+            # start a new group if the current density changes
+            # only group together if same current density is immediately following each other
+            if recent_group is None or recent_group['current_density'] != current_density:
+                recent_group = {'current_density': current_density, 'references': [], 'experiment_duration': 0}
+                grouped_inputs.append(recent_group)
+            # add current object to group
+            recent_group['references'].append(input_ref)
+            recent_group['experiment_duration'] += duration
         return grouped_inputs
 
     def get_oer_analysis_result(self, input_refs, experiment_duration):
@@ -164,9 +165,9 @@ class CPAnalysis(Analysis):
                     except Exception as e:
                         logger.warn('Could not analyse material', exc_info=e)
 
-            grouped_inputs = self.group_by_current_density(self.inputs)
             output_list = []
-            for current_density, group in grouped_inputs.items():
+            grouped_inputs = self.group_by_current_density(self.inputs)
+            for group in grouped_inputs:
                 result = self.get_oer_analysis_result(
                     group['references'], group['experiment_duration']
                 )
