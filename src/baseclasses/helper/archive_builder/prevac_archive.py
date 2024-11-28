@@ -46,7 +46,7 @@ def get_process_properties(parameters_df, num_targets):
         properties.z_position = step.get('Z position')
         properties.flow_rate = step.get('Flow Rate (ml/min)')
         gas = step.get('Gas')
-        properties.gas = PubChemPureSubstanceSectionCustom(name=gas) if not pd.isna(gas) else None
+        properties.gas = PubChemPureSubstanceSectionCustom(name=gas, load_data=False) if not pd.isna(gas) else None
         process_properties.append(properties)
     return  process_properties
 
@@ -59,7 +59,7 @@ def get_target_properties(source_configuration_df):
         properties = TargetProperties()
         material_name = source_configuration_df.loc[position_idx, 'Source']
         properties.name = f'{position_idx + 1}) {material_name}'
-        properties.material = PubChemPureSubstanceSectionCustom(name=material_name)
+        properties.material = PubChemPureSubstanceSectionCustom(name=material_name, load_data=False)
         properties.position = source_configuration_df.loc[position_idx, 'Position']
         properties.angle = source_configuration_df.loc[position_idx, 'Position (grad)']
         properties.rf_dc = source_configuration_df.loc[position_idx, 'RF/DC']
