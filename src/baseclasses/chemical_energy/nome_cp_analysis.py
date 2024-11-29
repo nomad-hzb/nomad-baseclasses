@@ -74,9 +74,14 @@ class CPOERAnalysisResult(AnalysisResult):
         section_def=CompositeSystemReference,
         repeats=True,
     )
+    inputs = SubSection(
+        section_def=CPOERReference,
+        repeats=True,
+    )
 
     def normalize(self, archive, logger):
-        self.current_density_string = format(self.j, '~')
+        rounded_current_density = round(self.j, 4)
+        self.current_density_string = format(rounded_current_density, '~')
         super().normalize(archive, logger)
 
 
@@ -89,35 +94,63 @@ class CPAnalysis(Analysis):
     outputs = Analysis.outputs.m_copy()
     outputs.section_def = CPOERAnalysisResult
 
+    def get_current_density(self, properties):
+        current_density = None
+        current = properties.step_1_current
+        area = properties.sample_area
+        if current is not None and area is not None:
+            current_density = current / area
+        return current_density
+
+    def group_by_current_density(self, inputs):
+        grouped_inputs = []
+        recent_group = None
+        for input_ref in inputs:
+            input_obj = input_ref.reference
+            current_density = round(self.get_current_density(input_obj.properties), 4)
+            duration = input_obj.time[-1]
+
+            # start a new group if the current density changes
+            # only group together if same current density is immediately following each other
+            if recent_group is None or recent_group['current_density'] != current_density:
+                recent_group = {'current_density': current_density, 'references': [], 'experiment_duration': 0}
+                grouped_inputs.append(recent_group)
+            # add current object to group
+            recent_group['references'].append(input_ref)
+            recent_group['experiment_duration'] += duration
+        return grouped_inputs
+
+    def get_oer_analysis_result(self, input_refs, experiment_duration):
+        first_oer_run = input_refs[0].reference
+        last_oer_run = input_refs[-1].reference
+        voltage_avg_first5 = np.mean(np.array(first_oer_run.voltage[:5]))
+        voltage_avg_last5 = np.mean(np.array(last_oer_run.voltage[-5:]))
+        voltage_difference = voltage_avg_first5 - voltage_avg_last5
+
+        current_density = self.get_current_density(first_oer_run.properties)
+
+        return CPOERAnalysisResult(
+            name=first_oer_run.name,
+            voltage_avg_first5=voltage_avg_first5,
+            voltage_avg_last5=voltage_avg_last5,
+            voltage_difference=voltage_difference,
+            j=current_density,
+            experiment_duration=experiment_duration,
+            reaction_type=first_oer_run.method,
+            samples=first_oer_run.samples,
+            voltage_shift=first_oer_run.voltage_shift,
+            resistance=first_oer_run.resistance,
+            inputs=input_refs,
+        )
+
     def normalize(self, archive, logger):
         refs = get_all_cp_in_upload(archive, archive.metadata.upload_id)
         self.inputs = [CPOERReference(name=name, reference=ref) for [name, ref] in refs]
 
         if self.inputs is not None and len(self.inputs) > 0:
-            first_oer_run = self.inputs[0].reference
-            last_oer_run = self.inputs[-1].reference
-
-            voltage_avg_first5 = np.mean(np.array(first_oer_run.voltage[:5]))
-            voltage_avg_last5 = np.mean(np.array(last_oer_run.voltage[-5:]))
-            voltage_difference = voltage_avg_first5 - voltage_avg_last5
-
-            current = first_oer_run.properties.step_1_current
-            area = first_oer_run.properties.sample_area
-            if current is not None and area is not None:
-                current_density = current / first_oer_run.properties.sample_area
-
-            cycle_number = len(self.inputs)
-            if cycle_number > 1:
-                time_one_cycle = (
-                    self.inputs[1].reference.datetime - first_oer_run.datetime
-                )
-                experiment_duration = cycle_number * time_one_cycle.total_seconds()
-            else:
-                experiment_duration = first_oer_run.time[-1]
-
-            for sample in first_oer_run.samples:
+            for sample in self.inputs[0].reference.samples:
                 export_lab_id(archive, sample.lab_id)
-                if sample.reference.chemical_composition_or_formulas:
+                if sample.reference.chemical_composition_or_formulas is not None:
                     if not archive.results:
                         archive.results = Results()
                     if not archive.results.material:
@@ -132,21 +165,17 @@ class CPAnalysis(Analysis):
                     except Exception as e:
                         logger.warn('Could not analyse material', exc_info=e)
 
-            self.outputs = [
-                CPOERAnalysisResult(
-                    name=first_oer_run.name,
-                    voltage_avg_first5=voltage_avg_first5,
-                    voltage_avg_last5=voltage_avg_last5,
-                    voltage_difference=voltage_difference,
-                    j=current_density,
-                    experiment_duration=experiment_duration,
-                    reaction_type=first_oer_run.method,
-                    samples=first_oer_run.samples,
-                    voltage_shift=first_oer_run.voltage_shift,
-                    resistance=first_oer_run.resistance,
+            output_list = []
+            grouped_inputs = self.group_by_current_density(self.inputs)
+            for group in grouped_inputs:
+                result = self.get_oer_analysis_result(
+                    group['references'], group['experiment_duration']
                 )
-            ]
-            self.outputs[0].normalize(archive, logger)
+                output_list.append(result)
+
+            self.outputs = output_list
+            for oer_cp_output in self.outputs:
+                oer_cp_output.normalize(archive, logger)
         super().normalize(archive, logger)
 
 
