@@ -22,7 +22,7 @@ from .laser_scribing import LaserScribing
 from .quenching import (
     AirKnifeGasQuenching,
     AntiSolventQuenching,
-    GasQuenching,
+    GasQuenching, GasQuenchingWithNozzle,
     Quenching,
     SpinCoatingAntiSolvent,
     SpinCoatingGasQuenching,
