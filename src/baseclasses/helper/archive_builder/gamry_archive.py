@@ -171,11 +171,16 @@ def get_cc_properties(metadata):
 
 def get_atmosphere_data(metadata):
     properties = Atmosphere()
-    properties.ambient_pressure = metadata.get('AIRPRESSURE')
+    try:
+        properties.temperature = metadata.get('AIRTEMPERATURE')
+        properties.relative_humidity = metadata.get('AIRHUMIDITY')
+        properties.ambient_pressure = metadata.get('AIRPRESSURE')
+    except ValueError:
+        properties.temperature = float(str(metadata.get('AIRTEMPERATURE')).replace(',', '.'))
+        properties.relative_humidity = float(str(metadata.get('AIRHUMIDITY')).replace(',', '.'))
+        properties.ambient_pressure = float(str(metadata.get('AIRPRESSURE')).replace(',', '.'))
     if properties.ambient_pressure is not None:
         properties.ambient_pressure /= 1000
-    properties.temperature = metadata.get('AIRTEMPERATURE')
-    properties.relative_humidity = metadata.get('AIRHUMIDITY')
     return properties
 
 
