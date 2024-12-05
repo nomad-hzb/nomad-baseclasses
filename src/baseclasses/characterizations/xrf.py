@@ -34,9 +34,9 @@ class XRFData(ArchiveSection):
 class XRFComposition(ArchiveSection):
     m_def = Section(label_quantity='name')
 
-    # name = Quantity(
-    #     type=str,
-    #     a_eln=dict(component='StringEditQuantity'))
+    name = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'))
 
     amount = Quantity(
         type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
