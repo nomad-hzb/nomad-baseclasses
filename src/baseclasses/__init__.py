@@ -259,7 +259,7 @@ class SingleLibraryMeasurement(ArchiveSection):
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
-        if self.position_x and self.position_y:
+        if self.position_x is not None and self.position_y is not None:
             self.name = f'{self.position_x},{self.position_y}'
 
 
