@@ -18,6 +18,7 @@
 
 import numpy as np
 from nomad.datamodel.data import ArchiveSection
+from nomad.datamodel.results import Material
 from nomad.metainfo import MEnum, Quantity, Reference, Section, SubSection
 
 from baseclasses import PubChemPureSubstanceSectionCustom
@@ -371,6 +372,19 @@ class MultiTargetSputtering(LayerDeposition):
     observables = SubSection(section_def=MultiTargetSputteringObservables, repeats=True)
 
     def normalize(self, archive, logger):
-        super().normalize(archive, logger)
-
         self.method = 'Multi Target Sputtering'
+
+        super().normalize(archive, logger)
+        if self.targets and self.observables:
+            elements = []
+            for step in self.observables:
+                if len(self.targets) != len(step.bias_voltage):
+                    continue
+                active = step.bias_voltage > 0
+                active_targets = [t for i, t in enumerate(self.targets) if active[i]]
+                new_elements = [v.material.molecular_formula for v in active_targets]
+                elements.extend(new_elements)
+
+            if not archive.results.material:
+                archive.results.material = Material()
+            archive.results.material.elements = list(set(elements))

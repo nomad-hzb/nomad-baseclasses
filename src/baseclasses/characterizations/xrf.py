@@ -34,9 +34,7 @@ class XRFData(ArchiveSection):
 class XRFComposition(ArchiveSection):
     m_def = Section(label_quantity='name')
 
-    name = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
+    name = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
     amount = Quantity(
         type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
@@ -168,5 +166,5 @@ class XRFLibrary(LibraryMeasurement):
     measurements = SubSection(section_def=XRFSingleLibraryMeasurement, repeats=True)
 
     def normalize(self, archive, logger):
-        super().normalize(archive, logger)
         self.method = 'XRF'
+        super().normalize(archive, logger)

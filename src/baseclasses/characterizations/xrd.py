@@ -155,5 +155,5 @@ class XRDLibrary(LibraryMeasurement):
     m_def = Section(a_eln=dict(hide=['certified_values', 'certification_institute']))
 
     def normalize(self, archive, logger):
-        super().normalize(archive, logger)
         self.method = 'XRD'
+        super().normalize(archive, logger)

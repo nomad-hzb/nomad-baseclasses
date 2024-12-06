@@ -71,7 +71,7 @@ def get_target_properties(source_configuration_df):
         material_name = source_configuration_df.loc[position_idx, 'Source']
         properties.name = f'{position_idx + 1}) {material_name}'
         properties.material = PubChemPureSubstanceSectionCustom(
-            name=material_name, load_data=False
+            name=material_name, load_data=False, molecular_formula=material_name
         )
         properties.position = source_configuration_df.loc[position_idx, 'Position']
         properties.angle = source_configuration_df.loc[position_idx, 'Position (grad)']
