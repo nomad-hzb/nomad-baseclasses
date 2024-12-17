@@ -294,11 +294,16 @@ class BaseProcess(Process):
                 self.positon_in_experimental_plan = float(
                     archive.metadata.mainfile.split('_')[0]
                 )
-            except:
+            except Exception:
                 pass
 
         if self.batch:
             self.samples = self.batch.entities
+
+        if self.samples:
+            for s in self.samples:
+                s.normalize(archive, logger)
+
         super().normalize(archive, logger)
 
 
