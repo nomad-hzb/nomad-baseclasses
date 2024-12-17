@@ -482,6 +482,9 @@ class BaseMeasurement(Measurement):
     )
 
     def normalize(self, archive, logger):
+        if self.samples:
+            for s in self.samples:
+                s.normalize(archive, logger)
         super().normalize(archive, logger)
 
 
