@@ -27,6 +27,7 @@ from .quenching import (
     Quenching,
     SpinCoatingAntiSolvent,
     SpinCoatingGasQuenching,
+    VacuumQuenching,
 )
 from .sintering import Sintering
 from .storage import Storage

@@ -112,8 +112,15 @@ class CPAnalysis(Analysis):
 
             # start a new group if the current density changes
             # only group together if same current density is immediately following each other
-            if recent_group is None or recent_group['current_density'] != current_density:
-                recent_group = {'current_density': current_density, 'references': [], 'experiment_duration': 0}
+            if (
+                recent_group is None
+                or recent_group['current_density'] != current_density
+            ):
+                recent_group = {
+                    'current_density': current_density,
+                    'references': [],
+                    'experiment_duration': 0,
+                }
                 grouped_inputs.append(recent_group)
             # add current object to group
             recent_group['references'].append(input_ref)

@@ -20,6 +20,7 @@ import numpy as np
 from nomad.datamodel.data import ArchiveSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 
+from ..atmosphere import Atmosphere
 from .wet_chemical_deposition import WetChemicalDeposition
 
 
@@ -28,7 +29,16 @@ class NozzleVoltageProfile(ArchiveSection):
 
 
 class PrintHeadPath(ArchiveSection):
-    pass
+    quality_factor = Quantity(
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00005084',
+            'https://purl.archive.org/tfsco/TFSCO_00005090',
+        ],
+        type=str,
+        a_eln=dict(
+            component='StringEditQuantity',
+        ),
+    )
 
 
 class LP50NozzleVoltageProfile(NozzleVoltageProfile):
@@ -133,35 +143,6 @@ class LP50NozzleVoltageProfile(NozzleVoltageProfile):
 
 
 class LP50PrintHeadPath(PrintHeadPath):
-    quality_factor = Quantity(
-        links=[
-            'https://purl.archive.org/tfsco/TFSCO_00005084',
-            'https://purl.archive.org/tfsco/TFSCO_00005090',
-        ],
-        type=MEnum(
-            'QF1',
-            'QF2',
-            'QF3',
-            'QF4',
-            'QF5',
-            'QF6',
-            'QF7',
-            'QF8',
-            'QF9',
-            'QF10',
-            'QF11',
-            'QF12',
-            'QF13',
-            'QF14',
-            'QF15',
-            'QF16',
-        ),
-        shape=[],
-        a_eln=dict(
-            component='EnumEditQuantity',
-        ),
-    )
-
     directional = Quantity(
         links=['https://purl.archive.org/tfsco/TFSCO_00005077'],
         type=MEnum('uni-directional', 'bi-directional', 'uni-directional reverse'),
@@ -205,6 +186,15 @@ class LP50PrintHeadPath(PrintHeadPath):
 
 
 class PrintHeadProperties(ArchiveSection):
+    print_head_name = Quantity(
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00005064',
+            'http://purl.obolibrary.org/obo/RO_0000057',
+        ],
+        type=str,
+        a_eln=dict(component='StringEditQuantity'),
+    )
+
     print_speed = Quantity(
         links=[
             'https://purl.archive.org/tfsco/TFSCO_00005074',
@@ -301,6 +291,16 @@ class PrintHeadProperties(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='pl'),
     )
 
+    print_nozzle_drop_frequency = Quantity(
+        type=np.dtype(np.float64),
+        unit=('1/s'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='1/s'),
+    )
+
+    number_of_active_print_nozzles = Quantity(
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
+
 
 class InkjetPrintingProperties(ArchiveSection):
     # m_def = Section(label_quantity='name')
@@ -325,6 +325,12 @@ class InkjetPrintingProperties(ArchiveSection):
             # defaultDisplayUnit='ml',
             props=dict(minValue=0),
         ),
+    )
+
+    drop_density = Quantity(
+        type=np.dtype(np.float64),
+        unit=('1/in'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='1/in'),
     )
 
     substrate_height = Quantity(
@@ -376,6 +382,12 @@ class InkjetPrintingProperties(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
     )
 
+    printed_area = Quantity(
+        type=np.dtype(np.float64),
+        unit=('mm**2'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm**2'),
+    )
+
     print_head_properties = SubSection(section_def=PrintHeadProperties)
 
 
@@ -399,7 +411,29 @@ class LP50InkjetPrintingProperties(InkjetPrintingProperties):
     printer_software = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
 
-class LP50InkjetPrinting(WetChemicalDeposition):
+class InkjetPrinting(WetChemicalDeposition):
+    """Base class for inkjet printing of a layer on a sample"""
+
+    m_def = Section(links=['https://purl.archive.org/tfsco/TFSCO_00002053'])
+
+    properties = SubSection(section_def=InkjetPrintingProperties)
+
+    print_head_path = SubSection(
+        links=['http://purl.obolibrary.org/obo/OBI_0000293'],
+        section_def=PrintHeadPath,
+    )
+
+    atmosphere = SubSection(
+        links=['http://purl.obolibrary.org/obo/RO_0000057'],
+        section_def=Atmosphere,
+    )
+
+    def normalize(self, archive, logger):
+        self.method = 'Inkjet printing'
+        super().normalize(archive, logger)
+
+
+class LP50InkjetPrinting(InkjetPrinting):
     """Base class for inkjet printing of a layer on a sample"""
 
     m_def = Section(links=['https://purl.archive.org/tfsco/TFSCO_00002053'])
@@ -433,5 +467,5 @@ class LP50InkjetPrinting(WetChemicalDeposition):
     )
 
     def normalize(self, archive, logger):
+        self.method = 'LP50 Inkjet printing'
         super().normalize(archive, logger)
-        self.method = 'Inkjet printing'

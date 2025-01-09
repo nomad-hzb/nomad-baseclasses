@@ -1,4 +1,3 @@
-#
 # Copyright The NOMAD Authors.
 #
 # This file is part of NOMAD. See https://nomad-lab.eu for further info.
@@ -231,6 +230,18 @@ class VacuumQuenching(Quenching):
         type=np.dtype(np.float64),
         unit=('mbar'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mbar'),
+    )
+
+    start_time = Quantity(
+        type=np.dtype(np.float64),
+        unit=('s'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
+    )
+
+    duration = Quantity(
+        type=np.dtype(np.float64),
+        unit=('s'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
     )
 
 
