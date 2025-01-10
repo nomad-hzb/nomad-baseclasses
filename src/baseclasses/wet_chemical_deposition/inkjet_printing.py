@@ -40,6 +40,49 @@ class PrintHeadPath(ArchiveSection):
         ),
     )
 
+    step_size = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
+
+    wait_run_time = Quantity(
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000165',
+            'http://purl.obolibrary.org/obo/PATO_0000165',
+        ],
+        type=np.dtype(np.float64),
+        unit=('s'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='s',
+            props=dict(minValue=0),
+        ),
+    )
+
+    total_run_time = Quantity(
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000165',
+            'http://purl.obolibrary.org/obo/PATO_0000165',
+        ],
+        type=np.dtype(np.float64),
+        unit=('s'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='s',
+            props=dict(minValue=0),
+        ),
+    )
+
+    swaths = Quantity(
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
+
+    directional = Quantity(
+        links=['https://purl.archive.org/tfsco/TFSCO_00005077'],
+        type=MEnum('uni-directional', 'bi-directional', 'uni-directional reverse'),
+        shape=[],
+        a_eln=dict(
+            component='EnumEditQuantity',
+        ),
+    )
+
 
 class LP50NozzleVoltageProfile(NozzleVoltageProfile):
     m_def = Section(
@@ -143,46 +186,7 @@ class LP50NozzleVoltageProfile(NozzleVoltageProfile):
 
 
 class LP50PrintHeadPath(PrintHeadPath):
-    directional = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO_00005077'],
-        type=MEnum('uni-directional', 'bi-directional', 'uni-directional reverse'),
-        shape=[],
-        a_eln=dict(
-            component='EnumEditQuantity',
-        ),
-    )
-
-    swaths = Quantity(
-        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
-    )
-
-    wait_run_time = Quantity(
-        links=[
-            'http://purl.obolibrary.org/obo/PATO_0000165',
-            'http://purl.obolibrary.org/obo/PATO_0000165',
-        ],
-        type=np.dtype(np.float64),
-        unit=('s'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='s',
-            props=dict(minValue=0),
-        ),
-    )
-
-    total_run_time = Quantity(
-        links=[
-            'http://purl.obolibrary.org/obo/PATO_0000165',
-            'http://purl.obolibrary.org/obo/PATO_0000165',
-        ],
-        type=np.dtype(np.float64),
-        unit=('s'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='s',
-            props=dict(minValue=0),
-        ),
-    )
+    pass
 
 
 class PrintHeadProperties(ArchiveSection):
@@ -298,7 +302,7 @@ class PrintHeadProperties(ArchiveSection):
     )
 
     number_of_active_print_nozzles = Quantity(
-        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+        type=np.dtype(np.int64), a_eln=dict(component='NumberEditQuantity')
     )
 
 
