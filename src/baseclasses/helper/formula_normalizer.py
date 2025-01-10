@@ -109,6 +109,7 @@ cation_dict = {
     '(PCBM)': '(C72H14O2)',
     '(PEDOT)': 'CHOS',
     '(PM6)': 'C68H76F2O2S8',
+    '(BCP)': 'C26H20N2',
 }
 
 cation_dict_miss = {
