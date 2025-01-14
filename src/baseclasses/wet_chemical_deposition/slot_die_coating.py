@@ -122,6 +122,24 @@ class SlotDieCoatingProperties(ArchiveSection):
         ),
     )
 
+    coating_run = Quantity(
+        links=[],
+        type=str,
+        a_eln=dict(component='StringEditQuantity'),
+    )
+
+    coated_area = Quantity(
+        links=[],
+        type=np.dtype(np.float64),
+        unit=('mm²'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mm²',
+            props=dict(minValue=0),
+        ),
+    )
+
+
 
 class SlotDieCoating(WetChemicalDeposition):
     """Spin Coating"""
