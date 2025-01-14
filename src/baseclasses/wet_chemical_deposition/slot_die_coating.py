@@ -131,14 +131,13 @@ class SlotDieCoatingProperties(ArchiveSection):
     coated_area = Quantity(
         links=[],
         type=np.dtype(np.float64),
-        unit=('mm²'),
+        unit=('mm**2'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='mm²',
+            defaultDisplayUnit='mm**2',
             props=dict(minValue=0),
         ),
     )
-
 
 
 class SlotDieCoating(WetChemicalDeposition):

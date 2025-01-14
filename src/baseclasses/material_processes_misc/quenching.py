@@ -355,10 +355,10 @@ class AirKnifeGasQuenching(GasQuenching):
 
     heat_transfer_coefficient = Quantity(
         type=np.dtype(np.float64),
-        unit=('W m^-2 K^-1'), # CHECK THE UNITS!!!
+        unit=('W/(K*m**2)'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='W m^-2 K^-1',
+            defaultDisplayUnit='W/(K*m**2)',
             props=dict(minValue=0),
         ),
     )
