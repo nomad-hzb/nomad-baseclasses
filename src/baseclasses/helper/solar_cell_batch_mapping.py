@@ -15,9 +15,7 @@ from baseclasses.material_processes_misc import (
     UVCleaning,
     VacuumQuenching,
 )
-
 from baseclasses.material_processes_misc.laser_scribing import LaserScribingProperties
-
 from baseclasses.solution import Solution, SolutionChemical
 from baseclasses.vapour_based_deposition.atomic_layer_deposition import (
     ALDMaterial,
@@ -326,8 +324,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                     data, 'Droplet per second [1/s]', None
                 ),
                 print_nozzle_drop_volume=get_value(data, 'Droplet volume [pL]', None),
-                print_head_temperature=get_value(
-                    data, 'Nozzle temperature [°C]', None),
+                print_head_temperature=get_value(data, 'Nozzle temperature [°C]', None),
                 print_head_distance_to_substrate=get_value(
                     data, 'Dropping Height [mm]', None
                 ),
@@ -409,6 +406,7 @@ def map_substrate(data, substrate_class):
 
 
 def map_evaporation(i, j, lab_ids, data, upload_id, evaporation_class):
+    material = get_value(data, 'Material name', '', False)
     archive = evaporation_class(
         name='evaporation ' + get_value(data, 'Material name', '', False),
         location=get_value(data, 'Tool/GB name', '', False),
@@ -433,21 +431,31 @@ def map_evaporation(i, j, lab_ids, data, upload_id, evaporation_class):
         data, 'Organic', '', False
     ).lower().startswith('0'):
         evaporation = InorganicEvaporation()
-        archive.inorganic_evaporation = [evaporation]
 
     if get_value(data, 'Organic', '', False).lower().startswith('y') or get_value(
         data, 'Organic', '', False
     ).lower().startswith('1'):
-        evaporation = OrganicEvaporation(
-            temparature=[get_value(data, 'Temperature [°C]', None)] * 2
-            if get_value(data, 'Temperature [°C]', None)
-            else None
-        )
+        evaporation = OrganicEvaporation()
+        if get_value(data, 'Temperature [°C]', None):
+            evaporation.temparature = [get_value(data, 'Temperature [°C]', None)] * 2
 
-        archive.organic_evaporation = [evaporation]
+        if get_value(data, 'Source temperature start[°C]', None) and get_value(
+            data, 'Source temperature end[°C]', None
+        ):
+            evaporation.temparature = [
+                get_value(data, 'Source temperature start[°C]', None)
+                and get_value(data, 'Source temperature end[°C]', None)
+            ]
+
+    if not evaporation:
+        return (f'{i}_{j}_evaporation_{material}', archive)
 
     evaporation.thickness = get_value(data, 'Thickness [nm]')
     evaporation.start_rate = get_value(data, 'Rate [angstrom/s]')
+    evaporation.substrate_temparature = get_value(data, 'Substrate temperature [°C]')
+    evaporation.pressure = convert_quantity(
+        get_value(data, 'Base pressure [bar]'), 1000
+    )
     evaporation.chemical_2 = PubChemPureSubstanceSectionCustom(
         name=get_value(data, 'Material name', None, False), load_data=False
     )
@@ -460,8 +468,6 @@ def map_evaporation(i, j, lab_ids, data, upload_id, evaporation_class):
         data, 'Organic', '', False
     ).lower().startswith('1'):
         archive.organic_evaporation = [evaporation]
-
-    material = get_value(data, 'Material name', '', False)
     return (f'{i}_{j}_evaporation_{material}', archive)
 
 
@@ -561,8 +567,7 @@ def map_laser_scribing(i, j, lab_ids, data, upload_id, laser_class):
         properties=LaserScribingProperties(
             laser_wavelength=get_value(data, 'Laser wavelength [nm]', None),
             laser_pulse_time=get_value(data, 'Laser pulse time [ps]', None),
-            laser_pulse_frequency=get_value(data,
-                                            'Laser pulse frequency [kHz]', None),
+            laser_pulse_frequency=get_value(data, 'Laser pulse frequency [kHz]', None),
             speed=get_value(data, 'Speed [mm/s]', None),
             fluence=get_value(data, 'Fluence [J/cm2]', None),
             power_in_percent=get_value(data, 'Power [%]', None),
