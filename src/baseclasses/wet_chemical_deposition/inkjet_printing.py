@@ -392,6 +392,12 @@ class InkjetPrintingProperties(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm**2'),
     )
 
+    printing_run = Quantity(
+        links=[],
+        type=str,
+        a_eln=dict(component='StringEditQuantity'),
+    )
+
     print_head_properties = SubSection(section_def=PrintHeadProperties)
 
 
