@@ -343,6 +343,26 @@ class AirKnifeGasQuenching(GasQuenching):
         ),
     )
 
+    drying_gas_temperature = Quantity(
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='°C',
+            props=dict(minValue=0),
+        ),
+    )
+
+    heat_transfer_coefficient = Quantity(
+        type=np.dtype(np.float64),
+        unit=('W m^-2 K^-1'), # CHECK THE UNITS!!!
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='W m^-2 K^-1',
+            props=dict(minValue=0),
+        ),
+    )
+
 
 class SpinCoatingGasQuenching(GasQuenching):
     pass
