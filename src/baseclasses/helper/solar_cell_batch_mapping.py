@@ -95,6 +95,23 @@ def map_batch(batch_ids, batch_id, upload_id, batch_class):
     return (batch_id, archive)
 
 
+def map_annealing(data):
+    return Annealing(
+        temperature=get_value(data, 'Annealing temperature [°C]', None),
+        time=convert_quantity(get_value(data, 'Annealing time [min]', None), 60),
+        atmosphere=get_value(data, 'Annealing athmosphere', None, False),
+    )
+
+
+def map_layer(data):
+    return [
+        LayerProperties(
+            layer_type=get_value(data, 'Layer type', None, False),
+            layer_material_name=get_value(data, 'Material name', None, False),
+        )
+    ]
+
+
 def map_solutions(data):
     solvents = []
     solutes = []
@@ -159,12 +176,7 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
             )
             for lab_id in lab_ids
         ],
-        layer=[
-            LayerProperties(
-                layer_type=get_value(data, 'Layer type', None, False),
-                layer_material_name=get_value(data, 'Material name', None, False),
-            )
-        ],
+        layer=map_layer(data),
         solution=[
             PrecursorSolution(
                 solution_details=map_solutions(data),  # check unit
@@ -174,11 +186,7 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
                 ),
             )
         ],
-        annealing=Annealing(
-            temperature=get_value(data, 'Annealing temperature [°C]', None),
-            time=convert_quantity(get_value(data, 'Annealing time [min]', None), 60),
-            atmosphere=get_value(data, 'Annealing athmosphere', None, False),
-        ),
+        annealing=map_annealing(data),
         recipe_steps=[
             SpinCoatingRecipeSteps(
                 speed=get_value(data, f'Rotation speed {step}[rpm]', None),
@@ -251,16 +259,8 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
                 ),
             )
         ],
-        layer=[
-            LayerProperties(
-                layer_type=get_value(data, 'Layer type', None, False),
-                layer_material_name=get_value(data, 'Material name', None, False),
-            )
-        ],
-        annealing=Annealing(
-            temperature=get_value(data, 'Annealing temperature [°C]', None),
-            time=convert_quantity(get_value(data, 'Annealing time [min]', None), 60),
-        ),
+        layer=map_layer(data),
+        annealing=map_annealing(data),
         properties=SlotDieCoatingProperties(
             coating_run=get_value(data, 'Coating run', None, False),
             flow_rate=convert_quantity(data.get('Flow rate [uL/min]', None), 1 / 1000),
@@ -308,12 +308,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                 ),
             )
         ],
-        layer=[
-            LayerProperties(
-                layer_type=get_value(data, 'Layer type', None, False),
-                layer_material_name=get_value(data, 'Material name', None, False),
-            )
-        ],
+        layer=map_layer(data),
         properties=InkjetPrintingProperties(
             printing_run=get_value(data, 'Printing run', None, False),
             print_head_properties=PrintHeadProperties(
@@ -330,25 +325,23 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                 ),
                 print_head_name=get_value(data, 'Printhead name', None, False),
             ),
-            cartridge_pressure=get_value(data, 'Ink reservoir pressure [bar]', None),
+            cartridge_pressure=convert_quantity(
+                get_value(data, 'Ink reservoir pressure [bar]', None), 1000
+            ),
             substrate_temperature=get_value(data, 'Table temperature [°C]', None),
             drop_density=get_value(data, 'Droplet density [dpi]', None),
             printed_area=get_value(data, 'Printed area [mm²]', None),
         ),
         print_head_path=PrintHeadPath(
             quality_factor=get_value(data, 'Quality factor', None, False),
-            step_size=get_value(data, 'Step size', None),
+            step_size=get_value(data, 'Step size', None, False),
             directional=get_value(data, 'Printing direction', None, False),
         ),
         atmosphere=Atmosphere(
             relative_humidity=get_value(data, 'rel. humidity [%]', None),
             temperature=get_value(data, 'Room Temperature [°C]', None),
         ),
-        annealing=Annealing(
-            temperature=get_value(data, 'Annealing temperature [°C]', None),
-            time=convert_quantity(get_value(data, 'Annealing time [min]', None), 60),
-            atmosphere=get_value(data, 'Annealing athmosphere', None, False),
-        ),
+        annealing=map_annealing(data),
     )
     material = get_value(data, 'Material name', '', False)
     return (f'{i}_{j}_inkjet_printing_{material}', archive)
@@ -369,7 +362,7 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
         ],
         cleaning=[
             SolutionCleaning(
-                time=get_value(data, f'Time {i} [s]', None),
+                time=convert_quantity(get_value(data, f'Time {i} [s]', None), 1 / 60),
                 temperature=get_value(data, f'Temperature {i} [°C]', None),
                 solvent_2=PubChemPureSubstanceSectionCustom(
                     name=get_value(data, f'Solvent {i}', None, False), load_data=False
@@ -378,10 +371,18 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
             for i in range(10)
             if get_value(data, f'Solvent {i}', None, False)
         ],
-        cleaning_uv=[UVCleaning(time=get_value(data, 'UV-Ozone Time [s]', None))],
+        cleaning_uv=[
+            UVCleaning(
+                time=convert_quantity(
+                    get_value(data, 'UV-Ozone Time [s]', None), 1 / 60
+                )
+            )
+        ],
         cleaning_plasma=[
             PlasmaCleaning(
-                time=get_value(data, 'Gas-Plasma Time [s]', None),
+                time=convert_quantity(
+                    get_value(data, 'Gas-Plasma Time [s]', None), 1 / 60
+                ),
                 power=get_value(data, 'Gas-Plasma Power [W]', None),
                 plasma_type=get_value(data, 'Gas-Plasma Gas', None, False),
             )
@@ -419,12 +420,7 @@ def map_evaporation(i, j, lab_ids, data, upload_id, evaporation_class):
             )
             for lab_id in lab_ids
         ],
-        layer=[
-            LayerProperties(
-                layer_type=get_value(data, 'Layer type', None, False),
-                layer_material_name=get_value(data, 'Material name', None, False),
-            )
-        ],
+        layer=map_layer(data),
     )
     evaporation = None
     if get_value(data, 'Organic', '', False).lower().startswith('n') or get_value(
@@ -484,12 +480,7 @@ def map_sputtering(i, j, lab_ids, data, upload_id, sputter_class):
             )
             for lab_id in lab_ids
         ],
-        layer=[
-            LayerProperties(
-                layer_type=get_value(data, 'Layer type', None, False),
-                layer_material_name=get_value(data, 'Material name', None, False),
-            )
-        ],
+        layer=map_layer(data),
     )
     process = SputteringProcess(
         thickness=get_value(data, 'Thickness [nm]'),
@@ -534,20 +525,11 @@ def map_dip_coating(i, j, lab_ids, data, upload_id, dc_class):
                 ),
             )
         ],
-        layer=[
-            LayerProperties(
-                layer_type=get_value(data, 'Layer type', None, False),
-                layer_material_name=get_value(data, 'Material name', None, False),
-            )
-        ],
+        layer=map_layer(data),
         properties=DipCoatingProperties(
             time=convert_quantity(get_value(data, 'Dipping duration [s]'), 1 / 60),
         ),
-        annealing=Annealing(
-            temperature=get_value(data, 'Annealing temperature [°C]', None),
-            time=convert_quantity(get_value(data, 'Annealing time [min]', None), 60),
-            atmosphere=get_value(data, 'Annealing athmosphere', None, False),
-        ),
+        annealing=map_annealing(data),
     )
     material = get_value(data, 'Material name', '', False)
     return (f'{i}_{j}_dip_coating_{material}', archive)
@@ -564,6 +546,7 @@ def map_laser_scribing(i, j, lab_ids, data, upload_id, laser_class):
             )
             for lab_id in lab_ids
         ],
+        recipe_file=get_value(data, 'Recipe file', None, False),
         properties=LaserScribingProperties(
             laser_wavelength=get_value(data, 'Laser wavelength [nm]', None),
             laser_pulse_time=get_value(data, 'Laser pulse time [ps]', None),
@@ -591,14 +574,7 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
             )
             for lab_id in lab_ids
         ],
-        layer=[
-            LayerProperties(
-                layer_type=get_value(data, 'Layer type', None, number=False),
-                layer_material_name=get_value(
-                    data, 'Material name', None, number=False
-                ),
-            )
-        ],
+        layer=map_layer(data),
         properties=ALDPropertiesIris(
             source=get_value(data, 'Source', None, number=False),
             thickness=get_value(data, 'Thickness [nm]', None),

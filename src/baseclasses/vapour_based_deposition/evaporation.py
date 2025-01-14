@@ -200,7 +200,8 @@ class Evaporation(ArchiveSection):
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(
-            component='NumberEditQuantity', defaultDisplayUnit='°C', label='Temperature'
+            component='NumberEditQuantity',
+            defaultDisplayUnit='°C',
         ),
     )
 
