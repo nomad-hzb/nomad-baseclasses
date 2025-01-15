@@ -76,6 +76,7 @@ def map_basic_sample(data, substrate_name, upload_id, sample_class):
         lab_id=data['Nomad ID'],
         substrate=get_reference(upload_id, substrate_name),
         description=get_value(data, 'Variation', None, False),
+        number_of_junctions=get_value(data, 'Number of junctions', None),
     )
     return (data['Nomad ID'], archive)
 
@@ -401,6 +402,8 @@ def map_substrate(data, substrate_class):
         + get_value(data, 'Substrate conductive layer', '', False),
         solar_cell_area=get_value(data, 'Sample area [cm^2]', ''),
         substrate=get_value(data, 'Substrate material', '', False),
+        description=get_value(data, 'Notes', '', False),
+        lab_id=get_value(data, 'Bottom Cell Name', '', False),
         conducting_material=[get_value(data, 'Substrate conductive layer', '', False)],
     )
     return archive

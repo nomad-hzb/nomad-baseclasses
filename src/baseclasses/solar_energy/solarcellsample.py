@@ -289,6 +289,8 @@ class SolcarCellSample(CompositeSystem):
         ),
     )
 
+    number_of_junctions = Quantity(type=int, a_eln=dict(component='NumberEditQuantity'))
+
     sample_id = SubSection(section_def=ReadableIdentifiersCustom)
 
     def normalize(self, archive, logger):
