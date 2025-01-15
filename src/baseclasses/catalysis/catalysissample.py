@@ -20,15 +20,16 @@ from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.basesections import (
     CompositeSystem,
     CompositeSystemReference,
-    Measurement
+    Measurement,
 )
 from nomad.datamodel.results import Material
 from nomad.metainfo import Quantity, Reference, SubSection
+from nomad_material_processing.combinatorial import (
+    CombinatorialLibrary,
+    CombinatorialSample,
+)
 
 from .. import LibrarySample
-from nomad_material_processing.combinatorial import (
-    CombinatorialSample,
-    CombinatorialLibrary)
 
 
 def collectSampleData(archive):
@@ -227,8 +228,7 @@ class CatalysisSample(CombinatorialLibrary):
             if not process['elements']:
                 continue
             archive.results.material.elements.extend(process['elements'])
-        archive.results.material.elements = list(
-            set(archive.results.material.elements))
+        archive.results.material.elements = list(set(archive.results.material.elements))
 
 
 class CatalysisLibrary(LibrarySample):
