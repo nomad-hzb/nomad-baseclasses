@@ -20,11 +20,15 @@ from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.basesections import (
     CompositeSystem,
     CompositeSystemReference,
+    Measurement
 )
 from nomad.datamodel.results import Material
 from nomad.metainfo import Quantity, Reference, SubSection
 
 from .. import LibrarySample
+from nomad_material_processing.combinatorial import (
+    CombinatorialSample,
+    CombinatorialLibrary)
 
 
 def collectSampleData(archive):
@@ -97,7 +101,110 @@ class CatalysisSubstrate(ArchiveSection):
     )
 
 
-class CatalysisSample(CompositeSystem):
+class CombinatorialProperty(ArchiveSection):
+    model = Quantity(
+        type=str,
+        description="""
+        The model/calculation method used to calculate the property.
+        """,
+    )
+
+    analysis = Quantity(
+        type=str,
+        description="""
+        The model used to calculate the property.
+        """,
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
+
+    measurements = Quantity(
+        type=Reference(Measurement.m_def),
+        description="""
+        List of measurements used to determine the property.
+        """,
+        shape=['*'],
+    )
+
+
+class SynthesisVariation(ArchiveSection):
+    variation_name = Quantity(
+        type=str,
+        description="""
+        The name of a paramter which is varied over a campaign
+        """,
+    )
+
+    variation_value_number = Quantity(
+        type=str,
+        description="""
+        The numerical value of a continous paramter which is varied over a campaign
+        """,
+    )
+
+    variation_value_string = Quantity(
+        type=str,
+        description="""
+        The string value of a categorical paramter which is varied over a campaign
+        """,
+    )
+
+
+class XRayDiffraction(CombinatorialProperty):
+    def derive_n_values(self):
+        if self.intensity is not None:
+            return len(self.intensity)
+        if self.scattering_vector is not None:
+            return len(self.scattering_vector)
+        else:
+            return 0
+
+    n_values = Quantity(type=int, derived=derive_n_values)
+
+    intensity = Quantity(
+        type=float,
+        description="""
+        The intensity of the X-ray diffraction pattern.
+        """,
+        shape=['n_values'],
+    )
+    scattering_vector = Quantity(
+        type=float,
+        description="""
+        The corresponding scattering vector values of the measured X-ray diffraction
+        pattern.
+        """,
+        shape=['n_values'],
+        unit='1/nm',
+    )
+
+
+class Thickness(CombinatorialProperty):
+    value = Quantity(
+        type=float,
+        description="""
+        The (average) thickness of the sample.
+        """,
+        unit='m',
+    )
+
+
+class Formula(CombinatorialProperty):
+    value = Quantity(
+        type=str,
+        description="""
+        The molecular formula of the sample.
+        """,
+    )
+
+
+class CatalysisXYSample(CombinatorialSample):
+    synthesis_variation = SubSection(section_def=SynthesisVariation, repeats=True)
+    formula = SubSection(section_def=Formula)
+    thickness = SubSection(section_def=Thickness)
+    xray_diffraction = SubSection(section_def=XRayDiffraction)
+
+
+class CatalysisSample(CombinatorialLibrary):
     active_area = Quantity(
         type=np.dtype(np.float64),
         unit=('cm^2'),
@@ -120,7 +227,8 @@ class CatalysisSample(CompositeSystem):
             if not process['elements']:
                 continue
             archive.results.material.elements.extend(process['elements'])
-        archive.results.material.elements = list(set(archive.results.material.elements))
+        archive.results.material.elements = list(
+            set(archive.results.material.elements))
 
 
 class CatalysisLibrary(LibrarySample):

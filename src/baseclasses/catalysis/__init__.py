@@ -1,1 +1,1 @@
-from .catalysissample import CatalysisLibrary, CatalysisSample, CatalysisSubstrate
+from .catalysissample import CatalysisLibrary, CatalysisSample, CatalysisSubstrate, CatalysisXYSample
