@@ -21,6 +21,7 @@ from baseclasses.vapour_based_deposition.atomic_layer_deposition import (
     ALDMaterial,
     ALDPropertiesIris,
 )
+from baseclasses.vapour_based_deposition.close_space_sublimation import CSSProcess
 from baseclasses.vapour_based_deposition.evaporation import (
     InorganicEvaporation,
     OrganicEvaporation,
@@ -321,7 +322,8 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                     data, 'Droplet per second [1/s]', None
                 ),
                 print_nozzle_drop_volume=get_value(data, 'Droplet volume [pL]', None),
-                print_head_temperature=get_value(data, 'Nozzle temperature [°C]', None),
+                print_head_temperature=get_value(
+                    data, 'Nozzle temperature [°C]', None),
                 print_head_distance_to_substrate=get_value(
                     data, 'Dropping Height [mm]', None
                 ),
@@ -414,11 +416,17 @@ def map_evaporation(
     i, j, lab_ids, data, upload_id, evaporation_class, coevaporation=False
 ):
     material = get_value(data, 'Material name', '', False)
+    file_name = (
+        f'{i}_{j}_coevaporation_{material}'
+        if coevaporation
+        else f'{i}_{j}_evaporation_{material}'
+    )
     archive = evaporation_class(
         name='evaporation ' + get_value(data, 'Material name', '', False),
         location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
         description=get_value(data, 'Notes', '', False),
+        co_evaporation=coevaporation,
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -430,6 +438,10 @@ def map_evaporation(
     )
     evaporations = []
     for mat in ['', ' 1', ' 2', ' 3', ' 4']:
+        if pd.isna(data.get(f'Material name{mat}')) or (
+            f'Material name{mat}' == 'Material name' and coevaporation
+        ):
+            continue
         evaporation = None
         if coevaporation:
             evaporation = PerovskiteEvaporation()
@@ -447,16 +459,16 @@ def map_evaporation(
                     get_value(data, 'Temperature [°C]', None)
                 ] * 2
 
-            if get_value(data, 'Source temperature start{mat}[°C]', None) and get_value(
-                data, 'Source temperature end{mat}[°C]', None
-            ):
-                evaporation.temparature = [
-                    get_value(data, 'Source temperature start{mat}[°C]', None)
-                    and get_value(data, 'Source temperature end{mat}[°C]', None)
-                ]
-
         if not evaporation:
-            return (f'{i}_{j}_evaporation_{material}', archive)
+            return (file_name, archive)
+
+        if get_value(data, f'Source temperature start{mat}[°C]', None) and get_value(
+            data, f'Source temperature end{mat}[°C]', None
+        ):
+            evaporation.temparature = [
+                get_value(data, f'Source temperature start{mat}[°C]', None),
+                get_value(data, f'Source temperature end{mat}[°C]', None),
+            ]
 
         evaporation.thickness = get_value(data, f'Thickness{mat} [nm]')
         evaporation.start_rate = get_value(data, f'Rate{mat} [angstrom/s]')
@@ -472,13 +484,13 @@ def map_evaporation(
         evaporation.pressure_end = convert_quantity(
             get_value(data, f'Pressure end{mat} [bar]'), 1000
         )
-        evaporation.tooling_factor = convert_quantity(
-            get_value(data, f'Tooling factor{mat}'), 1000
-        )
+        evaporation.tooling_factor = get_value(data, f'Tooling factor{mat}')
+
         evaporation.chemical_2 = PubChemPureSubstanceSectionCustom(
-            name=get_value(data, 'Material name{mat}', None, False), load_data=False
+            name=get_value(data, f'Material name{mat}', None, False), load_data=False
         )
         evaporations.append(evaporation)
+
     if get_value(data, 'Organic', '', False).lower().startswith('n') or get_value(
         data, 'Organic', '', False
     ).lower().startswith('0'):
@@ -489,7 +501,28 @@ def map_evaporation(
         archive.organic_evaporation = evaporations
     elif coevaporation:
         archive.perovskite_evaporation = evaporations
-    return (f'{i}_{j}_evaporation_{material}', archive)
+    return (file_name, archive)
+
+
+def map_annealing_class(i, j, lab_ids, data, upload_id, annealing_class):
+    archive = annealing_class(
+        name='Thermal Annealing',
+        positon_in_experimental_plan=i,
+        location=get_value(data, 'Tool/GB name', '', False),
+        description=get_value(data, 'Notes', '', False),
+        samples=[
+            CompositeSystemReference(
+                reference=get_reference(upload_id, f'{lab_id}.archive.json'),
+                lab_id=lab_id,
+            )
+            for lab_id in lab_ids
+        ],
+        annealing=map_annealing(data),
+        atmosphere=Atmosphere(
+            relative_humidity=get_value(data, 'Relative humidity [%]', None),
+        ),
+    )
+    return (f'{i}_{j}_annealing', archive)
 
 
 def map_sputtering(i, j, lab_ids, data, upload_id, sputter_class):
@@ -528,10 +561,10 @@ def map_sputtering(i, j, lab_ids, data, upload_id, sputter_class):
     return (f'{i}_{j}_sputtering_{material}', archive)
 
 
-def map_css(i, j, lab_ids, data, upload_id, css_class):
+def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
     material = get_value(data, 'Material name', '', False)
     archive = css_class(
-        name='CSS ' + get_value(data, 'Material name', '', False),
+        name='Close Space Sublimation ' + get_value(data, 'Material name', '', False),
         location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
         description=get_value(data, 'Notes', '', False),
@@ -544,25 +577,21 @@ def map_css(i, j, lab_ids, data, upload_id, css_class):
         ],
         layer=map_layer(data),
     )
-
-    CSS.thickness = get_value(data, 'Thickness [nm]')
-    CSS.substrate_temparature = get_value(data, 'Substrate temperature [°C]')
-    CSS.source_temparature = get_value(data, 'Source temperature [°C]')
-    CSS.substrate_source_distance = get_value(data, 'Substrate source distance [mm]')
-    CSS.deposition_time = get_value(data, 'Deposition time [s]')
-    CSS.carrying_gas = PubChemPureSubstanceSectionCustom(
-        name=get_value(data, 'Carrier gas', None, False), load_data=False
+    archive.process = CSSProcess(
+        thickness=get_value(data, 'Thickness [nm]'),
+        substrate_temperature=get_value(data, 'Substrate temperature [°C]'),
+        source_temperature=get_value(data, 'Source temperature [°C]'),
+        substrate_source_distance=get_value(data, 'Substrate source distance [mm]'),
+        deposition_time=get_value(data, 'Deposition Time [s]'),
+        carrier_gas=get_value(data, 'Carrier gas', None, False),
+        pressure=convert_quantity(get_value(data, 'Process pressure [bar]'), 1000),
+        chemical_2=PubChemPureSubstanceSectionCustom(
+            name=get_value(data, 'Material name', None, False), load_data=False
+        ),
+        material_state=get_value(data, 'Material state', None, False),
     )
-    CSS.pressure = convert_quantity(
-        get_value(data, 'Base pressure [bar]'), 1000
-    )
-    CSS.chemical_2 = PubChemPureSubstanceSectionCustom(
-        name=get_value(data, 'Material name', None, False), load_data=False
-    )
-    CSS.material_state = get_value(data, 'Material state', None, False)
 
-    return (f'{i}_{j}_CSS_{material}', archive)
-
+    return (f'{i}_{j}_close_space_subimation_{material}', archive)
 
 
 def map_dip_coating(i, j, lab_ids, data, upload_id, dc_class):

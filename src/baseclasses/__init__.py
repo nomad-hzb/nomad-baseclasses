@@ -288,6 +288,11 @@ class BaseProcess(Process):
         type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
     )
 
+    atmosphere = SubSection(
+        links=['http://purl.obolibrary.org/obo/RO_0000057'],
+        section_def=Atmosphere,
+    )
+
     def normalize(self, archive, logger):
         if not self.positon_in_experimental_plan:
             try:
@@ -469,7 +474,10 @@ class LayerDeposition(BaseProcess):
         archive.results.properties.optoelectronic.solar_cell.electron_transport_layer = electron_transport_layer
         archive.results.properties.optoelectronic.solar_cell.back_contact = back_contact
         archive.results.properties.optoelectronic.solar_cell.absorber = absorber
-        archive.results.material.elements = elements_final
+        try:
+            archive.results.material.elements = elements_final
+        except Exception:
+            pass
 
 
 class BaseMeasurement(Measurement):

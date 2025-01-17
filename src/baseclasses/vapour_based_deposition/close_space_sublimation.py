@@ -42,13 +42,12 @@ class CSSProcess(ArchiveSection):
         type=str,
         a_eln=dict(
             component='EnumEditQuantity',
-            props=dict(suggestions=['solid', 'liquid', 'gas']), 
+            props=dict(suggestions=['solid', 'liquid', 'gas']),
         ),
-
+    )
 
     pressure = Quantity(
-        links=[
-                ],
+        links=[],
         type=np.dtype(np.float64),
         unit=('mbar'),
         a_eln=dict(
@@ -86,7 +85,6 @@ class CSSProcess(ArchiveSection):
         ),
     )
 
-
     thickness = Quantity(
         type=np.dtype(np.float64),
         unit=('nm'),
@@ -107,7 +105,6 @@ class CSSProcess(ArchiveSection):
         ),
     )
 
-    
     carrier_gas = Quantity(
         type=str,
         a_eln=dict(
@@ -116,18 +113,14 @@ class CSSProcess(ArchiveSection):
         ),
     )
 
-
     comment = Quantity(type=str, a_eln=dict(component='RichTextEditQuantity'))
 
 
-
-
-class CSS(LayerDeposition):
+class CloseSpaceSublimation(LayerDeposition):
     """Base class for CSS of a sample"""
 
     process = SubSection(section_def=CSSProcess)
 
     def normalize(self, archive, logger):
-        super().normalize(archive, logger)
-
         self.method = 'Close Space Sublimation'
+        super().normalize(archive, logger)

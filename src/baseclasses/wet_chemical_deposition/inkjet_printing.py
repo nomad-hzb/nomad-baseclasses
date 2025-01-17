@@ -433,11 +433,6 @@ class InkjetPrinting(WetChemicalDeposition):
         section_def=PrintHeadPath,
     )
 
-    atmosphere = SubSection(
-        links=['http://purl.obolibrary.org/obo/RO_0000057'],
-        section_def=Atmosphere,
-    )
-
     def normalize(self, archive, logger):
         self.method = 'Inkjet printing'
         super().normalize(archive, logger)

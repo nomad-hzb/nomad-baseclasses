@@ -91,12 +91,12 @@ class EvaporationSources(ArchiveSection):
     #     diff = self.mass_after_weighing - self.mass_before_weighing
 
 
-class PerovskiteEvaporation(ArchiveSection):
-    evaporation_sources = SubSection(
-        links=['http://purl.obolibrary.org/obo/RO_0000057'],
-        section_def=EvaporationSources,
-        repeats=True,
-    )
+# class PerovskiteEvaporation(ArchiveSection):
+#     evaporation_sources = SubSection(
+#         links=['http://purl.obolibrary.org/obo/RO_0000057'],
+#         section_def=EvaporationSources,
+#         repeats=True,
+#     )
 
 
 class Evaporation(ArchiveSection):
@@ -240,6 +240,19 @@ class Evaporation(ArchiveSection):
         ),
     )
 
+    temparature = Quantity(
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000146',
+            'https://purl.archive.org/tfsco/TFSCO_00002111',
+        ],
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        shape=[2],
+        a_eln=dict(
+            component='NumberEditQuantity', defaultDisplayUnit='°C', label='Temperature'
+        ),
+    )
+
     def normalize(self, archive, logger):
         if self.chemical:
             if self.chemical.name:
@@ -257,18 +270,7 @@ class Evaporation(ArchiveSection):
 
 
 class OrganicEvaporation(Evaporation):
-    temparature = Quantity(
-        links=[
-            'http://purl.obolibrary.org/obo/PATO_0000146',
-            'https://purl.archive.org/tfsco/TFSCO_00002111',
-        ],
-        type=np.dtype(np.float64),
-        unit=('°C'),
-        shape=[2],
-        a_eln=dict(
-            component='NumberEditQuantity', defaultDisplayUnit='°C', label='Temperature'
-        ),
-    )
+    pass
 
 
 class PerovskiteEvaporation(Evaporation):
