@@ -24,6 +24,7 @@ from baseclasses.vapour_based_deposition.atomic_layer_deposition import (
 from baseclasses.vapour_based_deposition.evaporation import (
     InorganicEvaporation,
     OrganicEvaporation,
+    PerovskiteEvaporation,
 )
 from baseclasses.vapour_based_deposition.sputtering import SputteringProcess
 from baseclasses.wet_chemical_deposition import PrecursorSolution
@@ -340,7 +341,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
         ),
         atmosphere=Atmosphere(
             relative_humidity=get_value(data, 'rel. humidity [%]', None),
-            temperature=get_value(data, 'Room Temperature [°C]', None),
+            temperature=get_value(data, 'Room temperature [°C]', None),
         ),
         annealing=map_annealing(data),
     )
@@ -409,7 +410,9 @@ def map_substrate(data, substrate_class):
     return archive
 
 
-def map_evaporation(i, j, lab_ids, data, upload_id, evaporation_class):
+def map_evaporation(
+    i, j, lab_ids, data, upload_id, evaporation_class, coevaporation=False
+):
     material = get_value(data, 'Material name', '', False)
     archive = evaporation_class(
         name='evaporation ' + get_value(data, 'Material name', '', False),
@@ -425,48 +428,67 @@ def map_evaporation(i, j, lab_ids, data, upload_id, evaporation_class):
         ],
         layer=map_layer(data),
     )
-    evaporation = None
+    evaporations = []
+    for mat in ['', ' 1', ' 2', ' 3', ' 4']:
+        evaporation = None
+        if coevaporation:
+            evaporation = PerovskiteEvaporation()
+        if get_value(data, 'Organic', '', False).lower().startswith('n') or get_value(
+            data, 'Organic', '', False
+        ).lower().startswith('0'):
+            evaporation = InorganicEvaporation()
+
+        if get_value(data, 'Organic', '', False).lower().startswith('y') or get_value(
+            data, 'Organic', '', False
+        ).lower().startswith('1'):
+            evaporation = OrganicEvaporation()
+            if get_value(data, 'Temperature [°C]', None):
+                evaporation.temparature = [
+                    get_value(data, 'Temperature [°C]', None)
+                ] * 2
+
+            if get_value(data, 'Source temperature start{mat}[°C]', None) and get_value(
+                data, 'Source temperature end{mat}[°C]', None
+            ):
+                evaporation.temparature = [
+                    get_value(data, 'Source temperature start{mat}[°C]', None)
+                    and get_value(data, 'Source temperature end{mat}[°C]', None)
+                ]
+
+        if not evaporation:
+            return (f'{i}_{j}_evaporation_{material}', archive)
+
+        evaporation.thickness = get_value(data, f'Thickness{mat} [nm]')
+        evaporation.start_rate = get_value(data, f'Rate{mat} [angstrom/s]')
+        evaporation.substrate_temparature = get_value(
+            data, f'Substrate temperature{mat} [°C]'
+        )
+        evaporation.pressure = convert_quantity(
+            get_value(data, f'Base pressure{mat} [bar]'), 1000
+        )
+        evaporation.pressure_start = convert_quantity(
+            get_value(data, f'Pressure start{mat} [bar]'), 1000
+        )
+        evaporation.pressure_end = convert_quantity(
+            get_value(data, f'Pressure end{mat} [bar]'), 1000
+        )
+        evaporation.tooling_factor = convert_quantity(
+            get_value(data, f'Tooling factor{mat}'), 1000
+        )
+        evaporation.chemical_2 = PubChemPureSubstanceSectionCustom(
+            name=get_value(data, 'Material name{mat}', None, False), load_data=False
+        )
+        evaporations.append(evaporation)
     if get_value(data, 'Organic', '', False).lower().startswith('n') or get_value(
         data, 'Organic', '', False
     ).lower().startswith('0'):
-        evaporation = InorganicEvaporation()
-
-    if get_value(data, 'Organic', '', False).lower().startswith('y') or get_value(
+        archive.inorganic_evaporation = evaporations
+    elif get_value(data, 'Organic', '', False).lower().startswith('y') or get_value(
         data, 'Organic', '', False
     ).lower().startswith('1'):
-        evaporation = OrganicEvaporation()
-        if get_value(data, 'Temperature [°C]', None):
-            evaporation.temparature = [get_value(data, 'Temperature [°C]', None)] * 2
-
-        if get_value(data, 'Source temperature start[°C]', None) and get_value(
-            data, 'Source temperature end[°C]', None
-        ):
-            evaporation.temparature = [
-                get_value(data, 'Source temperature start[°C]', None)
-                and get_value(data, 'Source temperature end[°C]', None)
-            ]
-
-    if not evaporation:
-        return (f'{i}_{j}_evaporation_{material}', archive)
-
-    evaporation.thickness = get_value(data, 'Thickness [nm]')
-    evaporation.start_rate = get_value(data, 'Rate [angstrom/s]')
-    evaporation.substrate_temparature = get_value(data, 'Substrate temperature [°C]')
-    evaporation.pressure = convert_quantity(
-        get_value(data, 'Base pressure [bar]'), 1000
-    )
-    evaporation.chemical_2 = PubChemPureSubstanceSectionCustom(
-        name=get_value(data, 'Material name', None, False), load_data=False
-    )
-    if get_value(data, 'Organic', '', False).lower().startswith('n') or get_value(
-        data, 'Organic', '', False
-    ).lower().startswith('0'):
-        archive.inorganic_evaporation = [evaporation]
-
-    if get_value(data, 'Organic', '', False).lower().startswith('y') or get_value(
-        data, 'Organic', '', False
-    ).lower().startswith('1'):
-        archive.organic_evaporation = [evaporation]
+        archive.organic_evaporation = evaporations
+    elif coevaporation:
+        archive.perovskite_evaporation = evaporations
     return (f'{i}_{j}_evaporation_{material}', archive)
 
 

@@ -150,6 +150,34 @@ class Evaporation(ArchiveSection):
         ),
     )
 
+    pressure_start = Quantity(
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0001025',
+            'https://purl.archive.org/tfsco/TFSCO_00005040',
+        ],
+        type=np.dtype(np.float64),
+        unit=('mbar'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mbar',
+            props=dict(minValue=0),
+        ),
+    )
+
+    pressure_end = Quantity(
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0001025',
+            'https://purl.archive.org/tfsco/TFSCO_00005040',
+        ],
+        type=np.dtype(np.float64),
+        unit=('mbar'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mbar',
+            props=dict(minValue=0),
+        ),
+    )
+
     start_rate = Quantity(
         links=['http://purl.obolibrary.org/obo/PATO_0000161'],
         type=np.dtype(np.float64),
@@ -205,6 +233,13 @@ class Evaporation(ArchiveSection):
         ),
     )
 
+    tooling_factor = Quantity(
+        type=str,
+        a_eln=dict(
+            component='StringEditQuantity',
+        ),
+    )
+
     def normalize(self, archive, logger):
         if self.chemical:
             if self.chemical.name:
@@ -236,6 +271,10 @@ class OrganicEvaporation(Evaporation):
     )
 
 
+class PerovskiteEvaporation(Evaporation):
+    pass
+
+
 class InorganicEvaporation(Evaporation):
     power = Quantity(
         links=[
@@ -265,11 +304,15 @@ class InorganicEvaporation(Evaporation):
 class Evaporations(LayerDeposition):
     """Base class for evaporation of a sample"""
 
+    co_evaporation = Quantity(
+        type=bool, default=False, a_eln=dict(component='BoolEditQuantity')
+    )
+
     organic_evaporation = SubSection(section_def=OrganicEvaporation, repeats=True)
 
     inorganic_evaporation = SubSection(section_def=InorganicEvaporation, repeats=True)
 
-    perovskite_evaporation = SubSection(section_def=InorganicEvaporation, repeats=True)
+    perovskite_evaporation = SubSection(section_def=PerovskiteEvaporation, repeats=True)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
