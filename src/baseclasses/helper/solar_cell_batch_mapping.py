@@ -506,6 +506,43 @@ def map_sputtering(i, j, lab_ids, data, upload_id, sputter_class):
     return (f'{i}_{j}_sputtering_{material}', archive)
 
 
+def map_css(i, j, lab_ids, data, upload_id, css_class):
+    material = get_value(data, 'Material name', '', False)
+    archive = css_class(
+        name='CSS ' + get_value(data, 'Material name', '', False),
+        location=get_value(data, 'Tool/GB name', '', False),
+        positon_in_experimental_plan=i,
+        description=get_value(data, 'Notes', '', False),
+        samples=[
+            CompositeSystemReference(
+                reference=get_reference(upload_id, f'{lab_id}.archive.json'),
+                lab_id=lab_id,
+            )
+            for lab_id in lab_ids
+        ],
+        layer=map_layer(data),
+    )
+
+    CSS.thickness = get_value(data, 'Thickness [nm]')
+    CSS.substrate_temparature = get_value(data, 'Substrate temperature [°C]')
+    CSS.source_temparature = get_value(data, 'Source temperature [°C]')
+    CSS.substrate_source_distance = get_value(data, 'Substrate source distance [mm]')
+    CSS.deposition_time = get_value(data, 'Deposition time [s]')
+    CSS.carrying_gas = PubChemPureSubstanceSectionCustom(
+        name=get_value(data, 'Carrier gas', None, False), load_data=False
+    )
+    CSS.pressure = convert_quantity(
+        get_value(data, 'Base pressure [bar]'), 1000
+    )
+    CSS.chemical_2 = PubChemPureSubstanceSectionCustom(
+        name=get_value(data, 'Material name', None, False), load_data=False
+    )
+    CSS.material_state = get_value(data, 'Material state', None, False)
+
+    return (f'{i}_{j}_CSS_{material}', archive)
+
+
+
 def map_dip_coating(i, j, lab_ids, data, upload_id, dc_class):
     archive = dc_class(
         name='dip coating ' + get_value(data, 'Material name', '', False),
