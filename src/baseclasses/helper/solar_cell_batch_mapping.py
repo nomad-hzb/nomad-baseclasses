@@ -54,7 +54,11 @@ def get_reference(upload_id, file_name):
 
 def convert_quantity(value, factor):
     try:
-        return float(value) * factor
+        converted_value = float(value) * factor
+        if not pd.isna():
+            return converted_value
+        else:
+            return None
     except Exception:
         return None
 
