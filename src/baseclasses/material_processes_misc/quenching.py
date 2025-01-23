@@ -120,12 +120,12 @@ class GasQuenching(Quenching):
 
 
 class GasQuenchingWithNozzle(GasQuenching):
-    m_def = Section(links=['https://purl.archive.org/tfsco/TFSCO/TFSCO_00003300'])
+    m_def = Section(links=['https://purl.archive.org/tfsco/TFSCO_00003300'])
 
     starting_delay = Quantity(
         links=[
-            'https://purl.archive.org/tfsco/TFSCO/TFSCO_00003301',
-            'https://purl.archive.org/tfsco/TFSCO/TFSCO_00003312',
+            'https://purl.archive.org/tfsco/TFSCO_00003301',
+            'https://purl.archive.org/tfsco/TFSCO_00003312',
         ],
         type=np.dtype(np.float64),
         unit=('s'),
@@ -154,8 +154,8 @@ class GasQuenchingWithNozzle(GasQuenching):
 
     height = Quantity(
         links=[
-            'https://purl.archive.org/tfsco/TFSCO/TFSCO_00003302',
-            'https://purl.archive.org/tfsco/TFSCO/TFSCO_00003308',
+            'https://purl.archive.org/tfsco/TFSCO_00003302',
+            'https://purl.archive.org/tfsco/TFSCO_00003308',
         ],
         type=np.dtype(np.float64),
         description=('Distance Nozzle-Sample.'),
@@ -198,7 +198,7 @@ class GasQuenchingWithNozzle(GasQuenching):
     )
 
     velocity = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO/TFSCO_00003313'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00003313'],
         type=np.dtype(np.float64),
         description=(
             'Speed of gas at the nozzle tip (Calculated from Flow and Nozzle Area)'
@@ -212,7 +212,7 @@ class GasQuenchingWithNozzle(GasQuenching):
     )
 
     nozzle_shape = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO/TFSCO_00003304'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00003304'],
         type=str,
         description=('Description of the nozzle shape.'),
         a_eln=dict(component='StringEditQuantity'),
