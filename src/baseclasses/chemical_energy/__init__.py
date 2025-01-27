@@ -46,7 +46,11 @@ from .electrochemical_impedance_spectroscopy import (
     EISProperties,
     ElectrochemicalImpedanceSpectroscopy,
 )
-from .electrolyser_performance import ElectrolyserPerformanceEvaluation
+from .electrolyser_performance import (
+    ElectrolyserPerformanceEvaluation,
+    ElectrolyserProperties,
+    NESDElectrode,
+)
 from .galvanodynamic_sweep import GalvanodynamicSweep, LSGProperties
 from .general_process import GeneralProcess
 from .linear_sweep_voltammetry import LinearSweepVoltammetry, LSVProperties
