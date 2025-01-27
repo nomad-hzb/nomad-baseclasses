@@ -37,62 +37,67 @@ class PotentiostatProperties(ArchiveSection):
 
 
 class BioLogicProperties(PotentiostatProperties):
-
     active_material_mass = Quantity(
         type=np.dtype(np.float64),
-        unit=('cm^2'), #TODO
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'))
+        unit=('cm^2'),  # TODO
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'),
+    )
 
     at_x = Quantity(
         type=np.dtype(np.float64),
         unit=('cm^2'),  # TODO
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'),
+    )
 
     molecular_weight = Quantity(
         type=np.dtype(np.float64),
         unit=('g/mol'),  # TODO
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='g/mol'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='g/mol'),
+    )
 
     atomic_weight = Quantity(
-        type=np.dtype(np.float64),
-        a_eln=dict(component='NumberEditQuantity'))
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
 
     acquisition_start = Quantity(
         type=np.dtype(np.float64),
         unit=('cm^2'),  # TODO
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'),
+    )
 
     e_transferred = Quantity(
-        type=np.dtype(np.float64), # TODO maybe int
+        type=np.dtype(np.float64),  # TODO maybe int
         unit=('g/mol'),  # TODO
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='g/mol'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='g/mol'),
+    )
 
-    electrode_material = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
+    electrode_material = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
-    electrolyte = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'))
+    electrolyte = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
-    electrode_area = Quantity(  # TODO is the same as sample area which is already inherited?
-        type=np.dtype(np.float64),
-        unit=('g/mol'),  # TODO
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='g/mol'))
+    electrode_area = (
+        Quantity(  # TODO is the same as sample area which is already inherited?
+            type=np.dtype(np.float64),
+            unit=('g/mol'),  # TODO
+            a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='g/mol'),
+        )
+    )
 
     reference_electrode = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity')) #TODO maybe reference to electrode in system?
+        type=str, a_eln=dict(component='StringEditQuantity')
+    )  # TODO maybe reference to electrode in system?
 
     characteristic_mass = Quantity(
         type=np.dtype(np.float64),
         unit=('g/mol'),  # TODO
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='g/mol'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='g/mol'),
+    )
 
     battery_capacity = Quantity(
         type=np.dtype(np.float64),
         unit=('A*h'),  # TODO check unit
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='A*h'))
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='A*h'),
+    )
 
     # TODO more Quantities:
     #  Analog IN 1, Analog IN 1 max V, Analog IN 1 min V, Analog IN 1 max x, Analog IN 1 min x,
