@@ -18,17 +18,37 @@
 
 import numpy as np
 import plotly.graph_objects as go
-from nomad.datamodel.metainfo.basesections import CompositeSystem
+from nomad.datamodel.metainfo.basesections import (
+    CompositeSystem,
+    CompositeSystemReference,
+)
 from nomad.datamodel.metainfo.plot import PlotlyFigure, PlotSection
-from nomad.metainfo import Datetime, Quantity, SubSection
+from nomad.datamodel.results import Material, Results
+from nomad.metainfo import Datetime, Quantity, Reference, SubSection
+from nomad_chemical_energy.schema_packages.hzb_catlab_package import export_lab_id
+from unidecode import unidecode
 
 from baseclasses import PubChemPureSubstanceSectionCustom
+from baseclasses.helper.utilities import create_short_id
 
-from .. import BaseMeasurement, ReadableIdentifiersCustom
+from .. import BaseMeasurement
 
 
-# TODO create quantities for ids if needed
-# TODO decide which concepts should use reference instead of subsection
+def make_nesd_id(archive):
+    author = archive.metadata.main_author
+    first_short, last_short = 'E', ''
+    try:
+        first_short = unidecode(author.first_name)[:2]
+        last_short = unidecode(author.last_name)[:2]
+    except Exception:
+        pass
+    lab_id = create_short_id(
+        archive, str(first_short) + str(last_short), 'CE_NESD_Electrolyser'
+    )
+    export_lab_id(archive, lab_id)
+    return lab_id
+
+
 class NESDElectrode(CompositeSystem):
     electrolyte = Quantity(
         type=str,
@@ -39,16 +59,53 @@ class NESDElectrode(CompositeSystem):
         type=str,
         shape=[],
     )
-    # TODO use a material class here or rename and reuse the materialslist from cesample??
 
     electrode_area = Quantity(type=np.dtype(np.float64), unit='mm**2')
 
-    # TODO check example data if theses are really pure substances and normalize material properties in results section
     electrode_material = SubSection(section_def=PubChemPureSubstanceSectionCustom)
 
     gasket_material = SubSection(section_def=PubChemPureSubstanceSectionCustom)
 
     gasket_thickness = Quantity(type=np.dtype(np.float64), unit='mm')
+
+    def get_materials(self, formula, logger):
+        from ase import Atoms
+        from pymatgen.core import Composition
+
+        try:
+            formulas = Atoms(
+                Composition(formula.strip()).get_integer_formula_and_factor()[0]
+            )
+            return [formulas]
+        except ValueError as e:
+            logger.warn('Could not analyse material', exc_info=e)
+            return []
+
+    def normalize(self, archive, logger):
+        if not self.lab_id:
+            self.lab_id = make_nesd_id(archive)
+        if self.catalyst or self.electrode_material:
+            if not archive.results:
+                archive.results = Results()
+            archive.results.material = Material()
+            try:
+                formulas = (
+                    self.get_materials(self.catalyst, logger)
+                    if self.catalyst is not None
+                    else []
+                )
+                if self.electrode_material is not None:
+                    formulas.extend(
+                        self.get_materials(self.electrode_material.name, logger)
+                    )
+                elements = []
+                for f in formulas:
+                    elements.extend(f.get_chemical_symbols())
+                archive.results.material.elements = list(set(elements))
+            except Exception as e:
+                logger.warn('Could not analyse material', exc_info=e)
+
+        super().normalize(archive, logger)
 
 
 class ElectrolyserProperties(CompositeSystem):
@@ -70,14 +127,27 @@ class ElectrolyserProperties(CompositeSystem):
 
     cathode = SubSection(section_def=NESDElectrode)
 
+    def normalize(self, archive, logger):
+        if not self.lab_id:
+            self.lab_id = make_nesd_id(archive)
+        super().normalize(archive, logger)
+
 
 class ElectrolyserPerformanceEvaluation(BaseMeasurement, PlotSection):
-    # TODO add user name here?
+    labview_user = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
         a_browser=dict(adaptor='RawFileAdaptor'),
+    )
+
+    description = Quantity(
+        type=str,
+        description='Any information that cannot be captured in the other fields.',
+        a_eln=dict(
+            component='RichTextEditQuantity', props=dict(height=150), label='Comments'
+        ),
     )
 
     time = Quantity(type=np.dtype(np.float64), shape=['*'], unit='second')
@@ -106,7 +176,10 @@ class ElectrolyserPerformanceEvaluation(BaseMeasurement, PlotSection):
 
     timestamp = Quantity(type=Datetime, shape=['*'])
 
-    properties = SubSection(section_def=ElectrolyserProperties)
+    samples = SubSection(
+        section_def=CompositeSystemReference,
+        a_eln=dict(label='electrolyser properties'),
+    )
 
     def make_flow_figure(self):
         fig = go.Figure(
@@ -156,4 +229,4 @@ class ElectrolyserPerformanceEvaluation(BaseMeasurement, PlotSection):
             self.figures = [
                 PlotlyFigure(label='H2 O2 Flow Figure', figure=fig1.to_plotly_json()),
             ]
-        super(ElectrolyserPerformanceEvaluation, self).normalize(archive, logger)
+        super().normalize(archive, logger)
