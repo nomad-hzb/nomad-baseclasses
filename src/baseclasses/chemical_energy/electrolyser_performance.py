@@ -15,9 +15,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 import numpy as np
 import plotly.graph_objects as go
+from nomad.atomutils import Formula
 from nomad.datamodel.metainfo.basesections import (
     CompositeSystem,
     CompositeSystemReference,
@@ -68,43 +68,7 @@ class NESDElectrode(CompositeSystem):
 
     gasket_thickness = Quantity(type=np.dtype(np.float64), unit='mm')
 
-    def get_materials(self, formula, logger):
-        from ase import Atoms
-        from pymatgen.core import Composition
-
-        try:
-            formulas = Atoms(
-                Composition(formula.strip()).get_integer_formula_and_factor()[0]
-            )
-            return [formulas]
-        except ValueError as e:
-            logger.warn('Could not analyse material', exc_info=e)
-            return []
-
     def normalize(self, archive, logger):
-        if not self.lab_id:
-            self.lab_id = make_nesd_id(archive)
-        if self.catalyst or self.electrode_material:
-            if not archive.results:
-                archive.results = Results()
-            archive.results.material = Material()
-            try:
-                formulas = (
-                    self.get_materials(self.catalyst, logger)
-                    if self.catalyst is not None
-                    else []
-                )
-                if self.electrode_material is not None:
-                    formulas.extend(
-                        self.get_materials(self.electrode_material.name, logger)
-                    )
-                elements = []
-                for f in formulas:
-                    elements.extend(f.get_chemical_symbols())
-                archive.results.material.elements = list(set(elements))
-            except Exception as e:
-                logger.warn('Could not analyse material', exc_info=e)
-
         super().normalize(archive, logger)
 
 
@@ -127,9 +91,36 @@ class ElectrolyserProperties(CompositeSystem):
 
     cathode = SubSection(section_def=NESDElectrode)
 
+    def is_valid_formula(self, formula, logger):
+        try:
+            Formula(formula)
+            return True
+        except Exception as e:
+            logger.warn('Could not analyse material', exc_info=e)
+            return False
+
     def normalize(self, archive, logger):
         if not self.lab_id:
             self.lab_id = make_nesd_id(archive)
+        elements = ''
+        if self.cathode:
+            if self.is_valid_formula(self.cathode.catalyst, logger):
+                elements += self.cathode.catalyst
+            if self.is_valid_formula(self.cathode.electrode_material.name, logger):
+                elements += self.cathode.electrode_material.name
+        if self.anode:
+            if self.is_valid_formula(self.anode.catalyst, logger):
+                elements += self.anode.catalyst
+            if self.is_valid_formula(self.anode.electrode_material.name, logger):
+                elements += self.anode.electrode_material.name
+        if elements and not archive.results:
+            archive.results = Results()
+        archive.results.material = Material()
+        try:
+            formula = Formula(elements, unknown='remove')
+            formula.populate(section=archive.results.material)
+        except Exception as e:
+            logger.warn('Could not analyse material', exc_info=e)
         super().normalize(archive, logger)
 
 
