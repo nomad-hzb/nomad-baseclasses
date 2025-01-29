@@ -11,7 +11,7 @@ from baseclasses.chemical_energy.chronoamperometry import CAProperties
 from baseclasses.chemical_energy.chronocoulometry import CCProperties
 from baseclasses.chemical_energy.chronopotentiometry import CPProperties
 from baseclasses.chemical_energy.cyclicvoltammetry import CVProperties
-from baseclasses.chemical_energy.electorchemical_impedance_spectroscopy import (
+from baseclasses.chemical_energy.electrochemical_impedance_spectroscopy import (
     EISCycle,
     EISProperties,
 )

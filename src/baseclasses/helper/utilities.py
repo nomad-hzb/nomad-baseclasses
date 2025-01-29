@@ -352,6 +352,34 @@ def set_sample_reference(archive, entry, search_id, upload_id=None):
             entry.samples = [
                 CompositeSystemReference(reference=get_reference(upload_id, entry_id))
             ]
+        if 'electrolyser' in data['entry_type'].lower():
+            entry.samples = [
+                CompositeSystemReference(reference=get_reference(upload_id, entry_id))
+            ]
+
+
+def create_short_id(archive, lab_id_base, entry_type):
+    from nomad.app.v1.models import MetadataPagination
+    from nomad.search import search
+
+    query = {'entry_type': entry_type, 'results.eln.lab_ids': lab_id_base}
+    pagination = MetadataPagination()
+    pagination.page_size = 9999
+    search_result = search(
+        owner='all',
+        query=query,
+        pagination=pagination,
+        user_id=archive.metadata.main_author.user_id,
+    )
+    from nomad_chemical_energy.schema_packages.hzb_catlab_package import (
+        get_next_project_sample_number,
+    )
+
+    project_sample_number = get_next_project_sample_number(
+        search_result.data, archive.metadata.entry_id
+    )
+
+    return f'{lab_id_base}{project_sample_number:04d}'
 
 
 def get_entry_reference(archive, entry, search_id):
