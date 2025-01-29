@@ -195,7 +195,7 @@ class ElectrolyserPerformanceEvaluation(BaseMeasurement, PlotSection):
         fig.update_layout(
             yaxis=dict(
                 title=f'H2 Flow [{self.h2_flow[0].units}]',
-                titlefont=dict(color='green'),
+                # titlefont=dict(color='green'),
                 tickfont=dict(color='green'),
             ),
             yaxis2=dict(
@@ -203,7 +203,7 @@ class ElectrolyserPerformanceEvaluation(BaseMeasurement, PlotSection):
                 anchor='x',
                 overlaying='y',
                 side='right',
-                titlefont=dict(color='red'),
+                # titlefont=dict(color='red'),
                 tickfont=dict(color='red'),
             ),
         )

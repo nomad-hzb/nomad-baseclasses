@@ -326,8 +326,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                     data, 'Droplet per second [1/s]', None
                 ),
                 print_nozzle_drop_volume=get_value(data, 'Droplet volume [pL]', None),
-                print_head_temperature=get_value(
-                    data, 'Nozzle temperature [°C]', None),
+                print_head_temperature=get_value(data, 'Nozzle temperature [°C]', None),
                 print_head_distance_to_substrate=get_value(
                     data, 'Dropping Height [mm]', None
                 ),

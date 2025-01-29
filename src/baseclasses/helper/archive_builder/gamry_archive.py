@@ -219,7 +219,7 @@ def get_eis_data(data, cycle):
 
 
 def get_meta_datetime(metadata, entry):
-    datetime_str = f"{metadata['DATE']} {metadata['TIME']}"
+    datetime_str = f'{metadata["DATE"]} {metadata["TIME"]}'
     try:
         datetime_object = datetime.strptime(datetime_str, '%d/%m/%Y %H:%M:%S')
     except:

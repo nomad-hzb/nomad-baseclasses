@@ -143,7 +143,7 @@ def add_key_item(md, key, item, item_entry, indent=0):
         md += f'{shift}**{key.capitalize()}**:  \n'
         for list_idx, subsection in enumerate(item):
             shift2 = '&nbsp;' * 4
-            md += f'{shift}{shift2}**{list_idx+1}.** '
+            md += f'{shift}{shift2}**{list_idx + 1}.** '
             if isinstance(subsection, dict):
                 indent2 = 0
                 for key2, item2 in subsection.items():
@@ -214,7 +214,7 @@ def get_solutions(list_sol):
             ]
         )
         sol_table = get_solution(sol)
-        final_string += f"<br><b>{getattr(sol, 'name', [])}</b>:  <br>"
+        final_string += f'<br><b>{getattr(sol, "name", [])}</b>:  <br>'
         params_str = ', '.join(
             [
                 f'{key}={get_as_displayunit(sol, key)}'
@@ -223,7 +223,7 @@ def get_solutions(list_sol):
         )
         final_string += f'{params_str}  <br>'
         final_string += (
-            f"Description: <br> {getattr(sol, 'description', '     ')}  <br>"
+            f'Description: <br> {getattr(sol, "description", "     ")}  <br>'
         )
         final_string += sol_table
         final_strings.append(final_string)
@@ -231,7 +231,9 @@ def get_solutions(list_sol):
 
 
 def add_section_markdown(md, index_plan, index_batch, batch_process, process_batch):
-    md += f'### {index_plan+1}.{index_batch+1} {batch_process.name.capitalize()}  \n'
+    md += (
+        f'### {index_plan + 1}.{index_batch + 1} {batch_process.name.capitalize()}  \n'
+    )
     data_dict = batch_process.m_to_dict()
     md += f'**Batch Id**: {process_batch}  \n'
     for key, item in data_dict.items():

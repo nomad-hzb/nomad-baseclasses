@@ -219,7 +219,7 @@ def addLayerDepositionToStack(archive, process):
                 layer_name
             )
             archive.results.properties.optoelectronic.solar_cell.absorber_fabrication = [
-                f"{process['method']}"
+                f'{process["method"]}'
             ]
 
         if (
