@@ -17,7 +17,7 @@ def get_pint_from_string(magnitude_string, unit):
         return None
     try:
         magnitude = np.float64(magnitude_string)
-    except:
+    except Exception:
         print(f'Cannot convert {magnitude_string} to pint magnitude.')
         return None
     return magnitude * ureg(unit)
@@ -62,7 +62,6 @@ def get_electrolyser_properties(metadata, entry_object):
 
 
 def get_tdms_archive(data, entry_object):
-    # TODO units like mln/minute (is mln normliter? then mln/minute might be slpm or standard liter per minute?)
     entry_object.time = (
         np.array(data['READ_0_Time']) * ureg('s')
         if 'READ_0_Time' in data.columns
@@ -116,6 +115,10 @@ def get_tdms_archive(data, entry_object):
     timestamp_array = (
         np.array(data['READ_Timestamp']) if 'READ_Timestamp' in data.columns else None
     )
+    labview_to_unix_offset = (
+        datetime(1970, 1, 1) - datetime(1904, 1, 1)
+    ).total_seconds()
     entry_object.timestamp = [
-        datetime.fromtimestamp(timestamp) for timestamp in timestamp_array
+        datetime.fromtimestamp(timestamp - labview_to_unix_offset)
+        for timestamp in timestamp_array
     ]

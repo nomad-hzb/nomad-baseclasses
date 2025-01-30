@@ -118,7 +118,7 @@ class ElectrolyserProperties(CompositeSystem):
         archive.results.material = Material()
         try:
             formula = Formula(elements, unknown='remove')
-            formula.populate(section=archive.results.material)
+            archive.results.material.elements = list(set(formula.elements()))
         except Exception as e:
             logger.warn('Could not analyse material', exc_info=e)
         super().normalize(archive, logger)
@@ -139,6 +139,12 @@ class ElectrolyserPerformanceEvaluation(BaseMeasurement, PlotSection):
         a_eln=dict(
             component='RichTextEditQuantity', props=dict(height=150), label='Comments'
         ),
+    )
+
+    datetime = Quantity(
+        type=Datetime,
+        description='The date and time associated with the NOMAD upload of this measurement.',
+        a_eln=dict(component='DateTimeEditQuantity', label='Upload Time'),
     )
 
     time = Quantity(type=np.dtype(np.float64), shape=['*'], unit='second')
