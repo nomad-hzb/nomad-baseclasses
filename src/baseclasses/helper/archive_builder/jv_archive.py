@@ -28,6 +28,8 @@ from baseclasses.solar_energy.jvmeasurement import (
 
 def get_jv_archive(jv_dict, mainfile, jvm):
     jvm.file_name = os.path.basename(mainfile)
+    if jv_dict.get('datetime'):
+        jvm.datetime = jv_dict.get('datetime')
     jvm.active_area = jv_dict['active_area'] if 'active_area' in jv_dict else None
     jvm.intensity = jv_dict['intensity'] if 'intensity' in jv_dict else None
     jvm.integration_time = (
