@@ -26,11 +26,22 @@ import pandas as pd
 import pytz
 from ase.formula import Formula as ASEFormula
 from nomad.datamodel.metainfo.basesections import CompositeSystemReference
+from nomad.datamodel.results import ELN, Results
 from tabulate import tabulate
 
 
 def get_elements_from_formula(formula):
     return list(ASEFormula(formula).count().keys())
+
+
+def export_lab_id(archive, lab_id):
+    if not archive.results:
+        archive.results = Results(eln=ELN())
+    if not archive.results.eln:
+        archive.results.eln = ELN()
+    if lab_id:
+        archive.results.eln.lab_ids = []
+        archive.results.eln.lab_ids = [lab_id, lab_id[:4]]
 
 
 def traverse_dictionary(entry_dict, key, value):

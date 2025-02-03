@@ -25,11 +25,10 @@ from nomad.datamodel.metainfo.basesections import (
 from nomad.datamodel.metainfo.plot import PlotlyFigure, PlotSection
 from nomad.datamodel.results import Material, Results
 from nomad.metainfo import Datetime, Quantity, Reference, SubSection
-from nomad_chemical_energy.schema_packages.hzb_catlab_package import export_lab_id
 from unidecode import unidecode
 
 from baseclasses import PubChemPureSubstanceSectionCustom
-from baseclasses.helper.utilities import create_short_id
+from baseclasses.helper.utilities import create_short_id, export_lab_id
 
 from .. import BaseMeasurement
 
