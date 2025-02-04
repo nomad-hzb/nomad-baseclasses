@@ -446,7 +446,7 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
                     data,
                     ['UV-Ozone Time [s]', 'UV-Ozone Time [min]'],
                     None,
-                    unit=['s', 'min'],
+                    unit=['s', 'minute'],
                 )
             )
         ],
@@ -456,7 +456,7 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
                     data,
                     ['Gas-Plasma Time [s]', 'Gas-Plasma Time [min]'],
                     None,
-                    unit=['s', 'min'],
+                    unit=['s', 'minute'],
                 ),
                 power=get_value(data, 'Gas-Plasma Power [W]', None, unit='W'),
                 plasma_type=get_value(data, 'Gas-Plasma Gas', None, False),
