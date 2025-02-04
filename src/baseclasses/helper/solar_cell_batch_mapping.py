@@ -2,6 +2,7 @@ import pandas as pd
 from nomad.datamodel.metainfo.basesections import (
     CompositeSystemReference,
 )
+from nomad.units import ureg
 
 from baseclasses import LayerProperties, PubChemPureSubstanceSectionCustom
 from baseclasses.atmosphere import Atmosphere
@@ -52,26 +53,32 @@ def get_reference(upload_id, file_name):
     return f'../uploads/{upload_id}/archive/{entry_id}#data'
 
 
-def convert_quantity(value, factor):
-    try:
-        converted_value = float(value) * factor
-        if not pd.isna():
-            return converted_value
-        else:
-            return None
-    except Exception:
-        return None
+def get_value(data, key, default=None, number=True, unit=None):
+    if not isinstance(key, list):
+        key = [key]
+    if unit and not isinstance(unit, list):
+        unit = [unit]
 
-
-def get_value(data, key, default=None, number=True):
     try:
-        if key not in data:
-            return default
-        if pd.isna(data[key]):
-            return default
-        if number:
-            return float(data[key])
-        return str(data[key]).strip()
+        if not unit:
+            for k in key:
+                if k not in data:
+                    continue
+                if pd.isna(data[k]):
+                    return default
+                if number:
+                    return float(data[k])
+                return str(data[k]).strip()
+        if unit:
+            for k, u in zip(key, unit):
+                if k not in data:
+                    continue
+                if pd.isna(data[k]):
+                    return default
+                if number and u:
+                    Q_ = ureg.Quantity
+                    return Q_(float(data[k]), ureg(u))
+        return default
     except Exception as e:
         raise e
 
@@ -104,8 +111,8 @@ def map_batch(batch_ids, batch_id, upload_id, batch_class):
 
 def map_annealing(data):
     return Annealing(
-        temperature=get_value(data, 'Annealing temperature [°C]', None),
-        time=convert_quantity(get_value(data, 'Annealing time [min]', None), 60),
+        temperature=get_value(data, 'Annealing temperature [°C]', None, unit='°C'),
+        time=get_value(data, 'Annealing time [min]', None, unit='minute'),
         atmosphere=get_value(data, 'Annealing athmosphere', None, False),
     )
 
@@ -141,9 +148,10 @@ def map_solutions(data):
                     name=get_value(data, f'{solvent} name', None, False),
                     load_data=False,
                 ),
-                chemical_volume=convert_quantity(
-                    get_value(data, f'{solvent} volume [uL]', None), 1 / 1000
+                chemical_volume=get_value(
+                    data, f'{solvent} volume [uL]', None, unit='uL'
                 ),
+                amount_relative=get_value(data, f'{solvent} relative amount', None),
             )
         )
     for solute in sorted(set(solutes)):
@@ -151,17 +159,22 @@ def map_solutions(data):
             data, f'{solute} Concentration [mM]', None
         ):
             continue
+
         final_solutes.append(
             SolutionChemical(
                 chemical_2=PubChemPureSubstanceSectionCustom(
-                    name=get_value(data, f'{solute} type', None, False), load_data=False
+                    name=get_value(
+                        data, [f'{solute} type', f'{solute} name'], None, False
+                    ),
+                    load_data=False,
                 ),
-                concentration_mol=convert_quantity(
-                    get_value(data, f'{solute} Concentration [mM]', None), 1 / 1000
+                concentration_mol=get_value(
+                    data, f'{solute} Concentration [mM]', None, unit='mM'
                 ),
-                concentration_mass=convert_quantity(
-                    get_value(data, f'{solute} Concentration [wt%]', None), 10
+                concentration_mass=get_value(
+                    data, f'{solute} Concentration [wt%]', None, unit='wt%'
                 ),
+                amount_relative=get_value(data, f'{solute} relative amount', None),
             )
         )
 
@@ -188,17 +201,22 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
             PrecursorSolution(
                 solution_details=map_solutions(data),  # check unit
                 # check unit
-                solution_volume=convert_quantity(
-                    get_value(data, 'Solution volume [um]', None), 1 / 1000
+                solution_volume=get_value(
+                    data,
+                    ['Solution volume [um]', 'Solution volume [uL]'],
+                    None,
+                    unit=['uL', 'uL'],
                 ),
             )
         ],
         annealing=map_annealing(data),
         recipe_steps=[
             SpinCoatingRecipeSteps(
-                speed=get_value(data, f'Rotation speed {step}[rpm]', None),
-                time=get_value(data, f'Rotation time {step}[s]', None),
-                acceleration=get_value(data, f'Acceleration {step}[rpm/s]', None),
+                speed=get_value(data, f'Rotation speed {step}[rpm]', None, unit='rpm'),
+                time=get_value(data, f'Rotation time {step}[s]', None, unit='s'),
+                acceleration=get_value(
+                    data, f'Acceleration {step}[rpm/s]', None, unit='rpm/s'
+                ),
             )
             for step in ['', '1 ', '2 ', '3 ', '4 ']
             if get_value(data, f'Rotation time {step}[s]')
@@ -206,37 +224,47 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
     )
     if get_value(data, 'Anti solvent name', None, False):
         archive.quenching = AntiSolventQuenching(
-            anti_solvent_volume=get_value(data, 'Anti solvent volume [ml]', None),
+            anti_solvent_volume=get_value(
+                data, 'Anti solvent volume [ml]', None, unit='mL'
+            ),
             anti_solvent_dropping_time=get_value(
-                data, 'Anti solvent dropping time [s]', None
+                data, 'Anti solvent dropping time [s]', None, unit='s'
             ),
             anti_solvent_dropping_height=get_value(
-                data, 'Anti solvent dropping heigt [mm]', None
+                data, 'Anti solvent dropping heigt [mm]', None, unit='mm'
             ),
             anti_solvent_dropping_flow_rate=get_value(
-                data, 'Anti solvent dropping speed [ul/s]', None
+                data, 'Anti solvent dropping speed [ul/s]', None, unit='uL/s'
             ),
             anti_solvent_2=PubChemPureSubstanceSectionCustom(
                 name=get_value(data, 'Anti solvent name', None, False), load_data=False
             ),
         )
-    if get_value(data, 'Vacuum quenching duration [s]', None, False):
+    if get_value(data, 'Vacuum quenching duration [s]', None, False, unit='s'):
         archive.quenching = VacuumQuenching(
-            start_time=get_value(data, 'Vacuum quenching start time [s]', None),
-            duration=get_value(data, 'Vacuum quenching duration [s]', None),
-            pressure=get_value(data, 'Vacuum quenching pressure [bar]', None),
+            start_time=get_value(
+                data, 'Vacuum quenching start time [s]', None, unit='s'
+            ),
+            duration=get_value(data, 'Vacuum quenching duration [s]', None, unit='s'),
+            pressure=get_value(
+                data, 'Vacuum quenching pressure [bar]', None, unit='bar'
+            ),
         )
 
     if get_value(data, 'Gas', None, False):
         archive.quenching = GasQuenchingWithNozzle(
-            starting_delay=get_value(data, 'Gas quenching start time [s]', None),
-            flow_rate=get_value(data, 'Gas quenching flow rate [ml/s]', None),
-            height=get_value(data, 'Gas quenching height [mm]', None),
-            duration=get_value(data, 'Gas quenching duration [s]', None),
-            pressure=get_value(data, 'Gas quenching pressure [bar]', None),
-            velocity=get_value(data, 'Gas quenching velocity [m/s]', None),
+            starting_delay=get_value(
+                data, 'Gas quenching start time [s]', None, unit='s'
+            ),
+            flow_rate=get_value(
+                data, 'Gas quenching flow rate [ml/s]', None, unit='ml/s'
+            ),
+            height=get_value(data, 'Gas quenching height [mm]', None, unit='mm'),
+            duration=get_value(data, 'Gas quenching duration [s]', None, unit='s'),
+            pressure=get_value(data, 'Gas quenching pressure [bar]', None, unit='bar'),
+            velocity=get_value(data, 'Gas quenching velocity [m/s]', None, unit='m/s'),
             nozzle_shape=get_value(data, 'Nozzle shape', None, False),
-            nozzle_size=get_value(data, 'Nozzle size [mm²]', None, False),
+            nozzle_size=get_value(data, 'Nozzle size [mm²]', None, False, unit='mm**2'),
             gas=get_value(data, 'Gas', None, False),
         )
 
@@ -261,8 +289,11 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
             PrecursorSolution(
                 solution_details=map_solutions(data),  # check unit
                 # check unit
-                solution_volume=convert_quantity(
-                    get_value(data, 'Solution volume [um]', None), 1 / 1000
+                solution_volume=get_value(
+                    data,
+                    ['Solution volume [um]', 'Solution volume [uL]'],
+                    None,
+                    unit=['uL', 'uL'],
                 ),
             )
         ],
@@ -270,22 +301,36 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
         annealing=map_annealing(data),
         properties=SlotDieCoatingProperties(
             coating_run=get_value(data, 'Coating run', None, False),
-            flow_rate=convert_quantity(data.get('Flow rate [uL/min]', None), 1 / 1000),
-            slot_die_head_distance_to_thinfilm=get_value(data, 'Head gap [mm]'),
-            slot_die_head_speed=get_value(data, 'Speed [mm/s]'),
-            coated_area=get_value(data, 'Coated area [mm²]'),
+            flow_rate=get_value(
+                data,
+                ['Flow rate [uL/min]', 'Flow rate [ul/min]'],
+                None,
+                unit=['uL/minute', 'uL/minute'],
+            ),
+            slot_die_head_distance_to_thinfilm=get_value(
+                data, 'Head gap [mm]', unit='mm'
+            ),
+            slot_die_head_speed=get_value(data, 'Speed [mm/s]', unit='mm/s'),
+            coated_area=get_value(data, 'Coated area [mm²]', unit='mm**2'),
         ),
         quenching=AirKnifeGasQuenching(
             air_knife_angle=get_value(data, 'Air knife angle [°]', None),
             # is this the same as (drying) gas flow rate/velocity?
-            bead_volume=get_value(data, 'Bead volume [mm/s]', None),
-            drying_speed=get_value(data, 'Drying speed [cm/min]', None),
-            air_knife_distance_to_thin_film=convert_quantity(
-                data.get('Air knife gap [cm]', None), 10000
+            bead_volume=get_value(data, 'Bead volume [mm/s]', None, unit='mm/s'),
+            drying_speed=get_value(
+                data, 'Drying speed [cm/min]', None, unit='cm/minute'
             ),
-            drying_gas_temperature=get_value(data, 'Drying gas temperature [°]', None),
+            air_knife_distance_to_thin_film=get_value(
+                data, 'Air knife gap [cm]', None, unit='cm'
+            ),
+            drying_gas_temperature=get_value(
+                data,
+                ['Drying gas temperature [°]', 'Drying gas temperature [°C]'],
+                None,
+                unit=['°C', '°C'],
+            ),
             heat_transfer_coefficient=get_value(
-                data, 'Heat transfer coefficient [W m^-2 K^-1]', None
+                data, 'Heat transfer coefficient [W m^-2 K^-1]', None, unit='W/(K*m**2)'
             ),
         ),
     )
@@ -310,8 +355,11 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
             PrecursorSolution(
                 solution_details=map_solutions(data),  # check unit
                 # check unit
-                solution_volume=convert_quantity(
-                    get_value(data, 'Solution volume [um]', None), 1 / 1000
+                solution_volume=get_value(
+                    data,
+                    ['Solution volume [um]', 'Solution volume [uL]'],
+                    None,
+                    unit=['uL', 'uL'],
                 ),
             )
         ],
@@ -323,21 +371,30 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                     data, 'Number of active nozzles', None
                 ),
                 print_nozzle_drop_frequency=get_value(
-                    data, 'Droplet per second [1/s]', None
+                    data, 'Droplet per second [1/s]', None, unit='1/s'
                 ),
-                print_nozzle_drop_volume=get_value(data, 'Droplet volume [pL]', None),
-                print_head_temperature=get_value(data, 'Nozzle temperature [°C]', None),
+                print_nozzle_drop_volume=get_value(
+                    data,
+                    ['Droplet volume [pl]', 'Droplet volume [pL]'],
+                    None,
+                    unit=['pL', 'pL'],
+                ),
+                print_head_temperature=get_value(
+                    data, 'Nozzle temperature [°C]', None, unit='°C'
+                ),
                 print_head_distance_to_substrate=get_value(
-                    data, 'Dropping Height [mm]', None
+                    data, 'Dropping Height [mm]', None, unit='mm'
                 ),
                 print_head_name=get_value(data, 'Printhead name', None, False),
             ),
-            cartridge_pressure=convert_quantity(
-                get_value(data, 'Ink reservoir pressure [bar]', None), 1000
+            cartridge_pressure=get_value(
+                data, 'Ink reservoir pressure [bar]', None, unit='bar'
             ),
-            substrate_temperature=get_value(data, 'Table temperature [°C]', None),
+            substrate_temperature=get_value(
+                data, 'Table temperature [°C]', None, unit='°C'
+            ),
             drop_density=get_value(data, 'Droplet density [dpi]', None),
-            printed_area=get_value(data, 'Printed area [mm²]', None),
+            printed_area=get_value(data, 'Printed area [mm²]', None, unit='mm**2'),
         ),
         print_head_path=PrintHeadPath(
             quality_factor=get_value(data, 'Quality factor', None, False),
@@ -346,7 +403,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
         ),
         atmosphere=Atmosphere(
             relative_humidity=get_value(data, 'rel. humidity [%]', None),
-            temperature=get_value(data, 'Room temperature [°C]', None),
+            temperature=get_value(data, 'Room temperature [°C]', None, unit='°C'),
         ),
         annealing=map_annealing(data),
     )
@@ -369,8 +426,13 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
         ],
         cleaning=[
             SolutionCleaning(
-                time=convert_quantity(get_value(data, f'Time {i} [s]', None), 1 / 60),
-                temperature=get_value(data, f'Temperature {i} [°C]', None),
+                time=get_value(
+                    data,
+                    [f'Time {i} [s]', f'Time {i} [min]'],
+                    None,
+                    unit=['s', 'minute'],
+                ),
+                temperature=get_value(data, f'Temperature {i} [°C]', None, unit='°C'),
                 solvent_2=PubChemPureSubstanceSectionCustom(
                     name=get_value(data, f'Solvent {i}', None, False), load_data=False
                 ),
@@ -380,17 +442,23 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
         ],
         cleaning_uv=[
             UVCleaning(
-                time=convert_quantity(
-                    get_value(data, 'UV-Ozone Time [s]', None), 1 / 60
+                time=get_value(
+                    data,
+                    ['UV-Ozone Time [s]', 'UV-Ozone Time [min]'],
+                    None,
+                    unit=['s', 'min'],
                 )
             )
         ],
         cleaning_plasma=[
             PlasmaCleaning(
-                time=convert_quantity(
-                    get_value(data, 'Gas-Plasma Time [s]', None), 1 / 60
+                time=get_value(
+                    data,
+                    ['Gas-Plasma Time [s]', 'Gas-Plasma Time [min]'],
+                    None,
+                    unit=['s', 'min'],
                 ),
-                power=get_value(data, 'Gas-Plasma Power [W]', None),
+                power=get_value(data, 'Gas-Plasma Power [W]', None, unit='W'),
                 plasma_type=get_value(data, 'Gas-Plasma Gas', None, False),
             )
         ],
@@ -469,23 +537,34 @@ def map_evaporation(
             data, f'Source temperature end{mat}[°C]', None
         ):
             evaporation.temparature = [
-                get_value(data, f'Source temperature start{mat}[°C]', None),
-                get_value(data, f'Source temperature end{mat}[°C]', None),
+                get_value(data, f'Source temperature start{mat}[°C]', None, unit='°C'),
+                get_value(data, f'Source temperature end{mat}[°C]', None, unit='°C'),
             ]
 
-        evaporation.thickness = get_value(data, f'Thickness{mat} [nm]')
-        evaporation.start_rate = get_value(data, f'Rate{mat} [angstrom/s]')
+        evaporation.thickness = get_value(data, f'Thickness{mat} [nm]', unit='nm')
+        evaporation.start_rate = get_value(
+            data, f'Rate{mat} [angstrom/s]', unit='angstrom/s'
+        )
         evaporation.substrate_temparature = get_value(
-            data, f'Substrate temperature{mat} [°C]'
+            data, f'Substrate temperature{mat} [°C]', unit='°C'
         )
-        evaporation.pressure = convert_quantity(
-            get_value(data, f'Base pressure{mat} [bar]'), 1000
+        evaporation.pressure = get_value(
+            data,
+            [f'Base pressure{mat} [bar]', f'Base pressure{mat} [mbar]'],
+            None,
+            unit=['bar', 'mbar'],
         )
-        evaporation.pressure_start = convert_quantity(
-            get_value(data, f'Pressure start{mat} [bar]'), 1000
+        evaporation.pressure_start = get_value(
+            data,
+            [f'Pressure start{mat} [bar]', f'Pressure start{mat} [mbar]'],
+            None,
+            unit=['bar', 'mbar'],
         )
-        evaporation.pressure_end = convert_quantity(
-            get_value(data, f'Pressure end{mat} [bar]'), 1000
+        evaporation.pressure_end = get_value(
+            data,
+            [f'Pressure end{mat} [bar]', f'Pressure end{mat} [mbar]'],
+            None,
+            unit=['bar', 'mbar'],
         )
         evaporation.tooling_factor = get_value(data, f'Tooling factor{mat}')
 
@@ -544,14 +623,14 @@ def map_sputtering(i, j, lab_ids, data, upload_id, sputter_class):
         layer=map_layer(data),
     )
     process = SputteringProcess(
-        thickness=get_value(data, 'Thickness [nm]'),
-        gas_flow_rate=get_value(data, 'Gas flow rate [cm^3/min]'),
+        thickness=get_value(data, 'Thickness [nm]', unit='nm'),
+        gas_flow_rate=get_value(data, 'Gas flow rate [cm^3/min]', unit='cm**3/minute'),
         rotation_rate=get_value(data, 'Rotation rate [rpm]'),
-        power=get_value(data, 'Power [W]'),
-        temperature=get_value(data, 'Temperature [°C]'),
-        deposition_time=get_value(data, 'Deposition time [s]'),
-        burn_in_time=get_value(data, 'Burn in time [s]'),
-        pressure=get_value(data, 'Pressure [mbar]'),
+        power=get_value(data, 'Power [W]', unit='W'),
+        temperature=get_value(data, 'Temperature [°C]', unit='°C'),
+        deposition_time=get_value(data, 'Deposition time [s]', unit='s'),
+        burn_in_time=get_value(data, 'Burn in time [s]', unit='s'),
+        pressure=get_value(data, 'Pressure [mbar]', unit='mbar'),
         target_2=PubChemPureSubstanceSectionCustom(
             name=get_value(data, 'Material name', None, False), load_data=False
         ),
@@ -581,13 +660,15 @@ def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
         layer=map_layer(data),
     )
     archive.process = CSSProcess(
-        thickness=get_value(data, 'Thickness [nm]'),
-        substrate_temperature=get_value(data, 'Substrate temperature [°C]'),
-        source_temperature=get_value(data, 'Source temperature [°C]'),
-        substrate_source_distance=get_value(data, 'Substrate source distance [mm]'),
-        deposition_time=get_value(data, 'Deposition Time [s]'),
+        thickness=get_value(data, 'Thickness [nm]', unit='nm'),
+        substrate_temperature=get_value(data, 'Substrate temperature [°C]', unit='°C'),
+        source_temperature=get_value(data, 'Source temperature [°C]', unit='°C'),
+        substrate_source_distance=get_value(
+            data, 'Substrate source distance [mm]', unit='mm'
+        ),
+        deposition_time=get_value(data, 'Deposition Time [s]', unit='s'),
         carrier_gas=get_value(data, 'Carrier gas', None, False),
-        pressure=convert_quantity(get_value(data, 'Process pressure [bar]'), 1000),
+        pressure=get_value(data, 'Process pressure [bar]', None, unit='bar'),
         chemical_2=PubChemPureSubstanceSectionCustom(
             name=get_value(data, 'Material name', None, False), load_data=False
         ),
@@ -614,14 +695,17 @@ def map_dip_coating(i, j, lab_ids, data, upload_id, dc_class):
             PrecursorSolution(
                 solution_details=map_solutions(data),  # check unit
                 # check unit
-                solution_volume=convert_quantity(
-                    get_value(data, 'Solution volume [um]', None), 1 / 1000
+                solution_volume=get_value(
+                    data,
+                    ['Solution volume [um]', 'Solution volume [uL]'],
+                    None,
+                    unit=['uL', 'uL'],
                 ),
             )
         ],
         layer=map_layer(data),
         properties=DipCoatingProperties(
-            time=convert_quantity(get_value(data, 'Dipping duration [s]'), 1 / 60),
+            time=get_value(data, 'Dipping duration [s]', unit='s'),
         ),
         annealing=map_annealing(data),
     )
