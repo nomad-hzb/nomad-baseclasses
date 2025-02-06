@@ -211,7 +211,7 @@ def calculatePVparametersFromJV(
 
 def get_jv_data(filedata):
     
-    file_type = identify_file_type(file_content)
+    file_type = identify_file_type(filedata)
     jv_dict = {}
     
     if file_type == "labview":
