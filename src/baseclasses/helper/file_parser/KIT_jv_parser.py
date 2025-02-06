@@ -6,6 +6,12 @@ import numpy as np
 import pandas as pd
 from scipy import interpolate
 
+def identify_file_type(file_content):
+    """Identify whether the file is from LabVIEW or Python by checking for specific keywords."""
+    if "Singapore Solar Simulator, Python" in file_content:
+        return "python"
+    return "labview"
+
 
 def calculatePVparametersFromJV(
     jvData, savename, printing, enablePlot, cellArea=0.105, lineFittingDataPoints=20
@@ -185,59 +191,6 @@ def calculatePVparametersFromJV(
 
         r_shunt = (rshunt_backward, rshunt_forward)
 
-        # if np.isnan(r_s[0])==True:
-        #     pce=(np.nan,np.nan)
-        #     voc=(np.nan,np.nan)
-        #     jsc=(np.nan,np.nan)
-        #     ff=(np.nan,np.nan)
-        #     r_shunt=(np.nan,np.nan)
-        #     r_s=(np.nan,np.nan)
-
-        # if (r_s[0] > 10000) and (r_shunt[0] > 10000):
-        #     pce=(np.nan,np.nan)
-        #     voc=(np.nan,np.nan)
-        #     jsc=(np.nan,np.nan)
-        #     ff=(np.nan,np.nan)
-        #     r_shunt=(np.nan,np.nan)
-        #     r_s=(np.nan,np.nan)
-
-        # if (r_s[0] < 0) or (r_shunt[0] < 0) or (pce[0] < 0) or (voc[0] < 0)\
-        #    or (jsc[0] < 0) or (ff[0] < 0):
-        #     pce=(np.nan,np.nan)
-        #     voc=(np.nan,np.nan)
-        #     jsc=(np.nan,np.nan)
-        #     ff=(np.nan,np.nan)
-        #     r_shunt=(np.nan,np.nan)
-        #     r_s=(np.nan,np.nan)
-
-        # if (jsc[0] > 25) :
-        #     pce=(np.nan,np.nan)
-        #     voc=(np.nan,np.nan)
-        #     jsc=(np.nan,np.nan)
-        #     ff=(np.nan,np.nan)
-        #     r_shunt=(np.nan,np.nan)
-        #     r_s=(np.nan,np.nan)
-
-        if enablePlot:
-            plt.figure(figsize=(10, 5))
-            try:
-                plt.plot(v_new, m4 * v_new + b4, 'r')
-                plt.plot(v_new, m3 * v_new + b3, 'r')
-            except BaseException:
-                pass
-
-            try:
-                plt.plot(v_new, m2 * v_new + b2, 'k')
-                plt.plot(v_new, m1 * v_new + b1, 'k')
-            except BaseException:
-                pass
-
-            plt.plot(mpp[0][0], mpp[0][1], 'o')
-            plt.plot(mpp[1][0], mpp[1][1], 'o')
-            plt.plot(voc[0], 0, 'x')
-            plt.plot(voc[1], 0, 'x')
-            plt.plot(0, jsc[0], 'x')
-            plt.plot(0, jsc[1], 'x')
 
     else:
         pce = (np.nan, np.nan)
@@ -247,118 +200,166 @@ def calculatePVparametersFromJV(
         r_shunt = (np.nan, np.nan)
         r_s = (np.nan, np.nan)
 
-    s = f'pce = {pce} % \n'
-    s += f'voc = {voc} V \n'
-    s += f'jsc = {jsc} mA/cm2 \n'
-    s += f'ff = {ff} % \n'
-    s += f'r_shunt = {r_shunt} Ohm/cm2 \n'
-    s += f'r_s = {r_s} Ohm/cm2\n'
-    s += f'mpp = {mpp} mA/cm2 V'
-
-    if printing:
-        print(s)
-    props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
-
-    if enablePlot:
-        plt.plot(v_new, j_interpolated[0])
-        plt.plot(v_new, j_interpolated[1])
-
-        # plt.text(1.3, 29, s, fontsize=14, verticalalignment='top', bbox=props)
-        plt.text(
-            -0.2, -5, s, fontsize=14, verticalalignment='top', bbox=props, alpha=0.3
-        )
-        plt.axhline(y=0, xmin=-0.25, xmax=1.25, color='k')
-        plt.axvline(x=0, ymin=-2, ymax=30, color='k')
-        plt.ylim(-2, 30)
-        plt.tight_layout
-        # plt.show()
-
-    if printing:
-        print('-' * 60)
+ 
 
     return pce, voc, jsc, ff, r_shunt, r_s, mpp
 
 
+
+
+
+
 def get_jv_data(filedata):
-    df_header = pd.read_csv(
-        StringIO(filedata),
-        skiprows=0,
-        nrows=10,
-        sep='\t',
-        # index_col=0,
-        engine='python',
-    )
-
+    
+    file_type = identify_file_type(file_content)
     jv_dict = {}
-    jv_dict['active_area'] = float(df_header.iloc[1, 1])
-    jv_dict['datetime'] = f'{df_header.iloc[3, 0]} {df_header.iloc[3, 1]}'
-    # jv_dict['intensity'] = df_header.iloc[1, 1]
-    # jv_dict['integration_time'] = df_header.iloc[2, 1]
-    # jv_dict['settling_time'] = df_header.iloc[3, 1]
-    # jv_dict['averaging'] = df_header.iloc[4, 1]
-    # jv_dict['compliance'] = df_header.iloc[5, 1]
+    
+    if file_type == "labview":
+            
+        df_header = pd.read_csv(
+            StringIO(filedata),
+            skiprows=0,
+            nrows=10,
+            sep='\t',
+            # index_col=0,
+            engine='python',
+        )
+    
+        
+        jv_dict['active_area'] = float(df_header.iloc[1, 1])
+        jv_dict['datetime'] = f'{df_header.iloc[3, 0]} {df_header.iloc[3, 1]}'
+        # jv_dict['intensity'] = df_header.iloc[1, 1]
+        # jv_dict['integration_time'] = df_header.iloc[2, 1]
+        # jv_dict['settling_time'] = df_header.iloc[3, 1]
+        # jv_dict['averaging'] = df_header.iloc[4, 1]
+        # jv_dict['compliance'] = df_header.iloc[5, 1]
+    
+        jv_dict['J_sc'] = list(np.abs([float(df_header.iloc[4, 1]), float(df_header.iloc[4, 2])]))
+        jv_dict['V_oc'] = list(np.abs([float(df_header.iloc[5, 1]), float(df_header.iloc[5, 2])]))
+        jv_dict['Fill_factor'] = list([float(df_header.iloc[6, 1]), float(df_header.iloc[6, 2])])
+        jv_dict['Efficiency'] = list([float(df_header.iloc[7, 1]), float(df_header.iloc[7, 2])])
+    
+    
+        df_curves = pd.read_csv(
+            StringIO(filedata),
+            # header=0,
+            skiprows=11,
+            sep='\t',
+            engine='python',
+        )
+        
+        df_curves = df_curves.dropna(how='all', axis=1)
+    
+        if df_curves.iloc[0, 0] < 0:
+            # df_curves = df_curves*-1
+            j_columns = ['Voltage [V]']
+            df_curves[j_columns] = df_curves[j_columns] * -1
+            print('inverted')
+        else:
+            j_columns = [
+                'Current density [1] [mA/cm^2]',
+                'Current density [2] [mA/cm^2]',
+                'Average current density [mA/cm^2]',
+            ]
+            df_curves[j_columns] = df_curves[j_columns] * -1
+    
+        jv_dict['jv_curve'] = []
+        for column in range(1, len(df_curves.columns) - 1):
+            jv_dict['jv_curve'].append(
+                {
+                    'name': df_curves.columns[column],
+                    'voltage': df_curves[df_curves.columns[0]].values,
+                    'current_density': df_curves[df_curves.columns[column]].values,
+                }
+            )
+    
+        _, _, _, _, RSHUNT, RS, mpp = calculatePVparametersFromJV(
+            np.array(df_curves),
+            '',
+            printing=False,
+            enablePlot=True,
+            cellArea=jv_dict['active_area'],
+            lineFittingDataPoints=20,
+        )
+    
+        jv_dict['P_MPP'] = list(
+            (np.round(mpp[0][0] * mpp[0][1], 2), np.round(mpp[1][0] * mpp[1][1], 2))
+        )
+        jv_dict['J_MPP'] = list((mpp[0][1], mpp[1][1]))
+        jv_dict['U_MPP'] = list((mpp[0][0], mpp[1][0]))
+        jv_dict['R_ser'] = list(RS)
+        jv_dict['R_par'] = list(RSHUNT)
+            
+            
+    
+    elif file_type == "python":
+        print("python")
+        
+        df_header = pd.read_csv(
+            StringIO(file_content),
+            skiprows=0,
+            nrows=46,
+            sep='\t',
+            # index_col=0,
+            engine='python',
+        )
+        
+        
+        jv_dict['active_area'] = float(df_header.loc["PixArea:"].iloc[0])
+        jv_dict['datetime'] = f'{df_header.loc["DateTime:"].iloc[0]}'
+        # jv_dict['intensity'] = df_header.iloc[1, 1]
+        # jv_dict['integration_time'] = df_header.iloc[2, 1]
+        # jv_dict['settling_time'] = df_header.iloc[3, 1]
+        # jv_dict['averaging'] = df_header.iloc[4, 1]
+        # jv_dict['compliance'] = df_header.iloc[5, 1]
 
-    df = pd.read_csv(
-        StringIO(filedata),
-        skiprows=0,
-        nrows=10,
-        sep='\t',
-        # index_col=0,
-        engine='python',
-    )
-
-    jv_dict['J_sc'] = list(np.abs([float(df.iloc[4, 1]), float(df.iloc[4, 2])]))
-    jv_dict['V_oc'] = list(np.abs([float(df.iloc[5, 1]), float(df.iloc[5, 2])]))
-    jv_dict['Fill_factor'] = list([float(df.iloc[6, 1]), float(df.iloc[6, 2])])
-    jv_dict['Efficiency'] = list([float(df.iloc[7, 1]), float(df.iloc[7, 2])])
-
-    df_curves = pd.read_csv(
-        StringIO(filedata),
-        # header=0,
-        skiprows=11,
-        sep='\t',
-        engine='python',
-    )
-    df_curves = df_curves.dropna(how='all', axis=1)
-
-    if df_curves.iloc[0, 0] < 0:
-        # df_curves = df_curves*-1
-        j_columns = ['Voltage [V]']
-        df_curves[j_columns] = df_curves[j_columns] * -1
-        print('inverted')
-    else:
-        j_columns = [
-            'Current density [1] [mA/cm^2]',
-            'Current density [2] [mA/cm^2]',
-            'Average current density [mA/cm^2]',
-        ]
-        df_curves[j_columns] = df_curves[j_columns] * -1
-
-    jv_dict['jv_curve'] = []
-    for column in range(1, len(df_curves.columns) - 1):
-        jv_dict['jv_curve'].append(
-            {
-                'name': df_curves.columns[column],
-                'voltage': df_curves[df_curves.columns[0]].values,
-                'current_density': df_curves[df_curves.columns[column]].values,
-            }
+        jv_dict['J_sc'] = list([float(df_header.loc["Jsc"].iloc[0])])
+        jv_dict['V_oc'] = list([float(df_header.loc["Voc"].iloc[0])/1000])
+        jv_dict['Fill_factor'] = list([float(df_header.loc["FF"].iloc[0])])
+        jv_dict['Efficiency'] = list([float(df_header.loc["Eff"].iloc[0])])
+        
+        
+        
+        df_curves = pd.read_csv(
+            StringIO(file_content),
+            # header=0,
+            skiprows=48,
+            sep='\t',
+            engine='python',
         )
 
-    _, _, _, _, RSHUNT, RS, mpp = calculatePVparametersFromJV(
-        np.array(df_curves),
-        '',
-        printing=False,
-        enablePlot=True,
-        cellArea=jv_dict['active_area'],
-        lineFittingDataPoints=20,
-    )
 
-    jv_dict['P_MPP'] = list(
-        (np.round(mpp[0][0] * mpp[0][1], 2), np.round(mpp[1][0] * mpp[1][1], 2))
-    )
-    jv_dict['J_MPP'] = list((mpp[0][1], mpp[1][1]))
-    jv_dict['U_MPP'] = list((mpp[0][0], mpp[1][0]))
-    jv_dict['R_ser'] = list(RS)
-    jv_dict['R_par'] = list(RSHUNT)
+
+
+        df_curves = df_curves.dropna(how='all', axis=1)
+
+        j_columns = ['CurrentDensity','Current', ]
+        
+        df_curves[j_columns] = df_curves[j_columns] * -1
+
+
+        jv_dict['jv_curve'] = []
+        for column in range(1, len(df_curves.columns) - 1):
+            jv_dict['jv_curve'].append(
+                {
+                    'name': df_curves.columns[column],
+                    'voltage': df_curves[df_curves.columns[0]].values,
+                    'current_density': df_curves[df_curves.columns[column]].values,
+                }
+            )
+            
+            
+
+        jv_dict['P_MPP'] = list([float(df_header.loc["Pmpp"].iloc[0])])
+        jv_dict['J_MPP'] = list([float(df_header.loc["Jmpp"].iloc[0])])
+        jv_dict['U_MPP'] = list([float(df_header.loc["Vmpp"].iloc[0])/1000])
+        jv_dict['R_ser'] = list([float(df_header.loc["Roc"].iloc[0])])
+        jv_dict['R_par'] = list([float(df_header.loc["Rsc"].iloc[0])])
+             
+        
+
 
     return jv_dict
+
+
+
