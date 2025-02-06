@@ -95,8 +95,8 @@ class BioLogicProperties(PotentiostatProperties):
 
     battery_capacity = Quantity(
         type=np.dtype(np.float64),
-        unit=('A*h'),  # TODO check unit
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='A*h'),
+        unit=('A*hour'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='A*hour'),
     )
 
     # TODO more Quantities:

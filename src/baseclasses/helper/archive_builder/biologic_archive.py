@@ -37,11 +37,10 @@ def get_biologic_properties(metadata):
     properties.electrode_area = metadata.get('electrode_area')
     properties.reference_electrode = metadata.get('reference_electrode')
     properties.characteristic_mass = metadata.get('characteristic_mass')
-    battery_capacity_unit = (
-        ureg(metadata.get('battery_capacity_unit'))
-        if metadata.get('battery_capacity_unit') is not None
-        else ureg('Ah')
-    )
+    if metadata.get('battery_capacity_unit') is 0 or metadata.get('battery_capacity_unit') is None:
+        battery_capacity_unit = ureg('A*hour')
+    else:
+        battery_capacity_unit = ureg(metadata.get('battery_capacity_unit'))
     properties.battery_capacity = (
         metadata.get('battery_capacity') * battery_capacity_unit
     )
@@ -175,13 +174,11 @@ def get_eis_data(data, cycle):
         or isinstance(cycle, EISCycle)
     )
 
-    cycle.time = np.array(data.get('time')) * ureg(
-        's'
-    )  # TODO test if get instead of None stuff works TODO check unit s
+    cycle.time = np.array(data.get('time')) * ureg('s')
     cycle.frequency = np.array(data.get('freq')) * ureg('Hz')
-    cycle.z_real = np.array(data.get('Re(Z)')) * ureg('Ohm')
-    cycle.z_imaginary = np.array(data.get('-Im(Z)')) * ureg('Ohm')
-    cycle.z_modulus = np.array(data.get('|Z|')) * ureg('Ohm')
+    cycle.z_real = np.array(data.get('Re(Z)')) * ureg('ohm')
+    cycle.z_imaginary = np.array(data.get('-Im(Z)')) * ureg('ohm')
+    cycle.z_modulus = np.array(data.get('|Z|')) * ureg('ohm')
     cycle.z_angle = np.array(data.get('Phase(Z)')) * ureg('deg')
 
 
@@ -193,8 +190,9 @@ def get_voltammetry_data(data, cycle):
     )
     time = data.get('time')
     current = data.get('<I>')
-    voltage = data.get('Ewe') or data.get('<Ewe>')
+    voltage = data.get('Ewe') if data.get('Ewe') is not None else data.get('<Ewe>')
     charge = data.get('(Q-Qo)')
+
     cycle.time = (
         np.array(time.data) * ureg(time.attrs.get('units'))
         if time is not None
@@ -210,6 +208,7 @@ def get_voltammetry_data(data, cycle):
         if voltage is not None
         else None
     )
+    ureg.define('h = hour')
     cycle.charge = (
         np.array(charge.data) * ureg(charge.attrs.get('units'))
         if charge is not None
@@ -225,19 +224,19 @@ def get_voltammetry_archive(data, metadata, entry_class, multiple=False):
     if len(data.data_vars) == 0:
         return
 
-    data_grouped_by_cycles = data.ds.groupby('cycle number')
-    if len(data_grouped_by_cycles) > 1 or multiple:
-        if entry_class.cycles is None or len(entry_class.cycles) == 0:
-            entry_class.cycles = []
-            for cycle_number, cycle_data in data_grouped_by_cycles:
-                cycle = VoltammetryCycleWithPlot()
-                get_voltammetry_data(cycle_data.data_vars, cycle)
-                entry_class.cycles.append(cycle)
-
-    if len(data_grouped_by_cycles) == 1 and not multiple:
-        get_voltammetry_data(data_grouped_by_cycles[1], entry_class)
-
     get_meta_data(metadata, entry_class)
     entry_class.datetime = datetime.fromtimestamp(
-        data.get('time')[0]
-    )  # TODO check if really first value of time data is selcted like that
+        data.get('time')[0].item()
+    )  # TODO check what time to use this seems to be seconds??
+
+    if data.ds.get('cycle number') is None and not multiple:
+        get_voltammetry_data(data, entry_class) # todo darüber nachdenken weil alles innerhalb von cycle (curent, charge etc verloren geht?  ah moment das stimmt nicht, es geht verloren was nicht im entry definiert ist also nur charge
+        return
+
+    data_grouped_by_cycles = data.ds.groupby('cycle number')
+    if entry_class.cycles is None or len(entry_class.cycles) == 0:
+        entry_class.cycles = []
+        for cycle_number, cycle_data in data_grouped_by_cycles:
+            cycle = VoltammetryCycleWithPlot()
+            get_voltammetry_data(cycle_data.data_vars, cycle)
+            entry_class.cycles.append(cycle)
