@@ -234,10 +234,10 @@ def get_jv_data(filedata):
         # jv_dict['averaging'] = df_header.iloc[4, 1]
         # jv_dict['compliance'] = df_header.iloc[5, 1]
     
-        jv_dict['J_sc'] = list(np.abs([float(df_header.iloc[4, 1]), float(df_header.iloc[4, 2])]))
-        jv_dict['V_oc'] = list(np.abs([float(df_header.iloc[5, 1]), float(df_header.iloc[5, 2])]))
-        jv_dict['Fill_factor'] = list([float(df_header.iloc[6, 1]), float(df_header.iloc[6, 2])])
-        jv_dict['Efficiency'] = list([float(df_header.iloc[7, 1]), float(df_header.iloc[7, 2])])
+        # jv_dict['J_sc'] = list(np.abs([float(df_header.iloc[4, 1]), float(df_header.iloc[4, 2])]))
+        # jv_dict['V_oc'] = list(np.abs([float(df_header.iloc[5, 1]), float(df_header.iloc[5, 2])]))
+        # jv_dict['Fill_factor'] = list([float(df_header.iloc[6, 1]), float(df_header.iloc[6, 2])])
+        # jv_dict['Efficiency'] = list([float(df_header.iloc[7, 1]), float(df_header.iloc[7, 2])])
     
     
         df_curves = pd.read_csv(
@@ -273,7 +273,7 @@ def get_jv_data(filedata):
                 }
             )
     
-        _, _, _, _, RSHUNT, RS, mpp = calculatePVparametersFromJV(
+        pce, voc, jsc, ff, RSHUNT, RS, mpp = calculatePVparametersFromJV(
             np.array(df_curves),
             '',
             printing=False,
@@ -290,13 +290,18 @@ def get_jv_data(filedata):
         jv_dict['R_ser'] = list(RS)
         jv_dict['R_par'] = list(RSHUNT)
             
+        jv_dict['J_sc'] = list(jsc)
+        jv_dict['V_oc'] = list(voc)
+        jv_dict['Fill_factor'] = list(ff)
+        jv_dict['Efficiency'] = list(pce)
+
             
     
     elif file_type == "python":
         print("python")
         
         df_header = pd.read_csv(
-            StringIO(file_content),
+            StringIO(filedata),
             skiprows=0,
             nrows=46,
             sep='\t',
@@ -313,22 +318,22 @@ def get_jv_data(filedata):
         # jv_dict['averaging'] = df_header.iloc[4, 1]
         # jv_dict['compliance'] = df_header.iloc[5, 1]
 
-        jv_dict['J_sc'] = list([float(df_header.loc["Jsc"].iloc[0])])
-        jv_dict['V_oc'] = list([float(df_header.loc["Voc"].iloc[0])/1000])
-        jv_dict['Fill_factor'] = list([float(df_header.loc["FF"].iloc[0])])
-        jv_dict['Efficiency'] = list([float(df_header.loc["Eff"].iloc[0])])
+        # jv_dict['J_sc'] = list([float(df_header.loc["Jsc"].iloc[0])])
+        # jv_dict['V_oc'] = list([float(df_header.loc["Voc"].iloc[0])/1000])
+        # jv_dict['Fill_factor'] = list([float(df_header.loc["FF"].iloc[0])])
+        # jv_dict['Efficiency'] = list([float(df_header.loc["Eff"].iloc[0])])
         
         
         
         df_curves = pd.read_csv(
-            StringIO(file_content),
+            StringIO(filedata),
             # header=0,
             skiprows=48,
             sep='\t',
             engine='python',
         )
 
-
+        
 
 
         df_curves = df_curves.dropna(how='all', axis=1)
@@ -336,6 +341,8 @@ def get_jv_data(filedata):
         j_columns = ['CurrentDensity','Current', ]
         
         df_curves[j_columns] = df_curves[j_columns] * -1
+
+        df_curves['Current']=df_curves['CurrentDensity'].copy()
 
 
         jv_dict['jv_curve'] = []
@@ -347,16 +354,36 @@ def get_jv_data(filedata):
                     'current_density': df_curves[df_curves.columns[column]].values,
                 }
             )
-            
-            
-
-        jv_dict['P_MPP'] = list([float(df_header.loc["Pmpp"].iloc[0])])
-        jv_dict['J_MPP'] = list([float(df_header.loc["Jmpp"].iloc[0])])
-        jv_dict['U_MPP'] = list([float(df_header.loc["Vmpp"].iloc[0])/1000])
-        jv_dict['R_ser'] = list([float(df_header.loc["Roc"].iloc[0])])
-        jv_dict['R_par'] = list([float(df_header.loc["Rsc"].iloc[0])])
              
+        pce, voc, jsc, ff, RSHUNT, RS, mpp = calculatePVparametersFromJV(
+            np.array(df_curves),
+            '',
+            printing=False,
+            enablePlot=True,
+            cellArea=jv_dict['active_area'],
+            lineFittingDataPoints=20,
+        )
+
         
+        # jv_dict['P_MPP'] = list([float(df_header.loc["Pmpp"].iloc[0])])
+        # jv_dict['J_MPP'] = list([float(df_header.loc["Jmpp"].iloc[0])])
+        # jv_dict['U_MPP'] = list([float(df_header.loc["Vmpp"].iloc[0])/1000])
+        # jv_dict['R_ser'] = list([float(df_header.loc["Roc"].iloc[0])])
+        # jv_dict['R_par'] = list([float(df_header.loc["Rsc"].iloc[0])])
+             
+        jv_dict['P_MPP'] = list([
+            (np.round(mpp[0][0] * mpp[0][1], 2))]
+        )
+        jv_dict['J_MPP'] = list([mpp[0][1]])
+        jv_dict['U_MPP'] = list([mpp[0][0]])
+        jv_dict['R_ser'] = list([RS[0]])
+        jv_dict['R_par'] = list([RSHUNT[0]])
+            
+        jv_dict['J_sc'] = list([jsc[0]])
+        jv_dict['V_oc'] = list([voc[0]])
+        jv_dict['Fill_factor'] = list([ff[0]])
+        jv_dict['Efficiency'] = list([pce[0]])
+             
 
 
     return jv_dict
