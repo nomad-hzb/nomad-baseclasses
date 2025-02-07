@@ -26,7 +26,7 @@ from baseclasses.solar_energy.jvmeasurement import (
 )
 
 
-def get_jv_archive(jv_dict, mainfile, jvm):
+def get_jv_archive(jv_dict, mainfile, jvm, append=False):
     jvm.file_name = os.path.basename(mainfile)
     if jv_dict.get('datetime'):
         jvm.datetime = jv_dict.get('datetime')
@@ -38,7 +38,8 @@ def get_jv_archive(jv_dict, mainfile, jvm):
     jvm.settling_time = jv_dict['settling_time'] if 'settling_time' in jv_dict else None
     jvm.averaging = jv_dict['averaging'] if 'averaging' in jv_dict else None
     jvm.compliance = jv_dict['compliance'] if 'compliance' in jv_dict else None
-    jvm.jv_curve = []
+    if not append:
+        jvm.jv_curve = []
     light_idx = 0
     for curve_idx, curve in enumerate(jv_dict['jv_curve']):
         if curve.get('dark'):
