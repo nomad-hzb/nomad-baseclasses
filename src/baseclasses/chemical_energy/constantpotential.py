@@ -17,6 +17,56 @@
 #
 
 from .. import BaseMeasurement
+from .potentiostat_measurement import PotentiostatProperties
+from baseclasses.chemical_energy.chronoamperometry import CAProperties
+from baseclasses.chemical_energy.chronopotentiometry import CPProperties
+import numpy as np
+from nomad.metainfo import Quantity
+
+class ConstProperties(PotentiostatProperties):
+    total_time = Quantity(
+        type=np.dtype(np.float64),
+        unit=('s'),
+        shape=[],
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
+    )
+
+    sample_period = Quantity(
+        type=np.dtype(np.float64),
+        unit=('s'),
+        shape=[],
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
+    )
+
+    lower_limit_potential = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007214'],
+        type=np.dtype(np.float64),
+        unit=('V'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
+
+    upper_limit_potential = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007215'],
+        type=np.dtype(np.float64),
+        unit=('V'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
+
+    cycles = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007228'],
+        type=np.dtype(np.float64),
+        a_eln=dict(component='NumberEditQuantity'),
+    )
+
+
+class ConstCProperties(ConstProperties, CPProperties):
+    def normalize(self, archive, logger):
+        super().normalize(archive, logger)
+
+
+class ConstVProperties(ConstProperties, CAProperties):
+    def normalize(self, archive, logger):
+        super().normalize(archive, logger)
 
 
 class ConstantPotential(BaseMeasurement):

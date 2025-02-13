@@ -44,7 +44,9 @@ from .cyclicvoltammetry import CVProperties, CyclicVoltammetry
 from .diamondsample import DiamondSample
 from .electrochemical_impedance_spectroscopy import (
     EISProperties,
+    EISPropertiesWithData,
     ElectrochemicalImpedanceSpectroscopy,
+    ElectrochemicalImpedanceSpectroscopyMultiple,
 )
 from .electrolyser_performance import (
     ElectrolyserPerformanceEvaluation,
