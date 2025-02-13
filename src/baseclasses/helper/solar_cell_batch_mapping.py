@@ -474,7 +474,11 @@ def map_substrate(data, substrate_class):
         + get_value(data, 'Substrate material', '', False)
         + ' '
         + get_value(data, 'Substrate conductive layer', '', False),
-        solar_cell_area=get_value(data, 'Sample area [cm^2]', ''),
+        solar_cell_area=get_value(data, 'Sample area [cm^2]', None, unit=['cm**2']),
+        pixel_area=get_value(
+            data, ['Pixel area', 'Pixel area [cm^2]'], None, unit=['cm**2', 'cm**2']
+        ),
+        number_of_pixels=get_value(data, 'Number of pixels', None),
         substrate=get_value(data, 'Substrate material', '', False),
         description=get_value(data, 'Notes', '', False),
         lab_id=get_value(data, 'Bottom Cell Name', '', False),
