@@ -8,9 +8,11 @@ from nomad.units import ureg
 import baseclasses
 from baseclasses.chemical_energy.chronoamperometry import CAProperties
 from baseclasses.chemical_energy.chronocoulometry import CCProperties
-from baseclasses.chemical_energy.constantpotential import ConstCProperties
-from baseclasses.chemical_energy.constantpotential import ConstVProperties
 from baseclasses.chemical_energy.chronopotentiometry import CPProperties
+from baseclasses.chemical_energy.constantpotential import (
+    ConstCProperties,
+    ConstVProperties,
+)
 from baseclasses.chemical_energy.cyclicvoltammetry import CVProperties
 from baseclasses.chemical_energy.electrochemical_impedance_spectroscopy import (
     EISCycle,
@@ -33,6 +35,7 @@ def get_nomad_measured_against_enum(biologic_measured_against):
     else:
         return None
 
+
 def get_biologic_properties(metadata):
     settings = BioLogicSetting()
     settings.comments = metadata.get('comments')
@@ -47,13 +50,14 @@ def get_biologic_properties(metadata):
     settings.sample_area = metadata.get('electrode_area')
     settings.reference_electrode = metadata.get('reference_electrode')
     settings.characteristic_mass = metadata.get('characteristic_mass')
-    if metadata.get('battery_capacity_unit') is 0 or metadata.get('battery_capacity_unit') is None:
+    if (
+        metadata.get('battery_capacity_unit') == 0
+        or metadata.get('battery_capacity_unit') is None
+    ):
         battery_capacity_unit = ureg('A*hour')
     else:
         battery_capacity_unit = ureg(metadata.get('battery_capacity_unit'))
-    settings.battery_capacity = (
-        metadata.get('battery_capacity') * battery_capacity_unit
-    )
+    settings.battery_capacity = metadata.get('battery_capacity') * battery_capacity_unit
     settings.analog_in_1 = metadata.get('Analog IN 1')
     settings.analog_in_1_max_V = metadata.get('Analog IN 1 max V')
     settings.analog_in_1_min_V = metadata.get('Analog IN 1 min V')
@@ -73,10 +77,13 @@ def get_ca_properties(metadata, cc=False):
         properties = CCProperties()
 
     properties.pre_step_potential = metadata.get('Ei (V)')
-    properties.pre_step_potential_measured_against = get_nomad_measured_against_enum(metadata.get('Ei (V) vs.'))
+    properties.pre_step_potential_measured_against = get_nomad_measured_against_enum(
+        metadata.get('Ei (V) vs.')
+    )
     properties.pre_step_delay_time = metadata.get('ti (h:m:s)')
     properties.sample_period = metadata.get('dta (s)')
     return properties
+
 
 def get_const_properties(metadata, constC=False):
     properties = ConstVProperties()
@@ -99,10 +106,13 @@ def get_const_properties(metadata, constC=False):
         properties.step_1_time = metadata.get('ts (h:m:s)')
     else:
         properties.pre_step_potential = metadata.get('Ei (V)')
-        properties.pre_step_potential_measured_against = get_nomad_measured_against_enum(metadata.get('Ei (V) vs.'))
+        properties.pre_step_potential_measured_against = (
+            get_nomad_measured_against_enum(metadata.get('Ei (V) vs.'))
+        )
         properties.pre_step_delay_time = metadata.get('ti (h:m:s)')
         properties.sample_period = metadata.get('dta (s)')
     return properties
+
 
 def get_cp_properties(metadata, cc=False):
     properties = CPProperties()
@@ -126,13 +136,21 @@ def get_cv_properties(metadata):
     properties = CVProperties()
 
     properties.initial_potential = metadata.get('Ei (V)')
-    properties.initial_potential_measured_against = get_nomad_measured_against_enum(metadata.get('Ei (V) vs.'))
+    properties.initial_potential_measured_against = get_nomad_measured_against_enum(
+        metadata.get('Ei (V) vs.')
+    )
     properties.limit_potential_1 = metadata.get('E1 (V)')
-    properties.limit_potential_1_measured_against = get_nomad_measured_against_enum(metadata.get('E1 (V) vs.'))
+    properties.limit_potential_1_measured_against = get_nomad_measured_against_enum(
+        metadata.get('E1 (V) vs.')
+    )
     properties.limit_potential_2 = metadata.get('E2 (V)')
-    properties.limit_potential_2_measured_against = get_nomad_measured_against_enum(metadata.get('E2 (V) vs.'))
+    properties.limit_potential_2_measured_against = get_nomad_measured_against_enum(
+        metadata.get('E2 (V) vs.')
+    )
     properties.final_potential = metadata.get('Ef (V)')
-    properties.final_potential_measured_against = get_nomad_measured_against_enum(metadata.get('Ef (V) vs.'))
+    properties.final_potential_measured_against = get_nomad_measured_against_enum(
+        metadata.get('Ef (V) vs.')
+    )
     scan_rate_unit = metadata.get('dE/dt unit')
     scan_rate_unit = 'mV/s' if scan_rate_unit == [1] else scan_rate_unit
     properties.scan_rate = metadata.get('dE/dt') * ureg(scan_rate_unit)
@@ -153,14 +171,24 @@ def get_eis_properties(metadata):
         properties = EISPropertiesWithData()
         if dc_voltage:
             properties.dc_voltage = dc_voltage[cycle]
-            properties.dc_voltage_measured_against = get_nomad_measured_against_enum(metadata.get('E (V) vs.')[cycle])
+            properties.dc_voltage_measured_against = get_nomad_measured_against_enum(
+                metadata.get('E (V) vs.')[cycle]
+            )
         if unit_initial_freq:
-            properties.initial_frequency = metadata.get('fi')[cycle] * ureg(unit_initial_freq[cycle])
+            properties.initial_frequency = metadata.get('fi')[cycle] * ureg(
+                unit_initial_freq[cycle]
+            )
         if unit_final_freq:
-            properties.final_frequency = metadata.get('ff')[cycle] * ureg(unit_final_freq[cycle])
+            properties.final_frequency = metadata.get('ff')[cycle] * ureg(
+                unit_final_freq[cycle]
+            )
         if nd and points:
-            properties.points_per_decade = metadata.get('Nd')[cycle] * metadata.get('Points')[cycle]
-        properties.ac_voltage = metadata.get('Va (mV)')[cycle] if metadata.get('Va (mV)', []) else None
+            properties.points_per_decade = (
+                metadata.get('Nd')[cycle] * metadata.get('Points')[cycle]
+            )
+        properties.ac_voltage = (
+            metadata.get('Va (mV)')[cycle] if metadata.get('Va (mV)', []) else None
+        )
         property_list.append(properties)
     return property_list
 
@@ -169,9 +197,13 @@ def get_lsv_properties(metadata):
     properties = LSVProperties()
 
     properties.initial_potential = metadata.get('Ei (V)')
-    properties.initial_potential_measured_against = get_nomad_measured_against_enum(metadata.get('Ei (V) vs.'))
+    properties.initial_potential_measured_against = get_nomad_measured_against_enum(
+        metadata.get('Ei (V) vs.')
+    )
     properties.final_potential = metadata.get('EL (V)')
-    properties.final_potential_measured_against = get_nomad_measured_against_enum(metadata.get('EL (V) vs.'))
+    properties.final_potential_measured_against = get_nomad_measured_against_enum(
+        metadata.get('EL (V) vs.')
+    )
     scan_rate_unit = metadata.get('dE/dt unit')
     scan_rate_unit = 'mV/s' if scan_rate_unit == [1] else scan_rate_unit
     properties.scan_rate = metadata.get('dE/dt') * ureg(scan_rate_unit)
@@ -204,7 +236,7 @@ def get_eis_data(data, measurement_list):
     cycle_start_indices = np.where(np.diff(cycle_indices) != 0)[0] + 1
 
     # cycle_start_indices does not contain start of first cycle
-    if len(cycle_start_indices)+1 != len(measurement_list):
+    if len(cycle_start_indices) + 1 != len(measurement_list):
         return
 
     time = np.split(data.get('time', []), cycle_start_indices)
@@ -261,7 +293,10 @@ def get_voltammetry_data(data, cycle):
 
 def get_start_time(ole_timestamp, start_time_offset):
     ole_epoch = datetime(1899, 12, 30)
-    return ole_epoch + timedelta(days=ole_timestamp) + timedelta(seconds=start_time_offset)
+    return (
+        ole_epoch + timedelta(days=ole_timestamp) + timedelta(seconds=start_time_offset)
+    )
+
 
 def get_voltammetry_archive(data, metadata, entry_class, multiple=False):
     if len(data.data_vars) == 0:

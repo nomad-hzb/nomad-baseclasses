@@ -75,9 +75,7 @@ class BioLogicSetting(PotentiostatProperties):
 
     electrolyte = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
-    reference_electrode = Quantity(
-        type=str, a_eln=dict(component='StringEditQuantity')
-    )
+    reference_electrode = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
     characteristic_mass = Quantity(
         type=np.dtype(np.float64),
@@ -91,9 +89,7 @@ class BioLogicSetting(PotentiostatProperties):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='A*hour'),
     )
 
-    analog_in_1 = Quantity(
-        type=str, a_eln=dict(component='StringEditQuantity')
-    )
+    analog_in_1 = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
     analog_in_1_max_V = Quantity(
         type=np.dtype(np.float64),
@@ -119,9 +115,7 @@ class BioLogicSetting(PotentiostatProperties):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
     )
 
-    analog_in_2 = Quantity(
-        type=str, a_eln=dict(component='StringEditQuantity')
-    )
+    analog_in_2 = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
     analog_in_2_max_V = Quantity(
         type=np.dtype(np.float64),

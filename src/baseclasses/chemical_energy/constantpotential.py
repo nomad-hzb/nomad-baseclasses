@@ -16,12 +16,15 @@
 # limitations under the License.
 #
 
-from .. import BaseMeasurement
-from .potentiostat_measurement import PotentiostatProperties
-from baseclasses.chemical_energy.chronoamperometry import CAProperties
-from baseclasses.chemical_energy.chronopotentiometry import CPProperties
 import numpy as np
 from nomad.metainfo import Quantity
+
+from baseclasses.chemical_energy.chronoamperometry import CAProperties
+from baseclasses.chemical_energy.chronopotentiometry import CPProperties
+
+from .. import BaseMeasurement
+from .potentiostat_measurement import PotentiostatProperties
+
 
 class ConstProperties(PotentiostatProperties):
     total_time = Quantity(
