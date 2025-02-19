@@ -206,7 +206,10 @@ class NECCExperimentalProperties(ArchiveSection):
     )
 
     remarks = Quantity(
-        type=str, a_eln=dict(component='RichTextEditQuantity', label='Remarks')
+        type=str,
+        a_eln=dict(
+            component='RichTextEditQuantity', props=dict(height=150), label='Remarks'
+        ),
     )
 
     def normalize(self, archive, logger):
@@ -341,6 +344,12 @@ class NECCPotentiostatMeasurement(ArchiveSection):
         ],
     )
 
+    capacity = Quantity(
+        type=np.dtype(np.float64),
+        shape=['*'],
+        unit='C',
+    )
+
     mean_current = Quantity(type=np.dtype(np.float64), unit='mA')
     standard_deviation_current = Quantity(type=np.dtype(np.float64), unit='mA')
     minimum_current = Quantity(type=np.dtype(np.float64), unit='mA')
@@ -366,6 +375,8 @@ class NECCPotentiostatMeasurement(ArchiveSection):
     )
     minimum_ewe_ece_difference = Quantity(type=np.dtype(np.float64), unit='V')
     maximum_ewe_ece_difference = Quantity(type=np.dtype(np.float64), unit='V')
+
+    maximum_capacity = Quantity(type=np.dtype(np.float64), unit='C')
 
     def calculate_statistics(self, quantity, quantity_name):
         supported_quantities = {
@@ -400,6 +411,9 @@ class NECCPotentiostatMeasurement(ArchiveSection):
             self.counter_electrode_potential, 'counter_electrode_potential'
         )
         self.calculate_statistics(self.ewe_ece_difference, 'ewe_ece_difference')
+        self.maximum_capacity = (
+            max(self.capacity) if self.capacity is not None else None
+        )
 
 
 class ThermocoupleMeasurement(PlotSection, ArchiveSection):
@@ -531,7 +545,7 @@ class GasFEResults(ArchiveSection):
     maximum_fe = Quantity(type=np.dtype(np.float64))
 
     def normalize(self, archive, logger):
-        if any(fe < -100 for fe in self.faradaic_efficiency):
+        if any(fe > 100 for fe in self.faradaic_efficiency):
             self.faradaic_efficiency = [0] * len(self.faradaic_efficiency)
             logger.warn(
                 f'The FE of {self.gas_type} is removed because it is more than 100%. '
@@ -561,6 +575,10 @@ class PotentiometryGasChromatographyResults(ArchiveSection):
         shape=['*'],
         description='Total faradaic efficiency specified in %',
     )
+
+    pH_start = Quantity(type=np.dtype(np.float64))
+
+    pH_end = Quantity(type=np.dtype(np.float64))
 
     def normalize(self, archive, logger):
         for gas_result in self.gas_results:
@@ -602,6 +620,21 @@ class CENECCExperimentID(ReadableIdentifiersCustom):
         create_id(archive, self.lab_id)
 
 
+class ResultProperties(ArchiveSection):
+    anode_material = Quantity(type=str)
+    anode_deposition_method = Quantity(type=str)
+    anode_substrate_type = Quantity(type=str)
+    anode_ionomer_type = Quantity(type=str)
+
+    cathode_material = Quantity(type=str)
+    cathode_deposition_method = Quantity(type=str)
+    cathode_substrate_type = Quantity(type=str)
+    cathode_ionomer_type = Quantity(type=str)
+
+    def normalize(self, archive, logger):
+        super().normalize(archive, logger)
+
+
 class PotentiometryGasChromatographyMeasurement(BaseMeasurement):
     data_file = Quantity(
         type=str,
@@ -623,8 +656,59 @@ class PotentiometryGasChromatographyMeasurement(BaseMeasurement):
 
     fe_results = SubSection(section_def=PotentiometryGasChromatographyResults)
 
+    result_properties = SubSection(section_def=ResultProperties)
+
+    def get_result_properties_from_recipe(self, recipe):
+        if recipe is None:
+            return None, None, None, None
+        try:
+            material = recipe.electrode_recipe_id.element
+        except Exception:
+            material = None
+        try:
+            deposition = recipe.electrode_recipe_id.deposition_method
+        except Exception:
+            deposition = None
+        try:
+            substrate = recipe.substrate.substrate_type
+        except Exception:
+            substrate = None
+        try:
+            ionomer = recipe.ionomer[0].type
+        except Exception:
+            ionomer = None
+        return material, deposition, substrate, ionomer
+
     def normalize(self, archive, logger):
         self.experiment_id = CENECCExperimentID()
         self.experiment_id.normalize(archive, logger)
         self.potentiometry.normalize(archive, logger)
+        if self.properties is not None:
+            self.result_properties = ResultProperties()
+            if self.properties.anode is not None:
+                try:
+                    recipe = self.properties.anode.reference.electrode_id.recipe
+                except Exception as e:
+                    logger.info(e)
+                    recipe = None
+                material, deposition, substrate, ionomer = (
+                    self.get_result_properties_from_recipe(recipe)
+                )
+                self.result_properties.anode_material = material
+                self.result_properties.anode_deposition_method = deposition
+                self.result_properties.anode_substrate_type = substrate
+                self.result_properties.anode_ionomer_type = ionomer
+            if self.properties.cathode is not None:
+                try:
+                    recipe = self.properties.cathode.reference.electrode_id.recipe
+                except Exception as e:
+                    logger.info(e)
+                    recipe = None
+                material, deposition, substrate, ionomer = (
+                    self.get_result_properties_from_recipe(recipe)
+                )
+                self.result_properties.cathode_material = material
+                self.result_properties.cathode_deposition_method = deposition
+                self.result_properties.cathode_substrate_type = substrate
+                self.result_properties.cathode_ionomer_type = ionomer
         super().normalize(archive, logger)
