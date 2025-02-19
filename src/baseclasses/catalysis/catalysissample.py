@@ -136,7 +136,7 @@ class SynthesisVariation(ArchiveSection):
     )
 
     variation_value_number = Quantity(
-        type=str,
+        type=float,
         description="""
         The numerical value of a continous paramter which is varied over a campaign
         """,
