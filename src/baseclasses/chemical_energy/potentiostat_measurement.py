@@ -20,7 +20,9 @@ import os
 
 import numpy as np
 import pandas as pd
+from nomad.atomutils import Formula
 from nomad.datamodel.data import ArchiveSection
+from nomad.datamodel.results import Material, Results
 from nomad.metainfo import Quantity, Reference, Section, SectionProxy, SubSection
 
 from .. import BaseMeasurement
@@ -36,22 +38,21 @@ class PotentiostatProperties(ArchiveSection):
     )
 
 
-class BioLogicProperties(PotentiostatProperties):
+class BioLogicSetting(PotentiostatProperties):
     active_material_mass = Quantity(
         type=np.dtype(np.float64),
-        unit=('cm^2'),  # TODO
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'),
+        unit=('g'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='g'),
     )
 
     at_x = Quantity(
         type=np.dtype(np.float64),
-        unit=('cm^2'),  # TODO
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'),
+        a_eln=dict(component='NumberEditQuantity'),
     )
 
     molecular_weight = Quantity(
         type=np.dtype(np.float64),
-        unit=('g/mol'),  # TODO
+        unit=('g/mol'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='g/mol'),
     )
 
@@ -61,47 +62,95 @@ class BioLogicProperties(PotentiostatProperties):
 
     acquisition_start = Quantity(
         type=np.dtype(np.float64),
-        unit=('cm^2'),  # TODO
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'),
+        unit=('s'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
     )
 
     e_transferred = Quantity(
-        type=np.dtype(np.float64),  # TODO maybe int
-        unit=('g/mol'),  # TODO
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='g/mol'),
+        type=np.dtype(np.int32),
+        a_eln=dict(component='NumberEditQuantity'),
     )
 
     electrode_material = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
     electrolyte = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
-    electrode_area = (
-        Quantity(  # TODO is the same as sample area which is already inherited?
-            type=np.dtype(np.float64),
-            unit=('g/mol'),  # TODO
-            a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='g/mol'),
-        )
-    )
-
-    reference_electrode = Quantity(
-        type=str, a_eln=dict(component='StringEditQuantity')
-    )  # TODO maybe reference to electrode in system?
+    reference_electrode = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
     characteristic_mass = Quantity(
         type=np.dtype(np.float64),
-        unit=('g/mol'),  # TODO
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='g/mol'),
+        unit=('g'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='g'),
     )
 
     battery_capacity = Quantity(
         type=np.dtype(np.float64),
-        unit=('A*h'),  # TODO check unit
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='A*h'),
+        unit=('A*hour'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='A*hour'),
     )
 
-    # TODO more Quantities:
-    #  Analog IN 1, Analog IN 1 max V, Analog IN 1 min V, Analog IN 1 max x, Analog IN 1 min x,
-    #  Analog IN 2, Analog IN 2 max V, Analog IN 2 min V, Analog IN 2 max x, Analog IN 2 min x
+    analog_in_1 = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
+
+    analog_in_1_max_V = Quantity(
+        type=np.dtype(np.float64),
+        unit=('V'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
+
+    analog_in_1_min_V = Quantity(
+        type=np.dtype(np.float64),
+        unit=('V'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
+
+    analog_in_1_max_x = Quantity(
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
+
+    analog_in_1_min_x = Quantity(
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
+
+    analog_in_2 = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
+
+    analog_in_2_max_V = Quantity(
+        type=np.dtype(np.float64),
+        unit=('V'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
+
+    analog_in_2_min_V = Quantity(
+        type=np.dtype(np.float64),
+        unit=('V'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
+
+    analog_in_2_max_x = Quantity(
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
+
+    analog_in_2_min_x = Quantity(
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
+
+    def normalize(self, archive, logger):
+        if self.electrode_material and not archive.results:
+            archive.results = Results()
+            archive.results.material = Material()
+        try:
+            formula = Formula(self.electrode_material, unknown='remove')
+            archive.results.material.elements = list(set(formula.elements()))
+        except Exception as e:
+            logger.warn('Could not analyse material', exc_info=e)
+        super().normalize(archive, logger)
 
 
 class VoltammetryCycle(ArchiveSection):
