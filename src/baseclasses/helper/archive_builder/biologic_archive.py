@@ -90,11 +90,11 @@ def get_const_properties(metadata, constC=False):
     if constC:
         properties = ConstCProperties()
 
-    properties.total_time = metadata.get('tR (h:m:s)')
-    properties.sample_period = metadata.get('dtR (s)')
-    properties.lower_limit_potential = metadata.get('E range min (V)')
-    properties.upper_limit_potential = metadata.get('E range max (V)')
-    properties.cycles = metadata.get('nc cycles')
+    properties.total_time = metadata.get('tR (h:m:s)')[0]
+    properties.sample_period = metadata.get('dtR (s)')[0]
+    properties.lower_limit_potential = metadata.get('E range min (V)')[0]
+    properties.upper_limit_potential = metadata.get('E range max (V)')[0]
+    properties.cycles = metadata.get('nc cycles')[0]
 
     if constC:
         current_unit = (
@@ -102,8 +102,8 @@ def get_const_properties(metadata, constC=False):
             if metadata.get('unit Is') is not None
             else ureg('A')
         )
-        properties.step_1_current = metadata.get('Is') * current_unit
-        properties.step_1_time = metadata.get('ts (h:m:s)')
+        properties.step_1_current = metadata.get('Is')[0] * current_unit
+        properties.step_1_time = metadata.get('ts (h:m:s)')[0]
     else:
         properties.pre_step_potential = metadata.get('Ei (V)')
         properties.pre_step_potential_measured_against = (

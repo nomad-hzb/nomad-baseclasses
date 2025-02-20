@@ -144,7 +144,7 @@ class BioLogicSetting(PotentiostatProperties):
     def normalize(self, archive, logger):
         if self.electrode_material and not archive.results:
             archive.results = Results()
-        archive.results.material = Material()
+            archive.results.material = Material()
         try:
             formula = Formula(self.electrode_material, unknown='remove')
             archive.results.material.elements = list(set(formula.elements()))
