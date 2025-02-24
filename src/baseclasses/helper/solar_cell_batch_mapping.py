@@ -155,9 +155,7 @@ def map_solutions(data):
             )
         )
     for solute in sorted(set(solutes)):
-        if not get_value(data, f'{solute} type', None, False) and not get_value(
-            data, f'{solute} Concentration [mM]', None
-        ):
+        if not get_value(data, f'{solute} type', None, False):
             continue
 
         final_solutes.append(
