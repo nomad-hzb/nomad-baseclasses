@@ -138,10 +138,6 @@ def map_solutions(data):
     final_solvents = []
     final_solutes = []
     for solvent in sorted(set(solvents)):
-        if not get_value(data, f'{solvent} name', None, False) and not get_value(
-            data, f'{solvent} volume [uL]', None
-        ):
-            continue
         final_solvents.append(
             SolutionChemical(
                 chemical_2=PubChemPureSubstanceSectionCustom(
@@ -155,9 +151,6 @@ def map_solutions(data):
             )
         )
     for solute in sorted(set(solutes)):
-        if not get_value(data, f'{solute} type', None, False):
-            continue
-
         final_solutes.append(
             SolutionChemical(
                 chemical_2=PubChemPureSubstanceSectionCustom(
@@ -170,7 +163,13 @@ def map_solutions(data):
                     data, f'{solute} Concentration [mM]', None, unit='mM'
                 ),
                 concentration_mass=get_value(
-                    data, [f'{solute} Concentration [wt%]', f'{solute} Concentration [mg/ml]'], None, unit=['wt%', 'mg/ml']
+                    data,
+                    [
+                        f'{solute} Concentration [wt%]',
+                        f'{solute} Concentration [mg/ml]',
+                    ],
+                    None,
+                    unit=['wt%', 'mg/ml'],
                 ),
                 amount_relative=get_value(data, f'{solute} relative amount', None),
             )
