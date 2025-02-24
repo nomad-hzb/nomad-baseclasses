@@ -306,7 +306,7 @@ def get_voltammetry_archive(data, metadata, entry_class, multiple=False):
     get_meta_data(setting_metadata, entry_class)
 
     ole_timestamp = metadata.get('log', {}).get('ole_timestamp', 0)
-    start_time_offset = data.get('time')[0].item()
+    start_time_offset = data.get('time', np.array([0]))[0].item()
     entry_class.datetime = get_start_time(ole_timestamp, start_time_offset)
 
     if data.ds.get('cycle number') is None and not multiple:
