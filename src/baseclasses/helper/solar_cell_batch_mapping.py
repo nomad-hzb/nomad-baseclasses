@@ -547,7 +547,7 @@ def map_evaporation(
 
         evaporation.thickness = get_value(data, f'Thickness{mat} [nm]', unit='nm')
         evaporation.start_rate = get_value(
-            data, f'Rate start{mat} [angstrom/s]', unit='angstrom/s'
+            data, [f'Rate{mat} [angstrom/s]',  f'Rate start{mat} [angstrom/s]'], unit=['angstrom/s', 'angstrom/s']
         )
         evaporation.target_rate = get_value(
             data, f'Rate target{mat} [angstrom/s]', unit='angstrom/s'
