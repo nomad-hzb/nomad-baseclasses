@@ -549,7 +549,7 @@ def map_evaporation(
         evaporation.start_rate = get_value(
             data, f'Rate start{mat} [angstrom/s]', unit='angstrom/s'
         )
-        evaporation.start_rate = get_value(
+        evaporation.target_rate = get_value(
             data, f'Rate target{mat} [angstrom/s]', unit='angstrom/s'
         )
         evaporation.substrate_temparature = get_value(
