@@ -172,7 +172,7 @@ def map_solutions(data):
                     data, f'{solute} Concentration [mM]', None, unit='mM'
                 ),
                 concentration_mass=get_value(
-                    data, f'{solute} Concentration [wt%]', None, unit='wt%'
+                    data, [f'{solute} Concentration [wt%]', f'{solute} Concentration [mg/ml]'], None, unit=['wt%', 'mg/ml']
                 ),
                 amount_relative=get_value(data, f'{solute} relative amount', None),
             )
