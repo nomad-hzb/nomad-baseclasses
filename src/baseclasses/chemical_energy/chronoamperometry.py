@@ -141,7 +141,8 @@ class Chronoamperometry(Voltammetry):
     properties = SubSection(section_def=CAProperties)
 
     def normalize(self, archive, logger):
-        self.method = 'Chronoamperometry'
+        if self.method is None:
+            self.method = 'Chronoamperometry'
         super().normalize(archive, logger)
 
 
