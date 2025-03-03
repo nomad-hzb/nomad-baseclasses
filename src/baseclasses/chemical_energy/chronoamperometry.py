@@ -19,6 +19,7 @@
 import numpy as np
 from nomad.metainfo import Datetime, MEnum, Quantity, Section, SubSection
 
+from .chronopotentiometry import ConstProperties
 from .potentiostat_measurement import PotentiostatProperties
 from .voltammetry import Voltammetry, VoltammetryCycle
 
@@ -135,13 +136,19 @@ class CAPropertiesWithData(CAProperties):
     data = SubSection(section_def=VoltammetryCycle)
 
 
+class ConstVProperties(ConstProperties, CAProperties):
+    def normalize(self, archive, logger):
+        super().normalize(archive, logger)
+
+
 class Chronoamperometry(Voltammetry):
     m_def = Section(links=['https://w3id.org/nfdi4cat/voc4cat_0007207'])
 
     properties = SubSection(section_def=CAProperties)
 
     def normalize(self, archive, logger):
-        self.method = 'Chronoamperometry'
+        if self.method is None:
+            self.method = 'Chronoamperometry'
         super().normalize(archive, logger)
 
 
