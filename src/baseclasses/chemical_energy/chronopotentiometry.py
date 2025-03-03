@@ -96,3 +96,44 @@ class Chronopotentiometry(Voltammetry):
         if self.method is None:
             self.method = 'Chronopotentiometry'
         super().normalize(archive, logger)
+
+
+class ConstProperties(PotentiostatProperties):
+    total_time = Quantity(
+        type=np.dtype(np.float64),
+        unit=('s'),
+        shape=[],
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
+    )
+
+    sample_period = Quantity(
+        type=np.dtype(np.float64),
+        unit=('s'),
+        shape=[],
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
+    )
+
+    lower_limit_potential = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007214'],
+        type=np.dtype(np.float64),
+        unit=('V'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
+
+    upper_limit_potential = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007215'],
+        type=np.dtype(np.float64),
+        unit=('V'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
+
+    cycles = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007228'],
+        type=np.dtype(np.float64),
+        a_eln=dict(component='NumberEditQuantity'),
+    )
+
+
+class ConstCProperties(ConstProperties, CPProperties):
+    def normalize(self, archive, logger):
+        super().normalize(archive, logger)
