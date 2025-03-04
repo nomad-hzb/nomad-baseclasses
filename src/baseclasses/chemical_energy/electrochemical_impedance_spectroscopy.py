@@ -194,24 +194,6 @@ class EISPropertiesWithData(EISProperties):
         ],
     )
 
-    data_file = Quantity(
-        type=str,
-        a_eln=dict(component='FileEditQuantity'),
-        a_browser=dict(adaptor='RawFileAdaptor'),
-    )
-
-    name = Quantity(
-        type=str,
-        description='A short human readable and descriptive name.',
-        a_eln=dict(component='StringEditQuantity', label='Short name'),
-    )
-
-    datetime = Quantity(
-        type=Datetime,
-        description='The date and time associated with this section.',
-        a_eln=dict(component='DateTimeEditQuantity'),
-    )
-
     data = SubSection(section_def=EISCycle)
 
     results = SubSection(section_def=EISResults)
