@@ -231,7 +231,13 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
                 data, 'Anti solvent dropping heigt [mm]', None, unit='mm'
             ),
             anti_solvent_dropping_flow_rate=get_value(
-                data, 'Anti solvent dropping speed [ul/s]', None, unit='uL/s'
+                data,
+                [
+                    'Anti solvent dropping speed [ul/s]',
+                    'Anti solvent dropping speed [uL/s]',
+                ],
+                None,
+                unit=['uL/s', 'uL/s'],
             ),
             anti_solvent_2=PubChemPureSubstanceSectionCustom(
                 name=get_value(data, 'Anti solvent name', None, False), load_data=False
@@ -547,7 +553,9 @@ def map_evaporation(
             data, f'Rate start{mat} [angstrom/s]', unit='angstrom/s'
         )
         evaporation.target_rate = get_value(
-            data, [f'Rate{mat} [angstrom/s]',  f'Rate target{mat} [angstrom/s]'], unit=['angstrom/s', 'angstrom/s']
+            data,
+            [f'Rate{mat} [angstrom/s]', f'Rate target{mat} [angstrom/s]'],
+            unit=['angstrom/s', 'angstrom/s'],
         )
         evaporation.substrate_temparature = get_value(
             data, f'Substrate temperature{mat} [°C]', unit='°C'
