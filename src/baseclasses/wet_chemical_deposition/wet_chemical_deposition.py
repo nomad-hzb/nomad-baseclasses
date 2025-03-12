@@ -106,10 +106,10 @@ class WetChemicalDeposition(LayerDeposition):
     )
 
     annealing = SubSection(
-        links=['http://purl.obolibrary.org/obo/RO_0001019'], section_def=Annealing
+        links=['http://purl.obolibrary.org/obo/BFO_0000051'], section_def=Annealing
     )
     quenching = SubSection(
-        links=['http://purl.obolibrary.org/obo/RO_0001019'], section_def=Quenching
+        links=['http://purl.obolibrary.org/obo/BFO_0000051'], section_def=Quenching
     )
 
     sintering = SubSection(section_def=Sintering, repeats=True)
