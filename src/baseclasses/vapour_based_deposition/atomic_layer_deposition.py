@@ -121,6 +121,36 @@ class ALDMaterial(ArchiveSection):
         ),
     )
 
+    pulse_flow_rate = Quantity(
+        type=np.dtype(np.float64),
+        unit=('ccm'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='ccm',
+            props=dict(minValue=0),
+        ),
+    )
+
+    purge_duration = Quantity(
+        type=np.dtype(np.float64),
+        unit=('s'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='s',
+            props=dict(minValue=0),
+        ),
+    )
+
+    purge_flow_rate = Quantity(
+        type=np.dtype(np.float64),
+        unit=('ccm'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='ccm',
+            props=dict(minValue=0),
+        ),
+    )
+
     manifold_temperature = Quantity(
         links=[
             'http://purl.obolibrary.org/obo/PATO_0000146',
@@ -154,6 +184,36 @@ class ALDOxidizerReducer(ArchiveSection):
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='s',
+            props=dict(minValue=0),
+        ),
+    )
+
+    pulse_flow_rate = Quantity(
+        type=np.dtype(np.float64),
+        unit=('ccm'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='ccm',
+            props=dict(minValue=0),
+        ),
+    )
+
+    purge_duration = Quantity(
+        type=np.dtype(np.float64),
+        unit=('s'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='s',
+            props=dict(minValue=0),
+        ),
+    )
+
+    purge_flow_rate = Quantity(
+        type=np.dtype(np.float64),
+        unit=('ccm'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='ccm',
             props=dict(minValue=0),
         ),
     )

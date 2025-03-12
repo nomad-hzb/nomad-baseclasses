@@ -84,10 +84,102 @@ class PrintHeadPath(ArchiveSection):
     )
 
 
+class NotionNozzleVoltageProfile(NozzleVoltageProfile):
+    m_def = Section(
+        links=['https://purl.archive.org/tfsco/TFSCO_00005083'],
+    )
+    number_of_pulses = Quantity(
+        type=np.dtype(np.int64),
+        a_eln=dict(component='NumberEditQuantity', props=dict(minValue=1)),
+
+    )
+    
+    voltage_a = Quantity(
+        type=np.dtype(np.float64),
+        unit=('V'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='V',
+            props=dict(minValue=0, maxValue=130),
+        ),
+    )
+
+    delay_time_a = Quantity(
+        type=np.dtype(np.float64),
+        unit=('us'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='us',
+            props=dict(minValue=0, maxValue=25),
+        )
+    )
+
+    rise_edge_a = Quantity(
+        type=np.dtype(np.float64),  
+        unit=('us'),
+          a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='us',
+            props=dict(minValue=1, maxValue=25),
+        )
+    )
+
+    peak_time_a = Quantity(
+        type=np.dtype(np.float64),
+        unit=('us'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='us',
+            props=dict(minValue=0, maxValue=25),
+        ),
+    )
+
+    fall_edge_a = Quantity(
+        type=np.dtype(np.float64),
+        unit=('us'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='us',
+            props=dict(minValue=1, maxValue=25),
+        ),
+    )
+    
+    time_space_a = Quantity(
+        type=np.dtype(np.float64),
+        unit=('us'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='us',
+            props=dict(minValue=0, maxValue=10000),
+        ),
+    )
+
+    number_of_greylevels_a = Quantity(
+        type=np.dtype(np.int64),
+        a_eln=dict(component='NumberEditQuantity', props=dict(minValue=1)),
+    )
+
+    grey_level_0_pulse_a = Quantity(
+        type=np.dtype(np.bool),
+        a_eln=dict(component='BoolEditQuantity'),
+    )
+
+    grey_level_1_pulse_a = Quantity(
+        type=np.dtype(np.bool),
+        a_eln=dict(component='BoolEditQuantity'),
+    )
+    ## Add the rest of the parameters here
+
 class LP50NozzleVoltageProfile(NozzleVoltageProfile):
     m_def = Section(
         links=['https://purl.archive.org/tfsco/TFSCO_00005083'],
     )
+    number_of_pulses = Quantity(
+        type=np.dtype(np.int64),
+        a_eln=dict(component='NumberEditQuantity', props=dict(minValue=1)),
+
+    )
+
     voltage_a = Quantity(
         links=[
             'http://purl.obolibrary.org/obo/PATO_0001464',
@@ -108,7 +200,7 @@ class LP50NozzleVoltageProfile(NozzleVoltageProfile):
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='us',
-            props=dict(minValue=1, maxValue=25),
+            props=dict(minValue=0.1, maxValue=25),
         ),
     )
 
@@ -122,7 +214,7 @@ class LP50NozzleVoltageProfile(NozzleVoltageProfile):
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='us',
-            props=dict(minValue=0, maxValue=25),
+            props=dict(minValue=0, maxValue=50),
         ),
     )
 
@@ -132,7 +224,17 @@ class LP50NozzleVoltageProfile(NozzleVoltageProfile):
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='us',
-            props=dict(minValue=1, maxValue=25),
+            props=dict(minValue=0.1, maxValue=25),
+        ),
+    )
+
+    time_space_a = Quantity(
+        type=np.dtype(np.float64),
+        unit=('us'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='us',
+            props=dict(minValue=0, maxValue=10000),
         ),
     )
 
@@ -181,6 +283,74 @@ class LP50NozzleVoltageProfile(NozzleVoltageProfile):
             component='NumberEditQuantity',
             defaultDisplayUnit='us',
             props=dict(minValue=1, maxValue=25),
+        ),
+    )
+
+    time_space_b = Quantity(
+        type=np.dtype(np.float64),
+        unit=('us'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='us',
+            props=dict(minValue=0, maxValue=10000),
+        ),
+    )
+
+    voltage_c = Quantity(
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0001464',
+            'https://purl.archive.org/tfsco/TFSCO_00005005',
+        ],
+        type=np.dtype(np.float64),
+        unit=('V'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='V',
+            props=dict(minValue=0, maxValue=130),
+        ),
+    )
+
+    rise_edge_c = Quantity(
+        type=np.dtype(np.float64),
+        unit=('us'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='us',
+            props=dict(minValue=1, maxValue=25),
+        ),
+    )
+
+    peak_time_c = Quantity(
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000165',
+            'http://purl.obolibrary.org/obo/PATO_0000165',
+        ],
+        type=np.dtype(np.float64),
+        unit=('us'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='us',
+            props=dict(minValue=0, maxValue=25),
+        ),
+    )
+
+    fall_edge_c = Quantity(
+        type=np.dtype(np.float64),
+        unit=('us'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='us',
+            props=dict(minValue=1, maxValue=25),
+        ),
+    )
+
+    time_space_c = Quantity(
+        type=np.dtype(np.float64),
+        unit=('us'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='us',
+            props=dict(minValue=0, maxValue=10000),
         ),
     )
 

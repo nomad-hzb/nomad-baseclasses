@@ -34,6 +34,8 @@ from baseclasses.wet_chemical_deposition.inkjet_printing import (
     InkjetPrintingProperties,
     PrintHeadPath,
     PrintHeadProperties,
+    LP50NozzleVoltageProfile,
+    NotionNozzleVoltageProfile,
 )
 from baseclasses.wet_chemical_deposition.slot_die_coating import (
     SlotDieCoatingProperties,
@@ -330,17 +332,54 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                 print_head_name=get_value(data, 'Printhead name', None, False),
             ),
             cartridge_pressure=convert_quantity(
-                get_value(data, 'Ink reservoir pressure [bar]', None), 1000
+                get_value(data, 'Ink reservoir pressure [mbar]', None), 1000
             ),
             substrate_temperature=get_value(data, 'Table temperature [°C]', None),
             drop_density=get_value(data, 'Droplet density [dpi]', None),
             printed_area=get_value(data, 'Printed area [mm²]', None),
+            
+            if location in ['Pixdro', 'iLPixdro']: # printer param
+                print_head_waveform_parameters=LP50NozzleVoltageProfile(
+                    number_of_pulses=get_value(data, 'Wf Number of Pulses', None, False),
+                    voltage_a=get_value(data, 'Wf Level 1[V]', None, False),
+                    rise_edge_a= voltage_a / get_value(data, 'Wf Rise 1[V/us]', None, False), # umrechnen time [us] = V_level [V]/ rise[V/us]
+                    peak_time_a=get_value(data, 'Wf Width 1[us]', None, False),
+                    fall_edge_a= voltage_a / get_value(data, 'Wf Fall 1[V/us]', None, False), #umrechnen
+                    time_space_a=get_value(data, 'Wf Space 1[us]', None, False),
+                    voltage_b=get_value(data, 'Wf Level 2[V]', None, False),
+                    rise_edge_b= voltage_b / get_value(data, 'Wf Rise 2[V/us]', None, False), # umrechnen time [us] = V_level [V]/ rise[V/us]
+                    peak_time_b=get_value(data, 'Wf Width 2[us]', None, False),
+                    fall_edge_b= voltage_b / get_value(data, 'Wf Fall 2[V/us]', None, False), #umrechnen
+                    time_space_b=get_value(data, 'Wf Space 2[us]', None, False),
+                    voltage_c=get_value(data, 'Wf Level 3[V]', None, False),
+                    rise_edge_c= voltage_c / get_value(data, 'Wf Rise 3[V/us]', None, False), # umrechnen time [us] = V_level [V]/ rise[V/us]
+                    peak_time_c=get_value(data, 'Wf Width 3[us]', None, False),
+                    fall_edge_c= voltage_c / get_value(data, 'Wf Fall 3[V/us]', None, False), #umrechnen
+                    time_space_c=get_value(data, 'Wf Space 3[us]', None, False),
+                    )
+
+            if location in ['iLNotion', 'Notion']: # printer param
+                print_head_waveform_parameters=NotionNozzleVoltageProfile(
+                    number_of_pulses=get_value(data, 'Wf Number of Pulses', None, False),
+                    #for loop over number of pulses with changing _a suffix of variales below
+                    delay_time_a=get_value(data, 'Wf Delay Time [us]', None, False),
+                    rise_edge_a=get_value(data, 'Wf Rise Time [us]', None, False),
+                    peak_time_a=get_value(data, 'Wf Hold Time [us]', None, False),
+                    fall_edge_a=get_value(data, 'Wf Fall Time [us]', None, False),
+                    time_space_a=get_value(data, 'Wf Relax Time [us]', None, False),
+                    voltage_a=get_value(data, 'Wf Voltage [V]', None, False),
+                    #multipulse_a=get_value(data, 'Wf Multipulse [1/0]', None, False),
+                    number_of_greylevels_a=get_value(data, 'Wf Number Greylevels', None, False),
+                    grey_level_0_pulse_a=get_value(data, 'Wf Grey Level 0 Use Pulse [1/0]', None, False),
+                    grey_level_1_pulse_a=get_value(data, 'Wf Grey Level 1 Use Pulse [1/0]', None, False),
+                    )                    
         ),
         print_head_path=PrintHeadPath(
             quality_factor=get_value(data, 'Quality factor', None, False),
             step_size=get_value(data, 'Step size', None, False),
             directional=get_value(data, 'Printing direction', None, False),
         ),
+
         atmosphere=Atmosphere(
             relative_humidity=get_value(data, 'rel. humidity [%]', None),
             temperature=get_value(data, 'Room temperature [°C]', None),
@@ -457,7 +496,7 @@ def map_evaporation(
             if get_value(data, 'Temperature [°C]', None):
                 evaporation.temparature = [
                     get_value(data, 'Temperature [°C]', None)
-                ] * 2
+                ] * 2       # warum wird hier die temperatur mit 2 multipliziert?
 
         if not evaporation:
             return (file_name, archive)
@@ -667,11 +706,11 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
         ],
         layer=map_layer(data),
         properties=ALDPropertiesIris(
-            source=get_value(data, 'Source', None, number=False),
+            #source=get_value(data, 'Source', None, number=False),
             thickness=get_value(data, 'Thickness [nm]', None),
-            temperature=get_value(data, 'Temperature [°C]', None),
-            rate=get_value(data, 'Rate [A/s]', None),
-            time=get_value(data, 'Time [s]', None),
+            temperature=get_value(data, 'Reactor Temperature [°C]', None),
+            #rate=get_value(data, 'Rate [A/s]', None),
+            #time=get_value(data, 'Time [s]', None),
             number_of_cycles=get_value(data, 'Number of cycles', None),
             material=ALDMaterial(
                 material=PubChemPureSubstanceSectionCustom(
@@ -679,9 +718,10 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
                     load_data=False,
                 ),
                 pulse_duration=get_value(data, 'Pulse duration 1 [s]', None),
-                manifold_temperature=get_value(
-                    data, 'Manifold temperature 1 [°C]', None
-                ),
+                pulse_flow_rate=get_value(data, 'Pulse flow rate 1 [ccm]', None),
+                manifold_temperature=get_value(data, 'Manifold temperature [°C]', None),
+                purge_duration=get_value(data, 'Purge duration 1 [s]', None),
+                purge_flow_rate=get_value(data, 'Purge flow rate 1 [ccm]', None),
                 bottle_temperature=get_value(data, 'Bottle temperature 1 [°C]', None),
             ),
             oxidizer_reducer=ALDMaterial(
@@ -692,9 +732,11 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
                     load_data=False,
                 ),
                 pulse_duration=get_value(data, 'Pulse duration 2 [s]', None),
-                manifold_temperature=get_value(
-                    data, 'Manifold temperature 2 [°C]', None
-                ),
+                pulse_flow_rate=get_value(data, 'Pulse flow rate 2 [ccm]', None),
+               # manifold_temperature=get_value(data, 'Manifold temperature 2 [°C]', None),
+                purge_duration=get_value(data, 'Purge duration 2 [s]', None),
+                purge_flow_rate=get_value(data, 'Purge flow rate 2 [ccm]', None),
+                bottle_temperature=get_value(data, 'Bottle temperature 2 [°C]', None),
             ),
         ),
     )
