@@ -417,41 +417,59 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
         annealing=map_annealing(data),
     )
     if location in ['Pixdro', 'iLPixdro']:  # printer param
+        voltage_a = get_value(data, 'Wf Level 1[V]', None, unit='V')
+        voltage_b = get_value(data, 'Wf Level 2[V]', None, unit='V')
+        voltage_c = get_value(data, 'Wf Level 3[V]', None, unit='V')
         archive.print_head_waveform_parameters = LP50NozzleVoltageProfile(
             number_of_pulses=get_value(data, 'Wf Number of Pulses', None, False),
-            voltage_a=get_value(data, 'Wf Level 1[V]', None, False),
+            voltage_a=voltage_a,
             # umrechnen time [us] = V_level [V]/ rise[V/us]
-            rise_edge_a=voltage_a / get_value(data, 'Wf Rise 1[V/us]', None, False),
-            peak_time_a=get_value(data, 'Wf Width 1[us]', None, False),
+            rise_edge_a=voltage_a
+            / get_value(data, 'Wf Rise 1[V/us]', None, unit='V/us')
+            if voltage_a
+            else None,
+            peak_time_a=get_value(data, 'Wf Width 1[us]', None, unit=['us']),
             fall_edge_a=voltage_a
-            / get_value(data, 'Wf Fall 1[V/us]', None, False),  # umrechnen
-            time_space_a=get_value(data, 'Wf Space 1[us]', None, False),
-            voltage_b=get_value(data, 'Wf Level 2[V]', None, False),
+            / get_value(data, 'Wf Fall 1[V/us]', None, unit='V/us')
+            if voltage_a
+            else None,
+            time_space_a=get_value(data, 'Wf Space 1[us]', None, unit=['us']),
+            voltage_b=voltage_b,
             # umrechnen time [us] = V_level [V]/ rise[V/us]
-            rise_edge_b=voltage_b / get_value(data, 'Wf Rise 2[V/us]', None, False),
-            peak_time_b=get_value(data, 'Wf Width 2[us]', None, False),
+            rise_edge_b=voltage_b
+            / get_value(data, 'Wf Rise 2[V/us]', None, unit='V/us')
+            if voltage_b
+            else None,
+            peak_time_b=get_value(data, 'Wf Width 2[us]', None, unit=['us']),
             fall_edge_b=voltage_b
-            / get_value(data, 'Wf Fall 2[V/us]', None, False),  # umrechnen
-            time_space_b=get_value(data, 'Wf Space 2[us]', None, False),
-            voltage_c=get_value(data, 'Wf Level 3[V]', None, False),
+            / get_value(data, 'Wf Fall 2[V/us]', None, unit='V/us')
+            if voltage_b
+            else None,
+            time_space_b=get_value(data, 'Wf Space 2[us]', None, unit=['us']),
+            voltage_c=voltage_c,
             # umrechnen time [us] = V_level [V]/ rise[V/us]
-            rise_edge_c=voltage_c / get_value(data, 'Wf Rise 3[V/us]', None, False),
-            peak_time_c=get_value(data, 'Wf Width 3[us]', None, False),
+            rise_edge_c=voltage_c
+            / get_value(data, 'Wf Rise 3[V/us]', None, unit='V/us')
+            if voltage_c
+            else None,
+            peak_time_c=get_value(data, 'Wf Width 3[us]', None, unit=['us']),
             fall_edge_c=voltage_c
-            / get_value(data, 'Wf Fall 3[V/us]', None, False),  # umrechnen
-            time_space_c=get_value(data, 'Wf Space 3[us]', None, False),
+            / get_value(data, 'Wf Fall 3[V/us]', None, unit='V/us')
+            if voltage_c
+            else None,
+            time_space_c=get_value(data, 'Wf Space 3[us]', None, unit=['us']),
         )
 
     if location in ['iLNotion', 'Notion']:  # printer param
         archive.print_head_waveform_parameters = NotionNozzleVoltageProfile(
-            number_of_pulses=get_value(data, 'Wf Number of Pulses', None, False),
+            number_of_pulses=get_value(data, 'Wf Number of Pulses', None),
             # for loop over number of pulses with changing _a suffix of variales below
-            delay_time_a=get_value(data, 'Wf Delay Time [us]', None, False),
-            rise_edge_a=get_value(data, 'Wf Rise Time [us]', None, False),
-            peak_time_a=get_value(data, 'Wf Hold Time [us]', None, False),
-            fall_edge_a=get_value(data, 'Wf Fall Time [us]', None, False),
-            time_space_a=get_value(data, 'Wf Relax Time [us]', None, False),
-            voltage_a=get_value(data, 'Wf Voltage [V]', None, False),
+            delay_time_a=get_value(data, 'Wf Delay Time [us]', None, unit='us'),
+            rise_edge_a=get_value(data, 'Wf Rise Time [us]', None, unit='us'),
+            peak_time_a=get_value(data, 'Wf Hold Time [us]', None, unit='us'),
+            fall_edge_a=get_value(data, 'Wf Fall Time [us]', None, unit='us'),
+            time_space_a=get_value(data, 'Wf Relax Time [us]', None, unit='us'),
+            voltage_a=get_value(data, 'Wf Voltage [V]', None, unit='V'),
             # multipulse_a=get_value(data, 'Wf Multipulse [1/0]', None, False),
             number_of_greylevels_a=get_value(data, 'Wf Number Greylevels', None, False),
             grey_level_0_pulse_a=get_value(
