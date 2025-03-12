@@ -835,11 +835,11 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
         ],
         layer=map_layer(data),
         properties=ALDPropertiesIris(
-            # source=get_value(data, 'Source', None, number=False),
+            source=get_value(data, 'Source', None, number=False),
             thickness=get_value(data, 'Thickness [nm]', None),
             temperature=get_value(data, 'Reactor Temperature [°C]', None),
-            # rate=get_value(data, 'Rate [A/s]', None),
-            # time=get_value(data, 'Time [s]', None),
+            rate=get_value(data, 'Rate [A/s]', None),
+            time=get_value(data, 'Time [s]', None),
             number_of_cycles=get_value(data, 'Number of cycles', None),
             material=ALDMaterial(
                 material=PubChemPureSubstanceSectionCustom(
@@ -848,7 +848,12 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
                 ),
                 pulse_duration=get_value(data, 'Pulse duration 1 [s]', None),
                 pulse_flow_rate=get_value(data, 'Pulse flow rate 1 [ccm]', None),
-                manifold_temperature=get_value(data, 'Manifold temperature [°C]', None),
+                manifold_temperature=get_value(
+                    data,
+                    ['Manifold temperature [°C]', 'Manifold temperature 1 [°C]'],
+                    None,
+                    unit=['°C', '°C'],
+                ),
                 purge_duration=get_value(data, 'Purge duration 1 [s]', None),
                 purge_flow_rate=get_value(data, 'Purge flow rate 1 [ccm]', None),
                 bottle_temperature=get_value(data, 'Bottle temperature 1 [°C]', None),
@@ -862,7 +867,9 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
                 ),
                 pulse_duration=get_value(data, 'Pulse duration 2 [s]', None),
                 pulse_flow_rate=get_value(data, 'Pulse flow rate 2 [ccm]', None),
-                # manifold_temperature=get_value(data, 'Manifold temperature 2 [°C]', None),
+                manifold_temperature=get_value(
+                    data, 'Manifold temperature 2 [°C]', None
+                ),
                 purge_duration=get_value(data, 'Purge duration 2 [s]', None),
                 purge_flow_rate=get_value(data, 'Purge flow rate 2 [ccm]', None),
                 bottle_temperature=get_value(data, 'Bottle temperature 2 [°C]', None),
