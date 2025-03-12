@@ -837,7 +837,12 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
         properties=ALDPropertiesIris(
             source=get_value(data, 'Source', None, number=False),
             thickness=get_value(data, 'Thickness [nm]', None),
-            temperature=get_value(data, 'Reactor Temperature [°C]', None),
+            temperature=get_value(
+                data,
+                ['Temperature [°C]', 'Reactor Temperature [°C]'],
+                None,
+                unit=['°C', '°C'],
+            ),
             rate=get_value(data, 'Rate [A/s]', None),
             time=get_value(data, 'Time [s]', None),
             number_of_cycles=get_value(data, 'Number of cycles', None),
