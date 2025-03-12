@@ -604,7 +604,7 @@ def map_evaporation(
             if get_value(data, 'Temperature [°C]', None):
                 evaporation.temparature = [
                     get_value(data, 'Temperature [°C]', None)
-                ] * 2  # warum wird hier die temperatur mit 2 multipliziert?
+                ] * 2
 
         if not evaporation:
             return (file_name, archive)
