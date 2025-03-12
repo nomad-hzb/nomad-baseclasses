@@ -167,7 +167,7 @@ class NotionNozzleVoltageProfile(NozzleVoltageProfile):
         type=np.dtype(np.bool),
         a_eln=dict(component='BoolEditQuantity'),
     )
-    ## Add the rest of the parameters here
+    # Add the rest of the parameters here
 
 
 class LP50NozzleVoltageProfile(NozzleVoltageProfile):
@@ -600,6 +600,11 @@ class InkjetPrinting(WetChemicalDeposition):
     print_head_path = SubSection(
         links=['http://purl.obolibrary.org/obo/OBI_0000293'],
         section_def=PrintHeadPath,
+    )
+
+    nozzle_voltage_profile = SubSection(
+        links=['http://purl.obolibrary.org/obo/OBI_0000293'],
+        section_def=NozzleVoltageProfile,
     )
 
     def normalize(self, archive, logger):

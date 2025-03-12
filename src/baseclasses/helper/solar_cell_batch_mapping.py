@@ -420,7 +420,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
         voltage_a = get_value(data, 'Wf Level 1[V]', None, unit='V')
         voltage_b = get_value(data, 'Wf Level 2[V]', None, unit='V')
         voltage_c = get_value(data, 'Wf Level 3[V]', None, unit='V')
-        archive.print_head_waveform_parameters = LP50NozzleVoltageProfile(
+        archive.nozzle_voltage_profile = LP50NozzleVoltageProfile(
             number_of_pulses=get_value(data, 'Wf Number of Pulses', None, False),
             voltage_a=voltage_a,
             # umrechnen time [us] = V_level [V]/ rise[V/us]
@@ -461,7 +461,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
         )
 
     if location in ['iLNotion', 'Notion']:  # printer param
-        archive.print_head_waveform_parameters = NotionNozzleVoltageProfile(
+        archive.nozzle_voltage_profile = NotionNozzleVoltageProfile(
             number_of_pulses=get_value(data, 'Wf Number of Pulses', None),
             # for loop over number of pulses with changing _a suffix of variales below
             delay_time_a=get_value(data, 'Wf Delay Time [us]', None, unit='us'),
