@@ -228,6 +228,16 @@ class ALDOxidizerReducer(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
     )
 
+    bottle_temperature = Quantity(
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000146',
+            'https://purl.archive.org/tfsco/TFSCO_00002111',
+        ],
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
+
 
 class ALDPropertiesIris(ALDProperties):
     m_def = Section(
