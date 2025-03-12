@@ -471,12 +471,12 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
             time_space_a=get_value(data, 'Wf Relax Time [us]', None, unit='us'),
             voltage_a=get_value(data, 'Wf Voltage [V]', None, unit='V'),
             # multipulse_a=get_value(data, 'Wf Multipulse [1/0]', None, False),
-            number_of_greylevels_a=get_value(data, 'Wf Number Greylevels', None, False),
+            number_of_greylevels_a=get_value(data, 'Wf Number Greylevels', None),
             grey_level_0_pulse_a=get_value(
-                data, 'Wf Grey Level 0 Use Pulse [1/0]', None, False
+                data, 'Wf Grey Level 0 Use Pulse [1/0]', None
             ),
             grey_level_1_pulse_a=get_value(
-                data, 'Wf Grey Level 1 Use Pulse [1/0]', None, False
+                data, 'Wf Grey Level 1 Use Pulse [1/0]', None
             ),
         )
     material = get_value(data, 'Material name', '', False)
