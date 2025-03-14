@@ -379,6 +379,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                 print_nozzle_drop_frequency=get_value(
                     data, 'Droplet per second [1/s]', None, unit='1/s'
                 ),
+                print_speed=get_value(data, 'Printing speed [mm/s]', None, unit='mm/s'),
                 print_nozzle_drop_volume=get_value(
                     data,
                     ['Droplet volume [pl]', 'Droplet volume [pL]'],
@@ -855,9 +856,13 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
                 pulse_flow_rate=get_value(data, 'Pulse flow rate 1 [ccm]', None),
                 manifold_temperature=get_value(
                     data,
-                    ['Manifold temperature [°C]', 'Manifold temperature 1 [°C]'],
+                    [
+                        'Manifold Temperature [°C]',
+                        'Manifold temperature [°C]',
+                        'Manifold temperature 1 [°C]',
+                    ],
                     None,
-                    unit=['°C', '°C'],
+                    unit=['°C', '°C', '°C'],
                 ),
                 purge_duration=get_value(data, 'Purge duration 1 [s]', None),
                 purge_flow_rate=get_value(data, 'Purge flow rate 1 [ccm]', None),
