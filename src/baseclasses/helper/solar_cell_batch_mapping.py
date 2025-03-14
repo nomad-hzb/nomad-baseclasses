@@ -33,6 +33,8 @@ from baseclasses.wet_chemical_deposition import PrecursorSolution
 from baseclasses.wet_chemical_deposition.dip_coating import DipCoatingProperties
 from baseclasses.wet_chemical_deposition.inkjet_printing import (
     InkjetPrintingProperties,
+    LP50NozzleVoltageProfile,
+    NotionNozzleVoltageProfile,
     PrintHeadPath,
     PrintHeadProperties,
 )
@@ -342,9 +344,10 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
 
 
 def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
+    location = get_value(data, 'Tool/GB name', '', False)
     archive = inkjet_class(
         name='inkjet printing ' + get_value(data, 'Material name', '', False),
-        location=get_value(data, 'Tool/GB name', '', False),
+        location=location,
         positon_in_experimental_plan=i,
         description=get_value(data, 'Notes', None, False),
         samples=[
@@ -376,6 +379,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                 print_nozzle_drop_frequency=get_value(
                     data, 'Droplet per second [1/s]', None, unit='1/s'
                 ),
+                print_speed=get_value(data, 'Printing speed [mm/s]', None, unit='mm/s'),
                 print_nozzle_drop_volume=get_value(
                     data,
                     ['Droplet volume [pl]', 'Droplet volume [pL]'],
@@ -391,7 +395,10 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                 print_head_name=get_value(data, 'Printhead name', None, False),
             ),
             cartridge_pressure=get_value(
-                data, 'Ink reservoir pressure [bar]', None, unit='bar'
+                data,
+                ['Ink reservoir pressure [bar]', 'Ink reservoir pressure [mbar]'],
+                None,
+                unit=['bar', 'mbar'],
             ),
             substrate_temperature=get_value(
                 data, 'Table temperature [°C]', None, unit='°C'
@@ -410,6 +417,69 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
         ),
         annealing=map_annealing(data),
     )
+    if location in ['Pixdro', 'iLPixdro']:  # printer param
+        voltage_a = get_value(data, 'Wf Level 1[V]', None, unit='V')
+        voltage_b = get_value(data, 'Wf Level 2[V]', None, unit='V')
+        voltage_c = get_value(data, 'Wf Level 3[V]', None, unit='V')
+        archive.nozzle_voltage_profile = LP50NozzleVoltageProfile(
+            number_of_pulses=get_value(data, 'Wf Number of Pulses', None, False),
+            voltage_a=voltage_a,
+            # umrechnen time [us] = V_level [V]/ rise[V/us]
+            rise_edge_a=voltage_a
+            / get_value(data, 'Wf Rise 1[V/us]', None, unit='V/us')
+            if voltage_a
+            else None,
+            peak_time_a=get_value(data, 'Wf Width 1[us]', None, unit=['us']),
+            fall_edge_a=voltage_a
+            / get_value(data, 'Wf Fall 1[V/us]', None, unit='V/us')
+            if voltage_a
+            else None,
+            time_space_a=get_value(data, 'Wf Space 1[us]', None, unit=['us']),
+            voltage_b=voltage_b,
+            # umrechnen time [us] = V_level [V]/ rise[V/us]
+            rise_edge_b=voltage_b
+            / get_value(data, 'Wf Rise 2[V/us]', None, unit='V/us')
+            if voltage_b
+            else None,
+            peak_time_b=get_value(data, 'Wf Width 2[us]', None, unit=['us']),
+            fall_edge_b=voltage_b
+            / get_value(data, 'Wf Fall 2[V/us]', None, unit='V/us')
+            if voltage_b
+            else None,
+            time_space_b=get_value(data, 'Wf Space 2[us]', None, unit=['us']),
+            voltage_c=voltage_c,
+            # umrechnen time [us] = V_level [V]/ rise[V/us]
+            rise_edge_c=voltage_c
+            / get_value(data, 'Wf Rise 3[V/us]', None, unit='V/us')
+            if voltage_c
+            else None,
+            peak_time_c=get_value(data, 'Wf Width 3[us]', None, unit=['us']),
+            fall_edge_c=voltage_c
+            / get_value(data, 'Wf Fall 3[V/us]', None, unit='V/us')
+            if voltage_c
+            else None,
+            time_space_c=get_value(data, 'Wf Space 3[us]', None, unit=['us']),
+        )
+
+    if location in ['iLNotion', 'Notion']:  # printer param
+        archive.nozzle_voltage_profile = NotionNozzleVoltageProfile(
+            number_of_pulses=get_value(data, 'Wf Number of Pulses', None),
+            # for loop over number of pulses with changing _a suffix of variales below
+            delay_time_a=get_value(data, 'Wf Delay Time [us]', None, unit='us'),
+            rise_edge_a=get_value(data, 'Wf Rise Time [us]', None, unit='us'),
+            peak_time_a=get_value(data, 'Wf Hold Time [us]', None, unit='us'),
+            fall_edge_a=get_value(data, 'Wf Fall Time [us]', None, unit='us'),
+            time_space_a=get_value(data, 'Wf Relax Time [us]', None, unit='us'),
+            voltage_a=get_value(data, 'Wf Voltage [V]', None, unit='V'),
+            # multipulse_a=get_value(data, 'Wf Multipulse [1/0]', None, False),
+            number_of_greylevels_a=get_value(data, 'Wf Number Greylevels', None),
+            grey_level_0_pulse_a=get_value(
+                data, 'Wf Grey Level 0 Use Pulse [1/0]', None
+            ),
+            grey_level_1_pulse_a=get_value(
+                data, 'Wf Grey Level 1 Use Pulse [1/0]', None
+            ),
+        )
     material = get_value(data, 'Material name', '', False)
     return (f'{i}_{j}_inkjet_printing_{material}', archive)
 
@@ -768,7 +838,12 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
         properties=ALDPropertiesIris(
             source=get_value(data, 'Source', None, number=False),
             thickness=get_value(data, 'Thickness [nm]', None),
-            temperature=get_value(data, 'Temperature [°C]', None),
+            temperature=get_value(
+                data,
+                ['Temperature [°C]', 'Reactor Temperature [°C]'],
+                None,
+                unit=['°C', '°C'],
+            ),
             rate=get_value(data, 'Rate [A/s]', None),
             time=get_value(data, 'Time [s]', None),
             number_of_cycles=get_value(data, 'Number of cycles', None),
@@ -778,9 +853,19 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
                     load_data=False,
                 ),
                 pulse_duration=get_value(data, 'Pulse duration 1 [s]', None),
+                pulse_flow_rate=get_value(data, 'Pulse flow rate 1 [ccm]', None),
                 manifold_temperature=get_value(
-                    data, 'Manifold temperature 1 [°C]', None
+                    data,
+                    [
+                        'Manifold Temperature [°C]',
+                        'Manifold temperature [°C]',
+                        'Manifold temperature 1 [°C]',
+                    ],
+                    None,
+                    unit=['°C', '°C', '°C'],
                 ),
+                purge_duration=get_value(data, 'Purge duration 1 [s]', None),
+                purge_flow_rate=get_value(data, 'Purge flow rate 1 [ccm]', None),
                 bottle_temperature=get_value(data, 'Bottle temperature 1 [°C]', None),
             ),
             oxidizer_reducer=ALDMaterial(
@@ -791,9 +876,13 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
                     load_data=False,
                 ),
                 pulse_duration=get_value(data, 'Pulse duration 2 [s]', None),
+                pulse_flow_rate=get_value(data, 'Pulse flow rate 2 [ccm]', None),
                 manifold_temperature=get_value(
                     data, 'Manifold temperature 2 [°C]', None
                 ),
+                purge_duration=get_value(data, 'Purge duration 2 [s]', None),
+                purge_flow_rate=get_value(data, 'Purge flow rate 2 [ccm]', None),
+                bottle_temperature=get_value(data, 'Bottle temperature 2 [°C]', None),
             ),
         ),
     )

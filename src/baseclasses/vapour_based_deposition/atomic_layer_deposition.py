@@ -121,6 +121,36 @@ class ALDMaterial(ArchiveSection):
         ),
     )
 
+    pulse_flow_rate = Quantity(
+        type=np.dtype(np.float64),
+        unit=('cm**3/minute'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='cm**3/minute',
+            props=dict(minValue=0),
+        ),
+    )
+
+    purge_duration = Quantity(
+        type=np.dtype(np.float64),
+        unit=('s'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='s',
+            props=dict(minValue=0),
+        ),
+    )
+
+    purge_flow_rate = Quantity(
+        type=np.dtype(np.float64),
+        unit=('cm**3/minute'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='cm**3/minute',
+            props=dict(minValue=0),
+        ),
+    )
+
     manifold_temperature = Quantity(
         links=[
             'http://purl.obolibrary.org/obo/PATO_0000146',
@@ -132,33 +162,6 @@ class ALDMaterial(ArchiveSection):
     )
 
     bottle_temperature = Quantity(
-        links=[
-            'http://purl.obolibrary.org/obo/PATO_0000146',
-            'https://purl.archive.org/tfsco/TFSCO_00002111',
-        ],
-        type=np.dtype(np.float64),
-        unit=('°C'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
-    )
-
-
-class ALDOxidizerReducer(ArchiveSection):
-    material = SubSection(
-        links=['http://purl.obolibrary.org/obo/RO_0000057'],
-        section_def=PubChemPureSubstanceSectionCustom,
-    )
-
-    pulse_duration = Quantity(
-        type=np.dtype(np.float64),
-        unit=('s'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='s',
-            props=dict(minValue=0),
-        ),
-    )
-
-    manifold_temperature = Quantity(
         links=[
             'http://purl.obolibrary.org/obo/PATO_0000146',
             'https://purl.archive.org/tfsco/TFSCO_00002111',
