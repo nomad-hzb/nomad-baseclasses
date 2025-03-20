@@ -1,6 +1,6 @@
 # Excel sheet workflow - Documenting Solar Cell Synthesis and Measurements at HZB
 
-This guide explains how to document your solar cell experiments at HZB using our standard workflow. This process involves using an Excel sheet to record synthesis details and then uploading the sheet along with your measurement files to the NOMAD data management platform.
+This guide explains how to document your solar cells synthesis at HZB using our standard workflow. This process involves using an Excel sheet to record synthesis details and then uploading the sheet along with your measurement files to the NOMAD data management platform.
 
 ## Why do we need this workflow?
 
@@ -45,4 +45,3 @@ The workflow consists of the following steps:
     **Verify the upload**: Check that there was no error in the upload.
 
 Please check the other documents in this documentation for specifics on each step.
-
