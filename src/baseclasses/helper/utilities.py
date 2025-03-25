@@ -314,17 +314,6 @@ def merge_sections(
             continue
         if not section.m_is_set(quantity):
             section.m_set(quantity, update.m_get(quantity))
-        elif (
-            quantity.is_scalar
-            and section.m_get(quantity) != update.m_get(quantity)
-            or getattr(quantity, 'repeats', False)
-            and (section.m_get(quantity) != update.m_get(quantity)).any()
-        ):
-            warning = f'Merging sections with different values for quantity "{name}".'
-            if logger:
-                logger.warning(warning)
-            else:
-                print(warning)
     for name, sub_section_def in update.m_def.all_sub_sections.items():
         count = section.m_sub_section_count(sub_section_def)
         if count == 0:
@@ -337,14 +326,6 @@ def merge_sections(
                     update.m_get_sub_section(sub_section_def, i),
                     logger,
                 )
-        elif update.m_sub_section_count(sub_section_def) > 0:
-            warning = (
-                f'Merging sections with different number of "{name}" sub sections.'
-            )
-            if logger:
-                logger.warning(warning)
-            else:
-                print(warning)
 
 
 def create_archive(entity, archive, file_name, overwrite=False, merge=False):
