@@ -126,6 +126,7 @@ def map_layer(data):
         LayerProperties(
             layer_type=get_value(data, 'Layer type', None, False),
             layer_material_name=get_value(data, 'Material name', None, False),
+            layer_thickness=get_value(data, 'Layer thickness [nm]', None, unit='nm'),
         )
     ]
 
