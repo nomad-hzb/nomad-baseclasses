@@ -380,6 +380,14 @@ class LayerProperties(ArchiveSection):
         # component='StringEditQuantity')
     )
 
+    layer_thickness = Quantity(
+        # links=[],
+        type=np.dtype(np.float64),
+        description=('The thickness of the sample, either measured or assumed.'),
+        unit=('nm'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
+    )
+
 
 class LayerDeposition(BaseProcess):
     m_def = Section(
