@@ -217,8 +217,6 @@ class CatalysisSample(CombinatorialLibrary):
     parent = SubSection(section_def=CompositeSystemReference)
 
     def normalize(self, archive, logger):
-        super().normalize(archive, logger)
-
         if not archive.results.material:
             archive.results.material = Material()
         archive.results.material.elements = []
@@ -229,6 +227,7 @@ class CatalysisSample(CombinatorialLibrary):
                 continue
             archive.results.material.elements.extend(process['elements'])
         archive.results.material.elements = list(set(archive.results.material.elements))
+        super().normalize(archive, logger)
 
 
 class CatalysisLibrary(LibrarySample):
