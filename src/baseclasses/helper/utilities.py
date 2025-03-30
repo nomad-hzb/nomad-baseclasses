@@ -331,8 +331,16 @@ def merge_sections(
 def create_archive(entity, archive, file_name, overwrite=False, merge=False):
     import json
 
-    if not archive.m_context.raw_path_exists(file_name) or overwrite or merge:
-        if merge and file_name.endswith('.json'):
+    if (
+        not archive.m_context.raw_path_exists(file_name)
+        or overwrite
+        or (
+            merge
+            and archive.m_context.raw_path_exists(file_name)
+            and file_name.endswith('archive.json')
+        )
+    ):
+        if merge:
             try:
                 with archive.m_context.raw_file(file_name) as jsonFile:
                     file_json = json.load(jsonFile)
