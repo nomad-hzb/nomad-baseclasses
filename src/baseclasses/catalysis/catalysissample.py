@@ -22,7 +22,7 @@ from nomad.datamodel.metainfo.basesections import (
     CompositeSystemReference,
     Measurement,
 )
-from nomad.datamodel.results import Material
+from nomad.datamodel.results import Material, Results
 from nomad.metainfo import Quantity, Reference, SubSection
 from nomad_material_processing.combinatorial import (
     CombinatorialLibrary,
@@ -217,6 +217,8 @@ class CatalysisSample(CombinatorialLibrary):
     parent = SubSection(section_def=CompositeSystemReference)
 
     def normalize(self, archive, logger):
+        if not archive.results:
+            archive.results = Results()
         if not archive.results.material:
             archive.results.material = Material()
         archive.results.material.elements = []
