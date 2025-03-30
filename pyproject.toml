@@ -38,7 +38,8 @@ dependencies = [
     'markdown2>=2.4.8',
     'qrcode>=7.4.2 ',
     'hdf5plugin>=4.3',
-    'hyperspy>=2.1.1'
+    'hyperspy>=2.1.1',
+    'pydantic<2.11'
 ]
 
 [project.urls]
