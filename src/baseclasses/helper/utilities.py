@@ -315,19 +315,17 @@ def merge_sections(
         if not section.m_is_set(quantity):
             section.m_set(quantity, update.m_get(quantity))
     for name, sub_section_def in update.m_def.all_sub_sections.items():
-        count_section = section.m_sub_section_count(sub_section_def)
-        count_update = update.m_sub_section_count(sub_section_def)
-        min_number_of_subsections = min(count_section, count_update)
-        for i in range(min_number_of_subsections):
-            merge_sections(
-                section.m_get_sub_section(sub_section_def, i),
-                update.m_get_sub_section(sub_section_def, i),
-                logger,
-            )
-        for i in range(min_number_of_subsections, count_update):
-            section.m_add_sub_section(
-                sub_section_def, update.m_get_sub_section(sub_section_def, i)
-            )
+        count = section.m_sub_section_count(sub_section_def)
+        if count == 0:
+            for update_sub_section in update.m_get_sub_sections(sub_section_def):
+                section.m_add_sub_section(sub_section_def, update_sub_section)
+        elif count == update.m_sub_section_count(sub_section_def):
+            for i in range(count):
+                merge_sections(
+                    section.m_get_sub_section(sub_section_def, i),
+                    update.m_get_sub_section(sub_section_def, i),
+                    logger,
+                )
 
 
 def create_archive(entity, archive, file_name, overwrite=False, merge=False):
