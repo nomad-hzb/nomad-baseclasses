@@ -46,6 +46,7 @@ def collectSampleData(archive):
     # search for all archives referencing this archive
     query = {
         'entry_references.target_entry_id': archive.metadata.entry_id,
+        'section_defs.definition_qualified_name:any': ['baseclasses.BaseProcess'],
     }
     pagination = MetadataPagination()
     pagination.page_size = 100
