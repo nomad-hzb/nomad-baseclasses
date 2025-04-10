@@ -206,7 +206,7 @@ class CatalysisXYSample(CombinatorialSample):
 
 
 class CatalysisSample(CombinatorialLibrary):
-    """Base class for catalysis sample"""
+    """Base class for a catalysis sample"""
     m_def = Section(links=['https://w3id.org/nfdi4cat/voc4cat_0000194']) #annotation to voc4cat
 
     active_area = Quantity(
