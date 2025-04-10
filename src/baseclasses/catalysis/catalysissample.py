@@ -23,7 +23,7 @@ from nomad.datamodel.metainfo.basesections import (
     Measurement,
 )
 from nomad.datamodel.results import Material
-from nomad.metainfo import Quantity, Reference, SubSection
+from nomad.metainfo import Quantity, Reference, Section, SubSection
 from nomad_material_processing.combinatorial import (
     CombinatorialLibrary,
     CombinatorialSample,
@@ -206,6 +206,9 @@ class CatalysisXYSample(CombinatorialSample):
 
 
 class CatalysisSample(CombinatorialLibrary):
+    """Base class for catalysis sample"""
+    m_def = Section(links=['https://w3id.org/nfdi4cat/voc4cat_0000194']) #annotation to voc4cat
+
     active_area = Quantity(
         type=np.dtype(np.float64),
         unit=('cm^2'),
