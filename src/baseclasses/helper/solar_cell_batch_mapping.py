@@ -607,6 +607,9 @@ def map_substrate(data, substrate_class):
         description=get_value(data, 'Notes', '', False),
         lab_id=get_value(data, 'Bottom Cell Name', '', False),
         conducting_material=[get_value(data, 'Substrate conductive layer', '', False)],
+        conducting_material_transmission = get_value(data, 'Transmission [%]', None ),
+        conducting_material_sheet_resistance = get_value(data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm']),            
+        conducting_material_thickness = get_value(data, 'TCO thickness [nm]', None, unit=['nm'])
     )
     return archive
 
@@ -944,6 +947,20 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
     material = get_value(data, 'Material name', '', number=False)
     return (f'{i}_{j}_ALD_{material}', archive)
 
+def map_substrate_properties():
+    pass
+
+def map_ink_properties():
+    pass
+
+def map_film_characterization():
+    pass
+
+def map_room_conditions():
+    pass
+
+def map_carbon_paste():
+    pass
 
 def map_generic(i, j, lab_ids, data, upload_id, generic_class):
     archive = generic_class(

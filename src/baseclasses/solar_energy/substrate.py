@@ -74,6 +74,37 @@ class Substrate(Entity):
             ),
         ),
     )
+
+    conducting_material_thickness = Quantity(
+        #links=['http://purl.obolibrary.org/obo/PATO_0000915'], took it from ALD, does it apply here too?
+        type=np.dtype(np.float64),
+        unit='nm',
+        shape=[],
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='nm',
+            props=dict(minValue=0),
+        ),
+    )
+
+    conducting_material_sheet_resistance = Quantity(
+        type=np.dtype(np.float64),
+        unit='ohm',  
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='ohm',
+            props=dict(
+                minValue=0,
+                description="Sheet resistance in ohms per square (Ω/□)"
+            ),
+        ),
+    )
+
+    conducting_material_transmission = Quantity(
+        type=np.dtype(np.float64),
+        a_eln=dict(component='NumberEditQuantity', props=dict(minValue=0)), #is described in percentage
+    )
+        
     # back_contact = Quantity(
     #     type=str,
     #     shape=['*'],
