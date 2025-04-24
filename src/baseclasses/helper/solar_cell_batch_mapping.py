@@ -127,8 +127,8 @@ def map_layer(data):
             layer_type=get_value(data, 'Layer type', None, False),
             layer_material_name=get_value(data, 'Material name', None, False),
             layer_thickness=get_value(data, 'Layer thickness [nm]', None, unit='nm'),
-            layer_transmission = get_value(data, 'Transmission [%]', None, True),
-            layer_morphology = get_value(data, 'Morphology', None, False)
+            layer_transmission=get_value(data, 'Transmission [%]', None, True),
+            layer_morphology=get_value(data, 'Morphology', None, False),
         )
     ]
 
@@ -431,6 +431,9 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
             substrate_height=get_value(
                 data, 'Substrate thickness [mm]', None, unit='mm'
             ),
+            ink_batch_supplier=get_value(data, 'Ink Batch Supplier', None, False),
+            ink_viscosity=get_value(data, 'Ink Viscosity [Pa*s]', None, unit='Pa*s'),
+            ink_contact_angle=get_value(data, 'Ink Contact Angle [°]', None, unit='°'),
         ),
         print_head_path=PrintHeadPath(
             quality_factor=get_value(data, 'Quality factor', None, False),
@@ -609,9 +612,13 @@ def map_substrate(data, substrate_class):
         description=get_value(data, 'Notes', '', False),
         lab_id=get_value(data, 'Bottom Cell Name', '', False),
         conducting_material=[get_value(data, 'Substrate conductive layer', '', False)],
-        conducting_material_transmission = get_value(data, 'Transmission [%]', None ),
-        conducting_material_sheet_resistance = get_value(data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm']),            
-        conducting_material_thickness = get_value(data, 'TCO thickness [nm]', None, unit=['nm'])
+        conducting_material_transmission=get_value(data, 'Transmission [%]', None),
+        conducting_material_sheet_resistance=get_value(
+            data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm']
+        ),
+        conducting_material_thickness=get_value(
+            data, 'TCO thickness [nm]', None, unit=['nm']
+        ),
     )
     return archive
 
@@ -949,17 +956,20 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
     material = get_value(data, 'Material name', '', number=False)
     return (f'{i}_{j}_ALD_{material}', archive)
 
-def map_ink_properties():
-    pass
 
 def map_film_characterization():
+    # included some properties in the LayerProperties. Open question about the connection to measurements
     pass
 
+
 def map_room_conditions():
+    # will need to find a solution for saving a range of values
     pass
+
 
 def map_carbon_paste():
     pass
+
 
 def map_generic(i, j, lab_ids, data, upload_id, generic_class):
     archive = generic_class(
