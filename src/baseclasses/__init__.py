@@ -406,8 +406,6 @@ class LayerProperties(ArchiveSection):
 
 
 
-
-
 class LayerDeposition(BaseProcess):
     m_def = Section(
         links=['https://purl.archive.org/tfsco/TFSCO_00000067'], label_quantity='layer'

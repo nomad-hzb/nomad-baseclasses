@@ -408,6 +408,9 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
             ),
             drop_density=get_value(data, 'Droplet density [dpi]', None),
             printed_area=get_value(data, 'Printed area [mm²]', None, unit='mm**2'),
+            ink_batch_supplier = get_value(data, 'Ink Batch Supplier', None, False),
+            ink_viscosity=get_value(data, 'Ink Viscosity [Pa*s]', None, unit='Pa*s'),
+            ink_contact_angle=get_value(data, 'Ink Contact Angle [°]', None, unit='°'),
         ),
         print_head_path=PrintHeadPath(
             quality_factor=get_value(data, 'Quality factor', None, False),
@@ -895,13 +898,12 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
     material = get_value(data, 'Material name', '', number=False)
     return (f'{i}_{j}_ALD_{material}', archive)
 
-def map_ink_properties():
-    pass
-
 def map_film_characterization():
+    #included some properties in the LayerProperties. Open question about the connection to measurements
     pass
 
 def map_room_conditions():
+    #will need to find a solution for saving a range of values
     pass
 
 def map_carbon_paste():
