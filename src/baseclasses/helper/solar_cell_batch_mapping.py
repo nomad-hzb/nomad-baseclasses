@@ -115,7 +115,9 @@ def map_annealing(data):
     return Annealing(
         temperature=get_value(data, 'Annealing temperature [°C]', None, unit='°C'),
         time=get_value(data, 'Annealing time [min]', None, unit='minute'),
-        atmosphere=get_value(data, 'Annealing athmosphere', None, False),
+        atmosphere=get_value(
+            data, ['Annealing athmosphere', 'Annealing atmosphere'], None, False
+        ),
     )
 
 
