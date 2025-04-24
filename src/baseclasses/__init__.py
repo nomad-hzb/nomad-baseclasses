@@ -385,8 +385,27 @@ class LayerProperties(ArchiveSection):
         type=np.dtype(np.float64),
         description=('The thickness of the sample, either measured or assumed.'),
         unit=('nm'),
+        shape =[],
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
     )
+
+    layer_transmission = Quantity(
+        type=np.dtype(np.float64),
+        a_eln=dict(component='NumberEditQuantity', props=dict(minValue=0)), #is described in percentage
+    )
+
+    layer_morphology = Quantity(
+        #links=[],
+        type = str,
+        description= ('A description of the morphology of the film'),
+        shape = [],
+        a_eln=dict(component='StringEditQuantity'),
+
+    # How do I connect  characterization results such as photoluminescence, XRD & SEM results to this class?
+    )
+
+
+
 
 
 class LayerDeposition(BaseProcess):

@@ -127,6 +127,8 @@ def map_layer(data):
             layer_type=get_value(data, 'Layer type', None, False),
             layer_material_name=get_value(data, 'Material name', None, False),
             layer_thickness=get_value(data, 'Layer thickness [nm]', None, unit='nm'),
+            layer_transmission = get_value(data, 'Transmission [%]', None, True),
+            layer_morphology = get_value(data, 'Morphology', None, False)
         )
     ]
 
