@@ -17,7 +17,9 @@
 #
 import numpy as np
 from nomad.datamodel.metainfo.eln import Entity
-from nomad.metainfo import Quantity
+from nomad.metainfo import Quantity, SubSection
+
+from baseclasses import LayerProperties
 
 from ..helper.add_solar_cell import add_solar_cell
 
@@ -75,36 +77,7 @@ class Substrate(Entity):
         ),
     )
 
-    conducting_material_thickness = Quantity(
-        # links=['http://purl.obolibrary.org/obo/PATO_0000915'], took it from ALD, does it apply here too?
-        type=np.dtype(np.float64),
-        unit='nm',
-        shape=[],
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='nm',
-            props=dict(minValue=0),
-        ),
-    )
-
-    conducting_material_sheet_resistance = Quantity(
-        type=np.dtype(np.float64),
-        unit='ohm',
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='ohm',
-            props=dict(
-                minValue=0, description='Sheet resistance in ohms per square (Ω/□)'
-            ),
-        ),
-    )
-
-    conducting_material_transmission = Quantity(
-        type=np.dtype(np.float64),
-        a_eln=dict(
-            component='NumberEditQuantity', props=dict(minValue=0)
-        ),  # is described in percentage
-    )
+    substrate_properties = SubSection(section_def=LayerProperties)
 
     # back_contact = Quantity(
     #     type=str,
@@ -119,12 +92,45 @@ class Substrate(Entity):
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
         add_solar_cell(archive)
+
         if self.substrate:
+            # Set up the substrate materials list
+            substrate_materials = [self.substrate]
+
+            # Add conducting materials if present
             if self.conducting_material:
-                archive.results.properties.optoelectronic.solar_cell.substrate = [
-                    self.substrate
-                ] + self.conducting_material
-            else:
-                archive.results.properties.optoelectronic.solar_cell.substrate = [
-                    self.substrate
-                ]
+                substrate_materials.extend(self.conducting_material)
+
+            # Assign the materials list to the proper field
+            archive.results.properties.optoelectronic.solar_cell.substrate = (
+                substrate_materials
+            )
+
+            # Handle substrate properties separately - use the proper field names
+            if self.substrate_properties:
+                # Create a properties dictionary or object to store the values
+                props = {}
+
+                # Use the correct property names as defined in LayerProperties
+                if (
+                    hasattr(self.substrate_properties, 'layer_thickness')
+                    and self.substrate_properties.layer_thickness is not None
+                ):
+                    props['thickness'] = self.substrate_properties.layer_thickness
+
+                if (
+                    hasattr(self.substrate_properties, 'layer_transmission')
+                    and self.substrate_properties.layer_transmission is not None
+                ):
+                    props['transmission'] = self.substrate_properties.layer_transmission
+
+                if (
+                    hasattr(self.substrate_properties, 'sheet_resistance')
+                    and self.substrate_properties.layer_sheet_resistance is not None
+                ):
+                    props['sheet_resistance'] = (
+                        self.substrate_properties.sheet_resistance
+                    )
+
+                # Assign the properties to a separate field
+                archive.results.properties.optoelectronic.solar_cell.substrate_properties = props

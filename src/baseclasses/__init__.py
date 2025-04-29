@@ -402,7 +402,17 @@ class LayerProperties(ArchiveSection):
         description=('A description of the morphology of the film'),
         shape=[],
         a_eln=dict(component='StringEditQuantity'),
-        # How do I connect  characterization results such as photoluminescence, XRD & SEM results to this class?
+    )
+    layer_sheet_resistance = Quantity(
+        type=np.dtype(np.float64),
+        unit='ohm',
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='ohm',
+            props=dict(
+                minValue=0, description='Sheet resistance in ohms per square (Ω/□)'
+            ),
+        ),
     )
 
 
