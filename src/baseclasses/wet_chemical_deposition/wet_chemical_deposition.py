@@ -57,6 +57,30 @@ class PrecursorSolution(ArchiveSection):
         ),
     )
 
+    solution_viscosity = Quantity(
+        links=['http://purl.obolibrary.org/obo/PATO_0000992'],
+        type=np.dtype(np.float64),
+        unit=('Pa*s'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='Pa*s',
+            props=dict(minValue=0),
+        ),
+    )
+
+    solution_contact_angle = Quantity(
+        links=[
+            'http://www.ontology-of-units-of-measure.org/resource/om-2/ContactAngle'
+        ],
+        type=np.dtype(np.float64),
+        unit=('deg'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='deg',
+            props=dict(minValue=0, maxValue=180),
+        ),
+    )
+
     solution_details = SubSection(section_def=Solution)
 
     def normalize(self, archive, logger):

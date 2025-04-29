@@ -127,8 +127,14 @@ def map_layer(data):
             layer_type=get_value(data, 'Layer type', None, False),
             layer_material_name=get_value(data, 'Material name', None, False),
             layer_thickness=get_value(data, 'Layer thickness [nm]', None, unit='nm'),
+<<<<<<< HEAD
             layer_transmission=get_value(data, 'Transmission [%]', None, True),
             layer_morphology=get_value(data, 'Morphology', None, False),
+=======
+            layer_transmission = get_value(data, 'Transmission [%]', None, True),
+            layer_morphology = get_value(data, 'Morphology', None, False),
+            layer_sheet_resistance = get_value(data, 'Sheet Resistance [Ohms/square]', None, True )
+>>>>>>> 25eb8cd (substrate properties as subsection of layer)
         )
     ]
 
@@ -612,13 +618,9 @@ def map_substrate(data, substrate_class):
         description=get_value(data, 'Notes', '', False),
         lab_id=get_value(data, 'Bottom Cell Name', '', False),
         conducting_material=[get_value(data, 'Substrate conductive layer', '', False)],
-        conducting_material_transmission=get_value(data, 'Transmission [%]', None),
-        conducting_material_sheet_resistance=get_value(
-            data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm']
-        ),
-        conducting_material_thickness=get_value(
-            data, 'TCO thickness [nm]', None, unit=['nm']
-        ),
+        layer_thickness = get_value(data, 'TCO thickness', None ),
+        layer_transmission = get_value(data, 'Transmission [%]', None ),
+        layer_sheet_resistance = get_value(data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm']),            
     )
     return archive
 
