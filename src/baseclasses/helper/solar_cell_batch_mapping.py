@@ -611,7 +611,7 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
 def map_substrate(data, substrate_class):
     # Create LayerProperties for substrate_properties
     substrate_props = LayerProperties(
-        layer_thickness=get_value(data, 'TCO thickness', None, unit=['nm']),
+        layer_thickness=get_value(data, 'TCO thickness [nm]', None, unit=['nm']),
         layer_transmission=get_value(data, 'Transmission [%]', None),
         layer_sheet_resistance=get_value(
             data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm']
