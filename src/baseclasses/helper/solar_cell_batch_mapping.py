@@ -379,6 +379,18 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                     None,
                     unit=['uL', 'uL'],
                 ),
+                solution_viscosity=get_value(
+                    data,
+                    'Viscosity [mPa*s]',
+                    None,
+                    unit=['mPa*s'],
+                ),
+                solution_contact_angle=get_value(
+                    data,
+                    'Contact angle [°]',
+                    None,
+                    unit=['°'],
+                ),
             )
         ],
         layer=map_layer(data),
@@ -437,8 +449,6 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                 data, 'Substrate thickness [mm]', None, unit='mm'
             ),
             ink_batch_supplier=get_value(data, 'Ink Batch Supplier', None, False),
-            ink_viscosity=get_value(data, 'Ink Viscosity [Pa*s]', None, unit='Pa*s'),
-            ink_contact_angle=get_value(data, 'Ink Contact Angle [°]', None, unit='°'),
         ),
         print_head_path=PrintHeadPath(
             quality_factor=get_value(data, 'Quality factor', None, False),

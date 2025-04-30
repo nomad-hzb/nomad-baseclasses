@@ -63,7 +63,7 @@ class PrecursorSolution(ArchiveSection):
         unit=('Pa*s'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='Pa*s',
+            defaultDisplayUnit='mPa*s',
             props=dict(minValue=0),
         ),
     )
