@@ -359,7 +359,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
         name='inkjet printing ' + get_value(data, 'Material name', '', False),
         location=location,
         positon_in_experimental_plan=i,
-        description=get_value(data, 'Notes', None, False),
+        description=get_value(data, 'Batch supplier-ID-Opened at-remaining shelf life', None, False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -446,7 +446,6 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
             substrate_height=get_value(
                 data, 'Substrate thickness [mm]', None, unit='mm'
             ),
-            ink_batch_supplier=get_value(data, 'Ink Batch Supplier', None, False),
         ),
         print_head_path=PrintHeadPath(
             quality_factor=get_value(data, 'Quality factor', None, False),
@@ -888,6 +887,7 @@ def map_laser_scribing(i, j, lab_ids, data, upload_id, laser_class):
             )
             for lab_id in lab_ids
         ],
+        description=get_value(data, 'Platform', '', False),
         recipe_file=get_value(data, 'Recipe file', None, False),
         properties=LaserScribingProperties(
             laser_wavelength=get_value(data, 'Laser wavelength [nm]', None),

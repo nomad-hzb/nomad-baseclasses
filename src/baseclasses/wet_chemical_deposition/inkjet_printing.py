@@ -602,11 +602,6 @@ class InkjetPrintingProperties(ArchiveSection):
         a_eln=dict(component='StringEditQuantity'),
     )
 
-    ink_batch_supplier = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'),
-    )
-
     print_head_properties = SubSection(section_def=PrintHeadProperties)
 
 
