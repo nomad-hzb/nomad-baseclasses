@@ -428,7 +428,8 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
             directional=get_value(data, 'Printing direction', None, False),
         ),
         atmosphere=Atmosphere(
-            relative_humidity=get_value(data, 'rel. humidity [%]', None),
+            oxygen_level=get_value(data, 'GB oxygen level [ppm]', None),
+            relative_humidity=get_value(data, 'Room/GB humidity [%]', None),
             temperature=get_value(data, 'Room temperature [°C]', None, unit='°C'),
         ),
         annealing=map_annealing(data),
@@ -912,10 +913,6 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
     )
     material = get_value(data, 'Material name', '', number=False)
     return (f'{i}_{j}_ALD_{material}', archive)
-
-def map_film_characterization():
-    #included some properties in the LayerProperties. Open question about the connection to measurements
-    pass
 
 def map_room_conditions():
     #will need to find a solution for saving a range of values
