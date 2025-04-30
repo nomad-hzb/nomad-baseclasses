@@ -511,6 +511,18 @@ class InkjetPrintingProperties(ArchiveSection):
         ),
     )
 
+    ink_viscosity = Quantity(
+        links=['http://purl.obolibrary.org/obo/PATO_0000992'],
+        type=np.dtype(np.float64),
+        unit=('mPa*s'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mPa*s',
+            props=dict(minValue=0, maxValue=100),
+        ),
+        description='Viscosity of the ink, critical for printability in inkjet printing',
+    )
+
     drop_density = Quantity(
         type=np.dtype(np.float64),
         unit=('1/in'),

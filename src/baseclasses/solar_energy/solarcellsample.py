@@ -57,6 +57,21 @@ def collectBaseProcesses(entry, entry_id, entry_data):
     if 'layer' in entry_data:
         entry[entry_id].update({'layer': [layer for layer in entry_data['layer']]})
 
+    # Add collection of solution_viscosity for wet chemical deposition processes
+    if 'solution' in entry_data and entry_data['solution']:
+        solution_viscosities = []
+        for solution in entry_data['solution']:
+            if 'solution_viscosity' in solution:
+                solution_viscosities.append(solution['solution_viscosity'])
+            # Also check for ink_viscosity in InkjetPrintingProperties if available
+            elif (
+                'properties' in entry_data
+                and 'ink_viscosity' in entry_data['properties']
+            ):
+                solution_viscosities.append(entry_data['properties']['ink_viscosity'])
+        if solution_viscosities:
+            entry[entry_id].update({'solution_viscosities': solution_viscosities})
+
 
 def collectJVMeasurement(entry, entry_id, entry_data):
     efficiency = [
