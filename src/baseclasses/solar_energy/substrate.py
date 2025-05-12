@@ -79,6 +79,7 @@ class Substrate(Entity):
 
     substrate_properties = SubSection(section_def=LayerProperties, repeats=True)
 
+
     # back_contact = Quantity(
     #     type=str,
     #     shape=['*'],
@@ -92,45 +93,12 @@ class Substrate(Entity):
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
         add_solar_cell(archive)
-
         if self.substrate:
-            # Set up the substrate materials list
-            substrate_materials = [self.substrate]
-
-            # Add conducting materials if present
             if self.conducting_material:
-                substrate_materials.extend(self.conducting_material)
-
-            # Assign the materials list to the proper field
-            archive.results.properties.optoelectronic.solar_cell.substrate = (
-                substrate_materials
-            )
-
-            # Handle substrate properties separately - use the proper field names
-            if self.substrate_properties:
-                # Create a properties dictionary or object to store the values
-                props = {}
-
-                # Use the correct property names as defined in LayerProperties
-                if (
-                    hasattr(self.substrate_properties, 'layer_thickness')
-                    and self.substrate_properties.layer_thickness is not None
-                ):
-                    props['thickness'] = self.substrate_properties.layer_thickness
-
-                if (
-                    hasattr(self.substrate_properties, 'layer_transmission')
-                    and self.substrate_properties.layer_transmission is not None
-                ):
-                    props['transmission'] = self.substrate_properties.layer_transmission
-
-                if (
-                    hasattr(self.substrate_properties, 'sheet_resistance')
-                    and self.substrate_properties.layer_sheet_resistance is not None
-                ):
-                    props['sheet_resistance'] = (
-                        self.substrate_properties.sheet_resistance
-                    )
-
-                # Assign the properties to a separate field
-                archive.results.properties.optoelectronic.solar_cell.substrate_properties = props
+                archive.results.properties.optoelectronic.solar_cell.substrate = [
+                    self.substrate
+                ] + self.conducting_material
+            else:
+                archive.results.properties.optoelectronic.solar_cell.substrate = [
+                    self.substrate
+                ]
