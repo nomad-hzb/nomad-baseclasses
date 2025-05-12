@@ -66,8 +66,9 @@ class PrecursorSolution(ArchiveSection):
             defaultDisplayUnit='mPa*s',
             props=dict(minValue=0),
         ),
+        description='Viscosity of the ink solution, critical for printability in inkjet printing'
     )
-    
+
     solution_contact_angle = Quantity(
         links=['http://www.ontology-of-units-of-measure.org/resource/om-2/ContactAngle'],
         type=np.dtype(np.float64),

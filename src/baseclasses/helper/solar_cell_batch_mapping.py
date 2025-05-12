@@ -353,7 +353,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
         name='inkjet printing ' + get_value(data, 'Material name', '', False),
         location=location,
         positon_in_experimental_plan=i,
-        description=get_value(data, 'Batch supplier-ID-Opened at-remaining shelf life', None, False),
+        description=get_value(data, 'Notes', None, False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -428,7 +428,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
             directional=get_value(data, 'Printing direction', None, False),
         ),
         atmosphere=Atmosphere(
-            oxygen_level=get_value(data, 'GB oxygen level [ppm]', None),
+            oxygen_level_ppm=get_value(data, 'GB oxygen level [ppm]', None),
             relative_humidity=get_value(data, 'Room/GB humidity [%]', None),
             temperature=get_value(data, 'Room temperature [°C]', None, unit='°C'),
         ),
@@ -558,11 +558,13 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
 
 def map_substrate(data, substrate_class):
     # Create LayerProperties for substrate_properties
-    substrate_props = LayerProperties(
-        layer_thickness=get_value(data, 'TCO thickness [nm]', None, unit=['nm']),
-        layer_transmission=get_value(data, 'Transmission [%]', None),
-        layer_sheet_resistance=get_value(data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm'])
-    )
+    substrate_props = [
+        LayerProperties(
+            layer_thickness=get_value(data, 'TCO thickness [nm]', None, unit=['nm']),
+            layer_transmission=get_value(data, 'Transmission [%]', None),
+            layer_sheet_resistance=get_value(data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm'])
+        )
+    ]
     archive = substrate_class(
         name='Substrate '
         + get_value(data, 'Sample dimension', '', False)
@@ -913,10 +915,6 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
     )
     material = get_value(data, 'Material name', '', number=False)
     return (f'{i}_{j}_ALD_{material}', archive)
-
-def map_room_conditions():
-    #will need to find a solution for saving a range of values
-    pass
 
 def map_carbon_paste():
     pass
