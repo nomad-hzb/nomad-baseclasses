@@ -89,7 +89,25 @@ class LaserScribing(BaseProcess):
         a_browser=dict(adaptor='RawFileAdaptor'),
     )
 
+    patterning = Quantity(
+        type=str,
+        description = ('States the patterning step'),
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=['P1', 'P2', 'P3', 'Commercially Etched']
+            )
+        ),
+    )
+
+    layout = Quantity(
+        type=str,
+        description=('Layout of solar cell electrodes and connections dictating the laser scribing paths'),
+        a_eln=dict(component='StringEditQuantity'),
+    )   
+
     properties = SubSection(section_def=LaserScribingProperties)
+
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)

@@ -898,8 +898,10 @@ def map_laser_scribing(i, j, lab_ids, data, upload_id, laser_class):
             )
             for lab_id in lab_ids
         ],
-        description=get_value(data, 'Platform', '', False),
+        description=get_value(data, 'Notes', None, False),
         recipe_file=get_value(data, 'Recipe file', None, False),
+        patterning=get_value(data,'Patterning Step', None, False),
+        layout=get_value(data,'Layout', None, False),
         properties=LaserScribingProperties(
             laser_wavelength=get_value(data, 'Laser wavelength [nm]', None),
             laser_pulse_time=get_value(data, 'Laser pulse time [ps]', None),
