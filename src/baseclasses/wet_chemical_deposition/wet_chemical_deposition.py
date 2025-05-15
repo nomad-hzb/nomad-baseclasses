@@ -66,7 +66,7 @@ class PrecursorSolution(ArchiveSection):
             defaultDisplayUnit='mPa*s',
             props=dict(minValue=0),
         ),
-        description='Viscosity of the ink solution, critical for printability in inkjet printing'
+        description='Viscosity of the ink solution, critical for printability in inkjet printing',
     )
 
     solution_contact_angle = Quantity(
