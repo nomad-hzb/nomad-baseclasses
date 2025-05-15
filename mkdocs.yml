@@ -4,6 +4,7 @@ edit_uri: ""
 
 nav:
   - Home: index.md
+  - How to Cite: citation.md
   - Explanation:
     - Measurements: explanation/measurements.md
     - Synthesis: explanation/synthesis.md
@@ -15,6 +16,11 @@ nav:
     - Create a Standard Sample: how_to/create_standard_sample.md
     - Create Wet Chemical Deposition: how_to/create_wet_chemical_deposition.md
     - Upload Measurement: how_to/upload_measurement.md
+    - Spreadsheet Workflow:
+      - What is the Spreadsheet Workflow?: how_to/Spreadsheet Workflow/01-what_is_the_spreadsheet_workflow.md
+      - Getting a Spreadsheet: how_to/Spreadsheet Workflow/02-getting_a_spreadsheet.md
+      - Fill Your Spreadsheet: how_to/Spreadsheet Workflow/03-fill_your_spreadsheet.md
+      - Upload Spreadsheet: how_to/Spreadsheet Workflow/04-upload_spreadsheet.md
   - References:
     - Solution: references/solution.md
     - Wet Chemical Deposition: references/wet_chemical_deposition.md
