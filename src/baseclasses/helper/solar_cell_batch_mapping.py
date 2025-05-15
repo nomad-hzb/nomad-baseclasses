@@ -123,7 +123,7 @@ def map_annealing(data):
 def map_layer(data):
     if "Carbon Paste Layer" in get_value(data, 'Layer type', None, False):
         return [
-            CarbonPasteLayerProperties(
+                        CarbonPasteLayerProperties(
             layer_type=get_value(data, 'Layer type', None, False),
             layer_material_name=get_value(data, 'Material name', None, False),
             layer_thickness=get_value(data, 'Layer thickness [nm]', None, unit='nm'),
@@ -819,7 +819,7 @@ def map_dip_coating(i, j, lab_ids, data, upload_id, dc_class):
                 # check unit
                 solution_volume=get_value(
                     data,
-                    ['Solution volume [uL]', 'Solution volume [uL]'],
+                    ['Solution volume [mL]', 'Solution volume [uL]'],
                     None,
                     unit=['uL', 'uL'],
                 ),
