@@ -16,6 +16,7 @@ from baseclasses.material_processes_misc import (
     VacuumQuenching,
 )
 from baseclasses.material_processes_misc.laser_scribing import LaserScribingProperties
+from baseclasses.solar_energy.carbonpaste import CarbonPasteLayerProperties
 from baseclasses.solution import Solution, SolutionChemical
 from baseclasses.vapour_based_deposition.atomic_layer_deposition import (
     ALDMaterial,
@@ -122,18 +123,35 @@ def map_annealing(data):
 
 
 def map_layer(data):
-    return [
-        LayerProperties(
-            layer_type=get_value(data, 'Layer type', None, False),
-            layer_material_name=get_value(data, 'Material name', None, False),
-            layer_thickness=get_value(data, 'Layer thickness [nm]', None, unit='nm'),
-            layer_transmission=get_value(data, 'Transmission [%]', None, True),
-            layer_morphology=get_value(data, 'Morphology', None, False),
-            layer_sheet_resistance=get_value(
-                data, 'Sheet Resistance [Ohms/square]', None, True
-            ),
-        )
-    ]
+    if 'Carbon Paste Layer' in get_value(data, 'Layer type', None, False):
+        return [
+            CarbonPasteLayerProperties(
+                layer_type=get_value(data, 'Layer type', None, False),
+                layer_material_name=get_value(data, 'Material name', None, False),
+                layer_thickness=get_value(
+                    data, 'Layer thickness [nm]', None, unit='nm'
+                ),
+                supplier=get_value(data, 'Supplier', None, False),
+                batch=get_value(data, 'Batch', None, False),
+                drying_time=get_value(data, 'Drying Time [s]', None, unit='s'),
+                cost=get_value(data, 'Cost [EUR]', None, True),
+            )
+        ]
+    else:
+        return [
+            LayerProperties(
+                layer_type=get_value(data, 'Layer type', None, False),
+                layer_material_name=get_value(data, 'Material name', None, False),
+                layer_thickness=get_value(
+                    data, 'Layer thickness [nm]', None, unit='nm'
+                ),
+                layer_transmission=get_value(data, 'Transmission [%]', None, True),
+                layer_morphology=get_value(data, 'Morphology', None, False),
+                layer_sheet_resistance=get_value(
+                    data, 'Sheet Resistance [Ohms/square]', None, True
+                ),
+            )
+        ]
 
 
 def map_solutions(data):
@@ -610,23 +628,15 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
 
 def map_substrate(data, substrate_class):
     # Create LayerProperties for substrate_properties
-<<<<<<< HEAD
-    substrate_props = LayerProperties(
-        layer_thickness=get_value(data, 'TCO thickness [nm]', None, unit=['nm']),
-        layer_transmission=get_value(data, 'Transmission [%]', None),
-        layer_sheet_resistance=get_value(
-            data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm']
-        ),
-    )
-=======
     substrate_props = [
         LayerProperties(
             layer_thickness=get_value(data, 'TCO thickness [nm]', None, unit=['nm']),
             layer_transmission=get_value(data, 'Transmission [%]', None),
-            layer_sheet_resistance=get_value(data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm'])
+            layer_sheet_resistance=get_value(
+                data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm']
+            ),
         )
     ]
->>>>>>> f8272e4 (minor changes after meeting with Micha)
     archive = substrate_class(
         name='Substrate '
         + get_value(data, 'Sample dimension', '', False)
@@ -900,8 +910,8 @@ def map_laser_scribing(i, j, lab_ids, data, upload_id, laser_class):
         ],
         description=get_value(data, 'Notes', None, False),
         recipe_file=get_value(data, 'Recipe file', None, False),
-        patterning=get_value(data,'Patterning Step', None, False),
-        layout=get_value(data,'Layout', None, False),
+        patterning=get_value(data, 'Patterning Step', None, False),
+        layout=get_value(data, 'Layout', None, False),
         properties=LaserScribingProperties(
             laser_wavelength=get_value(data, 'Laser wavelength [nm]', None),
             laser_pulse_time=get_value(data, 'Laser pulse time [ps]', None),
@@ -983,18 +993,6 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
     )
     material = get_value(data, 'Material name', '', number=False)
     return (f'{i}_{j}_ALD_{material}', archive)
-
-<<<<<<< HEAD
-
-def map_room_conditions():
-    # will need to find a solution for saving a range of values
-    pass
-
-
-=======
->>>>>>> f8272e4 (minor changes after meeting with Micha)
-def map_carbon_paste():
-    pass
 
 
 def map_generic(i, j, lab_ids, data, upload_id, generic_class):

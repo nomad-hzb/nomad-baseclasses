@@ -79,7 +79,6 @@ class Substrate(Entity):
 
     substrate_properties = SubSection(section_def=LayerProperties, repeats=True)
 
-
     # back_contact = Quantity(
     #     type=str,
     #     shape=['*'],

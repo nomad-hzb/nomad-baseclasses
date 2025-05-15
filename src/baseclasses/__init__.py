@@ -356,6 +356,7 @@ class LayerProperties(ArchiveSection):
                     'Upconversion',
                     'Back Contact',
                     'Passivation',
+                    'Carbon Paste Layer',
                 ]
             ),
         ),
