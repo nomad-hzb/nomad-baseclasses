@@ -212,7 +212,7 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
                 # check unit
                 solution_volume=get_value(
                     data,
-                    ['Solution volume [uL]', 'Solution volume [uL]'],
+                    ['Solution volume [um]', 'Solution volume [uL]'],
                     None,
                     unit=['uL', 'uL'],
                 ),
@@ -306,7 +306,7 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
                 # check unit
                 solution_volume=get_value(
                     data,
-                    ['Solution volume [uL]', 'Solution volume [uL]'],
+                    ['Solution volume [um]', 'Solution volume [uL]'],
                     None,
                     unit=['uL', 'uL'],
                 ),
@@ -373,7 +373,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                 # check unit
                 solution_volume=get_value(
                     data,
-                    ['Solution volume [uL]', 'Solution volume [uL]'],
+                    ['Solution volume [um]', 'Solution volume [uL]'],
                     None,
                     unit=['uL', 'uL'],
                 ),
