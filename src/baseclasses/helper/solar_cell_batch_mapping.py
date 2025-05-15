@@ -881,7 +881,7 @@ def map_dip_coating(i, j, lab_ids, data, upload_id, dc_class):
                 # check unit
                 solution_volume=get_value(
                     data,
-                    ['Solution volume [mL]', 'Solution volume [uL]'],
+                    ['Solution volume [um]', 'Solution volume [uL]'],
                     None,
                     unit=['uL', 'uL'],
                 ),
