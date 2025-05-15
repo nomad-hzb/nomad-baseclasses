@@ -1,8 +1,12 @@
 import numpy as np
-from nomad.metainfo import Quantity, SubSection
+from nomad.metainfo import Quantity, SubSection, Section
+from nomad.datamodel.data import ArchiveSection
 from baseclasses import LayerProperties
 
-class CarbonPasteLayer(LayerProperties):
+class CarbonPasteLayerProperties(LayerProperties):
+    """
+    A special class to track additional information for when the Back Contact Layer is based on carbon paste.
+    """
     supplier = Quantity(
         type=str,
         description="Supplier of the carbon paste material.",
@@ -15,15 +19,6 @@ class CarbonPasteLayer(LayerProperties):
         a_eln=dict(component='StringEditQuantity'),
     )
 
-    # deposition_method = Quantity(
-    #     type=str,
-    #     description="Method used for depositing the carbon paste.",
-    #     a_eln=dict(
-    #         component='EnumEditQuantity',
-    #         props=dict(suggestions=['Screen Printing', 'Doctor Blade', 'Drop Casting']),
-    #     ),
-    # )
-
     drying_time = Quantity(
         type=np.dtype(np.float64),
         unit='s',
@@ -33,13 +28,7 @@ class CarbonPasteLayer(LayerProperties):
 
     cost = Quantity(
         type=np.dtype(np.float64),
-        unit='EUR',
-        description="Cost of the carbon paste material.",
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='EUR'),
-    )
-
-    properties = Quantity(
-        type=str,
-        description="Additional properties of the carbon paste layer.",
-        a_eln=dict(component='StringEditQuantity'),
+        description="Cost of the carbon paste material (in EUR).",
+        a_eln=dict(component='NumberEditQuantity', props=dict(unit='EUR'),
+        )
     )

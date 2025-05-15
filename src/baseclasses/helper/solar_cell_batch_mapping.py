@@ -5,6 +5,7 @@ from nomad.datamodel.metainfo.basesections import (
 from nomad.units import ureg
 
 from baseclasses import LayerProperties, PubChemPureSubstanceSectionCustom
+from baseclasses.solar_energy.carbonpaste import CarbonPasteLayerProperties
 from baseclasses.atmosphere import Atmosphere
 from baseclasses.material_processes_misc import (
     AirKnifeGasQuenching,
@@ -120,16 +121,29 @@ def map_annealing(data):
 
 
 def map_layer(data):
-    return [
-        LayerProperties(
+    if "Carbon Paste Layer" in get_value(data, 'Layer type', None, False):
+        return [
+            CarbonPasteLayerProperties(
             layer_type=get_value(data, 'Layer type', None, False),
             layer_material_name=get_value(data, 'Material name', None, False),
             layer_thickness=get_value(data, 'Layer thickness [nm]', None, unit='nm'),
-            layer_transmission = get_value(data, 'Transmission [%]', None, True),
-            layer_morphology = get_value(data, 'Morphology', None, False),
-            layer_sheet_resistance = get_value(data, 'Sheet Resistance [Ohms/square]', None, True)
-        )
-    ]
+            supplier= get_value(data, 'Supplier', None, False),
+            batch=get_value(data, 'Batch', None, False),
+            drying_time=get_value(data, 'Drying Time [s]', None, unit='s'),
+            cost = get_value(data, 'Cost [EUR]', None, True ),
+            )
+        ]
+    else:
+        return [
+            LayerProperties(
+                layer_type=get_value(data, 'Layer type', None, False),
+                layer_material_name=get_value(data, 'Material name', None, False),
+                layer_thickness=get_value(data, 'Layer thickness [nm]', None, unit='nm'),
+                layer_transmission = get_value(data, 'Transmission [%]', None, True),
+                layer_morphology = get_value(data, 'Morphology', None, False),
+                layer_sheet_resistance = get_value(data, 'Sheet Resistance [Ohms/square]', None, True)
+            )
+        ]
 
 
 def map_solutions(data):
@@ -918,8 +932,6 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
     material = get_value(data, 'Material name', '', number=False)
     return (f'{i}_{j}_ALD_{material}', archive)
 
-def map_carbon_paste():
-    pass
 
 def map_generic(i, j, lab_ids, data, upload_id, generic_class):
     archive = generic_class(
