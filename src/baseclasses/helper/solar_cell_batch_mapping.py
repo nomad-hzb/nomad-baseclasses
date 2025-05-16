@@ -4,7 +4,11 @@ from nomad.datamodel.metainfo.basesections import (
 )
 from nomad.units import ureg
 
-from baseclasses import LayerProperties, PubChemPureSubstanceSectionCustom
+from baseclasses import (
+    CarbonPasteLayerProperties,
+    LayerProperties,
+    PubChemPureSubstanceSectionCustom,
+)
 from baseclasses.atmosphere import Atmosphere
 from baseclasses.material_processes_misc import (
     AirKnifeGasQuenching,
@@ -136,7 +140,7 @@ def map_layer(data):
                 supplier=get_value(data, 'Supplier', None, False),
                 batch=get_value(data, 'Batch', None, False),
                 drying_time=get_value(data, 'Drying Time [s]', None, unit='s'),
-                cost=get_value(data, 'Cost [EUR]', None, True),
+                cost=get_value(data, 'Cost [EUR]', None, True, None),
             )
         ]
     else:
