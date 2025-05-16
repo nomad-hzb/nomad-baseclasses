@@ -417,6 +417,40 @@ class LayerProperties(ArchiveSection):
     )
 
 
+class CarbonPasteLayerProperties(LayerProperties):
+    """
+    A special class to track additional information for when the Back Contact Layer is based on carbon paste.
+    """
+
+    supplier = Quantity(
+        type=str,
+        description='Supplier of the carbon paste material.',
+        a_eln=dict(component='StringEditQuantity'),
+    )
+
+    batch = Quantity(
+        type=str,
+        description='Batch number of the carbon paste material.',
+        a_eln=dict(component='StringEditQuantity'),
+    )
+
+    drying_time = Quantity(
+        type=np.dtype(np.float64),
+        unit='s',
+        description='Drying time for the carbon paste layer.',
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
+    )
+
+    cost = Quantity(
+        type=np.dtype(np.float64),
+        description='Cost of the carbon paste material (in EUR).',
+        a_eln=dict(
+            component='NumberEditQuantity',
+            props=dict(unit='EUR'),
+        ),
+    )
+
+
 class LayerDeposition(BaseProcess):
     m_def = Section(
         links=['https://purl.archive.org/tfsco/TFSCO_00000067'], label_quantity='layer'
@@ -494,7 +528,7 @@ class LayerDeposition(BaseProcess):
                         hole_transport_layer.append(layer_material_name_tmp)
                     if layer_type == 'Electron Transport Layer':
                         electron_transport_layer.append(layer_material_name_tmp)
-                    if layer_type == 'Back Contact':
+                    if layer_type in ['Back Contact', 'Carbon Paste Layer']:
                         back_contact.append(layer_material_name_tmp)
                     if layer_type == 'Absorber Layer':
                         absorber.append(layer_material_name_tmp)
