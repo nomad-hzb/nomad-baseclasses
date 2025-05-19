@@ -4,7 +4,8 @@ from nomad.datamodel.metainfo.basesections import (
 )
 from nomad.units import ureg
 
-from baseclasses import LayerProperties, PubChemPureSubstanceSectionCustom, CarbonPasteLayerProperties
+from baseclasses import LayerProperties, PubChemPureSubstanceSectionCustom
+from baseclasses.solar_energy.carbonpaste import CarbonPasteLayerProperties
 from baseclasses.atmosphere import Atmosphere
 from baseclasses.material_processes_misc import (
     AirKnifeGasQuenching,
@@ -122,15 +123,15 @@ def map_annealing(data):
 def map_layer(data):
     if "Carbon Paste Layer" in get_value(data, 'Layer type', None, False):
         return [
-                CarbonPasteLayerProperties(
-                layer_type=get_value(data, 'Layer type', None, False),
-                layer_material_name=get_value(data, 'Material name', None, False),
-                layer_thickness=get_value(data, 'Layer thickness [nm]', None, unit='nm'),
-                supplier= get_value(data, 'Supplier', None, False),
-                batch=get_value(data, 'Batch', None, False),
-                drying_time=get_value(data, 'Drying Time [s]', None, unit='s'),
-                cost = get_value(data, 'Cost [EUR]', None, True, None ),
-                )
+                        CarbonPasteLayerProperties(
+            layer_type=get_value(data, 'Layer type', None, False),
+            layer_material_name=get_value(data, 'Material name', None, False),
+            layer_thickness=get_value(data, 'Layer thickness [nm]', None, unit='nm'),
+            supplier= get_value(data, 'Supplier', None, False),
+            batch=get_value(data, 'Batch', None, False),
+            drying_time=get_value(data, 'Drying Time [s]', None, unit='s'),
+            cost = get_value(data, 'Cost [EUR]', None, True ),
+            )
         ]
     else:
         return [
