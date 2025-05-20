@@ -70,6 +70,7 @@ class PrecursorSolution(ArchiveSection):
     )
 
     solution_contact_angle = Quantity(
+        description=('The angle formed between the solution and the underlying layer.'),
         links=[
             'http://www.ontology-of-units-of-measure.org/resource/om-2/ContactAngle'
         ],

@@ -391,7 +391,10 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                 # check unit
                 solution_volume=get_value(
                     data,
-                    ['Solution volume [um]', 'Solution volume [uL]'],
+                    [
+                        'Solution volume [um]',
+                        'Solution volume [uL]',
+                    ],  # the um (wong unit) is for parsing the typo in case of old excels
                     None,
                     unit=['uL', 'uL'],
                 ),
