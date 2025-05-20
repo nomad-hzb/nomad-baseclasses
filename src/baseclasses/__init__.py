@@ -356,6 +356,8 @@ class LayerProperties(ArchiveSection):
                     'Upconversion',
                     'Back Contact',
                     'Passivation',
+                    'Carbon Paste Layer',
+                    'Substrate Conductive Layer',
                 ]
             ),
         ),
@@ -379,6 +381,43 @@ class LayerProperties(ArchiveSection):
         ),  # a_eln=dict(
         # component='StringEditQuantity')
     )
+
+    layer_thickness = Quantity(
+        # links=[],
+        type=np.dtype(np.float64),
+        description=('The thickness of the sample, either measured or assumed.'),
+        unit=('nm'),
+        shape =[],
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
+    )
+
+    layer_transmission = Quantity(
+        type=np.dtype(np.float64),
+        description=('Percentage of light that gets transmitted through the layer.'),
+        a_eln=dict(component='NumberEditQuantity', props=dict(minValue=0)), #is described in percentage
+    )
+
+    layer_morphology = Quantity(
+        #links=[],
+        type = str,
+        description= ('A description of the morphology of the film'),
+        shape = [],
+        a_eln=dict(component='StringEditQuantity'),
+
+    )
+    layer_sheet_resistance = Quantity(
+        type=np.dtype(np.float64),
+        unit='ohm',  
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='ohm',
+            props=dict(
+                minValue=0,
+                description="Sheet resistance in ohms per square (Ω/□)"
+            ),
+        ),
+    )
+
 
 
 class LayerDeposition(BaseProcess):
@@ -458,7 +497,7 @@ class LayerDeposition(BaseProcess):
                         hole_transport_layer.append(layer_material_name_tmp)
                     if layer_type == 'Electron Transport Layer':
                         electron_transport_layer.append(layer_material_name_tmp)
-                    if layer_type == 'Back Contact':
+                    if layer_type in ['Back Contact']:
                         back_contact.append(layer_material_name_tmp)
                     if layer_type == 'Absorber Layer':
                         absorber.append(layer_material_name_tmp)

@@ -5,6 +5,7 @@ from nomad.datamodel.metainfo.basesections import (
 from nomad.units import ureg
 
 from baseclasses import LayerProperties, PubChemPureSubstanceSectionCustom
+from baseclasses.solar_energy.carbonpaste import CarbonPasteLayerProperties
 from baseclasses.atmosphere import Atmosphere
 from baseclasses.material_processes_misc import (
     AirKnifeGasQuenching,
@@ -85,10 +86,11 @@ def get_value(data, key, default=None, number=True, unit=None):
         raise e
 
 
-def map_basic_sample(data, substrate_name, upload_id, sample_class):
+def map_basic_sample(data, substrate_name, upload_id, datetime, sample_class):
     archive = sample_class(
         name=data['Nomad ID'],
         lab_id=data['Nomad ID'],
+        datetime = datetime,
         substrate=get_reference(upload_id, substrate_name),
         description=get_value(data, 'Variation', None, False),
         number_of_junctions=get_value(data, 'Number of junctions', None),
@@ -96,10 +98,11 @@ def map_basic_sample(data, substrate_name, upload_id, sample_class):
     return (data['Nomad ID'], archive)
 
 
-def map_batch(batch_ids, batch_id, upload_id, batch_class):
+def map_batch(batch_ids, batch_id, upload_id, datetime, batch_class):
     archive = batch_class(
         name=batch_id,
         lab_id=batch_id,
+        datetime = datetime,
         entities=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -122,12 +125,29 @@ def map_annealing(data):
 
 
 def map_layer(data):
-    return [
-        LayerProperties(
+    if "Carbon Paste Layer" in get_value(data, 'Layer type', None, False):
+        return [
+                        CarbonPasteLayerProperties(
             layer_type=get_value(data, 'Layer type', None, False),
             layer_material_name=get_value(data, 'Material name', None, False),
-        )
-    ]
+            layer_thickness=get_value(data, 'Layer thickness [nm]', None, unit='nm'),
+            supplier= get_value(data, 'Supplier', None, False),
+            batch=get_value(data, 'Batch', None, False),
+            drying_time=get_value(data, 'Drying Time [s]', None, unit='s'),
+            cost = get_value(data, 'Cost [EUR]', None, True ),
+            )
+        ]
+    else:
+        return [
+            LayerProperties(
+                layer_type=get_value(data, 'Layer type', None, False),
+                layer_material_name=get_value(data, 'Material name', None, False),
+                layer_thickness=get_value(data, 'Layer thickness [nm]', None, unit='nm'),
+                layer_transmission = get_value(data, 'Transmission [%]', None, True),
+                layer_morphology = get_value(data, 'Morphology', None, False),
+                layer_sheet_resistance = get_value(data, 'Sheet Resistance [Ohms/square]', None, True)
+            )
+        ]
 
 
 def map_solutions(data):
@@ -365,10 +385,22 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                 # check unit
                 solution_volume=get_value(
                     data,
-                    ['Solution volume [um]', 'Solution volume [uL]'],
+                    ['Solution volume [um]', 'Solution volume [uL]'], #the um (wrong unit) is for parsing the typo in case of old excels
                     None,
                     unit=['uL', 'uL'],
                 ),
+                solution_viscosity = get_value(
+                    data,
+                    'Viscosity [mPa*s]',
+                    None,
+                    unit=['mPa*s'],
+                ),
+                solution_contact_angle = get_value(
+                    data,
+                    'Contact angle [°]',
+                    None,
+                    unit=['°'],
+                )
             )
         ],
         layer=map_layer(data),
@@ -414,7 +446,8 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
             directional=get_value(data, 'Printing direction', None, False),
         ),
         atmosphere=Atmosphere(
-            relative_humidity=get_value(data, 'rel. humidity [%]', None),
+            oxygen_level_ppm=get_value(data, 'GB oxygen level [ppm]', None),
+            relative_humidity=get_value(data, 'Room/GB humidity [%]', None),
             temperature=get_value(data, 'Room temperature [°C]', None, unit='°C'),
         ),
         annealing=map_annealing(data),
@@ -542,6 +575,16 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
 
 
 def map_substrate(data, substrate_class):
+    # Create LayerProperties for substrate_properties
+    substrate_props = [
+        LayerProperties(
+            layer_thickness=get_value(data, 'TCO thickness [nm]', None, unit=['nm']),
+            layer_transmission=get_value(data, 'Transmission [%]', None),
+            layer_sheet_resistance=get_value(data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm']),
+            layer_type = 'Substrate Conductive Layer',
+            layer_material_name = get_value(data, 'Substrate conductive layer', '', False)
+        )
+    ]
     archive = substrate_class(
         name='Substrate '
         + get_value(data, 'Sample dimension', '', False)
@@ -558,6 +601,7 @@ def map_substrate(data, substrate_class):
         description=get_value(data, 'Notes', '', False),
         lab_id=get_value(data, 'Bottom Cell Name', '', False),
         conducting_material=[get_value(data, 'Substrate conductive layer', '', False)],
+        substrate_properties=substrate_props,            
     )
     return archive
 
@@ -808,7 +852,10 @@ def map_laser_scribing(i, j, lab_ids, data, upload_id, laser_class):
             )
             for lab_id in lab_ids
         ],
+        description=get_value(data, 'Notes', None, False),
         recipe_file=get_value(data, 'Recipe file', None, False),
+        patterning=get_value(data,'Patterning Step', None, False),
+        layout=get_value(data,'Layout', None, False),
         properties=LaserScribingProperties(
             laser_wavelength=get_value(data, 'Laser wavelength [nm]', None),
             laser_pulse_time=get_value(data, 'Laser pulse time [ps]', None),
