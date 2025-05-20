@@ -32,8 +32,5 @@ class CarbonPasteLayerProperties(LayerProperties):
     cost = Quantity(
         type=np.dtype(np.float64),
         description='Cost of the carbon paste material (in EUR).',
-        a_eln=dict(
-            component='NumberEditQuantity',
-            props=dict(unit='EUR'),
-        ),
+        a_eln=dict(component='NumberEditQuantity'),
     )
