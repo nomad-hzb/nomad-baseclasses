@@ -635,6 +635,10 @@ def map_substrate(data, substrate_class):
             layer_sheet_resistance=get_value(
                 data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm']
             ),
+            layer_type='Substrate Conductive Layer',
+            layer_material_name=get_value(
+                data, 'Substrate conductive layer', '', False
+            ),
         )
     ]
     archive = substrate_class(

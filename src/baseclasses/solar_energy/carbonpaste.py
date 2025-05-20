@@ -7,7 +7,7 @@ from baseclasses import LayerProperties
 
 class CarbonPasteLayerProperties(LayerProperties):
     """
-    A special class to track additional information for when the Back Contact Layer is based on carbon paste.
+    A special class to track additional information for when the Layer is based on carbon paste.
     """
 
     supplier = Quantity(
