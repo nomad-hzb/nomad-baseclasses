@@ -86,10 +86,11 @@ def get_value(data, key, default=None, number=True, unit=None):
         raise e
 
 
-def map_basic_sample(data, substrate_name, upload_id, sample_class):
+def map_basic_sample(data, substrate_name, upload_id, datetime, sample_class):
     archive = sample_class(
         name=data['Nomad ID'],
         lab_id=data['Nomad ID'],
+        datetime=datetime,
         substrate=get_reference(upload_id, substrate_name) if substrate_name else None,
         description=get_value(data, 'Variation', None, False),
         number_of_junctions=get_value(data, 'Number of junctions', None),
@@ -97,10 +98,11 @@ def map_basic_sample(data, substrate_name, upload_id, sample_class):
     return (data['Nomad ID'], archive)
 
 
-def map_batch(batch_ids, batch_id, upload_id, batch_class):
+def map_batch(batch_ids, batch_id, upload_id, datetime, batch_class):
     archive = batch_class(
         name=batch_id,
         lab_id=batch_id,
+        datetime=datetime,
         entities=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -297,7 +299,8 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
             pressure=get_value(data, 'Gas quenching pressure [bar]', None, unit='bar'),
             velocity=get_value(data, 'Gas quenching velocity [m/s]', None, unit='m/s'),
             nozzle_shape=get_value(data, 'Nozzle shape', None, False),
-            nozzle_size=get_value(data, 'Nozzle size [mm²]', None, False, unit='mm**2'),
+            nozzle_size=get_value(
+                data, 'Nozzle size [mm²]', None, False, unit='mm**2'),
             gas=get_value(data, 'Gas', None, False),
         )
 
@@ -430,7 +433,8 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                 print_head_angle=get_value(
                     data, 'Print head angle [deg]', None, unit='deg'
                 ),
-                print_speed=get_value(data, 'Printing speed [mm/s]', None, unit='mm/s'),
+                print_speed=get_value(
+                    data, 'Printing speed [mm/s]', None, unit='mm/s'),
                 print_nozzle_drop_volume=get_value(
                     data,
                     ['Droplet volume [pl]', 'Droplet volume [pL]'],
