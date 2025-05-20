@@ -357,6 +357,7 @@ class LayerProperties(ArchiveSection):
                     'Back Contact',
                     'Passivation',
                     'Carbon Paste Layer',
+                    'Substrate Conductive Layer',
                 ]
             ),
         ),
@@ -392,6 +393,7 @@ class LayerProperties(ArchiveSection):
 
     layer_transmission = Quantity(
         type=np.dtype(np.float64),
+        description=('Percentage of light that gets transmitted through the layer.'),
         a_eln=dict(
             component='NumberEditQuantity', props=dict(minValue=0)
         ),  # is described in percentage
@@ -494,7 +496,7 @@ class LayerDeposition(BaseProcess):
                         hole_transport_layer.append(layer_material_name_tmp)
                     if layer_type == 'Electron Transport Layer':
                         electron_transport_layer.append(layer_material_name_tmp)
-                    if layer_type in ['Back Contact', 'Carbon Paste Layer']:
+                    if layer_type in ['Back Contact']:
                         back_contact.append(layer_material_name_tmp)
                     if layer_type == 'Absorber Layer':
                         absorber.append(layer_material_name_tmp)
