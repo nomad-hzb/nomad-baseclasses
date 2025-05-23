@@ -496,7 +496,7 @@ class LayerDeposition(BaseProcess):
                         hole_transport_layer.append(layer_material_name_tmp)
                     if layer_type == 'Electron Transport Layer':
                         electron_transport_layer.append(layer_material_name_tmp)
-                    if layer_type in ['Back Contact']:
+                    if layer_type == 'Back Contact':
                         back_contact.append(layer_material_name_tmp)
                     if layer_type == 'Absorber Layer':
                         absorber.append(layer_material_name_tmp)
