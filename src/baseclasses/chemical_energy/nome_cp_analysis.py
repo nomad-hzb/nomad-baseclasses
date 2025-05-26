@@ -156,7 +156,7 @@ class CPAnalysis(Analysis):
 
         if self.inputs is not None and len(self.inputs) > 0:
             for sample in self.inputs[0].reference.samples:
-                export_lab_id(archive, sample.lab_id)
+                #export_lab_id(archive, sample.lab_id)
                 if sample.reference.chemical_composition_or_formulas is not None:
                     if not archive.results:
                         archive.results = Results()
