@@ -595,14 +595,18 @@ def map_evaporation(
         evaporation = None
         if coevaporation:
             evaporation = PerovskiteEvaporation()
-        if get_value(data, 'Organic', '', False).lower().startswith('n') or get_value(
-            data, 'Organic', '', False
-        ).lower().startswith('0'):
+        if (
+            get_value(data, 'Organic', '', False).lower().startswith('n')
+            or get_value(data, 'Organic', '', False).lower().startswith('0')
+            or get_value(data, 'Organic', '', False).lower().startswith('f')
+        ):
             evaporation = InorganicEvaporation()
 
-        if get_value(data, 'Organic', '', False).lower().startswith('y') or get_value(
-            data, 'Organic', '', False
-        ).lower().startswith('1'):
+        if (
+            get_value(data, 'Organic', '', False).lower().startswith('y')
+            or get_value(data, 'Organic', '', False).lower().startswith('1')
+            or get_value(data, 'Organic', '', False).lower().startswith('t')
+        ):
             evaporation = OrganicEvaporation()
             if get_value(data, 'Temperature [°C]', None):
                 evaporation.temparature = [

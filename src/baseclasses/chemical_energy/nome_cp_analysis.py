@@ -59,7 +59,7 @@ class CPOERAnalysisResult(AnalysisResult):
     reaction_type = Quantity(
         type=str,
         description='At the moment only OER CP is supported.'
-                    'In the future maybe also NRR CP.',
+        'In the future maybe also NRR CP.',
     )
     voltage_shift = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
@@ -191,8 +191,7 @@ def get_all_cp_in_upload(data_archive, upload_id):
     from nomad.search import search
 
     query = {
-        'section_defs.definition_qualified_name':
-            'baseclasses.chemical_energy.chronopotentiometry.Chronopotentiometry',
+        'section_defs.definition_qualified_name': 'baseclasses.chemical_energy.chronopotentiometry.Chronopotentiometry',
         'results.eln.methods': 'OER Chronopotentiometry',
         'upload_id': upload_id,
     }
