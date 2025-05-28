@@ -387,37 +387,36 @@ class LayerProperties(ArchiveSection):
         type=np.dtype(np.float64),
         description=('The thickness of the sample, either measured or assumed.'),
         unit=('nm'),
-        shape =[],
+        shape=[],
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
     )
 
     layer_transmission = Quantity(
         type=np.dtype(np.float64),
         description=('Percentage of light that gets transmitted through the layer.'),
-        a_eln=dict(component='NumberEditQuantity', props=dict(minValue=0)), #is described in percentage
+        a_eln=dict(
+            component='NumberEditQuantity', props=dict(minValue=0)
+        ),  # is described in percentage
     )
 
     layer_morphology = Quantity(
-        #links=[],
-        type = str,
-        description= ('A description of the morphology of the film'),
-        shape = [],
+        # links=[],
+        type=str,
+        description=('A description of the morphology of the film'),
+        shape=[],
         a_eln=dict(component='StringEditQuantity'),
-
     )
     layer_sheet_resistance = Quantity(
         type=np.dtype(np.float64),
-        unit='ohm',  
+        unit='ohm',
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='ohm',
             props=dict(
-                minValue=0,
-                description="Sheet resistance in ohms per square (Ω/□)"
+                minValue=0, description='Sheet resistance in ohms per square (Ω/□)'
             ),
         ),
     )
-
 
 
 class LayerDeposition(BaseProcess):

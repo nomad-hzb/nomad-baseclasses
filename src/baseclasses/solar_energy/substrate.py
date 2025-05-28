@@ -18,6 +18,7 @@
 import numpy as np
 from nomad.datamodel.metainfo.eln import Entity
 from nomad.metainfo import Quantity, SubSection
+
 from baseclasses import LayerProperties
 
 from ..helper.add_solar_cell import add_solar_cell
@@ -76,8 +77,11 @@ class Substrate(Entity):
         ),
     )
 
-    substrate_properties = SubSection(section_def=LayerProperties, repeats=True,)
-        
+    substrate_properties = SubSection(
+        section_def=LayerProperties,
+        repeats=True,
+    )
+
     # back_contact = Quantity(
     #     type=str,
     #     shape=['*'],

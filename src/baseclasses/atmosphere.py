@@ -44,10 +44,10 @@ class Atmosphere(ArchiveSection):
         type=np.dtype(np.float64),
         a_eln=dict(component='NumberEditQuantity'),
     )
-    
+
     # adding oxygen_level so that Atmosphere can be also used for tracking Glovebox conditions
-    oxygen_level_ppm= Quantity(
-        #links=[''],
+    oxygen_level_ppm = Quantity(
+        # links=[''],
         type=np.dtype(np.float64),
         a_eln=dict(
             component='NumberEditQuantity',
