@@ -10,6 +10,7 @@ from baseclasses.material_processes_misc import (
     AirKnifeGasQuenching,
     Annealing,
     AntiSolventQuenching,
+    GasFlowAssistedVacuumDrying,
     GasQuenchingWithNozzle,
     PlasmaCleaning,
     SolutionCleaning,
@@ -441,6 +442,30 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
         ),
         annealing=map_annealing(data),
     )
+
+    if get_value(data, 'GAVD Gas', None):
+        archive.quenching = GasFlowAssistedVacuumDrying(
+            vacuum_properties=VacuumQuenching(
+                start_time=get_value(
+                    data, 'Gas quenching start time [s]', None, unit='s'
+                ),
+                pressure=get_value(data, 'GAVD pressure [mbar]', None, unit='mbar'),
+                temperature=get_value(data, 'GAVD temperature [°C]', None, unit='°C'),
+                duration=get_value(data, 'Evacuation time [s]', None, unit='s'),
+            ),
+            gas_quenching_properties=GasQuenchingWithNozzle(
+                duration=get_value(data, 'Gas quenching duration [s]', None, unit='s'),
+                pressure=get_value(
+                    data,
+                    ['Gas quenching pressure [bar]', 'Gas quenching pressure [mbar]'],
+                    None,
+                    unit=['bar', 'mbar'],
+                ),
+                nozzle_shape=get_value(data, 'Nozzle shape', None, False),
+                gas=get_value(data, 'GAVD Gas', None, False),
+            ),
+        )
+
     if location in ['Pixdro', 'iLPixdro']:  # printer param
         voltage_a = get_value(data, 'Wf Level 1[V]', None, unit='V')
         voltage_b = get_value(data, 'Wf Level 2[V]', None, unit='V')

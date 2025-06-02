@@ -244,6 +244,20 @@ class VacuumQuenching(Quenching):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
     )
 
+    temperature = Quantity(
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='°C',
+        ),
+    )
+
+
+class GasFlowAssistedVacuumDrying(Quenching):
+    vacuum_properties = SubSection(section_def=VacuumQuenching)
+    gas_quenching_properties = SubSection(section_def=VacuumQuenching)
+
 
 class AirKnifeGasQuenching(GasQuenching):
     m_def = Section(
