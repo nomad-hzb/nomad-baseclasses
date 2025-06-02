@@ -443,7 +443,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
         annealing=map_annealing(data),
     )
 
-    if get_value(data, 'GAVD Gas', None):
+    if get_value(data, 'GAVD Gas', None, False):
         archive.quenching = GasFlowAssistedVacuumDrying(
             vacuum_properties=VacuumQuenching(
                 start_time=get_value(data, 'GAVD start time [s]', None, unit='s'),
