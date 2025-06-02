@@ -35,6 +35,7 @@ from baseclasses.wet_chemical_deposition.inkjet_printing import (
     InkjetPrintingProperties,
     LP50NozzleVoltageProfile,
     NotionNozzleVoltageProfile,
+    NozzleVoltageProfile,
     PrintHeadPath,
     PrintHeadProperties,
 )
@@ -152,6 +153,7 @@ def map_solutions(data):
                     data, f'{solvent} volume [uL]', None, unit='uL'
                 ),
                 amount_relative=get_value(data, f'{solvent} relative amount', None),
+                chemical_id=get_value(data, f'{solvent} chemical ID', None),
             )
         )
     for solute in sorted(set(solutes)):
@@ -176,6 +178,7 @@ def map_solutions(data):
                     unit=['wt%', 'mg/ml'],
                 ),
                 amount_relative=get_value(data, f'{solute} relative amount', None),
+                chemical_id=get_value(data, f'{solute} chemical ID', None),
             )
         )
 
@@ -372,6 +375,9 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
             )
         ],
         layer=map_layer(data),
+        nozzle_voltage_profile=NozzleVoltageProfile(
+            config_file=get_value(data, 'Nozzle voltage config file', None, False)
+        ),
         properties=InkjetPrintingProperties(
             printing_run=get_value(data, 'Printing run', None, False),
             print_head_properties=PrintHeadProperties(
@@ -405,13 +411,22 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
             substrate_temperature=get_value(
                 data, 'Table temperature [°C]', None, unit='°C'
             ),
-            drop_density=get_value(data, 'Droplet density [dpi]', None),
+            drop_density=get_value(
+                data,
+                ['Droplet density [dpi]', 'Droplet density X [dpi]'],
+                None,
+                unit=['1/in', '1/in'],
+            ),
+            drop_density_y=get_value(
+                data, 'Droplet density Y [dpi]', None, unit='1/in'
+            ),
             printed_area=get_value(data, 'Printed area [mm²]', None, unit='mm**2'),
         ),
         print_head_path=PrintHeadPath(
             quality_factor=get_value(data, 'Quality factor', None, False),
             step_size=get_value(data, 'Step size', None, False),
             directional=get_value(data, 'Printing direction', None, False),
+            swaths=get_value(data, 'Number of swaths', None, False),
         ),
         atmosphere=Atmosphere(
             relative_humidity=get_value(data, 'rel. humidity [%]', None),

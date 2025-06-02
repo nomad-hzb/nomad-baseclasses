@@ -25,6 +25,11 @@ from .wet_chemical_deposition import WetChemicalDeposition
 
 
 class NozzleVoltageProfile(ArchiveSection):
+    config_file = Quantity(
+        type=str,
+        a_eln=dict(component='FileEditQuantity'),
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
     pass
 
 
@@ -501,6 +506,12 @@ class InkjetPrintingProperties(ArchiveSection):
     )
 
     drop_density = Quantity(
+        type=np.dtype(np.float64),
+        unit=('1/in'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='1/in'),
+    )
+
+    drop_density_y = Quantity(
         type=np.dtype(np.float64),
         unit=('1/in'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='1/in'),
