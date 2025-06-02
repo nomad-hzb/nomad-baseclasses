@@ -25,7 +25,11 @@ from ..chemical import Chemical
 
 
 class Quenching(ArchiveSection):
-    pass
+    comment = Quantity(
+        type=str,
+        description='Comments regarding the drying/quenching procedures.',
+        a_eln=dict(component='RichTextEditQuantity'),
+    )
 
 
 class AntiSolventQuenching(Quenching):
@@ -221,6 +225,12 @@ class GasQuenchingWithNozzle(GasQuenching):
     nozzle_size = Quantity(
         type=str,
         description=('Description of the nozzle size.'),
+        a_eln=dict(component='StringEditQuantity'),
+    )
+
+    nozzle_type = Quantity(
+        type=str,
+        description=('Type/name of the nozzle.'),
         a_eln=dict(component='StringEditQuantity'),
     )
 

@@ -446,24 +446,26 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
     if get_value(data, 'GAVD Gas', None):
         archive.quenching = GasFlowAssistedVacuumDrying(
             vacuum_properties=VacuumQuenching(
-                start_time=get_value(
-                    data, 'Gas quenching start time [s]', None, unit='s'
+                start_time=get_value(data, 'GAVD start time [s]', None, unit='s'),
+                pressure=get_value(
+                    data, 'GAVD vacuum pressure [mbar]', None, unit='mbar'
                 ),
-                pressure=get_value(data, 'GAVD pressure [mbar]', None, unit='mbar'),
                 temperature=get_value(data, 'GAVD temperature [°C]', None, unit='°C'),
-                duration=get_value(data, 'Evacuation time [s]', None, unit='s'),
+                duration=get_value(data, 'GAVD vacuum time [s]', None, unit='s'),
             ),
             gas_quenching_properties=GasQuenchingWithNozzle(
-                duration=get_value(data, 'Gas quenching duration [s]', None, unit='s'),
+                duration=get_value(data, 'Gas flow duration [s]', None, unit='s'),
                 pressure=get_value(
                     data,
-                    ['Gas quenching pressure [bar]', 'Gas quenching pressure [mbar]'],
+                    ['Gas flow pressure [bar]', 'Gas flow pressure [mbar]'],
                     None,
                     unit=['bar', 'mbar'],
                 ),
                 nozzle_shape=get_value(data, 'Nozzle shape', None, False),
+                nozzle_type=get_value(data, 'Nozzle type', None, False),
                 gas=get_value(data, 'GAVD Gas', None, False),
             ),
+            comment=get_value(data, 'GAVD comment', None, False),
         )
 
     if location in ['Pixdro', 'iLPixdro']:  # printer param
