@@ -434,7 +434,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
             quality_factor=get_value(data, 'Quality factor', None, False),
             step_size=get_value(data, 'Step size', None, False),
             directional=get_value(data, 'Printing direction', None, False),
-            swaths=get_value(data, 'Number of swaths', None, False),
+            swaths=get_value(data, 'Number of swaths', None),
         ),
         atmosphere=Atmosphere(
             relative_humidity=get_value(data, 'rel. humidity [%]', None),

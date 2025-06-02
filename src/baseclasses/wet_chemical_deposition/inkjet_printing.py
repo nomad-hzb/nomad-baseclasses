@@ -30,7 +30,6 @@ class NozzleVoltageProfile(ArchiveSection):
         a_eln=dict(component='FileEditQuantity'),
         a_browser=dict(adaptor='RawFileAdaptor'),
     )
-    pass
 
 
 class PrintHeadPath(ArchiveSection):
@@ -81,8 +80,7 @@ class PrintHeadPath(ArchiveSection):
 
     directional = Quantity(
         links=['https://purl.archive.org/tfsco/TFSCO_00005077'],
-        type=MEnum('uni-directional', 'bi-directional', 'uni-directional reverse'),
-        shape=[],
+        type=str,
         a_eln=dict(
             component='EnumEditQuantity',
         ),
