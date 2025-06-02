@@ -384,8 +384,12 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                 number_of_active_print_nozzles=get_value(
                     data, 'Number of active nozzles', None
                 ),
+                active_nozzles=get_value(data, 'Active nozzles', None, False),
                 print_nozzle_drop_frequency=get_value(
                     data, 'Droplet per second [1/s]', None, unit='1/s'
+                ),
+                print_head_angle=get_value(
+                    data, 'Print head angle [deg]', None, unit='deg'
                 ),
                 print_speed=get_value(data, 'Printing speed [mm/s]', None, unit='mm/s'),
                 print_nozzle_drop_volume=get_value(
@@ -421,6 +425,9 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                 data, 'Droplet density Y [dpi]', None, unit='1/in'
             ),
             printed_area=get_value(data, 'Printed area [mm²]', None, unit='mm**2'),
+            substrate_height=get_value(
+                data, 'Substrate thickness [mm]', None, unit='mm'
+            ),
         ),
         print_head_path=PrintHeadPath(
             quality_factor=get_value(data, 'Quality factor', None, False),

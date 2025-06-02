@@ -479,6 +479,14 @@ class PrintHeadProperties(ArchiveSection):
         type=np.dtype(np.int64), a_eln=dict(component='NumberEditQuantity')
     )
 
+    active_nozzles = Quantity(
+        type=str,
+        shape=[],
+        a_eln=dict(
+            component='StringEditQuantity',
+        ),
+    )
+
 
 class InkjetPrintingProperties(ArchiveSection):
     # m_def = Section(label_quantity='name')
