@@ -154,7 +154,7 @@ def map_solutions(data):
                     data, f'{solvent} volume [uL]', None, unit='uL'
                 ),
                 amount_relative=get_value(data, f'{solvent} relative amount', None),
-                chemical_id=get_value(data, f'{solvent} chemical ID', None),
+                chemical_id=get_value(data, f'{solvent} chemical ID', None, False),
             )
         )
     for solute in sorted(set(solutes)):
@@ -179,7 +179,7 @@ def map_solutions(data):
                     unit=['wt%', 'mg/ml'],
                 ),
                 amount_relative=get_value(data, f'{solute} relative amount', None),
-                chemical_id=get_value(data, f'{solute} chemical ID', None),
+                chemical_id=get_value(data, f'{solute} chemical ID', None, False),
             )
         )
 
