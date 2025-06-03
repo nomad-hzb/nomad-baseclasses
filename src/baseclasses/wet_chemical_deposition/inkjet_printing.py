@@ -82,7 +82,7 @@ class PrintHeadPath(ArchiveSection):
         links=['https://purl.archive.org/tfsco/TFSCO_00005077'],
         type=str,
         a_eln=dict(
-            component='EnumEditQuantity',
+            component='StringEditQuantity',
         ),
     )
 
@@ -579,6 +579,12 @@ class InkjetPrintingProperties(ArchiveSection):
     )
 
     printing_run = Quantity(
+        links=[],
+        type=str,
+        a_eln=dict(component='StringEditQuantity'),
+    )
+
+    image_used = Quantity(
         links=[],
         type=str,
         a_eln=dict(component='StringEditQuantity'),

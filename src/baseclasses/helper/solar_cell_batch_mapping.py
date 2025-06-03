@@ -381,6 +381,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
         ),
         properties=InkjetPrintingProperties(
             printing_run=get_value(data, 'Printing run', None, False),
+            image_used=get_value(data, 'Image used', None, False),
             print_head_properties=PrintHeadProperties(
                 number_of_active_print_nozzles=get_value(
                     data, 'Number of active nozzles', None
