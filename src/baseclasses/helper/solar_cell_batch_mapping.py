@@ -796,13 +796,10 @@ def map_evaporation(
         )
         evaporations.append(evaporation)
 
-    if get_value(data, 'Organic', '', False).lower().startswith('n') or get_value(
-        data, 'Organic', '', False
-    ).lower().startswith('0'):
+    organic_value = get_value(data, 'Organic', '', False).lower()
+    if organic_value.startswith(('n', '0', 'f')):
         archive.inorganic_evaporation = evaporations
-    elif get_value(data, 'Organic', '', False).lower().startswith('y') or get_value(
-        data, 'Organic', '', False
-    ).lower().startswith('1'):
+    elif organic_value.startswith(('y', '1', 't')):
         archive.organic_evaporation = evaporations
     elif coevaporation:
         archive.perovskite_evaporation = evaporations
