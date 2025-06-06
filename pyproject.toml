@@ -80,7 +80,7 @@ exclude = [
 ]
 
 # Same as Black.
-line-length = 110
+line-length = 88
 indent-width = 4
 
 
@@ -104,8 +104,7 @@ ignore = [
     "PLR2004"
 ]
 pylint.max-branches = 25
-pylint.max-statements = 100
-pylint.max-args = 7
+pylint.max-statements = 65
 
 fixable = ["ALL"]
 
