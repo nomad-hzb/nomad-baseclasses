@@ -266,7 +266,7 @@ class VacuumQuenching(Quenching):
 
 class GasFlowAssistedVacuumDrying(Quenching):
     vacuum_properties = SubSection(section_def=VacuumQuenching)
-    gas_quenching_properties = SubSection(section_def=VacuumQuenching)
+    gas_quenching_properties = SubSection(section_def=GasQuenchingWithNozzle)
 
 
 class AirKnifeGasQuenching(GasQuenching):
