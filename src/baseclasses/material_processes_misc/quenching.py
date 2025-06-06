@@ -25,7 +25,11 @@ from ..chemical import Chemical
 
 
 class Quenching(ArchiveSection):
-    pass
+    comment = Quantity(
+        type=str,
+        description='Comments regarding the drying/quenching procedures.',
+        a_eln=dict(component='RichTextEditQuantity'),
+    )
 
 
 class AntiSolventQuenching(Quenching):
@@ -224,6 +228,12 @@ class GasQuenchingWithNozzle(GasQuenching):
         a_eln=dict(component='StringEditQuantity'),
     )
 
+    nozzle_type = Quantity(
+        type=str,
+        description=('Type/name of the nozzle.'),
+        a_eln=dict(component='StringEditQuantity'),
+    )
+
 
 class VacuumQuenching(Quenching):
     pressure = Quantity(
@@ -243,6 +253,20 @@ class VacuumQuenching(Quenching):
         unit=('s'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
     )
+
+    temperature = Quantity(
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='°C',
+        ),
+    )
+
+
+class GasFlowAssistedVacuumDrying(Quenching):
+    vacuum_properties = SubSection(section_def=VacuumQuenching)
+    gas_quenching_properties = SubSection(section_def=GasQuenchingWithNozzle)
 
 
 class AirKnifeGasQuenching(GasQuenching):

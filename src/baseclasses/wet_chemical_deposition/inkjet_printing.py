@@ -25,7 +25,11 @@ from .wet_chemical_deposition import WetChemicalDeposition
 
 
 class NozzleVoltageProfile(ArchiveSection):
-    pass
+    config_file = Quantity(
+        type=str,
+        a_eln=dict(component='FileEditQuantity'),
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
 
 class PrintHeadPath(ArchiveSection):
@@ -76,10 +80,9 @@ class PrintHeadPath(ArchiveSection):
 
     directional = Quantity(
         links=['https://purl.archive.org/tfsco/TFSCO_00005077'],
-        type=MEnum('uni-directional', 'bi-directional', 'uni-directional reverse'),
-        shape=[],
+        type=str,
         a_eln=dict(
-            component='EnumEditQuantity',
+            component='StringEditQuantity',
         ),
     )
 
@@ -474,6 +477,14 @@ class PrintHeadProperties(ArchiveSection):
         type=np.dtype(np.int64), a_eln=dict(component='NumberEditQuantity')
     )
 
+    active_nozzles = Quantity(
+        type=str,
+        shape=[],
+        a_eln=dict(
+            component='StringEditQuantity',
+        ),
+    )
+
 
 class InkjetPrintingProperties(ArchiveSection):
     # m_def = Section(label_quantity='name')
@@ -501,6 +512,12 @@ class InkjetPrintingProperties(ArchiveSection):
     )
 
     drop_density = Quantity(
+        type=np.dtype(np.float64),
+        unit=('1/in'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='1/in'),
+    )
+
+    drop_density_y = Quantity(
         type=np.dtype(np.float64),
         unit=('1/in'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='1/in'),
@@ -562,6 +579,12 @@ class InkjetPrintingProperties(ArchiveSection):
     )
 
     printing_run = Quantity(
+        links=[],
+        type=str,
+        a_eln=dict(component='StringEditQuantity'),
+    )
+
+    image_used = Quantity(
         links=[],
         type=str,
         a_eln=dict(component='StringEditQuantity'),

@@ -10,6 +10,7 @@ from baseclasses.material_processes_misc import (
     AirKnifeGasQuenching,
     Annealing,
     AntiSolventQuenching,
+    GasFlowAssistedVacuumDrying,
     GasQuenchingWithNozzle,
     PlasmaCleaning,
     SolutionCleaning,
@@ -35,6 +36,7 @@ from baseclasses.wet_chemical_deposition.inkjet_printing import (
     InkjetPrintingProperties,
     LP50NozzleVoltageProfile,
     NotionNozzleVoltageProfile,
+    NozzleVoltageProfile,
     PrintHeadPath,
     PrintHeadProperties,
 )
@@ -152,6 +154,7 @@ def map_solutions(data):
                     data, f'{solvent} volume [uL]', None, unit='uL'
                 ),
                 amount_relative=get_value(data, f'{solvent} relative amount', None),
+                chemical_id=get_value(data, f'{solvent} chemical ID', None, False),
             )
         )
     for solute in sorted(set(solutes)):
@@ -176,6 +179,7 @@ def map_solutions(data):
                     unit=['wt%', 'mg/ml'],
                 ),
                 amount_relative=get_value(data, f'{solute} relative amount', None),
+                chemical_id=get_value(data, f'{solute} chemical ID', None, False),
             )
         )
 
@@ -372,14 +376,22 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
             )
         ],
         layer=map_layer(data),
+        nozzle_voltage_profile=NozzleVoltageProfile(
+            config_file=get_value(data, 'Nozzle voltage config file', None, False)
+        ),
         properties=InkjetPrintingProperties(
             printing_run=get_value(data, 'Printing run', None, False),
+            image_used=get_value(data, 'Image used', None, False),
             print_head_properties=PrintHeadProperties(
                 number_of_active_print_nozzles=get_value(
                     data, 'Number of active nozzles', None
                 ),
+                active_nozzles=get_value(data, 'Active nozzles', None, False),
                 print_nozzle_drop_frequency=get_value(
                     data, 'Droplet per second [1/s]', None, unit='1/s'
+                ),
+                print_head_angle=get_value(
+                    data, 'Print head angle [deg]', None, unit='deg'
                 ),
                 print_speed=get_value(data, 'Printing speed [mm/s]', None, unit='mm/s'),
                 print_nozzle_drop_volume=get_value(
@@ -405,13 +417,25 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
             substrate_temperature=get_value(
                 data, 'Table temperature [°C]', None, unit='°C'
             ),
-            drop_density=get_value(data, 'Droplet density [dpi]', None),
+            drop_density=get_value(
+                data,
+                ['Droplet density [dpi]', 'Droplet density X [dpi]'],
+                None,
+                unit=['1/in', '1/in'],
+            ),
+            drop_density_y=get_value(
+                data, 'Droplet density Y [dpi]', None, unit='1/in'
+            ),
             printed_area=get_value(data, 'Printed area [mm²]', None, unit='mm**2'),
+            substrate_height=get_value(
+                data, 'Substrate thickness [mm]', None, unit='mm'
+            ),
         ),
         print_head_path=PrintHeadPath(
             quality_factor=get_value(data, 'Quality factor', None, False),
             step_size=get_value(data, 'Step size', None, False),
             directional=get_value(data, 'Printing direction', None, False),
+            swaths=get_value(data, 'Number of swaths', None),
         ),
         atmosphere=Atmosphere(
             relative_humidity=get_value(data, 'rel. humidity [%]', None),
@@ -419,6 +443,32 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
         ),
         annealing=map_annealing(data),
     )
+
+    if get_value(data, 'GAVD Gas', None, False):
+        archive.quenching = GasFlowAssistedVacuumDrying(
+            vacuum_properties=VacuumQuenching(
+                start_time=get_value(data, 'GAVD start time [s]', None, unit='s'),
+                pressure=get_value(
+                    data, 'GAVD vacuum pressure [mbar]', None, unit='mbar'
+                ),
+                temperature=get_value(data, 'GAVD temperature [°C]', None, unit='°C'),
+                duration=get_value(data, 'GAVD vacuum time [s]', None, unit='s'),
+            ),
+            gas_quenching_properties=GasQuenchingWithNozzle(
+                duration=get_value(data, 'Gas flow duration [s]', None, unit='s'),
+                pressure=get_value(
+                    data,
+                    ['Gas flow pressure [bar]', 'Gas flow pressure [mbar]'],
+                    None,
+                    unit=['bar', 'mbar'],
+                ),
+                nozzle_shape=get_value(data, 'Nozzle shape', None, False),
+                nozzle_type=get_value(data, 'Nozzle type', None, False),
+                gas=get_value(data, 'GAVD Gas', None, False),
+            ),
+            comment=get_value(data, 'GAVD comment', None, False),
+        )
+
     if location in ['Pixdro', 'iLPixdro']:  # printer param
         voltage_a = get_value(data, 'Wf Level 1[V]', None, unit='V')
         voltage_b = get_value(data, 'Wf Level 2[V]', None, unit='V')
