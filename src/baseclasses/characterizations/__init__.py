@@ -26,7 +26,13 @@ from .tem import TEM
 from .tga import TGA
 from .xas import XAS, XASFluorescence, XASTransmission
 from .xpeem import XPEEM
-from .xps import XPS, XPSLibrary
+from .xps import (
+    XPS,
+    XPSLibrary,
+    XPSSpecsLabProdigyAnalyzerParameters,
+    XPSSpecsLabProdigySettings,
+    XPSSpecsLabProdigySourceParameters,
+)
 from .xrd import XRD, XRDData, XRDLibrary
 from .xrf import (
     XRF,
