@@ -87,8 +87,9 @@ class XPS(BaseMeasurement):
     )
 
     def normalize(self, archive, logger):
+        if not self.method:
+            self.method = 'X-ray photoelectron spectroscopy'
         super().normalize(archive, logger)
-        self.method = 'X-ray photoelectron spectroscopy'
 
 
 class XPSLibrary(LibraryMeasurement):
