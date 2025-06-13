@@ -319,8 +319,7 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
             pressure=get_value(data, 'Gas quenching pressure [bar]', None, unit='bar'),
             velocity=get_value(data, 'Gas quenching velocity [m/s]', None, unit='m/s'),
             nozzle_shape=get_value(data, 'Nozzle shape', None, False),
-            nozzle_size=get_value(
-                data, 'Nozzle size [mm²]', None, False, unit='mm**2'),
+            nozzle_size=get_value(data, 'Nozzle size [mm²]', None, False),
             gas=get_value(data, 'Gas', None, False),
         )
 
