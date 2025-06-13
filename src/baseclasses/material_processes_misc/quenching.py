@@ -224,7 +224,7 @@ class GasQuenchingWithNozzle(GasQuenching):
 
     nozzle_size = Quantity(
         type=str,
-        description=('Description of the nozzle size.'),
+        description=('Description of the nozzle size, customary given in [mm²].'),
         a_eln=dict(component='StringEditQuantity'),
     )
 
