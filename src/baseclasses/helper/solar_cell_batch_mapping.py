@@ -295,7 +295,8 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
                 name=get_value(data, 'Anti solvent name', None, False), load_data=False
             ),
         )
-    if get_value(data, 'Vacuum quenching duration [s]', None, False, unit='s'):
+
+    if get_value(data, 'Vacuum quenching duration [s]', None, unit='s'):
         archive.quenching = VacuumQuenching(
             start_time=get_value(
                 data, 'Vacuum quenching start time [s]', None, unit='s'
