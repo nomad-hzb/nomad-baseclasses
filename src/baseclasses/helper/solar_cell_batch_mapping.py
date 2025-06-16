@@ -466,8 +466,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                 print_head_angle=get_value(
                     data, 'Print head angle [deg]', None, unit='deg'
                 ),
-                print_speed=get_value(
-                    data, 'Printing speed [mm/s]', None, unit='mm/s'),
+                print_speed=get_value(data, 'Printing speed [mm/s]', None, unit='mm/s'),
                 print_nozzle_drop_volume=get_value(
                     data,
                     ['Droplet volume [pl]', 'Droplet volume [pL]'],
