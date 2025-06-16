@@ -1,7 +1,5 @@
 import pandas as pd
-from nomad.datamodel.metainfo.basesections import (
-    CompositeSystemReference,
-)
+from nomad.datamodel.metainfo.basesections import CompositeSystemReference
 from nomad.units import ureg
 
 from baseclasses import LayerProperties, PubChemPureSubstanceSectionCustom
@@ -91,7 +89,7 @@ def map_basic_sample(data, substrate_name, upload_id, sample_class):
     archive = sample_class(
         name=data['Nomad ID'],
         lab_id=data['Nomad ID'],
-        substrate=get_reference(upload_id, substrate_name),
+        substrate=get_reference(upload_id, substrate_name) if substrate_name else None,
         description=get_value(data, 'Variation', None, False),
         number_of_junctions=get_value(data, 'Number of junctions', None),
     )
