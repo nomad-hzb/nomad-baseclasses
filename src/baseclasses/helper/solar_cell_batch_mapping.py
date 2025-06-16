@@ -16,6 +16,7 @@ from baseclasses.material_processes_misc import (
     VacuumQuenching,
 )
 from baseclasses.material_processes_misc.laser_scribing import LaserScribingProperties
+from baseclasses.solar_energy.carbonpaste import CarbonPasteLayerProperties
 from baseclasses.solution import Solution, SolutionChemical
 from baseclasses.vapour_based_deposition.atomic_layer_deposition import (
     ALDMaterial,
@@ -121,13 +122,46 @@ def map_annealing(data):
     )
 
 
+def map_atmosphere(data):
+    return Atmosphere(
+        oxygen_level_ppm=get_value(data, 'GB oxygen level [ppm]', None),
+        relative_humidity=get_value(
+            data, ['rel. humidity [%]', 'Room/GB humidity [%]'], None
+        ),
+        temperature=get_value(data, 'Room temperature [°C]', None, unit='°C'),
+    )
+
+
 def map_layer(data):
-    return [
-        LayerProperties(
-            layer_type=get_value(data, 'Layer type', None, False),
-            layer_material_name=get_value(data, 'Material name', None, False),
-        )
-    ]
+    if 'Carbon Paste Layer' in get_value(data, 'Layer type', None, False):
+        return [
+            CarbonPasteLayerProperties(
+                layer_type=get_value(data, 'Layer type', None, False),
+                layer_material_name=get_value(data, 'Material name', None, False),
+                layer_thickness=get_value(
+                    data, 'Layer thickness [nm]', None, unit='nm'
+                ),
+                supplier=get_value(data, 'Supplier', None, False),
+                batch=get_value(data, 'Batch', None, False),
+                drying_time=get_value(data, 'Drying Time [s]', None, unit='s'),
+                cost=get_value(data, 'Cost [EUR]', None, True),
+            )
+        ]
+    else:
+        return [
+            LayerProperties(
+                layer_type=get_value(data, 'Layer type', None, False),
+                layer_material_name=get_value(data, 'Material name', None, False),
+                layer_thickness=get_value(
+                    data, 'Layer thickness [nm]', None, unit='nm'
+                ),
+                layer_transmission=get_value(data, 'Transmission [%]', None, True),
+                layer_morphology=get_value(data, 'Morphology', None, False),
+                layer_sheet_resistance=get_value(
+                    data, 'Sheet Resistance [Ohms/square]', None, True
+                ),
+            )
+        ]
 
 
 def map_solutions(data):
@@ -202,17 +236,29 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
         layer=map_layer(data),
         solution=[
             PrecursorSolution(
-                solution_details=map_solutions(data),  # check unit
-                # check unit
+                solution_details=map_solutions(data),
                 solution_volume=get_value(
                     data,
                     ['Solution volume [um]', 'Solution volume [uL]'],
                     None,
                     unit=['uL', 'uL'],
                 ),
+                solution_viscosity=get_value(
+                    data,
+                    'Viscosity [mPa*s]',
+                    None,
+                    unit=['mPa*s'],
+                ),
+                solution_contact_angle=get_value(
+                    data,
+                    'Contact angle [°]',
+                    None,
+                    unit=['°'],
+                ),
             )
         ],
         annealing=map_annealing(data),
+        atmosphere=map_atmosphere(data),
         recipe_steps=[
             SpinCoatingRecipeSteps(
                 speed=get_value(data, f'Rotation speed {step}[rpm]', None, unit='rpm'),
@@ -249,7 +295,8 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
                 name=get_value(data, 'Anti solvent name', None, False), load_data=False
             ),
         )
-    if get_value(data, 'Vacuum quenching duration [s]', None, False, unit='s'):
+
+    if get_value(data, 'Vacuum quenching duration [s]', None, unit='s'):
         archive.quenching = VacuumQuenching(
             start_time=get_value(
                 data, 'Vacuum quenching start time [s]', None, unit='s'
@@ -273,7 +320,7 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
             pressure=get_value(data, 'Gas quenching pressure [bar]', None, unit='bar'),
             velocity=get_value(data, 'Gas quenching velocity [m/s]', None, unit='m/s'),
             nozzle_shape=get_value(data, 'Nozzle shape', None, False),
-            nozzle_size=get_value(data, 'Nozzle size [mm²]', None, False, unit='mm**2'),
+            nozzle_size=get_value(data, 'Nozzle size [mm²]', None, False),
             gas=get_value(data, 'Gas', None, False),
         )
 
@@ -304,9 +351,22 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
                     None,
                     unit=['uL', 'uL'],
                 ),
+                solution_viscosity=get_value(
+                    data,
+                    'Viscosity [mPa*s]',
+                    None,
+                    unit=['mPa*s'],
+                ),
+                solution_contact_angle=get_value(
+                    data,
+                    'Contact angle [°]',
+                    None,
+                    unit=['°'],
+                ),
             )
         ],
         layer=map_layer(data),
+        atmosphere=map_atmosphere(data),
         annealing=map_annealing(data),
         properties=SlotDieCoatingProperties(
             coating_run=get_value(data, 'Coating run', None, False),
@@ -367,9 +427,24 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                 # check unit
                 solution_volume=get_value(
                     data,
-                    ['Solution volume [um]', 'Solution volume [uL]'],
+                    [
+                        'Solution volume [um]',
+                        'Solution volume [uL]',
+                    ],  # the um (wrong unit) is for parsing the typo in case of old excels
                     None,
                     unit=['uL', 'uL'],
+                ),
+                solution_viscosity=get_value(
+                    data,
+                    'Viscosity [mPa*s]',
+                    None,
+                    unit=['mPa*s'],
+                ),
+                solution_contact_angle=get_value(
+                    data,
+                    'Contact angle [°]',
+                    None,
+                    unit=['°'],
                 ),
             )
         ],
@@ -435,10 +510,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
             directional=get_value(data, 'Printing direction', None, False),
             swaths=get_value(data, 'Number of swaths', None),
         ),
-        atmosphere=Atmosphere(
-            relative_humidity=get_value(data, 'rel. humidity [%]', None),
-            temperature=get_value(data, 'Room temperature [°C]', None, unit='°C'),
-        ),
+        atmosphere=map_atmosphere(data),
         annealing=map_annealing(data),
     )
 
@@ -590,6 +662,20 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
 
 
 def map_substrate(data, substrate_class):
+    # Create LayerProperties for substrate_properties
+    substrate_props = [
+        LayerProperties(
+            layer_thickness=get_value(data, 'TCO thickness [nm]', None, unit=['nm']),
+            layer_transmission=get_value(data, 'Transmission [%]', None),
+            layer_sheet_resistance=get_value(
+                data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm']
+            ),
+            layer_type='Substrate Conductive Layer',
+            layer_material_name=get_value(
+                data, 'Substrate conductive layer', '', False
+            ),
+        )
+    ]
     archive = substrate_class(
         name='Substrate '
         + get_value(data, 'Sample dimension', '', False)
@@ -606,6 +692,7 @@ def map_substrate(data, substrate_class):
         description=get_value(data, 'Notes', '', False),
         lab_id=get_value(data, 'Bottom Cell Name', '', False),
         conducting_material=[get_value(data, 'Substrate conductive layer', '', False)],
+        substrate_properties=substrate_props,
     )
     return archive
 
@@ -633,6 +720,7 @@ def map_evaporation(
             for lab_id in lab_ids
         ],
         layer=map_layer(data),
+        atmosphere=map_atmosphere(data),
     )
     evaporations = []
     for mat in ['', ' 1', ' 2', ' 3', ' 4']:
@@ -709,13 +797,10 @@ def map_evaporation(
         )
         evaporations.append(evaporation)
 
-    if get_value(data, 'Organic', '', False).lower().startswith('n') or get_value(
-        data, 'Organic', '', False
-    ).lower().startswith('0'):
+    organic_value = get_value(data, 'Organic', '', False).lower()
+    if organic_value.startswith(('n', '0', 'f')):
         archive.inorganic_evaporation = evaporations
-    elif get_value(data, 'Organic', '', False).lower().startswith('y') or get_value(
-        data, 'Organic', '', False
-    ).lower().startswith('1'):
+    elif organic_value.startswith(('y', '1', 't')):
         archive.organic_evaporation = evaporations
     elif coevaporation:
         archive.perovskite_evaporation = evaporations
@@ -757,6 +842,7 @@ def map_sputtering(i, j, lab_ids, data, upload_id, sputter_class):
             for lab_id in lab_ids
         ],
         layer=map_layer(data),
+        atmosphere=map_atmosphere(data),
     )
     process = SputteringProcess(
         thickness=get_value(data, 'Thickness [nm]', unit='nm'),
@@ -837,6 +923,18 @@ def map_dip_coating(i, j, lab_ids, data, upload_id, dc_class):
                     None,
                     unit=['uL', 'uL'],
                 ),
+                solution_viscosity=get_value(
+                    data,
+                    'Viscosity [mPa*s]',
+                    None,
+                    unit=['mPa*s'],
+                ),
+                solution_contact_angle=get_value(
+                    data,
+                    'Contact angle [°]',
+                    None,
+                    unit=['°'],
+                ),
             )
         ],
         layer=map_layer(data),
@@ -844,6 +942,7 @@ def map_dip_coating(i, j, lab_ids, data, upload_id, dc_class):
             time=get_value(data, 'Dipping duration [s]', unit='s'),
         ),
         annealing=map_annealing(data),
+        atmosphere=map_atmosphere(data),
     )
     material = get_value(data, 'Material name', '', False)
     return (f'{i}_{j}_dip_coating_{material}', archive)
@@ -860,7 +959,10 @@ def map_laser_scribing(i, j, lab_ids, data, upload_id, laser_class):
             )
             for lab_id in lab_ids
         ],
+        description=get_value(data, 'Notes', None, False),
         recipe_file=get_value(data, 'Recipe file', None, False),
+        patterning=get_value(data, 'Patterning Step', None, False),
+        layout=get_value(data, 'Layout', None, False),
         properties=LaserScribingProperties(
             laser_wavelength=get_value(data, 'Laser wavelength [nm]', None),
             laser_pulse_time=get_value(data, 'Laser pulse time [ps]', None),
@@ -889,6 +991,7 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
             for lab_id in lab_ids
         ],
         layer=map_layer(data),
+        atmosphere=map_atmosphere(data),
         properties=ALDPropertiesIris(
             source=get_value(data, 'Source', None, number=False),
             thickness=get_value(data, 'Thickness [nm]', None),

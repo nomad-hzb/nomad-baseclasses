@@ -356,6 +356,8 @@ class LayerProperties(ArchiveSection):
                     'Upconversion',
                     'Back Contact',
                     'Passivation',
+                    'Carbon Paste Layer',
+                    'Substrate Conductive Layer',
                 ]
             ),
         ),
@@ -365,7 +367,8 @@ class LayerProperties(ArchiveSection):
         type=str,
         # links=["https://www.helmholtz-berlin.de"],
         description=(
-            'The chemical formula using common abreviations. This will be used to set layer material, if not set, e.g. MAPbI3.'
+            'The chemical formula using common abreviations. '
+            'This will be used to set layer material, if not set, e.g. MAPbI3.'
         ),
         a_eln=dict(component='StringEditQuantity'),
     )
@@ -378,6 +381,42 @@ class LayerProperties(ArchiveSection):
             'the extracted chemical elements.'
         ),  # a_eln=dict(
         # component='StringEditQuantity')
+    )
+
+    layer_thickness = Quantity(
+        # links=[],
+        type=np.dtype(np.float64),
+        description=('The thickness of the sample, either measured or assumed.'),
+        unit=('nm'),
+        shape=[],
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
+    )
+
+    layer_transmission = Quantity(
+        type=np.dtype(np.float64),
+        description=('Percentage of light that gets transmitted through the layer.'),
+        a_eln=dict(
+            component='NumberEditQuantity', props=dict(minValue=0)
+        ),  # is described in percentage
+    )
+
+    layer_morphology = Quantity(
+        # links=[],
+        type=str,
+        description=('A description of the morphology of the film'),
+        shape=[],
+        a_eln=dict(component='StringEditQuantity'),
+    )
+    layer_sheet_resistance = Quantity(
+        type=np.dtype(np.float64),
+        unit='ohm',
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='ohm',
+            props=dict(
+                minValue=0, description='Sheet resistance in ohms per square (Ω/□)'
+            ),
+        ),
     )
 
 
