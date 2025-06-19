@@ -24,7 +24,7 @@ from .spv import SPV
 from .sxm import SXM
 from .tem import TEM
 from .tga import TGA
-from .xas import XAS, XASFluorescence, XASTransmission
+from .xas import XAS, XASFluorescence, XASTransmission, XASKMC3
 from .xpeem import XPEEM
 from .xps import (
     XPS,
