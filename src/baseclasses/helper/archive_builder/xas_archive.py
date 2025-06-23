@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from baseclasses.characterizations.xas import KMC3Detector
+from baseclasses.characterizations.xas import SiliconDriftDetector
 
 
 def get_xas_archive(data, dateline, entry_class):
@@ -18,7 +18,7 @@ def get_xas_archive(data, dateline, entry_class):
     kmc3_data = []
     for index in range(1, 14):
         kmc3_data.append(
-            KMC3Detector(
+            SiliconDriftDetector(
                 fluo=data.get(f'fluo{index}'),
                 icr=data.get(f'icr{index}'),
                 ocr=data.get(f'ocr{index}'),

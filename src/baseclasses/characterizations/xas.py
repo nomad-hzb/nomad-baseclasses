@@ -104,7 +104,7 @@ class XAS(BaseMeasurement):
         super().normalize(archive, logger)
 
 
-class KMC3Detector(PlotSection, ArchiveSection):
+class SiliconDriftDetector(PlotSection, ArchiveSection):
     fluo = Quantity(
         type=np.dtype(np.float64),
         shape=['*'],
@@ -134,24 +134,40 @@ class KMC3Detector(PlotSection, ArchiveSection):
         shape=['*'],
         description='Real Life Time',
     )
+    slope = Quantity(
+        type=np.dtype(np.float64),
+        description='slope of linear fit of log(ICR) over log(OCR)',
+    )
     fluo_dead_time_corrected = Quantity(
         type=np.dtype(np.float64),
         shape=['*'],
+        description='fluo_dead_time_corrected = fluo * slope * ICR/OCR',
+    )
+    fluo_tlt = Quantity(
+        type=np.dtype(np.float64),
+        shape=['*'],
+        description='fluo_tlt = fluo_dead_time_corrected / TLT',
+    )
+    fluo_tlt_result = Quantity(
+        type=np.dtype(np.float64),
+        shape=['*'],
+        description='fluo_tlt_result = fluo_tlt / k0',
     )
 
-    def normalize(self, archive, logger):
+    def normalize(self, archive, logger, k0):
         super().normalize(archive, logger)
-        # TODO use slope in dead time correction
         if self.fluo is not None and self.icr is not None and self.ocr is not None:
-            self.fluo_dead_time_corrected = self.fluo * self.icr / np.where(self.ocr == 0, np.nan, self.ocr)
-        fig1 = make_xas_plot('ICR/OCR', self.ocr, 'OCR', [self.icr], 'ICR')
+            self.slope, _ = np.polyfit(np.log10(self.ocr), np.log10(self.icr), 1)
+            self.fluo_dead_time_corrected = self.fluo * self.slope * self.icr / np.where(self.ocr == 0, np.nan, self.ocr)
+            self.fluo_tlt = self.fluo_dead_time_corrected / self.tlt
+            self.fluo_tlt_result = self.fluo_tlt / k0
+        fig1 = make_xas_plot('log(ICR)/log(OCR)', np.log10(self.ocr), 'log(OCR)', [np.log10(self.icr)], 'log(ICR)')
         self.figures = [
-            PlotlyFigure(label='ICR/OCR Plot', figure=json.loads(fig1.to_json())),
+            PlotlyFigure(label='log(ICR)/log(OCR) Plot', figure=json.loads(fig1.to_json())),
         ]
 
 
-
-class XASKMC3(XAS, PlotSection):
+class XASWithSDD(XAS, PlotSection):
     k00 = Quantity(
         type=np.dtype(np.float64),
         shape=['*'],
@@ -167,12 +183,12 @@ class XASKMC3(XAS, PlotSection):
         ],
     )
 
-    sdd_parameters = SubSection(section_def=KMC3Detector, repeats=True)
+    sdd_parameters = SubSection(section_def=SiliconDriftDetector, repeats=True)
 
     def normalize(self, archive, logger):
         self.method = 'XAS Fluoresence'
         for detector in self.sdd_parameters:
-            detector.normalize(archive, logger)
+            detector.normalize(archive, logger, self.k0)
         super().normalize(archive, logger)
         icr_list = [sdd.get('icr') for sdd in self.sdd_parameters]
         ocr_list = [sdd.get('icr') for sdd in self.sdd_parameters]
