@@ -9,7 +9,7 @@ This plugin provides a comprehensive set of base schemas for the digital represe
 
 - **Broad Coverage:** Includes schemas for synthesis, processing, and characterization of materials, with a focus on photovoltaics and heterogeneous catalysis.
 - **Specializations:** Offers detailed models for perovskite solar cell research, electrochemical energy conversion, and catalytic processes.
-- **Extensibility:** Designed to be extended for new techniques and custom workflows in further plugins exetnding and specializing this classes further.
+- **Extensibility:** Designed to be extended for new techniques and custom workflows in further plugins extending and specializing these classes further.
 
 ## Main Schema Areas
 
