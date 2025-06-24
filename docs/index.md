@@ -94,4 +94,4 @@ These schemas are intended as building blocks for labs specific plugins and pars
 - [HZB Electro Catalysis](https://github.com/nomad-hzb/nomad-chemical-energy)
 - [KIT Solar Cells](https://github.com/nomad-hzb/nomad-perotf)
 
-To learn more about plugins, chcek the oficial [NOMAD documentation](https://nomad-lab.eu/prod/v1/staging/docs/howto/plugins/plugins.html)
+To learn more about plugins, check the official [NOMAD documentation](https://nomad-lab.eu/prod/v1/staging/docs/howto/plugins/plugins.html)
