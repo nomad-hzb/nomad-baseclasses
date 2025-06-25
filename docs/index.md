@@ -68,7 +68,7 @@ These synthesis schemas are designed to interoperate with characterization and a
     - Catalytic sample and measurement schemas
     - Gas-phase and solution-phase catalysis protocols
  
-- **General Characterizations:** (general techniques are not covered in detail since they are planned to be covered by the NeXus Standard see also (pynxtools)[https://github.com/FAIRmat-NFDI/pynxtools])
+- **General Characterizations:** (general techniques are not covered in detail since they are planned to be covered by the NeXus Standard see also [pynxtools](https://github.com/FAIRmat-NFDI/pynxtools))
 
     - Raman, IR, UV-Vis, and ellipsometry spectroscopy
     - X-ray techniques: XRD, XRF, XAS, XPS, XRR, XPEEM
