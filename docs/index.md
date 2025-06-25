@@ -5,7 +5,7 @@
 
 This plugin provides a set of base schemas for the digital representation of synthesis and characterization techniques in materials science with focus on thin film solar cell and electro chemistry research. Developed at Helmholtz-Zentrum Berlin (HZB), it serves as a foundation for the NOMAD ecosystem, enabling standardized, interoperable, and extensible data management for a wide range of experimental workflows.
 
-The plugin is under active development. We take care that the schemas in the plugins remains compatible through extensions and changes and are open for feedback and discussions. We belive that science digitalization and data management is subject to changes through usage of and exchange with lab scientist. The schemas are using vocabulary from [voc4cat](https://github.com/nfdi4cat/voc4cat) fir catalysis and from the [TFSCO](https://github.com/nomad-hzb/autoperosol) for thin film solar cells. Nomad quantities contain links referencing the respective concepts.
+The plugin is under active development. We take care that the schemas in the plugins remains compatible through extensions and changes and are open for feedback and discussions. We believe that science digitalization and data management is subject to changes through usage of and exchange with lab scientist. The schemas are using vocabulary from [voc4cat](https://github.com/nfdi4cat/voc4cat) fir catalysis and from the [TFSCO](https://github.com/nomad-hzb/autoperosol) for thin film solar cells. Nomad quantities contain links referencing the respective concepts.
 
 We believe that it is key to link digital information of all synthesis and charactrerization steps against the material science samples. With this plugin we give structure to all of this information.
 
