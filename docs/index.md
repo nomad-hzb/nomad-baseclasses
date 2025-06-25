@@ -7,7 +7,7 @@ This plugin provides a set of base schemas for the digital representation of syn
 
 The plugin is under active development. We take care that the schemas in the plugins remains compatible through extensions and changes and are open for feedback and discussions. We believe that science digitalization and data management is subject to changes through usage of and exchange with lab scientist. The schemas are using vocabulary from [voc4cat](https://github.com/nfdi4cat/voc4cat) fir catalysis and from the [TFSCO](https://github.com/nomad-hzb/autoperosol) for thin film solar cells. Nomad quantities contain links referencing the respective concepts.
 
-We believe that it is key to link digital information of all synthesis and charactrerization steps against the material science samples. With this plugin we give structure to all of this information.
+We believe that it is key to link digital information of all synthesis and characterization steps against the material science samples. With this plugin we give structure to all of this information.
 
 ## Key Features
 
