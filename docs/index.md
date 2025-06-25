@@ -62,7 +62,7 @@ These synthesis schemas are designed to interoperate with characterization and a
  
 - **General Characterizations:** (general techniques are not covered in detail since they are planned to be covered by the NeXus Standard see also [pynxtools](https://github.com/FAIRmat-NFDI/pynxtools))
 
-    - There are some comprehensive schemae,e.g. for XPS and SEM as well as XRF for combinatorial meaurments.
+    - There are some comprehensive schemas, e.g. for XPS and SEM as well as XRF for combinatorial measurements.
     - There are general schemas to link arbitrary data to samples as a placeholder for future extension.
 
 ## How to Use
