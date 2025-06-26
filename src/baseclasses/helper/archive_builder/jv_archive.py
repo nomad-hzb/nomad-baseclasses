@@ -97,7 +97,7 @@ def get_jv_archive(jv_dict, mainfile, jvm, append=False):
                 potential_at_maximum_power_point=round(jv_dict['U_MPP'][light_idx], 8)
                 * ureg('V'),
                 current_density_at_maximun_power_point=round(
-                    jv_dict['J_MPP'][light_idx], 8
+                    jv_dict['J_MPP'][light_idx] * current_density_scaling_factor, 8
                 )
                 * ureg('mA/cm^2'),
                 series_resistance=round(jv_dict['R_ser'][light_idx], 8)
