@@ -296,7 +296,6 @@ class SolarCellJVCurve(SolarCellJV):
         shape=['n_values'],
         unit='mA/cm^2',
         description='Current density array of the *JV* curve.',
-        defaultDisplayUnit='mA/cm^2',
     )
 
     voltage = Quantity(
