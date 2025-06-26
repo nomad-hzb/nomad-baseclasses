@@ -31,6 +31,30 @@ def get_jv_archive(jv_dict, mainfile, jvm, append=False):
     if jv_dict.get('datetime'):
         jvm.datetime = jv_dict.get('datetime')
     jvm.active_area = jv_dict['active_area'] if 'active_area' in jv_dict else None
+
+    # Calculate current density scaling factor if corrected_active_area is provided
+    current_density_scaling_factor = 1.0
+    resistance_scaling_factor = 1.0
+
+    if (
+        jvm.corrected_active_area is not None
+        and jvm.active_area is not None
+        and jvm.active_area != 0
+        and jvm.corrected_active_area != 0
+        and jvm.corrected_active_area != jvm.active_area
+    ):
+        print(
+            f'jvm.corrected_active_area: {jvm.corrected_active_area}, jvm.active_area: {jvm.active_area}'
+        )
+        current_density_scaling_factor = (
+            jvm.active_area / jvm.corrected_active_area
+        ).magnitude
+        print(f'Current density scaling factor: {current_density_scaling_factor}')
+        resistance_scaling_factor = (
+            jvm.corrected_active_area / jvm.active_area
+        ).magnitude
+        print(f'Resistance scaling factor: {resistance_scaling_factor}')
+
     jvm.intensity = jv_dict['intensity'] if 'intensity' in jv_dict else None
     jvm.integration_time = (
         jv_dict['integration_time'] if 'integration_time' in jv_dict else None
@@ -42,18 +66,24 @@ def get_jv_archive(jv_dict, mainfile, jvm, append=False):
         jvm.jv_curve = []
     light_idx = 0
     for curve_idx, curve in enumerate(jv_dict['jv_curve']):
+        # Apply scaling to current density
+        corrected_curve_current_density = [
+            cd * current_density_scaling_factor for cd in curve['current_density']
+        ]
         if curve.get('dark'):
             jv_set = SolarCellJVCurveDarkCustom(
                 cell_name=curve['name'],
                 voltage=curve['voltage'],
-                current_density=curve['current_density'],
+                current_density=curve['current_density']
+                * current_density_scaling_factor,
                 dark=True,
             )
         else:
             jv_set = SolarCellJVCurveCustom(
                 cell_name=curve['name'],
                 voltage=curve['voltage'],
-                current_density=curve['current_density'],
+                current_density=curve['current_density']
+                * current_density_scaling_factor,
                 light_intensity=jv_dict['intensity']
                 if 'intensity' in jv_dict
                 else None,
