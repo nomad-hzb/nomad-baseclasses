@@ -88,7 +88,9 @@ def get_jv_archive(jv_dict, mainfile, jvm, append=False):
                 if 'intensity' in jv_dict
                 else None,
                 open_circuit_voltage=round(jv_dict['V_oc'][light_idx], 8) * ureg('V'),
-                short_circuit_current_density=round(jv_dict['J_sc'][light_idx], 8)
+                short_circuit_current_density=round(
+                    jv_dict['J_sc'][light_idx] * current_density_scaling_factor, 8
+                )
                 * ureg('mA/cm^2'),
                 fill_factor=round(jv_dict['Fill_factor'][light_idx], 8) * 0.01,
                 efficiency=round(jv_dict['Efficiency'][light_idx], 8),
