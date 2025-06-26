@@ -43,17 +43,13 @@ def get_jv_archive(jv_dict, mainfile, jvm, append=False):
         and jvm.corrected_active_area != 0
         and jvm.corrected_active_area != jvm.active_area
     ):
-        print(
-            f'jvm.corrected_active_area: {jvm.corrected_active_area}, jvm.active_area: {jvm.active_area}'
-        )
         current_density_scaling_factor = (
             jvm.active_area / jvm.corrected_active_area
         ).magnitude
-        print(f'Current density scaling factor: {current_density_scaling_factor}')
+
         resistance_scaling_factor = (
             jvm.corrected_active_area / jvm.active_area
         ).magnitude
-        print(f'Resistance scaling factor: {resistance_scaling_factor}')
 
     jvm.intensity = jv_dict['intensity'] if 'intensity' in jv_dict else None
     jvm.integration_time = (
