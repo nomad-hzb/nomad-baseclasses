@@ -128,7 +128,6 @@ def get_value_dynamically(
         <Quantity(120000.0, 'pascal')>
 
     Note:
-        - Function name contains a typo ('dinamically' should be 'dynamically')
         - Uses regex pattern to extract units from column names in format "Key [unit]"
         - Supports dimension validation using Pint's dimensionality checking
         - For dimension parameter, use physical dimension names like 'temperature', 'length', etc.
