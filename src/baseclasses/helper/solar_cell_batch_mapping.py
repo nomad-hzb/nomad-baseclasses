@@ -164,9 +164,11 @@ def get_value_dynamically(
             match = re.search(pattern, column_name, re.IGNORECASE)
             if match:
                 if match.group(1):
-                    unit_from_file = match.group(1)
-                else:
-                    unit_from_file = None
+                    if match.group(1) == 'min' and dimension == 'time':
+                        # special case for 'min' unit
+                        unit_from_file = 'minute'
+                    else:
+                        unit_from_file = match.group(1)
                 if unit_from_file:
                     Q_ = ureg.Quantity(float(data[column_name]), ureg(unit_from_file))
 
