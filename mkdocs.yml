@@ -19,6 +19,7 @@ nav:
     - Solution: references/solution.md
     - Wet Chemical Deposition: references/wet_chemical_deposition.md
   - Tutorials:
+    - Configuring and deploying NOMAD OASIS: tutorial/oasis_deployment.md
     - Solar Cells: tutorial/solar_cells.md
 plugins:
   - search
