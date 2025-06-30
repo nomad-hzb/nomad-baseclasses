@@ -146,7 +146,7 @@ def get_value_dynamically(
                     return default
                 if number:
                     return float(data[k])
-            return str(data[k]).strip()
+                return str(data[k]).strip()
         if unit:
             # match the one column from data that contains the key
             column_name = None
