@@ -386,7 +386,7 @@ def map_annealing(data):
             data, 'Annealing temperature', None, unit='°C', dimension='[temperature]'
         ),
         time=get_value(data, 'Annealing time [min]', None, unit='minute'),
-        atmosphere=get_value(
+        atmosphere=get_value_dynamically(
             data, ['Annealing athmosphere', 'Annealing atmosphere'], None, False
         ),
     )
