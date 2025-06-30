@@ -1,9 +1,7 @@
+import re
 from datetime import datetime
 
 import pandas as pd
-from nomad.datamodel.metainfo.basesections import CompositeSystemReference
-from nomad.units import ureg
-
 from baseclasses import LayerProperties, PubChemPureSubstanceSectionCustom
 from baseclasses.atmosphere import Atmosphere
 from baseclasses.material_processes_misc import (
@@ -45,6 +43,8 @@ from baseclasses.wet_chemical_deposition.slot_die_coating import (
     SlotDieCoatingProperties,
 )
 from baseclasses.wet_chemical_deposition.spin_coating import SpinCoatingRecipeSteps
+from nomad.datamodel.metainfo.basesections import CompositeSystemReference
+from nomad.units import ureg
 
 
 def get_entry_id_from_file_name(file_name, upload_id):
@@ -85,6 +85,52 @@ def get_value(data, key, default=None, number=True, unit=None):
                     return Q_(float(data[k]), ureg(u))
         return default
     except Exception as e:
+        raise e
+
+
+def get_value_dinamically(
+    data, key, default=None, number=True, unit=None, dimension=None
+):
+    if not isinstance(key, list):
+        key = [key]
+    pattern = rf'^(?:{"|".join(key)})\s+\[(.*?)\]$'
+
+    try:
+        if not unit and not dimension:
+            for k in key:
+                if k not in data:
+                    continue
+                if pd.isna(data[k]):
+                    return default
+                if number:
+                    return float(data[k])
+            return str(data[k]).strip()
+        if unit:
+            # match the one column from data that contains the key
+            for col in data.columns:
+                for k in key:
+                    if k in col:
+                        column_name = col
+                        break
+
+            match = re.search(pattern, column_name, re.IGNORECASE)
+            if match:
+                if match.group(1):
+                    unit_from_file = match.group(1)
+                else:
+                    unit_from_file = None
+                if unit_from_file:
+                    Q_ = ureg.Quantity(float(data[column_name]), ureg(unit_from_file))
+
+                    # check dimension
+                    if dimension:
+                        if dimension not in Q_.dimensionality:
+                            raise ValueError(
+                                f'Dimension mismatch: {dimension} not in {Q_.dimensionality}'
+                            )
+                    return Q_.to(unit)
+    except Exception as e:
+        print(f'Error in get_value_dinamically: {e}')
         raise e
 
 
@@ -180,7 +226,7 @@ def map_atmosphere(data):
 
 
 def map_layer(data):
-    if 'Carbon Paste Layer' in get_value(data, 'Layer type', '', False):
+    if 'Carbon Paste Layer' in get_value(data, 'Layer type', None, False):
         return [
             CarbonPasteLayerProperties(
                 layer_type=get_value(data, 'Layer type', None, False),
