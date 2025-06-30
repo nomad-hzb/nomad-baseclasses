@@ -207,7 +207,9 @@ def map_batch(batch_ids, batch_id, upload_id, batch_class):
 
 def map_annealing(data):
     return Annealing(
-        temperature=get_value(data, 'Annealing temperature [°C]', None, unit='°C'),
+        temperature=get_value_dinamically(
+            data, 'Annealing temperature', None, unit='°C', dimension='temperature'
+        ),
         time=get_value(data, 'Annealing time [min]', None, unit='minute'),
         atmosphere=get_value(
             data, ['Annealing athmosphere', 'Annealing atmosphere'], None, False
