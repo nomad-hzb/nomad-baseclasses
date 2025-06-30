@@ -88,9 +88,52 @@ def get_value(data, key, default=None, number=True, unit=None):
         raise e
 
 
-def get_value_dinamically(
+def get_value_dynamically(
     data, key, default=None, number=True, unit=None, dimension=None
 ):
+    """
+    Dynamically extract values from data with unit parsing from column names.
+
+    This function searches for column names that match the given key(s) and
+    automatically extracts unit information from square brackets in the column name.
+    It can validate dimensions and convert units as needed.
+
+    Args:
+        data (pd.Series): Row of data from a DataFrame with column names as index
+        key (str or list): Key(s) to search for in column names. If list, tries each key
+        default (any, optional): Default value to return if key not found or data is NaN.
+            Defaults to None.
+        number (bool, optional): Whether to convert the value to float. Defaults to True.
+        unit (str, optional): Target unit to convert the value to. If provided, the function
+            will parse the unit from the column name and convert to this target unit.
+        dimension (str, optional): Expected physical dimension (e.g., 'temperature', 'length').
+            Used to validate that the parsed unit has the correct dimensionality.
+
+    Returns:
+        float, str, pint.Quantity, or default:
+            - If unit is None: returns float (if number=True) or string
+            - If unit is provided: returns pint.Quantity converted to target unit
+            - Returns default if key not found or value is NaN
+
+    Raises:
+        ValueError: If dimension validation fails (unit doesn't match expected dimension)
+        Exception: Re-raises any other exceptions that occur during processing
+
+    Example:
+        >>> data = pd.Series({'Temperature [°C]': 25.5, 'Pressure [bar]': 1.2})
+        >>> get_value_dinamically(data, 'Temperature', unit='K', dimension='temperature')
+        <Quantity(298.65, 'kelvin')>
+
+        >>> get_value_dinamically(data, 'Pressure', unit='Pa')
+        <Quantity(120000.0, 'pascal')>
+
+    Note:
+        - Function name contains a typo ('dinamically' should be 'dynamically')
+        - Uses regex pattern to extract units from column names in format "Key [unit]"
+        - Supports dimension validation using Pint's dimensionality checking
+        - For dimension parameter, use physical dimension names like 'temperature', 'length', etc.
+    """
+
     if not isinstance(key, list):
         key = [key]
     pattern = rf'^(?:{"|".join(key)})\s+\[(.*?)\]$'
@@ -107,7 +150,7 @@ def get_value_dinamically(
             return str(data[k]).strip()
         if unit:
             # match the one column from data that contains the key
-            for col in data.columns:
+            for col in data.index:
                 for k in key:
                     if k in col:
                         column_name = col
@@ -124,9 +167,10 @@ def get_value_dinamically(
 
                     # check dimension
                     if dimension:
-                        if dimension not in Q_.dimensionality:
+                        if not Q_.check(f'[{dimension}]'):
                             raise ValueError(
-                                f'Dimension mismatch: {dimension} not in {Q_.dimensionality}'
+                                f'Dimension mismatch: {dimension} not in '
+                                f'{Q_.dimensionality}'
                             )
                     return Q_.to(unit)
     except Exception as e:
