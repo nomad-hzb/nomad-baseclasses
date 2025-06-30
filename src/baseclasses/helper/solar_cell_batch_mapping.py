@@ -149,13 +149,17 @@ def get_value_dynamically(
             return str(data[k]).strip()
         if unit:
             # match the one column from data that contains the key
+            column_name = None
             for col in data.index:
                 for k in key:
                     if k in col:
                         column_name = col
                         break
-                    if column_name:
-                        break
+                if column_name:
+                    break
+
+            if not column_name:
+                return default
 
             match = re.search(pattern, column_name, re.IGNORECASE)
             if match:
