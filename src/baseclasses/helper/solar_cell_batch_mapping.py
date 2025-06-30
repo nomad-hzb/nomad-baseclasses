@@ -394,11 +394,13 @@ def map_annealing(data):
 
 def map_atmosphere(data):
     return Atmosphere(
-        oxygen_level_ppm=get_value(data, 'GB oxygen level [ppm]', None),
-        relative_humidity=get_value(
+        oxygen_level_ppm=get_value_dynamically(data, 'GB oxygen level [ppm]', None),
+        relative_humidity=get_value_dynamically(
             data, ['rel. humidity [%]', 'Room/GB humidity [%]'], None
         ),
-        temperature=get_value(data, 'Room temperature [°C]', None, unit='°C'),
+        temperature=get_value_dynamically(
+            data, 'Room temperature', None, unit='°C', dimension='[temperature]'
+        ),
     )
 
 
