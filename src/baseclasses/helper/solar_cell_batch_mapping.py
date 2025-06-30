@@ -405,31 +405,39 @@ def map_atmosphere(data):
 
 
 def map_layer(data):
-    if 'Carbon Paste Layer' in get_value(data, 'Layer type', '', False):
+    if 'Carbon Paste Layer' in get_value_dynamically(data, 'Layer type', '', False):
         return [
             CarbonPasteLayerProperties(
-                layer_type=get_value(data, 'Layer type', None, False),
-                layer_material_name=get_value(data, 'Material name', None, False),
-                layer_thickness=get_value(
-                    data, 'Layer thickness [nm]', None, unit='nm'
+                layer_type=get_value_dynamically(data, 'Layer type', None, False),
+                layer_material_name=get_value_dynamically(
+                    data, 'Material name', None, False
                 ),
-                supplier=get_value(data, 'Supplier', None, False),
-                batch=get_value(data, 'Batch', None, False),
-                drying_time=get_value(data, 'Drying Time [s]', None, unit='s'),
-                cost=get_value(data, 'Cost [EUR]', None, True),
+                layer_thickness=get_value_dynamically(
+                    data, 'Layer thickness', None, unit='nm', dimension='[length]'
+                ),
+                supplier=get_value_dynamically(data, 'Supplier', None, False),
+                batch=get_value_dynamically(data, 'Batch', None, False),
+                drying_time=get_value_dynamically(
+                    data, 'Drying Time', None, unit='s', dimension='[time]'
+                ),
+                cost=get_value_dynamically(data, 'Cost [EUR]', None, True),
             )
         ]
     else:
         return [
             LayerProperties(
-                layer_type=get_value(data, 'Layer type', None, False),
-                layer_material_name=get_value(data, 'Material name', None, False),
-                layer_thickness=get_value(
-                    data, 'Layer thickness [nm]', None, unit='nm'
+                layer_type=get_value_dynamically(data, 'Layer type', None, False),
+                layer_material_name=get_value_dynamically(
+                    data, 'Material name', None, False
                 ),
-                layer_transmission=get_value(data, 'Transmission [%]', None, True),
-                layer_morphology=get_value(data, 'Morphology', None, False),
-                layer_sheet_resistance=get_value(
+                layer_thickness=get_value_dynamically(
+                    data, 'Layer thickness', None, unit='nm', dimension='[length]'
+                ),
+                layer_transmission=get_value_dynamically(
+                    data, 'Transmission [%]', None, True
+                ),
+                layer_morphology=get_value_dynamically(data, 'Morphology', None, False),
+                layer_sheet_resistance=get_value_dynamically(
                     data, 'Sheet Resistance [Ohms/square]', None, True
                 ),
             )
