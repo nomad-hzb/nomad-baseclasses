@@ -121,10 +121,10 @@ def get_value_dynamically(
 
     Example:
         >>> data = pd.Series({'Temperature [°C]': 25.5, 'Pressure [bar]': 1.2})
-        >>> get_value_dinamically(data, 'Temperature', unit='K', dimension='temperature')
+        >>> get_value_dynamically(data, 'Temperature', unit='K', dimension='temperature')
         <Quantity(298.65, 'kelvin')>
 
-        >>> get_value_dinamically(data, 'Pressure', unit='Pa')
+        >>> get_value_dynamically(data, 'Pressure', unit='Pa')
         <Quantity(120000.0, 'pascal')>
 
     Note:
@@ -173,7 +173,7 @@ def get_value_dynamically(
                             )
                     return Q_.to(unit)
     except Exception as e:
-        print(f'Error in get_value_dinamically: {e}')
+        print(f'Error in get_value_dynamically: {e}')
         raise e
 
 
@@ -250,7 +250,7 @@ def map_batch(batch_ids, batch_id, upload_id, batch_class):
 
 def map_annealing(data):
     return Annealing(
-        temperature=get_value_dinamically(
+        temperature=get_value_dynamically(
             data, 'Annealing temperature', None, unit='°C', dimension='temperature'
         ),
         time=get_value(data, 'Annealing time [min]', None, unit='minute'),
