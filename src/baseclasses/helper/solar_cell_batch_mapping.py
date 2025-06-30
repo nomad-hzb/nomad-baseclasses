@@ -154,6 +154,8 @@ def get_value_dynamically(
                     if k in col:
                         column_name = col
                         break
+                    if column_name:
+                        break
 
             match = re.search(pattern, column_name, re.IGNORECASE)
             if match:
@@ -166,7 +168,7 @@ def get_value_dynamically(
 
                     # check dimension
                     if dimension:
-                        if not Q_.check(f'[{dimension}]'):
+                        if not Q_.check(f'{dimension}'):
                             raise ValueError(
                                 f'Dimension mismatch: {dimension} not in '
                                 f'{Q_.dimensionality}'
@@ -251,7 +253,7 @@ def map_batch(batch_ids, batch_id, upload_id, batch_class):
 def map_annealing(data):
     return Annealing(
         temperature=get_value_dynamically(
-            data, 'Annealing temperature', None, unit='°C', dimension='temperature'
+            data, 'Annealing temperature', None, unit='°C', dimension='[temperature]'
         ),
         time=get_value(data, 'Annealing time [min]', None, unit='minute'),
         atmosphere=get_value(
