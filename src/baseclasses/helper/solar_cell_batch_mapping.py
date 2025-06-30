@@ -271,7 +271,7 @@ def map_atmosphere(data):
 
 
 def map_layer(data):
-    if 'Carbon Paste Layer' in get_value(data, 'Layer type', None, False):
+    if 'Carbon Paste Layer' in get_value(data, 'Layer type', '', False):
         return [
             CarbonPasteLayerProperties(
                 layer_type=get_value(data, 'Layer type', None, False),
