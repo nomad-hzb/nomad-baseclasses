@@ -459,14 +459,18 @@ def map_solutions(data):
         final_solvents.append(
             SolutionChemical(
                 chemical_2=PubChemPureSubstanceSectionCustom(
-                    name=get_value(data, f'{solvent} name', None, False),
+                    name=get_value_dynamically(data, f'{solvent} name', None, False),
                     load_data=False,
                 ),
-                chemical_volume=get_value(
-                    data, f'{solvent} volume [uL]', None, unit='uL'
+                chemical_volume=get_value_dynamically(
+                    data, f'{solvent} volume', None, unit='uL', dimension='[volume]'
                 ),
-                amount_relative=get_value(data, f'{solvent} relative amount', None),
-                chemical_id=get_value(data, f'{solvent} chemical ID', None, False),
+                amount_relative=get_value_dynamically(
+                    data, f'{solvent} relative amount', None
+                ),
+                chemical_id=get_value_dynamically(
+                    data, f'{solvent} chemical ID', None, False
+                ),
             )
         )
     for solute in sorted(set(solutes)):
