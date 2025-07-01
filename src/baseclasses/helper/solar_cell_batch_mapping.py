@@ -705,28 +705,37 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
         atmosphere=map_atmosphere(data),
         annealing=map_annealing(data),
         properties=SlotDieCoatingProperties(
-            coating_run=get_value(data, 'Coating run', None, False),
-            flow_rate=get_value(
+            coating_run=get_value_dynamically(data, 'Coating run', None, False),
+            flow_rate=get_value_dynamically(
                 data,
-                ['Flow rate [uL/min]', 'Flow rate [ul/min]'],
+                'Flow rate',
                 None,
-                unit=['uL/minute', 'uL/minute'],
+                unit='uL/minute',
+                dimension='[volume]/[time]',
             ),
-            slot_die_head_distance_to_thinfilm=get_value(
-                data, 'Head gap [mm]', unit='mm'
+            slot_die_head_distance_to_thinfilm=get_value_dynamically(
+                data, 'Head gap', unit='mm', dimension='[length]'
             ),
-            slot_die_head_speed=get_value(data, 'Speed [mm/s]', unit='mm/s'),
+            slot_die_head_speed=get_value_dynamically(
+                data, 'Speed', unit='mm/s', dimension='[length]/[time]'
+            ),
             coated_area=get_value(data, 'Coated area [mm²]', unit='mm**2'),
         ),
         quenching=AirKnifeGasQuenching(
             air_knife_angle=get_value(data, 'Air knife angle [°]', None),
             # is this the same as (drying) gas flow rate/velocity?
-            bead_volume=get_value(data, 'Bead volume [mm/s]', None, unit='mm/s'),
-            drying_speed=get_value(
-                data, 'Drying speed [cm/min]', None, unit='cm/minute'
+            bead_volume=get_value_dynamically(
+                data, 'Bead volume', None, unit='mm/s', dimension='[length]/[time]'
             ),
-            air_knife_distance_to_thin_film=get_value(
-                data, 'Air knife gap [cm]', None, unit='cm'
+            drying_speed=get_value_dynamically(
+                data,
+                'Drying speed',
+                None,
+                unit='cm/minute',
+                dimension='[length]/[time]',
+            ),
+            air_knife_distance_to_thin_film=get_value_dynamically(
+                data, 'Air knife gap', None, unit='cm', dimension='[length]'
             ),
             drying_gas_temperature=get_value(
                 data,
@@ -734,12 +743,16 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
                 None,
                 unit=['°C', '°C'],
             ),
-            heat_transfer_coefficient=get_value(
-                data, 'Heat transfer coefficient [W m^-2 K^-1]', None, unit='W/(K*m**2)'
+            heat_transfer_coefficient=get_value_dynamically(
+                data,
+                'Heat transfer coefficient',
+                None,
+                unit='W/(K*m**2)',
+                dimension='[power]/[temperature]/[area]',
             ),
         ),
     )
-    material = get_value(data, 'Material name', '', False)
+    material = get_value_dynamically(data, 'Material name', '', False)
     return (f'{i}_{j}_slot_die_coating_{material}', archive)
 
 
