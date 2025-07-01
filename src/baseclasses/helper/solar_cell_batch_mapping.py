@@ -1100,13 +1100,15 @@ def map_substrate(data, substrate_class):
     # Create LayerProperties for substrate_properties
     substrate_props = [
         LayerProperties(
-            layer_thickness=get_value(data, 'TCO thickness [nm]', None, unit=['nm']),
-            layer_transmission=get_value(data, 'Transmission [%]', None),
+            layer_thickness=get_value_dynamically(
+                data, 'TCO thickness', None, unit='nm', dimension='[length]'
+            ),
+            layer_transmission=get_value_dynamically(data, 'Transmission [%]', None),
             layer_sheet_resistance=get_value(
                 data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm']
             ),
             layer_type='Substrate Conductive Layer',
-            layer_material_name=get_value(
+            layer_material_name=get_value_dynamically(
                 data, 'Substrate conductive layer', '', False
             ),
         )
@@ -1114,20 +1116,24 @@ def map_substrate(data, substrate_class):
     archive = substrate_class(
         datetime=get_datetime(data, 'Date'),
         name='Substrate '
-        + get_value(data, 'Sample dimension', '', False)
+        + get_value_dynamically(data, 'Sample dimension', '', False)
         + ' '
-        + get_value(data, 'Substrate material', '', False)
+        + get_value_dynamically(data, 'Substrate material', '', False)
         + ' '
-        + get_value(data, 'Substrate conductive layer', '', False),
-        solar_cell_area=get_value(data, 'Sample area [cm^2]', None, unit=['cm**2']),
-        pixel_area=get_value(
-            data, ['Pixel area', 'Pixel area [cm^2]'], None, unit=['cm**2', 'cm**2']
+        + get_value_dynamically(data, 'Substrate conductive layer', '', False),
+        solar_cell_area=get_value_dynamically(
+            data, 'Sample area', None, unit='cm**2', dimension='[area]'
         ),
-        number_of_pixels=get_value(data, 'Number of pixels', None),
-        substrate=get_value(data, 'Substrate material', '', False),
-        description=get_value(data, 'Notes', '', False),
-        lab_id=get_value(data, 'Bottom Cell Name', '', False),
-        conducting_material=[get_value(data, 'Substrate conductive layer', '', False)],
+        pixel_area=get_value_dynamically(
+            data, 'Pixel area', None, unit='cm**2', dimension='[area]'
+        ),
+        number_of_pixels=get_value_dynamically(data, 'Number of pixels', None),
+        substrate=get_value_dynamically(data, 'Substrate material', '', False),
+        description=get_value_dynamically(data, 'Notes', '', False),
+        lab_id=get_value_dynamically(data, 'Bottom Cell Name', '', False),
+        conducting_material=[
+            get_value_dynamically(data, 'Substrate conductive layer', '', False)
+        ],
         substrate_properties=substrate_props,
     )
     return archive
