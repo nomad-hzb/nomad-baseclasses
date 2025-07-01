@@ -477,16 +477,17 @@ def map_solutions(data):
         final_solutes.append(
             SolutionChemical(
                 chemical_2=PubChemPureSubstanceSectionCustom(
-                    name=get_value(
+                    name=get_value_dynamically(
                         data, [f'{solute} type', f'{solute} name'], None, False
                     ),
                     load_data=False,
                 ),
-                concentration_mol=get_value(
+                concentration_mol=get_value_dynamically(
                     data,
-                    f'{solute} Concentration [mM]',
+                    f'{solute} Concentration',
                     None,
                     unit='mM',
+                    dimension='[concentration]',
                 ),
                 concentration_mass=get_value(
                     data,
@@ -497,8 +498,12 @@ def map_solutions(data):
                     None,
                     unit=['wt%', 'mg/ml'],
                 ),
-                amount_relative=get_value(data, f'{solute} relative amount', None),
-                chemical_id=get_value(data, f'{solute} chemical ID', None, False),
+                amount_relative=get_value_dynamically(
+                    data, f'{solute} relative amount', None
+                ),
+                chemical_id=get_value_dynamically(
+                    data, f'{solute} chemical ID', None, False
+                ),
             )
         )
 
