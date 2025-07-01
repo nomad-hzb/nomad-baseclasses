@@ -514,10 +514,10 @@ def map_solutions(data):
 
 def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
     archive = sc_class(
-        name='spin coating ' + get_value(data, 'Material name', '', False),
-        location=get_value(data, 'Tool/GB name', '', False),
+        name='spin coating ' + get_value_dynamically(data, 'Material name', '', False),
+        location=get_value_dynamically(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
-        description=get_value(data, 'Notes', '', False),
+        description=get_value_dynamically(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -535,17 +535,19 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
                     None,
                     unit=['uL', 'uL'],
                 ),
-                solution_viscosity=get_value(
+                solution_viscosity=get_value_dynamically(
                     data,
-                    'Viscosity [mPa*s]',
+                    'Viscosity',
                     None,
                     unit=['mPa*s'],
+                    dimension='[viscosity]',
                 ),
-                solution_contact_angle=get_value(
+                solution_contact_angle=get_value_dynamically(
                     data,
-                    'Contact angle [°]',
+                    'Contact angle',
                     None,
                     unit=['°'],
+                    dimension='[angle]',
                 ),
             )
         ],
@@ -553,7 +555,13 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
         atmosphere=map_atmosphere(data),
         recipe_steps=[
             SpinCoatingRecipeSteps(
-                speed=get_value(data, f'Rotation speed {step}[rpm]', None, unit='rpm'),
+                speed=get_value_dynamically(
+                    data,
+                    f'Rotation speed {step}',
+                    None,
+                    unit='rpm',
+                    dimension='[frequency]',
+                ),
                 time=get_value(data, f'Rotation time {step}[s]', None, unit='s'),
                 acceleration=get_value(
                     data, f'Acceleration {step}[rpm/s]', None, unit='rpm/s'
