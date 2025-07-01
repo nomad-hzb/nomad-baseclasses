@@ -757,12 +757,13 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
 
 
 def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
-    location = get_value(data, 'Tool/GB name', '', False)
+    location = get_value_dynamically(data, 'Tool/GB name', '', False)
     archive = inkjet_class(
-        name='inkjet printing ' + get_value(data, 'Material name', '', False),
+        name='inkjet printing '
+        + get_value_dynamically(data, 'Material name', '', False),
         location=location,
         positon_in_experimental_plan=i,
-        description=get_value(data, 'Notes', None, False),
+        description=get_value_dynamically(data, 'Notes', None, False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -783,61 +784,84 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                     None,
                     unit=['uL', 'uL'],
                 ),
-                solution_viscosity=get_value(
+                solution_viscosity=get_value_dynamically(
                     data,
-                    'Viscosity [mPa*s]',
+                    'Viscosity',
                     None,
-                    unit=['mPa*s'],
+                    unit='mPa*s',
+                    dimension='[viscosity]',
                 ),
-                solution_contact_angle=get_value(
+                solution_contact_angle=get_value_dynamically(
                     data,
-                    'Contact angle [°]',
+                    'Contact angle',
                     None,
-                    unit=['°'],
+                    unit='°',
+                    dimension='[angle]',
                 ),
             )
         ],
         layer=map_layer(data),
         nozzle_voltage_profile=NozzleVoltageProfile(
-            config_file=get_value(data, 'Nozzle voltage config file', None, False)
+            config_file=get_value_dynamically(
+                data, 'Nozzle voltage config file', None, False
+            )
         ),
         properties=InkjetPrintingProperties(
-            printing_run=get_value(data, 'Printing run', None, False),
-            image_used=get_value(data, 'Image used', None, False),
+            printing_run=get_value_dynamically(data, 'Printing run', None, False),
+            image_used=get_value_dynamically(data, 'Image used', None, False),
             print_head_properties=PrintHeadProperties(
-                number_of_active_print_nozzles=get_value(
+                number_of_active_print_nozzles=get_value_dynamically(
                     data, 'Number of active nozzles', None
                 ),
-                active_nozzles=get_value(data, 'Active nozzles', None, False),
-                print_nozzle_drop_frequency=get_value(
-                    data, 'Droplet per second [1/s]', None, unit='1/s'
+                active_nozzles=get_value_dynamically(
+                    data, 'Active nozzles', None, False
                 ),
-                print_head_angle=get_value(
-                    data, 'Print head angle [deg]', None, unit='deg'
-                ),
-                print_speed=get_value(data, 'Printing speed [mm/s]', None, unit='mm/s'),
-                print_nozzle_drop_volume=get_value(
+                print_nozzle_drop_frequency=get_value_dynamically(
                     data,
-                    ['Droplet volume [pl]', 'Droplet volume [pL]'],
+                    'Droplet per second',
                     None,
-                    unit=['pL', 'pL'],
+                    unit='1/s',
+                    dimension='[frequency]',
                 ),
-                print_head_temperature=get_value(
-                    data, 'Nozzle temperature [°C]', None, unit='°C'
+                print_head_angle=get_value_dynamically(
+                    data, 'Print head angle', None, unit='deg', dimension='[angle]'
                 ),
-                print_head_distance_to_substrate=get_value(
-                    data, 'Dropping Height [mm]', None, unit='mm'
+                print_speed=get_value_dynamically(
+                    data,
+                    'Printing speed',
+                    None,
+                    unit='mm/s',
+                    dimension='[length]/[time]',
                 ),
-                print_head_name=get_value(data, 'Printhead name', None, False),
+                print_nozzle_drop_volume=get_value_dynamically(
+                    data,
+                    'Droplet volume',
+                    None,
+                    unit='pL',
+                    dimension='[volume]',
+                ),
+                print_head_temperature=get_value_dynamically(
+                    data,
+                    'Nozzle temperature',
+                    None,
+                    unit='°C',
+                    dimension='[temperature]',
+                ),
+                print_head_distance_to_substrate=get_value_dynamically(
+                    data, 'Dropping Height', None, unit='mm', dimension='[length]'
+                ),
+                print_head_name=get_value_dynamically(
+                    data, 'Printhead name', None, False
+                ),
             ),
-            cartridge_pressure=get_value(
+            cartridge_pressure=get_value_dynamically(
                 data,
-                ['Ink reservoir pressure [bar]', 'Ink reservoir pressure [mbar]'],
+                'Ink reservoir pressure',
                 None,
-                unit=['bar', 'mbar'],
+                dimension='[pressure]',
             ),
-            substrate_temperature=get_value(
-                data, 'Table temperature [°C]', None, unit='°C'
+            substrate_temperature=get_value_dynamically(
+                data, 'Table temperature', None, unit='°C', dimension='[temperature]'
             ),
             drop_density=get_value(
                 data,
@@ -854,104 +878,162 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
             ),
         ),
         print_head_path=PrintHeadPath(
-            quality_factor=get_value(data, 'Quality factor', None, False),
-            step_size=get_value(data, 'Step size', None, False),
-            directional=get_value(data, 'Printing direction', None, False),
-            swaths=get_value(data, 'Number of swaths', None),
+            quality_factor=get_value_dynamically(data, 'Quality factor', None, False),
+            step_size=get_value_dynamically(data, 'Step size', None, False),
+            directional=get_value_dynamically(data, 'Printing direction', None, False),
+            swaths=get_value_dynamically(data, 'Number of swaths', None),
         ),
         atmosphere=map_atmosphere(data),
         annealing=map_annealing(data),
     )
 
-    if get_value(data, 'GAVD Gas', None, False):
+    if get_value_dynamically(data, 'GAVD Gas', None, False):
         archive.quenching = GasFlowAssistedVacuumDrying(
             vacuum_properties=VacuumQuenching(
-                start_time=get_value(data, 'GAVD start time [s]', None, unit='s'),
-                pressure=get_value(
-                    data, 'GAVD vacuum pressure [mbar]', None, unit='mbar'
+                start_time=get_value_dynamically(
+                    data, 'GAVD start time', None, unit='s', dimension='[time]'
                 ),
-                temperature=get_value(data, 'GAVD temperature [°C]', None, unit='°C'),
-                duration=get_value(data, 'GAVD vacuum time [s]', None, unit='s'),
+                pressure=get_value_dynamically(
+                    data,
+                    'GAVD vacuum pressure',
+                    None,
+                    unit='mbar',
+                    dimension='[pressure]',
+                ),
+                temperature=get_value_dynamically(
+                    data, 'GAVD temperature', None, unit='°C', dimension='[temperature]'
+                ),
+                duration=get_value_dynamically(
+                    data, 'GAVD vacuum time', None, unit='s', dimension='[time]'
+                ),
             ),
             gas_quenching_properties=GasQuenchingWithNozzle(
-                duration=get_value(data, 'Gas flow duration [s]', None, unit='s'),
-                pressure=get_value(
-                    data,
-                    ['Gas flow pressure [bar]', 'Gas flow pressure [mbar]'],
-                    None,
-                    unit=['bar', 'mbar'],
+                duration=get_value_dynamically(
+                    data, 'Gas flow duration', None, unit='s', dimension='[time]'
                 ),
-                nozzle_shape=get_value(data, 'Nozzle shape', None, False),
-                nozzle_type=get_value(data, 'Nozzle type', None, False),
-                gas=get_value(data, 'GAVD Gas', None, False),
+                pressure=get_value_dynamically(
+                    data,
+                    'Gas flow pressure',
+                    None,
+                    dimension='[pressure]',
+                ),
+                nozzle_shape=get_value_dynamically(data, 'Nozzle shape', None, False),
+                nozzle_type=get_value_dynamically(data, 'Nozzle type', None, False),
+                gas=get_value_dynamically(data, 'GAVD Gas', None, False),
             ),
-            comment=get_value(data, 'GAVD comment', None, False),
+            comment=get_value_dynamically(data, 'GAVD comment', None, False),
         )
 
     if location in ['Pixdro', 'iLPixdro']:  # printer param
-        voltage_a = get_value(data, 'Wf Level 1[V]', None, unit='V')
-        voltage_b = get_value(data, 'Wf Level 2[V]', None, unit='V')
-        voltage_c = get_value(data, 'Wf Level 3[V]', None, unit='V')
+        voltage_a = get_value_dynamically(
+            data, 'Wf Level 1', None, unit='V', dimension='[voltage]'
+        )
+        voltage_b = get_value_dynamically(
+            data, 'Wf Level 2', None, unit='V', dimension='[voltage]'
+        )
+        voltage_c = get_value_dynamically(
+            data, 'Wf Level 3', None, unit='V', dimension='[voltage]'
+        )
         archive.nozzle_voltage_profile = LP50NozzleVoltageProfile(
-            number_of_pulses=get_value(data, 'Wf Number of Pulses', None, False),
+            number_of_pulses=get_value_dynamically(
+                data, 'Wf Number of Pulses', None, False
+            ),
             voltage_a=voltage_a,
             # umrechnen time [us] = V_level [V]/ rise[V/us]
             rise_edge_a=voltage_a
-            / get_value(data, 'Wf Rise 1[V/us]', None, unit='V/us')
+            / get_value_dynamically(
+                data, 'Wf Rise 1', None, unit='V/us', dimension='[voltage]/[time]'
+            )
             if voltage_a
             else None,
-            peak_time_a=get_value(data, 'Wf Width 1[us]', None, unit=['us']),
+            peak_time_a=get_value_dynamically(
+                data, 'Wf Width 1', None, unit='us', dimension='[time]'
+            ),
             fall_edge_a=voltage_a
-            / get_value(data, 'Wf Fall 1[V/us]', None, unit='V/us')
+            / get_value_dynamically(
+                data, 'Wf Fall 1', None, unit='V/us', dimension='[voltage]/[time]'
+            )
             if voltage_a
             else None,
-            time_space_a=get_value(data, 'Wf Space 1[us]', None, unit=['us']),
+            time_space_a=get_value_dynamically(
+                data, 'Wf Space 1', None, unit='us', dimension='[time]'
+            ),
             voltage_b=voltage_b,
             # umrechnen time [us] = V_level [V]/ rise[V/us]
             rise_edge_b=voltage_b
-            / get_value(data, 'Wf Rise 2[V/us]', None, unit='V/us')
+            / get_value_dynamically(
+                data, 'Wf Rise 2', None, unit='V/us', dimension='[voltage]/[time]'
+            )
             if voltage_b
             else None,
-            peak_time_b=get_value(data, 'Wf Width 2[us]', None, unit=['us']),
+            peak_time_b=get_value_dynamically(
+                data, 'Wf Width 2', None, unit='us', dimension='[time]'
+            ),
             fall_edge_b=voltage_b
-            / get_value(data, 'Wf Fall 2[V/us]', None, unit='V/us')
+            / get_value_dynamically(
+                data, 'Wf Fall 2', None, unit='V/us', dimension='[voltage]/[time]'
+            )
             if voltage_b
             else None,
-            time_space_b=get_value(data, 'Wf Space 2[us]', None, unit=['us']),
+            time_space_b=get_value_dynamically(
+                data, 'Wf Space 2', None, unit='us', dimension='[time]'
+            ),
             voltage_c=voltage_c,
             # umrechnen time [us] = V_level [V]/ rise[V/us]
             rise_edge_c=voltage_c
-            / get_value(data, 'Wf Rise 3[V/us]', None, unit='V/us')
+            / get_value_dynamically(
+                data, 'Wf Rise 3', None, unit='V/us', dimension='[voltage]/[time]'
+            )
             if voltage_c
             else None,
-            peak_time_c=get_value(data, 'Wf Width 3[us]', None, unit=['us']),
+            peak_time_c=get_value_dynamically(
+                data, 'Wf Width 3', None, unit='us', dimension='[time]'
+            ),
             fall_edge_c=voltage_c
-            / get_value(data, 'Wf Fall 3[V/us]', None, unit='V/us')
+            / get_value_dynamically(
+                data, 'Wf Fall 3', None, unit='V/us', dimension='[voltage]/[time]'
+            )
             if voltage_c
             else None,
-            time_space_c=get_value(data, 'Wf Space 3[us]', None, unit=['us']),
+            time_space_c=get_value_dynamically(
+                data, 'Wf Space 3', None, unit='us', dimension='[time]'
+            ),
         )
 
     if location in ['iLNotion', 'Notion']:  # printer param
         archive.nozzle_voltage_profile = NotionNozzleVoltageProfile(
-            number_of_pulses=get_value(data, 'Wf Number of Pulses', None),
+            number_of_pulses=get_value_dynamically(data, 'Wf Number of Pulses', None),
             # for loop over number of pulses with changing _a suffix of variales below
-            delay_time_a=get_value(data, 'Wf Delay Time [us]', None, unit='us'),
-            rise_edge_a=get_value(data, 'Wf Rise Time [us]', None, unit='us'),
-            peak_time_a=get_value(data, 'Wf Hold Time [us]', None, unit='us'),
-            fall_edge_a=get_value(data, 'Wf Fall Time [us]', None, unit='us'),
-            time_space_a=get_value(data, 'Wf Relax Time [us]', None, unit='us'),
-            voltage_a=get_value(data, 'Wf Voltage [V]', None, unit='V'),
+            delay_time_a=get_value_dynamically(
+                data, 'Wf Delay Time', None, unit='us', dimension='[time]'
+            ),
+            rise_edge_a=get_value_dynamically(
+                data, 'Wf Rise Time', None, unit='us', dimension='[time]'
+            ),
+            peak_time_a=get_value_dynamically(
+                data, 'Wf Hold Time', None, unit='us', dimension='[time]'
+            ),
+            fall_edge_a=get_value_dynamically(
+                data, 'Wf Fall Time', None, unit='us', dimension='[time]'
+            ),
+            time_space_a=get_value_dynamically(
+                data, 'Wf Relax Time', None, unit='us', dimension='[time]'
+            ),
+            voltage_a=get_value_dynamically(
+                data, 'Wf Voltage', None, unit='V', dimension='[voltage]'
+            ),
             # multipulse_a=get_value(data, 'Wf Multipulse [1/0]', None, False),
-            number_of_greylevels_a=get_value(data, 'Wf Number Greylevels', None),
-            grey_level_0_pulse_a=get_value(
+            number_of_greylevels_a=get_value_dynamically(
+                data, 'Wf Number Greylevels', None
+            ),
+            grey_level_0_pulse_a=get_value_dynamically(
                 data, 'Wf Grey Level 0 Use Pulse [1/0]', None
             ),
-            grey_level_1_pulse_a=get_value(
+            grey_level_1_pulse_a=get_value_dynamically(
                 data, 'Wf Grey Level 1 Use Pulse [1/0]', None
             ),
         )
-    material = get_value(data, 'Material name', '', False)
+    material = get_value_dynamically(data, 'Material name', '', False)
     return (f'{i}_{j}_inkjet_printing_{material}', archive)
 
 
