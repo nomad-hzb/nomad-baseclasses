@@ -1142,17 +1142,17 @@ def map_substrate(data, substrate_class):
 def map_evaporation(
     i, j, lab_ids, data, upload_id, evaporation_class, coevaporation=False
 ):
-    material = get_value(data, 'Material name', '', False)
+    material = get_value_dynamically(data, 'Material name', '', False)
     file_name = (
         f'{i}_{j}_coevaporation_{material}'
         if coevaporation
         else f'{i}_{j}_evaporation_{material}'
     )
     archive = evaporation_class(
-        name='evaporation ' + get_value(data, 'Material name', '', False),
-        location=get_value(data, 'Tool/GB name', '', False),
+        name='evaporation ' + get_value_dynamically(data, 'Material name', '', False),
+        location=get_value_dynamically(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
-        description=get_value(data, 'Notes', '', False),
+        description=get_value_dynamically(data, 'Notes', '', False),
         co_evaporation=coevaporation,
         samples=[
             CompositeSystemReference(
@@ -1186,56 +1186,94 @@ def map_evaporation(
             or get_value(data, 'Organic', '', False).lower().startswith('t')
         ):
             evaporation = OrganicEvaporation()
-            if get_value(data, 'Temperature [°C]', None):
+            if (
+                get_value_dynamically(
+                    data, 'Temperature', None, unit='°C', dimension='[temperature]'
+                )
+                is not None
+            ):
                 evaporation.temparature = [
-                    get_value(data, 'Temperature [°C]', None)
+                    get_value_dynamically(
+                        data, 'Temperature', None, unit='°C', dimension='[temperature]'
+                    ),
                 ] * 2
 
         if not evaporation:
             return (file_name, archive)
 
-        if get_value(data, f'Source temperature start{mat}[°C]', None) and get_value(
-            data, f'Source temperature end{mat}[°C]', None
+        if (
+            get_value_dynamically(
+                data,
+                f'Source temperature start{mat}',
+                None,
+                unit='°C',
+                dimension='[temperature]',
+            )
+            is not None
+            and get_value_dynamically(
+                data,
+                f'Source temperature end{mat}',
+                None,
+                unit='°C',
+                dimension='[temperature]',
+            )
+            is not None
         ):
             evaporation.temparature = [
-                get_value(data, f'Source temperature start{mat}[°C]', None, unit='°C'),
-                get_value(data, f'Source temperature end{mat}[°C]', None, unit='°C'),
+                get_value_dynamically(
+                    data,
+                    f'Source temperature start{mat}',
+                    None,
+                    unit='°C',
+                    dimension='[temperature]',
+                ),
+                get_value_dynamically(
+                    data,
+                    f'Source temperature end{mat}',
+                    None,
+                    unit='°C',
+                    dimension='[temperature]',
+                ),
             ]
 
-        evaporation.thickness = get_value(data, f'Thickness{mat} [nm]', unit='nm')
-        evaporation.start_rate = get_value(
-            data, f'Rate start{mat} [angstrom/s]', unit='angstrom/s'
+        evaporation.thickness = get_value_dynamically(
+            data, f'Thickness{mat}', unit='nm', dimension='[length]'
         )
-        evaporation.target_rate = get_value(
+        evaporation.start_rate = get_value_dynamically(
+            data, f'Rate start{mat}', unit='angstrom/s', dimension='[length]/[time]'
+        )
+        evaporation.target_rate = get_value_dynamically(
             data,
-            [f'Rate{mat} [angstrom/s]', f'Rate target{mat} [angstrom/s]'],
-            unit=['angstrom/s', 'angstrom/s'],
+            [f'Rate{mat}', f'Rate target{mat}'],
+            unit='angstrom/s',
+            dimension='[length]/[time]',
         )
-        evaporation.substrate_temparature = get_value(
-            data, f'Substrate temperature{mat} [°C]', unit='°C'
+        evaporation.substrate_temparature = get_value_dynamically(
+            data, f'Substrate temperature{mat}', unit='°C', dimension='[temperature]'
         )
-        evaporation.pressure = get_value(
+        evaporation.pressure = get_value_dynamically(
             data,
-            [f'Base pressure{mat} [bar]', f'Base pressure{mat} [mbar]'],
+            f'Base pressure{mat}',
             None,
-            unit=['bar', 'mbar'],
+            dimension='[pressure]',
         )
-        evaporation.pressure_start = get_value(
+        evaporation.pressure_start = get_value_dynamically(
             data,
-            [f'Pressure start{mat} [bar]', f'Pressure start{mat} [mbar]'],
+            f'Pressure start{mat}',
             None,
-            unit=['bar', 'mbar'],
+            dimension='[pressure]',
         )
-        evaporation.pressure_end = get_value(
+        evaporation.pressure_end = get_value_dynamically(
             data,
-            [f'Pressure end{mat} [bar]', f'Pressure end{mat} [mbar]'],
+            f'Pressure end{mat}',
             None,
-            unit=['bar', 'mbar'],
+            dimension='[pressure]',
         )
-        evaporation.tooling_factor = get_value(data, f'Tooling factor{mat}')
+        evaporation.tooling_factor = get_value_dynamically(data, f'Tooling factor{mat}')
 
         evaporation.chemical_2 = PubChemPureSubstanceSectionCustom(
-            name=get_value(data, f'Material name{mat}', None, False), load_data=False
+            name=get_value_dynamically(data, f'Material name{mat}', None, False),
+            load_data=False,
         )
         evaporations.append(evaporation)
 
@@ -1503,4 +1541,7 @@ def map_generic(i, j, lab_ids, data, upload_id, generic_class):
         ],
     )
     name = get_value(data, 'Name', '', False)
+    return (f'{i}_{j}_generic_process_{name.replace(" ", "_")}', archive)
+    return (f'{i}_{j}_generic_process_{name.replace(" ", "_")}', archive)
+    return (f'{i}_{j}_generic_process_{name.replace(" ", "_")}', archive)
     return (f'{i}_{j}_generic_process_{name.replace(" ", "_")}', archive)
