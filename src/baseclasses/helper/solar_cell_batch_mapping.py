@@ -1411,10 +1411,10 @@ def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
 
 def map_dip_coating(i, j, lab_ids, data, upload_id, dc_class):
     archive = dc_class(
-        name='dip coating ' + get_value(data, 'Material name', '', False),
-        location=get_value(data, 'Tool/GB name', '', False),
+        name='dip coating ' + get_value_dynamically(data, 'Material name', '', False),
+        location=get_value_dynamically(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
-        description=get_value(data, 'Notes', None, False),
+        description=get_value_dynamically(data, 'Notes', None, False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -1432,28 +1432,32 @@ def map_dip_coating(i, j, lab_ids, data, upload_id, dc_class):
                     None,
                     unit=['uL', 'uL'],
                 ),
-                solution_viscosity=get_value(
+                solution_viscosity=get_value_dynamically(
                     data,
-                    'Viscosity [mPa*s]',
+                    'Viscosity',
                     None,
-                    unit=['mPa*s'],
+                    unit='mPa*s',
+                    dimension='[viscosity]',
                 ),
-                solution_contact_angle=get_value(
+                solution_contact_angle=get_value_dynamically(
                     data,
-                    'Contact angle [°]',
+                    'Contact angle',
                     None,
-                    unit=['°'],
+                    unit='°',
+                    dimension='[angle]',
                 ),
             )
         ],
         layer=map_layer(data),
         properties=DipCoatingProperties(
-            time=get_value(data, 'Dipping duration [s]', unit='s'),
+            time=get_value_dynamically(
+                data, 'Dipping duration', unit='s', dimension='[time]'
+            ),
         ),
         annealing=map_annealing(data),
         atmosphere=map_atmosphere(data),
     )
-    material = get_value(data, 'Material name', '', False)
+    material = get_value_dynamically(data, 'Material name', '', False)
     return (f'{i}_{j}_dip_coating_{material}', archive)
 
 
