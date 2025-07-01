@@ -624,24 +624,40 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
             ),
         )
 
-    if get_value(data, 'Gas', None, False):
+    if get_value_dynamically(data, 'Gas', None, False):
         archive.quenching = GasQuenchingWithNozzle(
-            starting_delay=get_value(
-                data, 'Gas quenching start time [s]', None, unit='s'
+            starting_delay=get_value_dynamically(
+                data, 'Gas quenching start time', None, unit='s', dimension='[time]'
             ),
-            flow_rate=get_value(
-                data, 'Gas quenching flow rate [ml/s]', None, unit='ml/s'
+            flow_rate=get_value_dynamically(
+                data,
+                'Gas quenching flow rate',
+                None,
+                unit='mL/s',
+                dimension='[volume]/[time]',
             ),
-            height=get_value(data, 'Gas quenching height [mm]', None, unit='mm'),
-            duration=get_value(data, 'Gas quenching duration [s]', None, unit='s'),
-            pressure=get_value(data, 'Gas quenching pressure [bar]', None, unit='bar'),
-            velocity=get_value(data, 'Gas quenching velocity [m/s]', None, unit='m/s'),
-            nozzle_shape=get_value(data, 'Nozzle shape', None, False),
-            nozzle_size=get_value(data, 'Nozzle size [mm²]', None, False),
-            gas=get_value(data, 'Gas', None, False),
+            height=get_value_dynamically(
+                data, 'Gas quenching height', None, unit='mm', dimension='[length]'
+            ),
+            duration=get_value_dynamically(
+                data, 'Gas quenching duration', None, unit='s', dimension='[time]'
+            ),
+            pressure=get_value_dynamically(
+                data, 'Gas quenching pressure', None, unit='bar', dimension='[pressure]'
+            ),
+            velocity=get_value_dynamically(
+                data,
+                'Gas quenching velocity',
+                None,
+                unit='m/s',
+                dimension='[length]/[time]',
+            ),
+            nozzle_shape=get_value_dynamically(data, 'Nozzle shape', None, False),
+            nozzle_size=get_value_dynamically(data, 'Nozzle size [mm²]', None, False),
+            gas=get_value_dynamically(data, 'Gas', None, False),
         )
 
-    material = get_value(data, 'Material name', '', False)
+    material = get_value_dynamically(data, 'Material name', '', False)
     return (f'{i}_{j}_spin_coating_{material}', archive)
 
 
