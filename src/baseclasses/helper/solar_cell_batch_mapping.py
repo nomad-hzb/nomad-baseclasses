@@ -577,28 +577,31 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
             if get_value_dynamically(data, f'Rotation time {step}[s]')
         ],
     )
-    if get_value(data, 'Anti solvent name', None, False):
+    if get_value_dynamically(data, 'Anti solvent name', None, False):
         archive.quenching = AntiSolventQuenching(
-            anti_solvent_volume=get_value(
-                data, 'Anti solvent volume [ml]', None, unit='mL'
+            anti_solvent_volume=get_value_dynamically(
+                data, 'Anti solvent volume', None, unit='mL', dimension='[volume]'
             ),
-            anti_solvent_dropping_time=get_value(
-                data, 'Anti solvent dropping time [s]', None, unit='s'
+            anti_solvent_dropping_time=get_value_dynamically(
+                data, 'Anti solvent dropping time', None, unit='s', dimension='[time]'
             ),
-            anti_solvent_dropping_height=get_value(
-                data, 'Anti solvent dropping heigt [mm]', None, unit='mm'
-            ),
-            anti_solvent_dropping_flow_rate=get_value(
+            anti_solvent_dropping_height=get_value_dynamically(
                 data,
-                [
-                    'Anti solvent dropping speed [ul/s]',
-                    'Anti solvent dropping speed [uL/s]',
-                ],
+                ['Anti solvent dropping height', 'Anti solvent dropping heigt'],
                 None,
-                unit=['uL/s', 'uL/s'],
+                unit='mm',
+                dimension='[length]',
+            ),
+            anti_solvent_dropping_flow_rate=get_value_dynamically(
+                data,
+                'Anti solvent dropping speed',
+                None,
+                unit='uL/s',
+                dimension='[volume]/[time]',
             ),
             anti_solvent_2=PubChemPureSubstanceSectionCustom(
-                name=get_value(data, 'Anti solvent name', None, False), load_data=False
+                name=get_value_dynamically(data, 'Anti solvent name', None, False),
+                load_data=False,
             ),
         )
 
