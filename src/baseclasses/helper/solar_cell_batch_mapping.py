@@ -663,10 +663,11 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
 
 def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
     archive = sdc_class(
-        name='slot die coating ' + get_value(data, 'Material name', '', False),
-        location=get_value(data, 'Tool/GB name', '', False),
+        name='slot die coating '
+        + get_value_dynamically(data, 'Material name', '', False),
+        location=get_value_dynamically(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
-        description=get_value(data, 'Notes', None, False),
+        description=get_value_dynamically(data, 'Notes', None, False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -684,17 +685,19 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
                     None,
                     unit=['uL', 'uL'],
                 ),
-                solution_viscosity=get_value(
+                solution_viscosity=get_value_dynamically(
                     data,
-                    'Viscosity [mPa*s]',
+                    'Viscosity',
                     None,
                     unit=['mPa*s'],
+                    dimension='[viscosity]',
                 ),
-                solution_contact_angle=get_value(
+                solution_contact_angle=get_value_dynamically(
                     data,
-                    'Contact angle [°]',
+                    'Contact angle',
                     None,
                     unit=['°'],
+                    dimension='[angle]',
                 ),
             )
         ],
