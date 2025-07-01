@@ -1291,8 +1291,8 @@ def map_annealing_class(i, j, lab_ids, data, upload_id, annealing_class):
     archive = annealing_class(
         name='Thermal Annealing',
         positon_in_experimental_plan=i,
-        location=get_value(data, 'Tool/GB name', '', False),
-        description=get_value(data, 'Notes', '', False),
+        location=get_value_dynamically(data, 'Tool/GB name', '', False),
+        description=get_value_dynamically(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -1302,7 +1302,9 @@ def map_annealing_class(i, j, lab_ids, data, upload_id, annealing_class):
         ],
         annealing=map_annealing(data),
         atmosphere=Atmosphere(
-            relative_humidity=get_value(data, 'Relative humidity [%]', None),
+            relative_humidity=get_value_dynamically(
+                data, 'Relative humidity [%]', None
+            ),
         ),
     )
     return (f'{i}_{j}_annealing', archive)
@@ -1310,10 +1312,10 @@ def map_annealing_class(i, j, lab_ids, data, upload_id, annealing_class):
 
 def map_sputtering(i, j, lab_ids, data, upload_id, sputter_class):
     archive = sputter_class(
-        name='sputtering ' + get_value(data, 'Material name', '', False),
+        name='sputtering ' + get_value_dynamically(data, 'Material name', '', False),
         positon_in_experimental_plan=i,
-        location=get_value(data, 'Tool/GB name', '', False),
-        description=get_value(data, 'Notes', '', False),
+        location=get_value_dynamically(data, 'Tool/GB name', '', False),
+        description=get_value_dynamically(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -1325,23 +1327,38 @@ def map_sputtering(i, j, lab_ids, data, upload_id, sputter_class):
         atmosphere=map_atmosphere(data),
     )
     process = SputteringProcess(
-        thickness=get_value(data, 'Thickness [nm]', unit='nm'),
-        gas_flow_rate=get_value(data, 'Gas flow rate [cm^3/min]', unit='cm**3/minute'),
-        rotation_rate=get_value(data, 'Rotation rate [rpm]'),
-        power=get_value(data, 'Power [W]', unit='W'),
-        temperature=get_value(data, 'Temperature [°C]', unit='°C'),
-        deposition_time=get_value(data, 'Deposition time [s]', unit='s'),
-        burn_in_time=get_value(data, 'Burn in time [s]', unit='s'),
-        pressure=get_value(data, 'Pressure [mbar]', unit='mbar'),
+        thickness=get_value_dynamically(
+            data, 'Thickness', unit='nm', dimension='[length]'
+        ),
+        gas_flow_rate=get_value_dynamically(
+            data, 'Gas flow rate', unit='cm**3/minute', dimension='[volume]/[time]'
+        ),
+        rotation_rate=get_value_dynamically(
+            data, 'Rotation rate', dimension='[frequency]'
+        ),
+        power=get_value_dynamically(data, 'Power', unit='W', dimension='[power]'),
+        temperature=get_value_dynamically(
+            data, 'Temperature', unit='°C', dimension='[temperature]'
+        ),
+        deposition_time=get_value_dynamically(
+            data, 'Deposition time', unit='s', dimension='[time]'
+        ),
+        burn_in_time=get_value_dynamically(
+            data, 'Burn in time', unit='s', dimension='[time]'
+        ),
+        pressure=get_value_dynamically(
+            data, 'Pressure', unit='mbar', dimension='[pressure]'
+        ),
         target_2=PubChemPureSubstanceSectionCustom(
-            name=get_value(data, 'Material name', None, False), load_data=False
+            name=get_value_dynamically(data, 'Material name', None, False),
+            load_data=False,
         ),
         gas_2=PubChemPureSubstanceSectionCustom(
-            name=get_value(data, 'Gas', None, False), load_data=False
+            name=get_value_dynamically(data, 'Gas', None, False), load_data=False
         ),
     )
     archive.processes = [process]
-    material = get_value(data, 'Material name', '', False)
+    material = get_value_dynamically(data, 'Material name', '', False)
     return (f'{i}_{j}_sputtering_{material}', archive)
 
 
