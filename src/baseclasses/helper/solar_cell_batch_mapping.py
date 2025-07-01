@@ -605,14 +605,22 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
             ),
         )
 
-    if get_value(data, 'Vacuum quenching duration [s]', None, unit='s'):
+    if get_value_dynamically(
+        data, 'Vacuum quenching duration', None, unit='s', dimension='[time]'
+    ):
         archive.quenching = VacuumQuenching(
-            start_time=get_value(
-                data, 'Vacuum quenching start time [s]', None, unit='s'
+            start_time=get_value_dynamically(
+                data, 'Vacuum quenching start time', None, unit='s', dimension='[time]'
             ),
-            duration=get_value(data, 'Vacuum quenching duration [s]', None, unit='s'),
-            pressure=get_value(
-                data, 'Vacuum quenching pressure [bar]', None, unit='bar'
+            duration=get_value_dynamically(
+                data, 'Vacuum quenching duration', None, unit='s', dimension='[time]'
+            ),
+            pressure=get_value_dynamically(
+                data,
+                'Vacuum quenching pressure',
+                None,
+                unit='bar',
+                dimension='[pressure]',
             ),
         )
 
