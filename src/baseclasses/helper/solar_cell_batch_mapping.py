@@ -1041,8 +1041,8 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
     archive = cleaning_class(
         name='Cleaning',
         positon_in_experimental_plan=i,
-        location=get_value(data, 'Tool/GB name', '', False),
-        description=get_value(data, 'Notes', '', False),
+        location=get_value_dynamically(data, 'Tool/GB name', '', False),
+        description=get_value_dynamically(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -1052,40 +1052,44 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
         ],
         cleaning=[
             SolutionCleaning(
-                time=get_value(
+                time=get_value_dynamically(
                     data,
-                    [f'Time {i} [s]', f'Time {i} [min]'],
+                    f'Time {i}',
                     None,
-                    unit=['s', 'minute'],
+                    dimension='[time]',
                 ),
-                temperature=get_value(data, f'Temperature {i} [°C]', None, unit='°C'),
+                temperature=get_value_dynamically(
+                    data, f'Temperature {i}', None, unit='°C', dimension='[temperature]'
+                ),
                 solvent_2=PubChemPureSubstanceSectionCustom(
                     name=get_value(data, f'Solvent {i}', None, False), load_data=False
                 ),
             )
             for i in range(10)
-            if get_value(data, f'Solvent {i}', None, False)
+            if get_value_dynamically(data, f'Solvent {i}', None, False)
         ],
         cleaning_uv=[
             UVCleaning(
-                time=get_value(
+                time=get_value_dynamically(
                     data,
-                    ['UV-Ozone Time [s]', 'UV-Ozone Time [min]'],
+                    'UV-Ozone Time',
                     None,
-                    unit=['s', 'minute'],
+                    dimension='[time]',
                 )
             )
         ],
         cleaning_plasma=[
             PlasmaCleaning(
-                time=get_value(
+                time=get_value_dynamically(
                     data,
-                    ['Gas-Plasma Time [s]', 'Gas-Plasma Time [min]'],
+                    'Gas-Plasma Time',
                     None,
-                    unit=['s', 'minute'],
+                    dimension='[time]',
                 ),
-                power=get_value(data, 'Gas-Plasma Power [W]', None, unit='W'),
-                plasma_type=get_value(data, 'Gas-Plasma Gas', None, False),
+                power=get_value_dynamically(
+                    data, 'Gas-Plasma Power', None, unit='W', dimension='[power]'
+                ),
+                plasma_type=get_value_dynamically(data, 'Gas-Plasma Gas', None, False),
             )
         ],
     )
