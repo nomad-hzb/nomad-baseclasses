@@ -1363,12 +1363,13 @@ def map_sputtering(i, j, lab_ids, data, upload_id, sputter_class):
 
 
 def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
-    material = get_value(data, 'Material name', '', False)
+    material = get_value_dynamically(data, 'Material name', '', False)
     archive = css_class(
-        name='Close Space Sublimation ' + get_value(data, 'Material name', '', False),
-        location=get_value(data, 'Tool/GB name', '', False),
+        name='Close Space Sublimation '
+        + get_value_dynamically(data, 'Material name', '', False),
+        location=get_value_dynamically(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
-        description=get_value(data, 'Notes', '', False),
+        description=get_value_dynamically(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -1379,19 +1380,30 @@ def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
         layer=map_layer(data),
     )
     archive.process = CSSProcess(
-        thickness=get_value(data, 'Thickness [nm]', unit='nm'),
-        substrate_temperature=get_value(data, 'Substrate temperature [°C]', unit='°C'),
-        source_temperature=get_value(data, 'Source temperature [°C]', unit='°C'),
-        substrate_source_distance=get_value(
-            data, 'Substrate source distance [mm]', unit='mm'
+        thickness=get_value_dynamically(
+            data, 'Thickness', unit='nm', dimension='[length]'
         ),
-        deposition_time=get_value(data, 'Deposition Time [s]', unit='s'),
-        carrier_gas=get_value(data, 'Carrier gas', None, False),
-        pressure=get_value(data, 'Process pressure [bar]', None, unit='bar'),
+        substrate_temperature=get_value_dynamically(
+            data, 'Substrate temperature', unit='°C', dimension='[temperature]'
+        ),
+        source_temperature=get_value_dynamically(
+            data, 'Source temperature', unit='°C', dimension='[temperature]'
+        ),
+        substrate_source_distance=get_value_dynamically(
+            data, 'Substrate source distance', unit='mm', dimension='[length]'
+        ),
+        deposition_time=get_value_dynamically(
+            data, 'Deposition Time', unit='s', dimension='[time]'
+        ),
+        carrier_gas=get_value_dynamically(data, 'Carrier gas', None, False),
+        pressure=get_value_dynamically(
+            data, 'Process pressure', None, unit='bar', dimension='[pressure]'
+        ),
         chemical_2=PubChemPureSubstanceSectionCustom(
-            name=get_value(data, 'Material name', None, False), load_data=False
+            name=get_value_dynamically(data, 'Material name', None, False),
+            load_data=False,
         ),
-        material_state=get_value(data, 'Material state', None, False),
+        material_state=get_value_dynamically(data, 'Material state', None, False),
     )
 
     return (f'{i}_{j}_close_space_subimation_{material}', archive)
