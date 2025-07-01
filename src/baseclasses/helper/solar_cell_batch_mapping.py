@@ -562,13 +562,19 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
                     unit='rpm',
                     dimension='[frequency]',
                 ),
-                time=get_value(data, f'Rotation time {step}[s]', None, unit='s'),
-                acceleration=get_value(
-                    data, f'Acceleration {step}[rpm/s]', None, unit='rpm/s'
+                time=get_value_dynamically(
+                    data, f'Rotation time {step}', None, unit='s', dimension='[time]'
+                ),
+                acceleration=get_value_dynamically(
+                    data,
+                    f'Acceleration {step}',
+                    None,
+                    unit='rpm/s',
+                    dimension='[frequency]/[time]',
                 ),
             )
             for step in ['', '1 ', '2 ', '3 ', '4 ']
-            if get_value(data, f'Rotation time {step}[s]')
+            if get_value_dynamically(data, f'Rotation time {step}[s]')
         ],
     )
     if get_value(data, 'Anti solvent name', None, False):
