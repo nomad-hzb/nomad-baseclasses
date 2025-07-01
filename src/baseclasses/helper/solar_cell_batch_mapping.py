@@ -1,4 +1,5 @@
 import re
+import unittest
 from datetime import datetime
 
 import pandas as pd
@@ -96,7 +97,8 @@ def get_value_dynamically(
 
     This function searches for column names that match the given key(s) and
     automatically extracts unit information from square brackets in the column name.
-    It can validate dimensions and convert units as needed.
+    It can validate dimensions and convert units as needed. When multiple columns
+    match the same key, it tries each one until it finds a valid match.
 
     Args:
         data (pd.Series): Row of data from a DataFrame with column names as index
@@ -106,17 +108,18 @@ def get_value_dynamically(
         number (bool, optional): Whether to convert the value to float. Defaults to True.
         unit (str, optional): Target unit to convert the value to. If provided, the function
             will parse the unit from the column name and convert to this target unit.
-        dimension (str, optional): Expected physical dimension (e.g., 'temperature', 'length').
+        dimension (str or list, optional): Expected physical dimension(s) (e.g., 'temperature', 'length').
             Used to validate that the parsed unit has the correct dimensionality.
+            If list, any matching dimension is acceptable.
 
     Returns:
         float, str, pint.Quantity, or default:
-            - If unit is None: returns float (if number=True) or string
+            - If unit is None: returns float (if number=True) or string, after dimension validation
             - If unit is provided: returns pint.Quantity converted to target unit
-            - Returns default if key not found or value is NaN
+            - Returns default if key not found, value is NaN, or no valid match found
 
     Raises:
-        ValueError: If dimension validation fails (unit doesn't match expected dimension)
+        ValueError: If no column found with valid dimension when dimension is specified
         Exception: Re-raises any other exceptions that occur during processing
 
     Example:
@@ -124,18 +127,21 @@ def get_value_dynamically(
         >>> get_value_dynamically(data, 'Temperature', unit='K', dimension='temperature')
         <Quantity(298.65, 'kelvin')>
 
-        >>> get_value_dynamically(data, 'Pressure', unit='Pa')
-        <Quantity(120000.0, 'pascal')>
+        >>> # Multiple matching columns - finds the one with valid dimension
+        >>> data = pd.Series({'Solute concentration [M]': 0.1, 'Solute concentration [mg/mL]': 50})
+        >>> get_value_dynamically(data, 'Solute concentration', unit='mM', dimension='concentration')
+        <Quantity(100.0, 'millimolar')>
 
     Note:
         - Uses regex pattern to extract units from column names in format "Key [unit]"
         - Supports dimension validation using Pint's dimensionality checking
+        - When multiple columns match the same key, tries each until finding valid dimension
         - For dimension parameter, use physical dimension names like 'temperature', 'length', etc.
     """
 
     if not isinstance(key, list):
         key = [key]
-    pattern = rf'^(?:{"|".join(key)})\s+\[(.*?)\]$'
+    pattern = rf'^(?:{"|".join(key)})\s*\[(.*?)\]$'
 
     try:
         if not unit and not dimension:
@@ -147,41 +153,128 @@ def get_value_dynamically(
                 if number:
                     return float(data[k])
                 return str(data[k]).strip()
-        if unit:
-            # match the one column from data that contains the key
-            column_name = None
+        if not unit and dimension:
+            # Handle dimension validation without unit conversion
+            if not isinstance(dimension, list):
+                dimension = [dimension]
+
+            # Find all matching columns
+            matching_columns = []
             for col in data.index:
                 for k in key:
                     if k in col:
-                        column_name = col
+                        matching_columns.append(col)
                         break
-                if column_name:
-                    break
 
-            if not column_name:
+            if not matching_columns:
                 return default
 
-            match = re.search(pattern, column_name, re.IGNORECASE)
-            if match:
-                if match.group(1):
-                    if match.group(1) == 'min' and dimension == 'time':
-                        # special case for 'min' unit
-                        unit_from_file = 'minute'
-                    else:
-                        unit_from_file = match.group(1)
-                if unit_from_file:
-                    Q_ = ureg.Quantity(float(data[column_name]), ureg(unit_from_file))
+            # Try each matching column to find one with valid dimension
+            for column_name in matching_columns:
+                if pd.isna(data[column_name]):
+                    continue
 
-                    # check dimension
-                    if dimension:
-                        if not Q_.check(f'{dimension}'):
-                            raise ValueError(
-                                f'Dimension mismatch: {dimension} not in '
-                                f'{Q_.dimensionality}'
-                            )
-                    return Q_.to(unit)
+                match = re.search(pattern, column_name, re.IGNORECASE)
+                if match and match.group(1):
+                    unit_from_file = match.group(1)
+                    if unit_from_file == 'min' and 'time' in dimension:
+                        unit_from_file = 'minute'
+
+                    try:
+                        # Create quantity to check dimension
+                        Q_ = ureg.Quantity(data[column_name], ureg(unit_from_file))
+
+                        # Check if any of the allowed dimensions match
+                        dimension_matches = False
+                        for dim in dimension:
+                            if Q_.check(dim):
+                                dimension_matches = True
+                                break
+
+                        if dimension_matches:
+                            # Return the value (not converted, just validated)
+                            if number:
+                                return Q_
+                            return str(data[column_name]).strip()
+                    except:
+                        continue  # Try next column
+
+            # No valid dimension match found
+            return default
+
+        if unit:
+            # Find all matching columns
+            matching_columns = []
+            for col in data.index:
+                for k in key:
+                    if k in col:
+                        matching_columns.append(col)
+                        break
+
+            if not matching_columns:
+                return default
+
+            # Convert dimension to list if needed
+            if dimension and not isinstance(dimension, list):
+                dimension = [dimension]
+
+            # Try each matching column
+            for column_name in matching_columns:
+                if pd.isna(data[column_name]):
+                    continue
+
+                match = re.search(pattern, column_name, re.IGNORECASE)
+                if match and match.group(1):
+                    unit_from_file = match.group(1)
+                    if unit_from_file == 'min' and dimension and '[time]' in dimension:
+                        unit_from_file = 'minute'
+
+                    try:
+                        Q_ = ureg.Quantity(
+                            float(data[column_name]), ureg(unit_from_file)
+                        )
+
+                        # Check dimension if specified
+                        if dimension:
+                            dimension_matches = False
+                            for dim in dimension:
+                                if Q_.check(dim):
+                                    dimension_matches = True
+                                    break
+
+                            if not dimension_matches:
+                                continue  # Try next column instead of raising error
+
+                        # Successfully found matching column with valid dimension
+                        result = Q_.to(unit)
+                        return result
+                    except Exception:
+                        continue  # Try next column
+
+            # If no matching column with valid dimension found, handle based on values
+            has_any_values = any(not pd.isna(data[col]) for col in matching_columns)
+
+            if not has_any_values:
+                # All matching columns have NaN values, return default
+                return default
+            elif dimension:
+                # We have values but no valid dimension match
+                raise ValueError(
+                    f'No column found matching key {key} with valid dimension {dimension}. '
+                    f'Available columns: {[col for col in data.index if any(k in col for k in key)]}'
+                )
+            else:
+                # No dimension constraint, try direct conversion
+                for column_name in matching_columns:
+                    if not pd.isna(data[column_name]):
+                        try:
+                            Q_ = ureg.Quantity(float(data[column_name]), ureg(unit))
+                            return Q_
+                        except Exception:
+                            continue
+
+                return default
     except Exception as e:
-        print(f'Error in get_value_dynamically: {e}')
         raise e
 
 
@@ -345,7 +438,10 @@ def map_solutions(data):
                     load_data=False,
                 ),
                 concentration_mol=get_value(
-                    data, f'{solute} Concentration [mM]', None, unit='mM'
+                    data,
+                    f'{solute} Concentration [mM]',
+                    None,
+                    unit='mM',
                 ),
                 concentration_mass=get_value(
                     data,
