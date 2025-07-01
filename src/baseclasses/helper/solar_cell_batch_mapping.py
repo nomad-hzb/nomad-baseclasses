@@ -259,10 +259,11 @@ def get_value_dynamically(
                 return default
             elif dimension:
                 # We have values but no valid dimension match
-                raise ValueError(
+                print(
                     f'No column found matching key {key} with valid dimension {dimension}. '
                     f'Available columns: {[col for col in data.index if any(k in col for k in key)]}'
                 )
+                return default
             else:
                 # No dimension constraint, try direct conversion
                 for column_name in matching_columns:
