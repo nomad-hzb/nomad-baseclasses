@@ -177,8 +177,17 @@ def get_value_dynamically(
                 match = re.search(pattern, column_name, re.IGNORECASE)
                 if match and match.group(1):
                     unit_from_file = match.group(1)
-                    if unit_from_file == 'min' and 'time' in dimension:
-                        unit_from_file = 'minute'
+                    if 'time' in dimension:
+                        # Replace 'min' with 'minute' in units
+                        if unit_from_file == 'min':
+                            unit_from_file = 'minute'
+                        elif '/min' in unit_from_file:
+                            unit_from_file = unit_from_file.replace('/min', '/minute')
+                        elif 'min' in unit_from_file and (
+                            '/' in unit_from_file or '^' in unit_from_file
+                        ):
+                            # Handle composite units like cm^3/min
+                            unit_from_file = unit_from_file.replace('min', 'minute')
 
                     try:
                         # Create quantity to check dimension
@@ -226,8 +235,17 @@ def get_value_dynamically(
                 match = re.search(pattern, column_name, re.IGNORECASE)
                 if match and match.group(1):
                     unit_from_file = match.group(1)
-                    if unit_from_file == 'min' and dimension and '[time]' in dimension:
-                        unit_from_file = 'minute'
+                    if dimension and 'time' in str(dimension):
+                        # Replace 'min' with 'minute' in units
+                        if unit_from_file == 'min':
+                            unit_from_file = 'minute'
+                        elif '/min' in unit_from_file:
+                            unit_from_file = unit_from_file.replace('/min', '/minute')
+                        elif 'min' in unit_from_file and (
+                            '/' in unit_from_file or '^' in unit_from_file
+                        ):
+                            # Handle composite units like cm^3/min
+                            unit_from_file = unit_from_file.replace('min', 'minute')
 
                     try:
                         Q_ = ureg.Quantity(
