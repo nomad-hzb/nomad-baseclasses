@@ -12,7 +12,7 @@ After this, return to the main page of the repository and refresh the tab. The t
 
 ## Plugins and NOMAD OASIS customization
 
-NOMAD OASIS can be customized for specific application by various plugins. For detailed explanation of the NOMAD plugin system, see [the official documentation](https://nomad-lab.eu/prod/v1/docs/explanation/plugin_system.html). If you would like to test the OASIS with the default set of plugins, you can skip this paragraph and continue directly with depoyment. Otherwise, the list of plugins can be modified in `pyproject.toml` by adding or removing lines in the plugin table:
+NOMAD OASIS can be customized for specific application by various plugins. For detailed explanation of the NOMAD plugin system, see [the official documentation](https://nomad-lab.eu/prod/v1/docs/explanation/plugin_system.html). If you would like to test the OASIS with the default set of plugins, you can skip this paragraph and continue directly with deployment. Otherwise, the list of plugins can be modified in `pyproject.toml` by adding or removing lines in the plugin table:
 
 ```toml
 [project.optional-dependencies]
