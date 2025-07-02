@@ -313,7 +313,7 @@ class SolarCellJVCurve(SolarCellJV):
         super().normalize(archive, logger)
         if (
             self.current_density is not None
-            and self.efficiency is None
+            # and self.efficiency is None
             and not self.dark
         ):
             if self.voltage is not None:
@@ -466,6 +466,28 @@ class JVMeasurement(BaseMeasurement):
     def normalize(self, archive, logger):
         self.method = 'JV Measurement'
         super().normalize(archive, logger)
+
+        current_density_scaling_factor = 1.0
+
+        if (
+            self.corrected_active_area is not None
+            and self.corrected_active_area != 0
+            and self.active_area is not None
+            and self.active_area != 0
+            and self.corrected_active_area != self.active_area
+        ):
+            current_density_scaling_factor = (
+                self.active_area / self.corrected_active_area
+            ).magnitude
+
+        for curve in self.jv_curve:
+            if curve.current_density is not None:
+                curve.current_density = (
+                    curve.current_density * current_density_scaling_factor
+                )
+
+        for curve in self.jv_curve:
+            curve.normalize(archive, logger)
 
         max_idx = -1
         eff = -1
