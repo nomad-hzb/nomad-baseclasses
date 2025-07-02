@@ -103,7 +103,7 @@ Finally, run `docker-compose` in detached mode (this might take several minutes)
 docker compose up -d
 ```
 
-NOMAD OASIS graphic inteface should now be accessible via browser at [http://localhost/nomad-oasis](http://localhost/nomad-oasis).
+NOMAD OASIS graphic interface should now be accessible via browser at [http://localhost/nomad-oasis](http://localhost/nomad-oasis).
 
 The OASIS can be stopped by using
 
