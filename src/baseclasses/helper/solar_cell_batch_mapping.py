@@ -1589,7 +1589,7 @@ def map_generic(i, j, lab_ids, data, upload_id, generic_class):
     archive = generic_class(
         name=get_value(data, 'Name', '', False),
         positon_in_experimental_plan=i,
-        description=get_value(data, 'Notes', '', False),
+        description=get_value_dynamically(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -1599,7 +1599,4 @@ def map_generic(i, j, lab_ids, data, upload_id, generic_class):
         ],
     )
     name = get_value(data, 'Name', '', False)
-    return (f'{i}_{j}_generic_process_{name.replace(" ", "_")}', archive)
-    return (f'{i}_{j}_generic_process_{name.replace(" ", "_")}', archive)
-    return (f'{i}_{j}_generic_process_{name.replace(" ", "_")}', archive)
     return (f'{i}_{j}_generic_process_{name.replace(" ", "_")}', archive)
