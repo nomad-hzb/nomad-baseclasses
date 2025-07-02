@@ -4,6 +4,10 @@
 
 This is a NOMAD plugin. For information on how to use plugins, see [NOMAD Plugins](https://nomad-lab/prod/v1/staging/docs/plugins.html).
 
+## Citations
+
+If you use this plugin in your research, please see our [citation guidelines](citation.md). Proper citation helps us track the impact of our work and secure continued support for development.
+
 ## About the Plugin
 
 The core of this plugin includes deposition techniques used in perovskite solar cells, characterization methods for these solar cells, and electrochemical techniques, such as those involving a potentiostat. The plugin offers a structured approach to managing and analyzing data related to these techniques, facilitating a deeper understanding and innovations in solar cell and electrocatalysis research.
