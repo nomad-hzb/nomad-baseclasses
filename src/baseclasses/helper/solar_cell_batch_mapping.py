@@ -4,6 +4,7 @@ from datetime import datetime
 
 import pandas as pd
 from nomad.datamodel.metainfo.basesections import CompositeSystemReference
+from nomad.metainfo.metainfo import Dimension
 from nomad.units import ureg
 
 from baseclasses import LayerProperties, PubChemPureSubstanceSectionCustom
@@ -1472,17 +1473,25 @@ def map_laser_scribing(i, j, lab_ids, data, upload_id, laser_class):
             )
             for lab_id in lab_ids
         ],
-        description=get_value(data, 'Notes', None, False),
-        recipe_file=get_value(data, 'Recipe file', None, False),
-        patterning=get_value(data, 'Patterning Step', None, False),
-        layout=get_value(data, 'Layout', None, False),
+        description=get_value_dynamically(data, 'Notes', None, False),
+        recipe_file=get_value_dynamically(data, 'Recipe file', None, False),
+        patterning=get_value_dynamically(data, 'Patterning Step', None, False),
+        layout=get_value_dynamically(data, 'Layout', None, False),
         properties=LaserScribingProperties(
-            laser_wavelength=get_value(data, 'Laser wavelength [nm]', None),
-            laser_pulse_time=get_value(data, 'Laser pulse time [ps]', None),
-            laser_pulse_frequency=get_value(data, 'Laser pulse frequency [kHz]', None),
-            speed=get_value(data, 'Speed [mm/s]', None),
+            laser_wavelength=get_value_dynamically(
+                data, 'Laser wavelength', None, dimension='[length]'
+            ),
+            laser_pulse_time=get_value_dynamically(
+                data, 'Laser pulse time', None, dimension='[time]'
+            ),
+            laser_pulse_frequency=get_value_dynamically(
+                data, 'Laser pulse frequency', None, dimension='[frequency]'
+            ),
+            speed=get_value_dynamically(
+                data, 'Speed', None, dimension='[length]/[time]'
+            ),
             fluence=get_value(data, 'Fluence [J/cm2]', None),
-            power_in_percent=get_value(data, 'Power [%]', None),
+            power_in_percent=get_value_dynamically(data, 'Power [%]', None),
         ),
     )
 
