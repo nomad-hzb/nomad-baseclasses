@@ -1501,10 +1501,10 @@ def map_laser_scribing(i, j, lab_ids, data, upload_id, laser_class):
 def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
     archive = ald_class(
         name='atomic layer deposition '
-        + get_value(data, 'Material name', '', number=False),
-        location=get_value(data, 'Tool/GB name', '', False),
+        + get_value_dynamically(data, 'Material name', '', False),
+        location=get_value_dynamically(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
-        description=get_value(data, 'Notes', '', number=False),
+        description=get_value_dynamically(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -1515,57 +1515,73 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
         layer=map_layer(data),
         atmosphere=map_atmosphere(data),
         properties=ALDPropertiesIris(
-            source=get_value(data, 'Source', None, number=False),
-            thickness=get_value(data, 'Thickness [nm]', None),
-            temperature=get_value(
+            source=get_value_dynamically(data, 'Source', None, False),
+            thickness=get_value_dynamically(
+                data, 'Thickness', None, dimension='[length]'
+            ),
+            temperature=get_value_dynamically(
                 data,
-                ['Temperature [°C]', 'Reactor Temperature [°C]'],
+                ['Temperature', 'Reactor Temperature'],
                 None,
-                unit=['°C', '°C'],
+                unit='°C',
+                dimension='[temperature]',
             ),
             rate=get_value(data, 'Rate [A/s]', None),
-            time=get_value(data, 'Time [s]', None),
-            number_of_cycles=get_value(data, 'Number of cycles', None),
+            time=get_value_dynamically(data, 'Time', None, dimension='[time]'),
+            number_of_cycles=get_value_dynamically(data, 'Number of cycles', None),
             material=ALDMaterial(
                 material=PubChemPureSubstanceSectionCustom(
-                    name=get_value(data, 'Precursor 1', None, number=False),
+                    name=get_value_dynamically(data, 'Precursor 1', None, False),
                     load_data=False,
                 ),
-                pulse_duration=get_value(data, 'Pulse duration 1 [s]', None),
+                pulse_duration=get_value_dynamically(
+                    data, 'Pulse duration 1', None, dimension='[time]'
+                ),
                 pulse_flow_rate=get_value(data, 'Pulse flow rate 1 [ccm]', None),
-                manifold_temperature=get_value(
+                manifold_temperature=get_value_dynamically(
                     data,
                     [
-                        'Manifold Temperature [°C]',
-                        'Manifold temperature [°C]',
-                        'Manifold temperature 1 [°C]',
+                        'Manifold Temperature',
+                        'Manifold temperature',
+                        'Manifold temperature 1',
                     ],
                     None,
-                    unit=['°C', '°C', '°C'],
+                    unit='°C',
+                    dimension='[temperature]',
                 ),
-                purge_duration=get_value(data, 'Purge duration 1 [s]', None),
+                purge_duration=get_value_dynamically(
+                    data, 'Purge duration 1', None, dimension='[time]'
+                ),
                 purge_flow_rate=get_value(data, 'Purge flow rate 1 [ccm]', None),
-                bottle_temperature=get_value(data, 'Bottle temperature 1 [°C]', None),
+                bottle_temperature=get_value_dynamically(
+                    data, 'Bottle temperature 1', None, dimension='[temperature]'
+                ),
             ),
             oxidizer_reducer=ALDMaterial(
                 material=PubChemPureSubstanceSectionCustom(
-                    name=get_value(
-                        data, 'Precursor 2 (Oxidizer/Reducer)', None, number=False
+                    name=get_value_dynamically(
+                        data, 'Precursor 2 (Oxidizer/Reducer)', None, False
                     ),
                     load_data=False,
                 ),
-                pulse_duration=get_value(data, 'Pulse duration 2 [s]', None),
-                pulse_flow_rate=get_value(data, 'Pulse flow rate 2 [ccm]', None),
-                manifold_temperature=get_value(
-                    data, 'Manifold temperature 2 [°C]', None
+                pulse_duration=get_value_dynamically(
+                    data, 'Pulse duration 2', None, dimension='[time]'
                 ),
-                purge_duration=get_value(data, 'Purge duration 2 [s]', None),
+                pulse_flow_rate=get_value(data, 'Pulse flow rate 2 [ccm]', None),
+                manifold_temperature=get_value_dynamically(
+                    data, 'Manifold temperature 2', None, dimension='[temperature]'
+                ),
+                purge_duration=get_value_dynamically(
+                    data, 'Purge duration 2', None, dimension='[time]'
+                ),
                 purge_flow_rate=get_value(data, 'Purge flow rate 2 [ccm]', None),
-                bottle_temperature=get_value(data, 'Bottle temperature 2 [°C]', None),
+                bottle_temperature=get_value_dynamically(
+                    data, 'Bottle temperature 2', None, dimension='[temperature]'
+                ),
             ),
         ),
     )
-    material = get_value(data, 'Material name', '', number=False)
+    material = get_value_dynamically(data, 'Material name', '', False)
     return (f'{i}_{j}_ALD_{material}', archive)
 
 
