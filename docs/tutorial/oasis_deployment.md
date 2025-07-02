@@ -27,7 +27,7 @@ Plugins can be specified in several ways. If it is distributed via PyPI, you can
     "nomad-measurements>=1.2.0",
 ```
 
-If it is availbale form GitHub repository, you can choose a tag:
+If it is available from GitHub repository, you can choose a tag:
 
 ```toml
     "nomad-measurements @ git+https://github.com/FAIRmat-NFDI/nomad-measurements.git@v0.0.4",
