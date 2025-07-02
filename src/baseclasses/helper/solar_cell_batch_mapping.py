@@ -3,6 +3,9 @@ import unittest
 from datetime import datetime
 
 import pandas as pd
+from nomad.datamodel.metainfo.basesections import CompositeSystemReference
+from nomad.units import ureg
+
 from baseclasses import LayerProperties, PubChemPureSubstanceSectionCustom
 from baseclasses.atmosphere import Atmosphere
 from baseclasses.material_processes_misc import (
@@ -44,8 +47,6 @@ from baseclasses.wet_chemical_deposition.slot_die_coating import (
     SlotDieCoatingProperties,
 )
 from baseclasses.wet_chemical_deposition.spin_coating import SpinCoatingRecipeSteps
-from nomad.datamodel.metainfo.basesections import CompositeSystemReference
-from nomad.units import ureg
 
 
 def get_entry_id_from_file_name(file_name, upload_id):
@@ -87,6 +88,51 @@ def get_value(data, key, default=None, number=True, unit=None):
         return default
     except Exception as e:
         raise e
+
+
+def _find_matching_columns(data, keys):
+    """Find all columns that match any of the given keys."""
+    matching_columns = []
+    for col in data.index:
+        for k in keys:
+            if k in col:
+                matching_columns.append(col)
+                break
+    return matching_columns
+
+
+def _parse_unit_from_column(column_name, pattern):
+    """Extract unit from column name using regex pattern."""
+    match = re.search(pattern, column_name, re.IGNORECASE)
+    if match and match.group(1):
+        return match.group(1)
+    return None
+
+
+def _normalize_time_units(unit_string):
+    """Convert 'min' to 'minute' in unit strings for proper Pint parsing."""
+    if unit_string == 'min':
+        return 'minute'
+    elif '/min' in unit_string:
+        return unit_string.replace('/min', '/minute')
+    elif 'min' in unit_string and ('/' in unit_string or '^' in unit_string):
+        # Handle composite units like cm^3/min
+        return unit_string.replace('min', 'minute')
+    return unit_string
+
+
+def _validate_dimension(quantity, dimensions):
+    """Check if quantity matches any of the allowed dimensions."""
+    if not dimensions:
+        return True
+
+    if not isinstance(dimensions, list):
+        dimensions = [dimensions]
+
+    for dim in dimensions:
+        if quantity.check(dim):
+            return True
+    return False
 
 
 def get_value_dynamically(
@@ -159,12 +205,7 @@ def get_value_dynamically(
                 dimension = [dimension]
 
             # Find all matching columns
-            matching_columns = []
-            for col in data.index:
-                for k in key:
-                    if k in col:
-                        matching_columns.append(col)
-                        break
+            matching_columns = _find_matching_columns(data, key)
 
             if not matching_columns:
                 return default
@@ -174,33 +215,17 @@ def get_value_dynamically(
                 if pd.isna(data[column_name]):
                     continue
 
-                match = re.search(pattern, column_name, re.IGNORECASE)
-                if match and match.group(1):
-                    unit_from_file = match.group(1)
+                unit_from_file = _parse_unit_from_column(column_name, pattern)
+                if unit_from_file:
                     if 'time' in dimension:
-                        # Replace 'min' with 'minute' in units
-                        if unit_from_file == 'min':
-                            unit_from_file = 'minute'
-                        elif '/min' in unit_from_file:
-                            unit_from_file = unit_from_file.replace('/min', '/minute')
-                        elif 'min' in unit_from_file and (
-                            '/' in unit_from_file or '^' in unit_from_file
-                        ):
-                            # Handle composite units like cm^3/min
-                            unit_from_file = unit_from_file.replace('min', 'minute')
+                        unit_from_file = _normalize_time_units(unit_from_file)
 
                     try:
                         # Create quantity to check dimension
                         Q_ = ureg.Quantity(data[column_name], ureg(unit_from_file))
 
                         # Check if any of the allowed dimensions match
-                        dimension_matches = False
-                        for dim in dimension:
-                            if Q_.check(dim):
-                                dimension_matches = True
-                                break
-
-                        if dimension_matches:
+                        if _validate_dimension(Q_, dimension):
                             # Return the value (not converted, just validated)
                             if number:
                                 return Q_
@@ -213,12 +238,7 @@ def get_value_dynamically(
 
         if unit:
             # Find all matching columns
-            matching_columns = []
-            for col in data.index:
-                for k in key:
-                    if k in col:
-                        matching_columns.append(col)
-                        break
+            matching_columns = _find_matching_columns(data, key)
 
             if not matching_columns:
                 return default
@@ -232,20 +252,10 @@ def get_value_dynamically(
                 if pd.isna(data[column_name]):
                     continue
 
-                match = re.search(pattern, column_name, re.IGNORECASE)
-                if match and match.group(1):
-                    unit_from_file = match.group(1)
+                unit_from_file = _parse_unit_from_column(column_name, pattern)
+                if unit_from_file:
                     if dimension and 'time' in str(dimension):
-                        # Replace 'min' with 'minute' in units
-                        if unit_from_file == 'min':
-                            unit_from_file = 'minute'
-                        elif '/min' in unit_from_file:
-                            unit_from_file = unit_from_file.replace('/min', '/minute')
-                        elif 'min' in unit_from_file and (
-                            '/' in unit_from_file or '^' in unit_from_file
-                        ):
-                            # Handle composite units like cm^3/min
-                            unit_from_file = unit_from_file.replace('min', 'minute')
+                        unit_from_file = _normalize_time_units(unit_from_file)
 
                     try:
                         Q_ = ureg.Quantity(
@@ -254,13 +264,7 @@ def get_value_dynamically(
 
                         # Check dimension if specified
                         if dimension:
-                            dimension_matches = False
-                            for dim in dimension:
-                                if Q_.check(dim):
-                                    dimension_matches = True
-                                    break
-
-                            if not dimension_matches:
+                            if not _validate_dimension(Q_, dimension):
                                 continue  # Try next column instead of raising error
 
                         # Successfully found matching column with valid dimension
@@ -279,7 +283,7 @@ def get_value_dynamically(
                 # We have values but no valid dimension match
                 print(
                     f'No column found matching key {key} with valid dimension {dimension}. '
-                    f'Available columns: {[col for col in data.index if any(k in col for k in key)]}'
+                    f'Available columns: {_find_matching_columns(data, key)}'
                 )
                 return default
             else:
