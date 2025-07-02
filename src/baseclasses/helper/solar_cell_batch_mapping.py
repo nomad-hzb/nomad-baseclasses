@@ -4,6 +4,7 @@ from datetime import datetime
 
 import pandas as pd
 from nomad.datamodel.metainfo.basesections import CompositeSystemReference
+from nomad.metainfo.metainfo import Dimension
 from nomad.units import ureg
 
 from baseclasses import LayerProperties, PubChemPureSubstanceSectionCustom
@@ -135,6 +136,71 @@ def _validate_dimension(quantity, dimensions):
     return False
 
 
+def _process_matching_columns(
+    data, matching_columns, pattern, dimension=None, target_unit=None, number=True
+):
+    """
+    Process matching columns to find one with valid dimension and/or convert units.
+
+    Args:
+        data: The data series
+        matching_columns: List of column names to process
+        pattern: Regex pattern for unit extraction
+        dimension: Optional dimension(s) to validate against
+        target_unit: Optional target unit for conversion
+        number: Whether to return numeric values
+
+    Returns:
+        tuple: (success, result) where success is bool and result is the processed value
+    """
+    for column_name in matching_columns:
+        if pd.isna(data[column_name]):
+            continue
+
+        unit_from_file = _parse_unit_from_column(column_name, pattern)
+        if not unit_from_file:
+            continue
+
+        # Handle time unit normalization if needed
+        if dimension and 'time' in str(dimension):
+            unit_from_file = _normalize_time_units(unit_from_file)
+
+        try:
+            # Create quantity
+            Q_ = ureg.Quantity(float(data[column_name]), ureg(unit_from_file))
+
+            # Validate dimension if specified
+            if dimension and not _validate_dimension(Q_, dimension):
+                continue
+
+            # Convert to target unit if specified
+            if target_unit:
+                return True, Q_.to(target_unit)
+            # Return quantity or string based on number parameter
+            elif number:
+                return True, Q_
+            else:
+                return True, str(data[column_name]).strip()
+
+        except Exception:
+            continue
+
+    return False, None
+
+
+def _handle_simple_case(data, keys, default, number):
+    """Handle the simple case: no unit conversion, no dimension validation."""
+    for k in keys:
+        if k not in data:
+            continue
+        if pd.isna(data[k]):
+            return default
+        if number:
+            return float(data[k])
+        return str(data[k]).strip()
+    return default
+
+
 def get_value_dynamically(
     data, key, default=None, number=True, unit=None, dimension=None
 ):
@@ -185,102 +251,46 @@ def get_value_dynamically(
         - For dimension parameter, use physical dimension names like 'temperature', 'length', etc.
     """
 
+    # Normalize inputs
     if not isinstance(key, list):
         key = [key]
+    if dimension and not isinstance(dimension, list):
+        dimension = [dimension]
+
     pattern = rf'^(?:{"|".join(key)})\s*\[(.*?)\]$'
 
     try:
+        # Handle simple case: no unit conversion, no dimension validation
         if not unit and not dimension:
-            for k in key:
-                if k not in data:
-                    continue
-                if pd.isna(data[k]):
-                    return default
-                if number:
-                    return float(data[k])
-                return str(data[k]).strip()
-        if not unit and dimension:
-            # Handle dimension validation without unit conversion
-            if not isinstance(dimension, list):
-                dimension = [dimension]
+            return _handle_simple_case(data, key, default, number)
 
-            # Find all matching columns
-            matching_columns = _find_matching_columns(data, key)
-
-            if not matching_columns:
-                return default
-
-            # Try each matching column to find one with valid dimension
-            for column_name in matching_columns:
-                if pd.isna(data[column_name]):
-                    continue
-
-                unit_from_file = _parse_unit_from_column(column_name, pattern)
-                if unit_from_file:
-                    if 'time' in dimension:
-                        unit_from_file = _normalize_time_units(unit_from_file)
-
-                    try:
-                        # Create quantity to check dimension
-                        Q_ = ureg.Quantity(data[column_name], ureg(unit_from_file))
-
-                        # Check if any of the allowed dimensions match
-                        if _validate_dimension(Q_, dimension):
-                            # Return the value (not converted, just validated)
-                            if number:
-                                return Q_
-                            return str(data[column_name]).strip()
-                    except:
-                        continue  # Try next column
-
-            # No valid dimension match found
+        # Find all matching columns for complex cases
+        matching_columns = _find_matching_columns(data, key)
+        if not matching_columns:
             return default
 
+        # Handle dimension validation without unit conversion
+        if not unit and dimension:
+            success, result = _process_matching_columns(
+                data, matching_columns, pattern, dimension=dimension, number=number
+            )
+            return result if success else default
+
+        # Handle unit conversion (with optional dimension validation)
         if unit:
-            # Find all matching columns
-            matching_columns = _find_matching_columns(data, key)
+            success, result = _process_matching_columns(
+                data, matching_columns, pattern, dimension=dimension, target_unit=unit
+            )
 
-            if not matching_columns:
-                return default
+            if success:
+                return result
 
-            # Convert dimension to list if needed
-            if dimension and not isinstance(dimension, list):
-                dimension = [dimension]
-
-            # Try each matching column
-            for column_name in matching_columns:
-                if pd.isna(data[column_name]):
-                    continue
-
-                unit_from_file = _parse_unit_from_column(column_name, pattern)
-                if unit_from_file:
-                    if dimension and 'time' in str(dimension):
-                        unit_from_file = _normalize_time_units(unit_from_file)
-
-                    try:
-                        Q_ = ureg.Quantity(
-                            float(data[column_name]), ureg(unit_from_file)
-                        )
-
-                        # Check dimension if specified
-                        if dimension:
-                            if not _validate_dimension(Q_, dimension):
-                                continue  # Try next column instead of raising error
-
-                        # Successfully found matching column with valid dimension
-                        result = Q_.to(unit)
-                        return result
-                    except Exception:
-                        continue  # Try next column
-
-            # If no matching column with valid dimension found, handle based on values
+            # Handle fallback cases
             has_any_values = any(not pd.isna(data[col]) for col in matching_columns)
 
             if not has_any_values:
-                # All matching columns have NaN values, return default
                 return default
             elif dimension:
-                # We have values but no valid dimension match
                 print(
                     f'No column found matching key {key} with valid dimension {dimension}. '
                     f'Available columns: {_find_matching_columns(data, key)}'
@@ -295,7 +305,6 @@ def get_value_dynamically(
                             return Q_
                         except Exception:
                             continue
-
                 return default
     except Exception as e:
         raise e
@@ -378,7 +387,7 @@ def map_annealing(data):
             data, 'Annealing temperature', None, unit='°C', dimension='[temperature]'
         ),
         time=get_value(data, 'Annealing time [min]', None, unit='minute'),
-        atmosphere=get_value(
+        atmosphere=get_value_dynamically(
             data, ['Annealing athmosphere', 'Annealing atmosphere'], None, False
         ),
     )
@@ -386,40 +395,50 @@ def map_annealing(data):
 
 def map_atmosphere(data):
     return Atmosphere(
-        oxygen_level_ppm=get_value(data, 'GB oxygen level [ppm]', None),
-        relative_humidity=get_value(
+        oxygen_level_ppm=get_value_dynamically(data, 'GB oxygen level [ppm]', None),
+        relative_humidity=get_value_dynamically(
             data, ['rel. humidity [%]', 'Room/GB humidity [%]'], None
         ),
-        temperature=get_value(data, 'Room temperature [°C]', None, unit='°C'),
+        temperature=get_value_dynamically(
+            data, 'Room temperature', None, unit='°C', dimension='[temperature]'
+        ),
     )
 
 
 def map_layer(data):
-    if 'Carbon Paste Layer' in get_value(data, 'Layer type', '', False):
+    if 'Carbon Paste Layer' in get_value_dynamically(data, 'Layer type', '', False):
         return [
             CarbonPasteLayerProperties(
-                layer_type=get_value(data, 'Layer type', None, False),
-                layer_material_name=get_value(data, 'Material name', None, False),
-                layer_thickness=get_value(
-                    data, 'Layer thickness [nm]', None, unit='nm'
+                layer_type=get_value_dynamically(data, 'Layer type', None, False),
+                layer_material_name=get_value_dynamically(
+                    data, 'Material name', None, False
                 ),
-                supplier=get_value(data, 'Supplier', None, False),
-                batch=get_value(data, 'Batch', None, False),
-                drying_time=get_value(data, 'Drying Time [s]', None, unit='s'),
-                cost=get_value(data, 'Cost [EUR]', None, True),
+                layer_thickness=get_value_dynamically(
+                    data, 'Layer thickness', None, unit='nm', dimension='[length]'
+                ),
+                supplier=get_value_dynamically(data, 'Supplier', None, False),
+                batch=get_value_dynamically(data, 'Batch', None, False),
+                drying_time=get_value_dynamically(
+                    data, 'Drying Time', None, unit='s', dimension='[time]'
+                ),
+                cost=get_value_dynamically(data, 'Cost [EUR]', None, True),
             )
         ]
     else:
         return [
             LayerProperties(
-                layer_type=get_value(data, 'Layer type', None, False),
-                layer_material_name=get_value(data, 'Material name', None, False),
-                layer_thickness=get_value(
-                    data, 'Layer thickness [nm]', None, unit='nm'
+                layer_type=get_value_dynamically(data, 'Layer type', None, False),
+                layer_material_name=get_value_dynamically(
+                    data, 'Material name', None, False
                 ),
-                layer_transmission=get_value(data, 'Transmission [%]', None, True),
-                layer_morphology=get_value(data, 'Morphology', None, False),
-                layer_sheet_resistance=get_value(
+                layer_thickness=get_value_dynamically(
+                    data, 'Layer thickness', None, unit='nm', dimension='[length]'
+                ),
+                layer_transmission=get_value_dynamically(
+                    data, 'Transmission [%]', None, True
+                ),
+                layer_morphology=get_value_dynamically(data, 'Morphology', None, False),
+                layer_sheet_resistance=get_value_dynamically(
                     data, 'Sheet Resistance [Ohms/square]', None, True
                 ),
             )
@@ -441,30 +460,35 @@ def map_solutions(data):
         final_solvents.append(
             SolutionChemical(
                 chemical_2=PubChemPureSubstanceSectionCustom(
-                    name=get_value(data, f'{solvent} name', None, False),
+                    name=get_value_dynamically(data, f'{solvent} name', None, False),
                     load_data=False,
                 ),
-                chemical_volume=get_value(
-                    data, f'{solvent} volume [uL]', None, unit='uL'
+                chemical_volume=get_value_dynamically(
+                    data, f'{solvent} volume', None, unit='uL', dimension='[volume]'
                 ),
-                amount_relative=get_value(data, f'{solvent} relative amount', None),
-                chemical_id=get_value(data, f'{solvent} chemical ID', None, False),
+                amount_relative=get_value_dynamically(
+                    data, f'{solvent} relative amount', None
+                ),
+                chemical_id=get_value_dynamically(
+                    data, f'{solvent} chemical ID', None, False
+                ),
             )
         )
     for solute in sorted(set(solutes)):
         final_solutes.append(
             SolutionChemical(
                 chemical_2=PubChemPureSubstanceSectionCustom(
-                    name=get_value(
+                    name=get_value_dynamically(
                         data, [f'{solute} type', f'{solute} name'], None, False
                     ),
                     load_data=False,
                 ),
-                concentration_mol=get_value(
+                concentration_mol=get_value_dynamically(
                     data,
-                    f'{solute} Concentration [mM]',
+                    f'{solute} Concentration',
                     None,
                     unit='mM',
+                    dimension='[concentration]',
                 ),
                 concentration_mass=get_value(
                     data,
@@ -475,8 +499,12 @@ def map_solutions(data):
                     None,
                     unit=['wt%', 'mg/ml'],
                 ),
-                amount_relative=get_value(data, f'{solute} relative amount', None),
-                chemical_id=get_value(data, f'{solute} chemical ID', None, False),
+                amount_relative=get_value_dynamically(
+                    data, f'{solute} relative amount', None
+                ),
+                chemical_id=get_value_dynamically(
+                    data, f'{solute} chemical ID', None, False
+                ),
             )
         )
 
@@ -487,10 +515,10 @@ def map_solutions(data):
 
 def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
     archive = sc_class(
-        name='spin coating ' + get_value(data, 'Material name', '', False),
-        location=get_value(data, 'Tool/GB name', '', False),
+        name='spin coating ' + get_value_dynamically(data, 'Material name', '', False),
+        location=get_value_dynamically(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
-        description=get_value(data, 'Notes', '', False),
+        description=get_value_dynamically(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -508,17 +536,19 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
                     None,
                     unit=['uL', 'uL'],
                 ),
-                solution_viscosity=get_value(
+                solution_viscosity=get_value_dynamically(
                     data,
-                    'Viscosity [mPa*s]',
+                    'Viscosity',
                     None,
                     unit=['mPa*s'],
+                    dimension='[viscosity]',
                 ),
-                solution_contact_angle=get_value(
+                solution_contact_angle=get_value_dynamically(
                     data,
-                    'Contact angle [°]',
+                    'Contact angle',
                     None,
                     unit=['°'],
+                    dimension='[angle]',
                 ),
             )
         ],
@@ -526,79 +556,119 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
         atmosphere=map_atmosphere(data),
         recipe_steps=[
             SpinCoatingRecipeSteps(
-                speed=get_value(data, f'Rotation speed {step}[rpm]', None, unit='rpm'),
-                time=get_value(data, f'Rotation time {step}[s]', None, unit='s'),
-                acceleration=get_value(
-                    data, f'Acceleration {step}[rpm/s]', None, unit='rpm/s'
+                speed=get_value_dynamically(
+                    data,
+                    f'Rotation speed {step}',
+                    None,
+                    unit='rpm',
+                    dimension='[frequency]',
+                ),
+                time=get_value_dynamically(
+                    data, f'Rotation time {step}', None, unit='s', dimension='[time]'
+                ),
+                acceleration=get_value_dynamically(
+                    data,
+                    f'Acceleration {step}',
+                    None,
+                    unit='rpm/s',
+                    dimension='[frequency]/[time]',
                 ),
             )
             for step in ['', '1 ', '2 ', '3 ', '4 ']
-            if get_value(data, f'Rotation time {step}[s]')
+            if get_value_dynamically(data, f'Rotation time {step}[s]')
         ],
     )
-    if get_value(data, 'Anti solvent name', None, False):
+    if get_value_dynamically(data, 'Anti solvent name', None, False):
         archive.quenching = AntiSolventQuenching(
-            anti_solvent_volume=get_value(
-                data, 'Anti solvent volume [ml]', None, unit='mL'
+            anti_solvent_volume=get_value_dynamically(
+                data, 'Anti solvent volume', None, unit='mL', dimension='[volume]'
             ),
-            anti_solvent_dropping_time=get_value(
-                data, 'Anti solvent dropping time [s]', None, unit='s'
+            anti_solvent_dropping_time=get_value_dynamically(
+                data, 'Anti solvent dropping time', None, unit='s', dimension='[time]'
             ),
-            anti_solvent_dropping_height=get_value(
-                data, 'Anti solvent dropping heigt [mm]', None, unit='mm'
-            ),
-            anti_solvent_dropping_flow_rate=get_value(
+            anti_solvent_dropping_height=get_value_dynamically(
                 data,
-                [
-                    'Anti solvent dropping speed [ul/s]',
-                    'Anti solvent dropping speed [uL/s]',
-                ],
+                ['Anti solvent dropping height', 'Anti solvent dropping heigt'],
                 None,
-                unit=['uL/s', 'uL/s'],
+                unit='mm',
+                dimension='[length]',
+            ),
+            anti_solvent_dropping_flow_rate=get_value_dynamically(
+                data,
+                'Anti solvent dropping speed',
+                None,
+                unit='uL/s',
+                dimension='[volume]/[time]',
             ),
             anti_solvent_2=PubChemPureSubstanceSectionCustom(
-                name=get_value(data, 'Anti solvent name', None, False), load_data=False
+                name=get_value_dynamically(data, 'Anti solvent name', None, False),
+                load_data=False,
             ),
         )
 
-    if get_value(data, 'Vacuum quenching duration [s]', None, unit='s'):
+    if get_value_dynamically(
+        data, 'Vacuum quenching duration', None, unit='s', dimension='[time]'
+    ):
         archive.quenching = VacuumQuenching(
-            start_time=get_value(
-                data, 'Vacuum quenching start time [s]', None, unit='s'
+            start_time=get_value_dynamically(
+                data, 'Vacuum quenching start time', None, unit='s', dimension='[time]'
             ),
-            duration=get_value(data, 'Vacuum quenching duration [s]', None, unit='s'),
-            pressure=get_value(
-                data, 'Vacuum quenching pressure [bar]', None, unit='bar'
+            duration=get_value_dynamically(
+                data, 'Vacuum quenching duration', None, unit='s', dimension='[time]'
+            ),
+            pressure=get_value_dynamically(
+                data,
+                'Vacuum quenching pressure',
+                None,
+                unit='bar',
+                dimension='[pressure]',
             ),
         )
 
-    if get_value(data, 'Gas', None, False):
+    if get_value_dynamically(data, 'Gas', None, False):
         archive.quenching = GasQuenchingWithNozzle(
-            starting_delay=get_value(
-                data, 'Gas quenching start time [s]', None, unit='s'
+            starting_delay=get_value_dynamically(
+                data, 'Gas quenching start time', None, unit='s', dimension='[time]'
             ),
-            flow_rate=get_value(
-                data, 'Gas quenching flow rate [ml/s]', None, unit='ml/s'
+            flow_rate=get_value_dynamically(
+                data,
+                'Gas quenching flow rate',
+                None,
+                unit='mL/s',
+                dimension='[volume]/[time]',
             ),
-            height=get_value(data, 'Gas quenching height [mm]', None, unit='mm'),
-            duration=get_value(data, 'Gas quenching duration [s]', None, unit='s'),
-            pressure=get_value(data, 'Gas quenching pressure [bar]', None, unit='bar'),
-            velocity=get_value(data, 'Gas quenching velocity [m/s]', None, unit='m/s'),
-            nozzle_shape=get_value(data, 'Nozzle shape', None, False),
-            nozzle_size=get_value(data, 'Nozzle size [mm²]', None, False),
-            gas=get_value(data, 'Gas', None, False),
+            height=get_value_dynamically(
+                data, 'Gas quenching height', None, unit='mm', dimension='[length]'
+            ),
+            duration=get_value_dynamically(
+                data, 'Gas quenching duration', None, unit='s', dimension='[time]'
+            ),
+            pressure=get_value_dynamically(
+                data, 'Gas quenching pressure', None, unit='bar', dimension='[pressure]'
+            ),
+            velocity=get_value_dynamically(
+                data,
+                'Gas quenching velocity',
+                None,
+                unit='m/s',
+                dimension='[length]/[time]',
+            ),
+            nozzle_shape=get_value_dynamically(data, 'Nozzle shape', None, False),
+            nozzle_size=get_value_dynamically(data, 'Nozzle size [mm²]', None, False),
+            gas=get_value_dynamically(data, 'Gas', None, False),
         )
 
-    material = get_value(data, 'Material name', '', False)
+    material = get_value_dynamically(data, 'Material name', '', False)
     return (f'{i}_{j}_spin_coating_{material}', archive)
 
 
 def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
     archive = sdc_class(
-        name='slot die coating ' + get_value(data, 'Material name', '', False),
-        location=get_value(data, 'Tool/GB name', '', False),
+        name='slot die coating '
+        + get_value_dynamically(data, 'Material name', '', False),
+        location=get_value_dynamically(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
-        description=get_value(data, 'Notes', None, False),
+        description=get_value_dynamically(data, 'Notes', None, False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -616,17 +686,19 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
                     None,
                     unit=['uL', 'uL'],
                 ),
-                solution_viscosity=get_value(
+                solution_viscosity=get_value_dynamically(
                     data,
-                    'Viscosity [mPa*s]',
+                    'Viscosity',
                     None,
                     unit=['mPa*s'],
+                    dimension='[viscosity]',
                 ),
-                solution_contact_angle=get_value(
+                solution_contact_angle=get_value_dynamically(
                     data,
-                    'Contact angle [°]',
+                    'Contact angle',
                     None,
                     unit=['°'],
+                    dimension='[angle]',
                 ),
             )
         ],
@@ -634,28 +706,37 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
         atmosphere=map_atmosphere(data),
         annealing=map_annealing(data),
         properties=SlotDieCoatingProperties(
-            coating_run=get_value(data, 'Coating run', None, False),
-            flow_rate=get_value(
+            coating_run=get_value_dynamically(data, 'Coating run', None, False),
+            flow_rate=get_value_dynamically(
                 data,
-                ['Flow rate [uL/min]', 'Flow rate [ul/min]'],
+                'Flow rate',
                 None,
-                unit=['uL/minute', 'uL/minute'],
+                unit='uL/minute',
+                dimension='[volume]/[time]',
             ),
-            slot_die_head_distance_to_thinfilm=get_value(
-                data, 'Head gap [mm]', unit='mm'
+            slot_die_head_distance_to_thinfilm=get_value_dynamically(
+                data, 'Head gap', unit='mm', dimension='[length]'
             ),
-            slot_die_head_speed=get_value(data, 'Speed [mm/s]', unit='mm/s'),
+            slot_die_head_speed=get_value_dynamically(
+                data, 'Speed', unit='mm/s', dimension='[length]/[time]'
+            ),
             coated_area=get_value(data, 'Coated area [mm²]', unit='mm**2'),
         ),
         quenching=AirKnifeGasQuenching(
             air_knife_angle=get_value(data, 'Air knife angle [°]', None),
             # is this the same as (drying) gas flow rate/velocity?
-            bead_volume=get_value(data, 'Bead volume [mm/s]', None, unit='mm/s'),
-            drying_speed=get_value(
-                data, 'Drying speed [cm/min]', None, unit='cm/minute'
+            bead_volume=get_value_dynamically(
+                data, 'Bead volume', None, unit='mm/s', dimension='[length]/[time]'
             ),
-            air_knife_distance_to_thin_film=get_value(
-                data, 'Air knife gap [cm]', None, unit='cm'
+            drying_speed=get_value_dynamically(
+                data,
+                'Drying speed',
+                None,
+                unit='cm/minute',
+                dimension='[length]/[time]',
+            ),
+            air_knife_distance_to_thin_film=get_value_dynamically(
+                data, 'Air knife gap', None, unit='cm', dimension='[length]'
             ),
             drying_gas_temperature=get_value(
                 data,
@@ -663,22 +744,27 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
                 None,
                 unit=['°C', '°C'],
             ),
-            heat_transfer_coefficient=get_value(
-                data, 'Heat transfer coefficient [W m^-2 K^-1]', None, unit='W/(K*m**2)'
+            heat_transfer_coefficient=get_value_dynamically(
+                data,
+                'Heat transfer coefficient',
+                None,
+                unit='W/(K*m**2)',
+                dimension='[power]/[temperature]/[area]',
             ),
         ),
     )
-    material = get_value(data, 'Material name', '', False)
+    material = get_value_dynamically(data, 'Material name', '', False)
     return (f'{i}_{j}_slot_die_coating_{material}', archive)
 
 
 def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
-    location = get_value(data, 'Tool/GB name', '', False)
+    location = get_value_dynamically(data, 'Tool/GB name', '', False)
     archive = inkjet_class(
-        name='inkjet printing ' + get_value(data, 'Material name', '', False),
+        name='inkjet printing '
+        + get_value_dynamically(data, 'Material name', '', False),
         location=location,
         positon_in_experimental_plan=i,
-        description=get_value(data, 'Notes', None, False),
+        description=get_value_dynamically(data, 'Notes', None, False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -699,61 +785,84 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                     None,
                     unit=['uL', 'uL'],
                 ),
-                solution_viscosity=get_value(
+                solution_viscosity=get_value_dynamically(
                     data,
-                    'Viscosity [mPa*s]',
+                    'Viscosity',
                     None,
-                    unit=['mPa*s'],
+                    unit='mPa*s',
+                    dimension='[viscosity]',
                 ),
-                solution_contact_angle=get_value(
+                solution_contact_angle=get_value_dynamically(
                     data,
-                    'Contact angle [°]',
+                    'Contact angle',
                     None,
-                    unit=['°'],
+                    unit='°',
+                    dimension='[angle]',
                 ),
             )
         ],
         layer=map_layer(data),
         nozzle_voltage_profile=NozzleVoltageProfile(
-            config_file=get_value(data, 'Nozzle voltage config file', None, False)
+            config_file=get_value_dynamically(
+                data, 'Nozzle voltage config file', None, False
+            )
         ),
         properties=InkjetPrintingProperties(
-            printing_run=get_value(data, 'Printing run', None, False),
-            image_used=get_value(data, 'Image used', None, False),
+            printing_run=get_value_dynamically(data, 'Printing run', None, False),
+            image_used=get_value_dynamically(data, 'Image used', None, False),
             print_head_properties=PrintHeadProperties(
-                number_of_active_print_nozzles=get_value(
+                number_of_active_print_nozzles=get_value_dynamically(
                     data, 'Number of active nozzles', None
                 ),
-                active_nozzles=get_value(data, 'Active nozzles', None, False),
-                print_nozzle_drop_frequency=get_value(
-                    data, 'Droplet per second [1/s]', None, unit='1/s'
+                active_nozzles=get_value_dynamically(
+                    data, 'Active nozzles', None, False
                 ),
-                print_head_angle=get_value(
-                    data, 'Print head angle [deg]', None, unit='deg'
-                ),
-                print_speed=get_value(data, 'Printing speed [mm/s]', None, unit='mm/s'),
-                print_nozzle_drop_volume=get_value(
+                print_nozzle_drop_frequency=get_value_dynamically(
                     data,
-                    ['Droplet volume [pl]', 'Droplet volume [pL]'],
+                    'Droplet per second',
                     None,
-                    unit=['pL', 'pL'],
+                    unit='1/s',
+                    dimension='[frequency]',
                 ),
-                print_head_temperature=get_value(
-                    data, 'Nozzle temperature [°C]', None, unit='°C'
+                print_head_angle=get_value_dynamically(
+                    data, 'Print head angle', None, unit='deg', dimension='[angle]'
                 ),
-                print_head_distance_to_substrate=get_value(
-                    data, 'Dropping Height [mm]', None, unit='mm'
+                print_speed=get_value_dynamically(
+                    data,
+                    'Printing speed',
+                    None,
+                    unit='mm/s',
+                    dimension='[length]/[time]',
                 ),
-                print_head_name=get_value(data, 'Printhead name', None, False),
+                print_nozzle_drop_volume=get_value_dynamically(
+                    data,
+                    'Droplet volume',
+                    None,
+                    unit='pL',
+                    dimension='[volume]',
+                ),
+                print_head_temperature=get_value_dynamically(
+                    data,
+                    'Nozzle temperature',
+                    None,
+                    unit='°C',
+                    dimension='[temperature]',
+                ),
+                print_head_distance_to_substrate=get_value_dynamically(
+                    data, 'Dropping Height', None, unit='mm', dimension='[length]'
+                ),
+                print_head_name=get_value_dynamically(
+                    data, 'Printhead name', None, False
+                ),
             ),
-            cartridge_pressure=get_value(
+            cartridge_pressure=get_value_dynamically(
                 data,
-                ['Ink reservoir pressure [bar]', 'Ink reservoir pressure [mbar]'],
+                'Ink reservoir pressure',
                 None,
-                unit=['bar', 'mbar'],
+                dimension='[pressure]',
             ),
-            substrate_temperature=get_value(
-                data, 'Table temperature [°C]', None, unit='°C'
+            substrate_temperature=get_value_dynamically(
+                data, 'Table temperature', None, unit='°C', dimension='[temperature]'
             ),
             drop_density=get_value(
                 data,
@@ -770,104 +879,162 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
             ),
         ),
         print_head_path=PrintHeadPath(
-            quality_factor=get_value(data, 'Quality factor', None, False),
-            step_size=get_value(data, 'Step size', None, False),
-            directional=get_value(data, 'Printing direction', None, False),
-            swaths=get_value(data, 'Number of swaths', None),
+            quality_factor=get_value_dynamically(data, 'Quality factor', None, False),
+            step_size=get_value_dynamically(data, 'Step size', None, False),
+            directional=get_value_dynamically(data, 'Printing direction', None, False),
+            swaths=get_value_dynamically(data, 'Number of swaths', None),
         ),
         atmosphere=map_atmosphere(data),
         annealing=map_annealing(data),
     )
 
-    if get_value(data, 'GAVD Gas', None, False):
+    if get_value_dynamically(data, 'GAVD Gas', None, False):
         archive.quenching = GasFlowAssistedVacuumDrying(
             vacuum_properties=VacuumQuenching(
-                start_time=get_value(data, 'GAVD start time [s]', None, unit='s'),
-                pressure=get_value(
-                    data, 'GAVD vacuum pressure [mbar]', None, unit='mbar'
+                start_time=get_value_dynamically(
+                    data, 'GAVD start time', None, unit='s', dimension='[time]'
                 ),
-                temperature=get_value(data, 'GAVD temperature [°C]', None, unit='°C'),
-                duration=get_value(data, 'GAVD vacuum time [s]', None, unit='s'),
+                pressure=get_value_dynamically(
+                    data,
+                    'GAVD vacuum pressure',
+                    None,
+                    unit='mbar',
+                    dimension='[pressure]',
+                ),
+                temperature=get_value_dynamically(
+                    data, 'GAVD temperature', None, unit='°C', dimension='[temperature]'
+                ),
+                duration=get_value_dynamically(
+                    data, 'GAVD vacuum time', None, unit='s', dimension='[time]'
+                ),
             ),
             gas_quenching_properties=GasQuenchingWithNozzle(
-                duration=get_value(data, 'Gas flow duration [s]', None, unit='s'),
-                pressure=get_value(
-                    data,
-                    ['Gas flow pressure [bar]', 'Gas flow pressure [mbar]'],
-                    None,
-                    unit=['bar', 'mbar'],
+                duration=get_value_dynamically(
+                    data, 'Gas flow duration', None, unit='s', dimension='[time]'
                 ),
-                nozzle_shape=get_value(data, 'Nozzle shape', None, False),
-                nozzle_type=get_value(data, 'Nozzle type', None, False),
-                gas=get_value(data, 'GAVD Gas', None, False),
+                pressure=get_value_dynamically(
+                    data,
+                    'Gas flow pressure',
+                    None,
+                    dimension='[pressure]',
+                ),
+                nozzle_shape=get_value_dynamically(data, 'Nozzle shape', None, False),
+                nozzle_type=get_value_dynamically(data, 'Nozzle type', None, False),
+                gas=get_value_dynamically(data, 'GAVD Gas', None, False),
             ),
-            comment=get_value(data, 'GAVD comment', None, False),
+            comment=get_value_dynamically(data, 'GAVD comment', None, False),
         )
 
     if location in ['Pixdro', 'iLPixdro']:  # printer param
-        voltage_a = get_value(data, 'Wf Level 1[V]', None, unit='V')
-        voltage_b = get_value(data, 'Wf Level 2[V]', None, unit='V')
-        voltage_c = get_value(data, 'Wf Level 3[V]', None, unit='V')
+        voltage_a = get_value_dynamically(
+            data, 'Wf Level 1', None, unit='V', dimension='[voltage]'
+        )
+        voltage_b = get_value_dynamically(
+            data, 'Wf Level 2', None, unit='V', dimension='[voltage]'
+        )
+        voltage_c = get_value_dynamically(
+            data, 'Wf Level 3', None, unit='V', dimension='[voltage]'
+        )
         archive.nozzle_voltage_profile = LP50NozzleVoltageProfile(
-            number_of_pulses=get_value(data, 'Wf Number of Pulses', None, False),
+            number_of_pulses=get_value_dynamically(
+                data, 'Wf Number of Pulses', None, False
+            ),
             voltage_a=voltage_a,
             # umrechnen time [us] = V_level [V]/ rise[V/us]
             rise_edge_a=voltage_a
-            / get_value(data, 'Wf Rise 1[V/us]', None, unit='V/us')
+            / get_value_dynamically(
+                data, 'Wf Rise 1', None, unit='V/us', dimension='[voltage]/[time]'
+            )
             if voltage_a
             else None,
-            peak_time_a=get_value(data, 'Wf Width 1[us]', None, unit=['us']),
+            peak_time_a=get_value_dynamically(
+                data, 'Wf Width 1', None, unit='us', dimension='[time]'
+            ),
             fall_edge_a=voltage_a
-            / get_value(data, 'Wf Fall 1[V/us]', None, unit='V/us')
+            / get_value_dynamically(
+                data, 'Wf Fall 1', None, unit='V/us', dimension='[voltage]/[time]'
+            )
             if voltage_a
             else None,
-            time_space_a=get_value(data, 'Wf Space 1[us]', None, unit=['us']),
+            time_space_a=get_value_dynamically(
+                data, 'Wf Space 1', None, unit='us', dimension='[time]'
+            ),
             voltage_b=voltage_b,
             # umrechnen time [us] = V_level [V]/ rise[V/us]
             rise_edge_b=voltage_b
-            / get_value(data, 'Wf Rise 2[V/us]', None, unit='V/us')
+            / get_value_dynamically(
+                data, 'Wf Rise 2', None, unit='V/us', dimension='[voltage]/[time]'
+            )
             if voltage_b
             else None,
-            peak_time_b=get_value(data, 'Wf Width 2[us]', None, unit=['us']),
+            peak_time_b=get_value_dynamically(
+                data, 'Wf Width 2', None, unit='us', dimension='[time]'
+            ),
             fall_edge_b=voltage_b
-            / get_value(data, 'Wf Fall 2[V/us]', None, unit='V/us')
+            / get_value_dynamically(
+                data, 'Wf Fall 2', None, unit='V/us', dimension='[voltage]/[time]'
+            )
             if voltage_b
             else None,
-            time_space_b=get_value(data, 'Wf Space 2[us]', None, unit=['us']),
+            time_space_b=get_value_dynamically(
+                data, 'Wf Space 2', None, unit='us', dimension='[time]'
+            ),
             voltage_c=voltage_c,
             # umrechnen time [us] = V_level [V]/ rise[V/us]
             rise_edge_c=voltage_c
-            / get_value(data, 'Wf Rise 3[V/us]', None, unit='V/us')
+            / get_value_dynamically(
+                data, 'Wf Rise 3', None, unit='V/us', dimension='[voltage]/[time]'
+            )
             if voltage_c
             else None,
-            peak_time_c=get_value(data, 'Wf Width 3[us]', None, unit=['us']),
+            peak_time_c=get_value_dynamically(
+                data, 'Wf Width 3', None, unit='us', dimension='[time]'
+            ),
             fall_edge_c=voltage_c
-            / get_value(data, 'Wf Fall 3[V/us]', None, unit='V/us')
+            / get_value_dynamically(
+                data, 'Wf Fall 3', None, unit='V/us', dimension='[voltage]/[time]'
+            )
             if voltage_c
             else None,
-            time_space_c=get_value(data, 'Wf Space 3[us]', None, unit=['us']),
+            time_space_c=get_value_dynamically(
+                data, 'Wf Space 3', None, unit='us', dimension='[time]'
+            ),
         )
 
     if location in ['iLNotion', 'Notion']:  # printer param
         archive.nozzle_voltage_profile = NotionNozzleVoltageProfile(
-            number_of_pulses=get_value(data, 'Wf Number of Pulses', None),
+            number_of_pulses=get_value_dynamically(data, 'Wf Number of Pulses', None),
             # for loop over number of pulses with changing _a suffix of variales below
-            delay_time_a=get_value(data, 'Wf Delay Time [us]', None, unit='us'),
-            rise_edge_a=get_value(data, 'Wf Rise Time [us]', None, unit='us'),
-            peak_time_a=get_value(data, 'Wf Hold Time [us]', None, unit='us'),
-            fall_edge_a=get_value(data, 'Wf Fall Time [us]', None, unit='us'),
-            time_space_a=get_value(data, 'Wf Relax Time [us]', None, unit='us'),
-            voltage_a=get_value(data, 'Wf Voltage [V]', None, unit='V'),
+            delay_time_a=get_value_dynamically(
+                data, 'Wf Delay Time', None, unit='us', dimension='[time]'
+            ),
+            rise_edge_a=get_value_dynamically(
+                data, 'Wf Rise Time', None, unit='us', dimension='[time]'
+            ),
+            peak_time_a=get_value_dynamically(
+                data, 'Wf Hold Time', None, unit='us', dimension='[time]'
+            ),
+            fall_edge_a=get_value_dynamically(
+                data, 'Wf Fall Time', None, unit='us', dimension='[time]'
+            ),
+            time_space_a=get_value_dynamically(
+                data, 'Wf Relax Time', None, unit='us', dimension='[time]'
+            ),
+            voltage_a=get_value_dynamically(
+                data, 'Wf Voltage', None, unit='V', dimension='[voltage]'
+            ),
             # multipulse_a=get_value(data, 'Wf Multipulse [1/0]', None, False),
-            number_of_greylevels_a=get_value(data, 'Wf Number Greylevels', None),
-            grey_level_0_pulse_a=get_value(
+            number_of_greylevels_a=get_value_dynamically(
+                data, 'Wf Number Greylevels', None
+            ),
+            grey_level_0_pulse_a=get_value_dynamically(
                 data, 'Wf Grey Level 0 Use Pulse [1/0]', None
             ),
-            grey_level_1_pulse_a=get_value(
+            grey_level_1_pulse_a=get_value_dynamically(
                 data, 'Wf Grey Level 1 Use Pulse [1/0]', None
             ),
         )
-    material = get_value(data, 'Material name', '', False)
+    material = get_value_dynamically(data, 'Material name', '', False)
     return (f'{i}_{j}_inkjet_printing_{material}', archive)
 
 
@@ -875,8 +1042,8 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
     archive = cleaning_class(
         name='Cleaning',
         positon_in_experimental_plan=i,
-        location=get_value(data, 'Tool/GB name', '', False),
-        description=get_value(data, 'Notes', '', False),
+        location=get_value_dynamically(data, 'Tool/GB name', '', False),
+        description=get_value_dynamically(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -886,40 +1053,44 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
         ],
         cleaning=[
             SolutionCleaning(
-                time=get_value(
+                time=get_value_dynamically(
                     data,
-                    [f'Time {i} [s]', f'Time {i} [min]'],
+                    f'Time {i}',
                     None,
-                    unit=['s', 'minute'],
+                    dimension='[time]',
                 ),
-                temperature=get_value(data, f'Temperature {i} [°C]', None, unit='°C'),
+                temperature=get_value_dynamically(
+                    data, f'Temperature {i}', None, unit='°C', dimension='[temperature]'
+                ),
                 solvent_2=PubChemPureSubstanceSectionCustom(
                     name=get_value(data, f'Solvent {i}', None, False), load_data=False
                 ),
             )
             for i in range(10)
-            if get_value(data, f'Solvent {i}', None, False)
+            if get_value_dynamically(data, f'Solvent {i}', None, False)
         ],
         cleaning_uv=[
             UVCleaning(
-                time=get_value(
+                time=get_value_dynamically(
                     data,
-                    ['UV-Ozone Time [s]', 'UV-Ozone Time [min]'],
+                    'UV-Ozone Time',
                     None,
-                    unit=['s', 'minute'],
+                    dimension='[time]',
                 )
             )
         ],
         cleaning_plasma=[
             PlasmaCleaning(
-                time=get_value(
+                time=get_value_dynamically(
                     data,
-                    ['Gas-Plasma Time [s]', 'Gas-Plasma Time [min]'],
+                    'Gas-Plasma Time',
                     None,
-                    unit=['s', 'minute'],
+                    dimension='[time]',
                 ),
-                power=get_value(data, 'Gas-Plasma Power [W]', None, unit='W'),
-                plasma_type=get_value(data, 'Gas-Plasma Gas', None, False),
+                power=get_value_dynamically(
+                    data, 'Gas-Plasma Power', None, unit='W', dimension='[power]'
+                ),
+                plasma_type=get_value_dynamically(data, 'Gas-Plasma Gas', None, False),
             )
         ],
     )
@@ -930,13 +1101,15 @@ def map_substrate(data, substrate_class):
     # Create LayerProperties for substrate_properties
     substrate_props = [
         LayerProperties(
-            layer_thickness=get_value(data, 'TCO thickness [nm]', None, unit=['nm']),
-            layer_transmission=get_value(data, 'Transmission [%]', None),
+            layer_thickness=get_value_dynamically(
+                data, 'TCO thickness', None, unit='nm', dimension='[length]'
+            ),
+            layer_transmission=get_value_dynamically(data, 'Transmission [%]', None),
             layer_sheet_resistance=get_value(
                 data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm']
             ),
             layer_type='Substrate Conductive Layer',
-            layer_material_name=get_value(
+            layer_material_name=get_value_dynamically(
                 data, 'Substrate conductive layer', '', False
             ),
         )
@@ -944,20 +1117,24 @@ def map_substrate(data, substrate_class):
     archive = substrate_class(
         datetime=get_datetime(data, 'Date'),
         name='Substrate '
-        + get_value(data, 'Sample dimension', '', False)
+        + get_value_dynamically(data, 'Sample dimension', '', False)
         + ' '
-        + get_value(data, 'Substrate material', '', False)
+        + get_value_dynamically(data, 'Substrate material', '', False)
         + ' '
-        + get_value(data, 'Substrate conductive layer', '', False),
-        solar_cell_area=get_value(data, 'Sample area [cm^2]', None, unit=['cm**2']),
-        pixel_area=get_value(
-            data, ['Pixel area', 'Pixel area [cm^2]'], None, unit=['cm**2', 'cm**2']
+        + get_value_dynamically(data, 'Substrate conductive layer', '', False),
+        solar_cell_area=get_value_dynamically(
+            data, 'Sample area', None, unit='cm**2', dimension='[area]'
         ),
-        number_of_pixels=get_value(data, 'Number of pixels', None),
-        substrate=get_value(data, 'Substrate material', '', False),
-        description=get_value(data, 'Notes', '', False),
-        lab_id=get_value(data, 'Bottom Cell Name', '', False),
-        conducting_material=[get_value(data, 'Substrate conductive layer', '', False)],
+        pixel_area=get_value_dynamically(
+            data, 'Pixel area', None, unit='cm**2', dimension='[area]'
+        ),
+        number_of_pixels=get_value_dynamically(data, 'Number of pixels', None),
+        substrate=get_value_dynamically(data, 'Substrate material', '', False),
+        description=get_value_dynamically(data, 'Notes', '', False),
+        lab_id=get_value_dynamically(data, 'Bottom Cell Name', '', False),
+        conducting_material=[
+            get_value_dynamically(data, 'Substrate conductive layer', '', False)
+        ],
         substrate_properties=substrate_props,
     )
     return archive
@@ -966,17 +1143,17 @@ def map_substrate(data, substrate_class):
 def map_evaporation(
     i, j, lab_ids, data, upload_id, evaporation_class, coevaporation=False
 ):
-    material = get_value(data, 'Material name', '', False)
+    material = get_value_dynamically(data, 'Material name', '', False)
     file_name = (
         f'{i}_{j}_coevaporation_{material}'
         if coevaporation
         else f'{i}_{j}_evaporation_{material}'
     )
     archive = evaporation_class(
-        name='evaporation ' + get_value(data, 'Material name', '', False),
-        location=get_value(data, 'Tool/GB name', '', False),
+        name='evaporation ' + get_value_dynamically(data, 'Material name', '', False),
+        location=get_value_dynamically(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
-        description=get_value(data, 'Notes', '', False),
+        description=get_value_dynamically(data, 'Notes', '', False),
         co_evaporation=coevaporation,
         samples=[
             CompositeSystemReference(
@@ -1010,56 +1187,94 @@ def map_evaporation(
             or get_value(data, 'Organic', '', False).lower().startswith('t')
         ):
             evaporation = OrganicEvaporation()
-            if get_value(data, 'Temperature [°C]', None):
+            if (
+                get_value_dynamically(
+                    data, 'Temperature', None, unit='°C', dimension='[temperature]'
+                )
+                is not None
+            ):
                 evaporation.temparature = [
-                    get_value(data, 'Temperature [°C]', None)
+                    get_value_dynamically(
+                        data, 'Temperature', None, unit='°C', dimension='[temperature]'
+                    ),
                 ] * 2
 
         if not evaporation:
             return (file_name, archive)
 
-        if get_value(data, f'Source temperature start{mat}[°C]', None) and get_value(
-            data, f'Source temperature end{mat}[°C]', None
+        if (
+            get_value_dynamically(
+                data,
+                f'Source temperature start{mat}',
+                None,
+                unit='°C',
+                dimension='[temperature]',
+            )
+            is not None
+            and get_value_dynamically(
+                data,
+                f'Source temperature end{mat}',
+                None,
+                unit='°C',
+                dimension='[temperature]',
+            )
+            is not None
         ):
             evaporation.temparature = [
-                get_value(data, f'Source temperature start{mat}[°C]', None, unit='°C'),
-                get_value(data, f'Source temperature end{mat}[°C]', None, unit='°C'),
+                get_value_dynamically(
+                    data,
+                    f'Source temperature start{mat}',
+                    None,
+                    unit='°C',
+                    dimension='[temperature]',
+                ),
+                get_value_dynamically(
+                    data,
+                    f'Source temperature end{mat}',
+                    None,
+                    unit='°C',
+                    dimension='[temperature]',
+                ),
             ]
 
-        evaporation.thickness = get_value(data, f'Thickness{mat} [nm]', unit='nm')
-        evaporation.start_rate = get_value(
-            data, f'Rate start{mat} [angstrom/s]', unit='angstrom/s'
+        evaporation.thickness = get_value_dynamically(
+            data, f'Thickness{mat}', unit='nm', dimension='[length]'
         )
-        evaporation.target_rate = get_value(
+        evaporation.start_rate = get_value_dynamically(
+            data, f'Rate start{mat}', unit='angstrom/s', dimension='[length]/[time]'
+        )
+        evaporation.target_rate = get_value_dynamically(
             data,
-            [f'Rate{mat} [angstrom/s]', f'Rate target{mat} [angstrom/s]'],
-            unit=['angstrom/s', 'angstrom/s'],
+            [f'Rate{mat}', f'Rate target{mat}'],
+            unit='angstrom/s',
+            dimension='[length]/[time]',
         )
-        evaporation.substrate_temparature = get_value(
-            data, f'Substrate temperature{mat} [°C]', unit='°C'
+        evaporation.substrate_temparature = get_value_dynamically(
+            data, f'Substrate temperature{mat}', unit='°C', dimension='[temperature]'
         )
-        evaporation.pressure = get_value(
+        evaporation.pressure = get_value_dynamically(
             data,
-            [f'Base pressure{mat} [bar]', f'Base pressure{mat} [mbar]'],
+            f'Base pressure{mat}',
             None,
-            unit=['bar', 'mbar'],
+            dimension='[pressure]',
         )
-        evaporation.pressure_start = get_value(
+        evaporation.pressure_start = get_value_dynamically(
             data,
-            [f'Pressure start{mat} [bar]', f'Pressure start{mat} [mbar]'],
+            f'Pressure start{mat}',
             None,
-            unit=['bar', 'mbar'],
+            dimension='[pressure]',
         )
-        evaporation.pressure_end = get_value(
+        evaporation.pressure_end = get_value_dynamically(
             data,
-            [f'Pressure end{mat} [bar]', f'Pressure end{mat} [mbar]'],
+            f'Pressure end{mat}',
             None,
-            unit=['bar', 'mbar'],
+            dimension='[pressure]',
         )
-        evaporation.tooling_factor = get_value(data, f'Tooling factor{mat}')
+        evaporation.tooling_factor = get_value_dynamically(data, f'Tooling factor{mat}')
 
         evaporation.chemical_2 = PubChemPureSubstanceSectionCustom(
-            name=get_value(data, f'Material name{mat}', None, False), load_data=False
+            name=get_value_dynamically(data, f'Material name{mat}', None, False),
+            load_data=False,
         )
         evaporations.append(evaporation)
 
@@ -1077,8 +1292,8 @@ def map_annealing_class(i, j, lab_ids, data, upload_id, annealing_class):
     archive = annealing_class(
         name='Thermal Annealing',
         positon_in_experimental_plan=i,
-        location=get_value(data, 'Tool/GB name', '', False),
-        description=get_value(data, 'Notes', '', False),
+        location=get_value_dynamically(data, 'Tool/GB name', '', False),
+        description=get_value_dynamically(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -1088,7 +1303,9 @@ def map_annealing_class(i, j, lab_ids, data, upload_id, annealing_class):
         ],
         annealing=map_annealing(data),
         atmosphere=Atmosphere(
-            relative_humidity=get_value(data, 'Relative humidity [%]', None),
+            relative_humidity=get_value_dynamically(
+                data, 'Relative humidity [%]', None
+            ),
         ),
     )
     return (f'{i}_{j}_annealing', archive)
@@ -1096,10 +1313,10 @@ def map_annealing_class(i, j, lab_ids, data, upload_id, annealing_class):
 
 def map_sputtering(i, j, lab_ids, data, upload_id, sputter_class):
     archive = sputter_class(
-        name='sputtering ' + get_value(data, 'Material name', '', False),
+        name='sputtering ' + get_value_dynamically(data, 'Material name', '', False),
         positon_in_experimental_plan=i,
-        location=get_value(data, 'Tool/GB name', '', False),
-        description=get_value(data, 'Notes', '', False),
+        location=get_value_dynamically(data, 'Tool/GB name', '', False),
+        description=get_value_dynamically(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -1111,33 +1328,49 @@ def map_sputtering(i, j, lab_ids, data, upload_id, sputter_class):
         atmosphere=map_atmosphere(data),
     )
     process = SputteringProcess(
-        thickness=get_value(data, 'Thickness [nm]', unit='nm'),
-        gas_flow_rate=get_value(data, 'Gas flow rate [cm^3/min]', unit='cm**3/minute'),
-        rotation_rate=get_value(data, 'Rotation rate [rpm]'),
-        power=get_value(data, 'Power [W]', unit='W'),
-        temperature=get_value(data, 'Temperature [°C]', unit='°C'),
-        deposition_time=get_value(data, 'Deposition time [s]', unit='s'),
-        burn_in_time=get_value(data, 'Burn in time [s]', unit='s'),
-        pressure=get_value(data, 'Pressure [mbar]', unit='mbar'),
+        thickness=get_value_dynamically(
+            data, 'Thickness', unit='nm', dimension='[length]'
+        ),
+        gas_flow_rate=get_value_dynamically(
+            data, 'Gas flow rate', unit='cm**3/minute', dimension='[volume]/[time]'
+        ),
+        rotation_rate=get_value_dynamically(
+            data, 'Rotation rate', dimension='[frequency]'
+        ),
+        power=get_value_dynamically(data, 'Power', unit='W', dimension='[power]'),
+        temperature=get_value_dynamically(
+            data, 'Temperature', unit='°C', dimension='[temperature]'
+        ),
+        deposition_time=get_value_dynamically(
+            data, 'Deposition time', unit='s', dimension='[time]'
+        ),
+        burn_in_time=get_value_dynamically(
+            data, 'Burn in time', unit='s', dimension='[time]'
+        ),
+        pressure=get_value_dynamically(
+            data, 'Pressure', unit='mbar', dimension='[pressure]'
+        ),
         target_2=PubChemPureSubstanceSectionCustom(
-            name=get_value(data, 'Material name', None, False), load_data=False
+            name=get_value_dynamically(data, 'Material name', None, False),
+            load_data=False,
         ),
         gas_2=PubChemPureSubstanceSectionCustom(
-            name=get_value(data, 'Gas', None, False), load_data=False
+            name=get_value_dynamically(data, 'Gas', None, False), load_data=False
         ),
     )
     archive.processes = [process]
-    material = get_value(data, 'Material name', '', False)
+    material = get_value_dynamically(data, 'Material name', '', False)
     return (f'{i}_{j}_sputtering_{material}', archive)
 
 
 def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
-    material = get_value(data, 'Material name', '', False)
+    material = get_value_dynamically(data, 'Material name', '', False)
     archive = css_class(
-        name='Close Space Sublimation ' + get_value(data, 'Material name', '', False),
-        location=get_value(data, 'Tool/GB name', '', False),
+        name='Close Space Sublimation '
+        + get_value_dynamically(data, 'Material name', '', False),
+        location=get_value_dynamically(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
-        description=get_value(data, 'Notes', '', False),
+        description=get_value_dynamically(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -1148,19 +1381,30 @@ def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
         layer=map_layer(data),
     )
     archive.process = CSSProcess(
-        thickness=get_value(data, 'Thickness [nm]', unit='nm'),
-        substrate_temperature=get_value(data, 'Substrate temperature [°C]', unit='°C'),
-        source_temperature=get_value(data, 'Source temperature [°C]', unit='°C'),
-        substrate_source_distance=get_value(
-            data, 'Substrate source distance [mm]', unit='mm'
+        thickness=get_value_dynamically(
+            data, 'Thickness', unit='nm', dimension='[length]'
         ),
-        deposition_time=get_value(data, 'Deposition Time [s]', unit='s'),
-        carrier_gas=get_value(data, 'Carrier gas', None, False),
-        pressure=get_value(data, 'Process pressure [bar]', None, unit='bar'),
+        substrate_temperature=get_value_dynamically(
+            data, 'Substrate temperature', unit='°C', dimension='[temperature]'
+        ),
+        source_temperature=get_value_dynamically(
+            data, 'Source temperature', unit='°C', dimension='[temperature]'
+        ),
+        substrate_source_distance=get_value_dynamically(
+            data, 'Substrate source distance', unit='mm', dimension='[length]'
+        ),
+        deposition_time=get_value_dynamically(
+            data, 'Deposition Time', unit='s', dimension='[time]'
+        ),
+        carrier_gas=get_value_dynamically(data, 'Carrier gas', None, False),
+        pressure=get_value_dynamically(
+            data, 'Process pressure', None, unit='bar', dimension='[pressure]'
+        ),
         chemical_2=PubChemPureSubstanceSectionCustom(
-            name=get_value(data, 'Material name', None, False), load_data=False
+            name=get_value_dynamically(data, 'Material name', None, False),
+            load_data=False,
         ),
-        material_state=get_value(data, 'Material state', None, False),
+        material_state=get_value_dynamically(data, 'Material state', None, False),
     )
 
     return (f'{i}_{j}_close_space_subimation_{material}', archive)
@@ -1168,10 +1412,10 @@ def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
 
 def map_dip_coating(i, j, lab_ids, data, upload_id, dc_class):
     archive = dc_class(
-        name='dip coating ' + get_value(data, 'Material name', '', False),
-        location=get_value(data, 'Tool/GB name', '', False),
+        name='dip coating ' + get_value_dynamically(data, 'Material name', '', False),
+        location=get_value_dynamically(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
-        description=get_value(data, 'Notes', None, False),
+        description=get_value_dynamically(data, 'Notes', None, False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -1189,28 +1433,32 @@ def map_dip_coating(i, j, lab_ids, data, upload_id, dc_class):
                     None,
                     unit=['uL', 'uL'],
                 ),
-                solution_viscosity=get_value(
+                solution_viscosity=get_value_dynamically(
                     data,
-                    'Viscosity [mPa*s]',
+                    'Viscosity',
                     None,
-                    unit=['mPa*s'],
+                    unit='mPa*s',
+                    dimension='[viscosity]',
                 ),
-                solution_contact_angle=get_value(
+                solution_contact_angle=get_value_dynamically(
                     data,
-                    'Contact angle [°]',
+                    'Contact angle',
                     None,
-                    unit=['°'],
+                    unit='°',
+                    dimension='[angle]',
                 ),
             )
         ],
         layer=map_layer(data),
         properties=DipCoatingProperties(
-            time=get_value(data, 'Dipping duration [s]', unit='s'),
+            time=get_value_dynamically(
+                data, 'Dipping duration', unit='s', dimension='[time]'
+            ),
         ),
         annealing=map_annealing(data),
         atmosphere=map_atmosphere(data),
     )
-    material = get_value(data, 'Material name', '', False)
+    material = get_value_dynamically(data, 'Material name', '', False)
     return (f'{i}_{j}_dip_coating_{material}', archive)
 
 
@@ -1225,17 +1473,25 @@ def map_laser_scribing(i, j, lab_ids, data, upload_id, laser_class):
             )
             for lab_id in lab_ids
         ],
-        description=get_value(data, 'Notes', None, False),
-        recipe_file=get_value(data, 'Recipe file', None, False),
-        patterning=get_value(data, 'Patterning Step', None, False),
-        layout=get_value(data, 'Layout', None, False),
+        description=get_value_dynamically(data, 'Notes', None, False),
+        recipe_file=get_value_dynamically(data, 'Recipe file', None, False),
+        patterning=get_value_dynamically(data, 'Patterning Step', None, False),
+        layout=get_value_dynamically(data, 'Layout', None, False),
         properties=LaserScribingProperties(
-            laser_wavelength=get_value(data, 'Laser wavelength [nm]', None),
-            laser_pulse_time=get_value(data, 'Laser pulse time [ps]', None),
-            laser_pulse_frequency=get_value(data, 'Laser pulse frequency [kHz]', None),
-            speed=get_value(data, 'Speed [mm/s]', None),
+            laser_wavelength=get_value_dynamically(
+                data, 'Laser wavelength', None, dimension='[length]'
+            ),
+            laser_pulse_time=get_value_dynamically(
+                data, 'Laser pulse time', None, dimension='[time]'
+            ),
+            laser_pulse_frequency=get_value_dynamically(
+                data, 'Laser pulse frequency', None, dimension='[frequency]'
+            ),
+            speed=get_value_dynamically(
+                data, 'Speed', None, dimension='[length]/[time]'
+            ),
             fluence=get_value(data, 'Fluence [J/cm2]', None),
-            power_in_percent=get_value(data, 'Power [%]', None),
+            power_in_percent=get_value_dynamically(data, 'Power [%]', None),
         ),
     )
 
@@ -1245,10 +1501,10 @@ def map_laser_scribing(i, j, lab_ids, data, upload_id, laser_class):
 def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
     archive = ald_class(
         name='atomic layer deposition '
-        + get_value(data, 'Material name', '', number=False),
-        location=get_value(data, 'Tool/GB name', '', False),
+        + get_value_dynamically(data, 'Material name', '', False),
+        location=get_value_dynamically(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
-        description=get_value(data, 'Notes', '', number=False),
+        description=get_value_dynamically(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -1259,57 +1515,73 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
         layer=map_layer(data),
         atmosphere=map_atmosphere(data),
         properties=ALDPropertiesIris(
-            source=get_value(data, 'Source', None, number=False),
-            thickness=get_value(data, 'Thickness [nm]', None),
-            temperature=get_value(
+            source=get_value_dynamically(data, 'Source', None, False),
+            thickness=get_value_dynamically(
+                data, 'Thickness', None, dimension='[length]'
+            ),
+            temperature=get_value_dynamically(
                 data,
-                ['Temperature [°C]', 'Reactor Temperature [°C]'],
+                ['Temperature', 'Reactor Temperature'],
                 None,
-                unit=['°C', '°C'],
+                unit='°C',
+                dimension='[temperature]',
             ),
             rate=get_value(data, 'Rate [A/s]', None),
-            time=get_value(data, 'Time [s]', None),
-            number_of_cycles=get_value(data, 'Number of cycles', None),
+            time=get_value_dynamically(data, 'Time', None, dimension='[time]'),
+            number_of_cycles=get_value_dynamically(data, 'Number of cycles', None),
             material=ALDMaterial(
                 material=PubChemPureSubstanceSectionCustom(
-                    name=get_value(data, 'Precursor 1', None, number=False),
+                    name=get_value_dynamically(data, 'Precursor 1', None, False),
                     load_data=False,
                 ),
-                pulse_duration=get_value(data, 'Pulse duration 1 [s]', None),
+                pulse_duration=get_value_dynamically(
+                    data, 'Pulse duration 1', None, dimension='[time]'
+                ),
                 pulse_flow_rate=get_value(data, 'Pulse flow rate 1 [ccm]', None),
-                manifold_temperature=get_value(
+                manifold_temperature=get_value_dynamically(
                     data,
                     [
-                        'Manifold Temperature [°C]',
-                        'Manifold temperature [°C]',
-                        'Manifold temperature 1 [°C]',
+                        'Manifold Temperature',
+                        'Manifold temperature',
+                        'Manifold temperature 1',
                     ],
                     None,
-                    unit=['°C', '°C', '°C'],
+                    unit='°C',
+                    dimension='[temperature]',
                 ),
-                purge_duration=get_value(data, 'Purge duration 1 [s]', None),
+                purge_duration=get_value_dynamically(
+                    data, 'Purge duration 1', None, dimension='[time]'
+                ),
                 purge_flow_rate=get_value(data, 'Purge flow rate 1 [ccm]', None),
-                bottle_temperature=get_value(data, 'Bottle temperature 1 [°C]', None),
+                bottle_temperature=get_value_dynamically(
+                    data, 'Bottle temperature 1', None, dimension='[temperature]'
+                ),
             ),
             oxidizer_reducer=ALDMaterial(
                 material=PubChemPureSubstanceSectionCustom(
-                    name=get_value(
-                        data, 'Precursor 2 (Oxidizer/Reducer)', None, number=False
+                    name=get_value_dynamically(
+                        data, 'Precursor 2 (Oxidizer/Reducer)', None, False
                     ),
                     load_data=False,
                 ),
-                pulse_duration=get_value(data, 'Pulse duration 2 [s]', None),
-                pulse_flow_rate=get_value(data, 'Pulse flow rate 2 [ccm]', None),
-                manifold_temperature=get_value(
-                    data, 'Manifold temperature 2 [°C]', None
+                pulse_duration=get_value_dynamically(
+                    data, 'Pulse duration 2', None, dimension='[time]'
                 ),
-                purge_duration=get_value(data, 'Purge duration 2 [s]', None),
+                pulse_flow_rate=get_value(data, 'Pulse flow rate 2 [ccm]', None),
+                manifold_temperature=get_value_dynamically(
+                    data, 'Manifold temperature 2', None, dimension='[temperature]'
+                ),
+                purge_duration=get_value_dynamically(
+                    data, 'Purge duration 2', None, dimension='[time]'
+                ),
                 purge_flow_rate=get_value(data, 'Purge flow rate 2 [ccm]', None),
-                bottle_temperature=get_value(data, 'Bottle temperature 2 [°C]', None),
+                bottle_temperature=get_value_dynamically(
+                    data, 'Bottle temperature 2', None, dimension='[temperature]'
+                ),
             ),
         ),
     )
-    material = get_value(data, 'Material name', '', number=False)
+    material = get_value_dynamically(data, 'Material name', '', False)
     return (f'{i}_{j}_ALD_{material}', archive)
 
 
@@ -1317,7 +1589,7 @@ def map_generic(i, j, lab_ids, data, upload_id, generic_class):
     archive = generic_class(
         name=get_value(data, 'Name', '', False),
         positon_in_experimental_plan=i,
-        description=get_value(data, 'Notes', '', False),
+        description=get_value_dynamically(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -1326,5 +1598,5 @@ def map_generic(i, j, lab_ids, data, upload_id, generic_class):
             for lab_id in lab_ids
         ],
     )
-    name = get_value(data, 'Name', '', False)
+    name = get_value_dynamically(data, 'Name', '', False)
     return (f'{i}_{j}_generic_process_{name.replace(" ", "_")}', archive)
