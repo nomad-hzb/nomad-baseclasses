@@ -122,7 +122,7 @@ docker compose up -d
 
 For simple tests, NOMAD OASIS can be deployed in GitHub Codespaces; this will use resources from GitHub and therefore will work even if your local computer lacks sufficient RAM. Most of the instruction above remain applicable, with the necessary changes described below:
 
-1. Instead of clonning the repository created from the template locally, create Codespaces on main branch of the repository by selecting `Code` -> `Codespaces` -> `...` -> `new with options`, then chose an option with 16 GB RAM.
+1. Instead of cloning the repository created from the template locally, create Codespaces on main branch of the repository by selecting `Code` -> `Codespaces` -> `...` -> `new with options`, then chose an option with 16 GB RAM.
 
 2. Use HTTP protocol for communication
 
