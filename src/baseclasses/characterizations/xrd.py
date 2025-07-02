@@ -130,9 +130,9 @@ class XRDResults(MeasurementResult):
 
     peak_position = Quantity(
         type=np.dtype(np.float64),
-        description='The position of an identified peak in units of wavelength.',
-        unit=('nm'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
+        description='The position of an identified peak in units of the angle.',
+        unit=('degree'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='degree'),
     )
 
     peak_height = Quantity(
