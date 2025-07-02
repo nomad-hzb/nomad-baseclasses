@@ -43,23 +43,18 @@ Note that `nomad-baseclasses` should not itself be on the list of plugins for yo
 
 Every time changes are commited to the main branch of the repository, the action generating docker image will be run automatically. When these workflows are finished, the OASIS can be deployed.
 
-### Example: SE HZB OASIS plugin list
+### Example plugin lists
+<!-- Example: SE HZB OASIS plugin list -->
 
-NOMAD OASIS at Helmoltz-Zentrum Berlin (HZB) uses the following plugins for organizing and interpreting experimental data:
+List of plugins installed in a given NOMAD OASIS can be found under the `About` -> `Information` page of this OASIS (scroll to the bottom of the page). The `plugin packages` gives the general list of plugins, and specific entry points for apps, parsers, schemas etc are given below. Click on any item on these lists to see a more detailed information, such as a short desription and specific plugin version.
 
-- [nomad-perovskite-solar-cells-database](https://github.com/FAIRmat-NFDI/nomad-perovskite-solar-cells-database)
-- [nomad-material-processing](https://github.com/FAIRmat-NFDI/nomad-material-processing)
-- [nomad-measurements](https://github.com/FAIRmat-NFDI/nomad-measurements)
-- [pynxtools](https://github.com/FAIRmat-NFDI/pynxtools)
-- [pynxtools-xps](https://github.com/FAIRmat-NFDI/pynxtools-xps)
-- [nomad-schema-plugin-simulation-workflow](https://github.com/nomad-coe/nomad-schema-plugin-simulation-workflow)
-- [nomad-schema-plugin-run](https://github.com/nomad-coe/nomad-schema-plugin-run)
-- [nomad-hysprint](https://github.com/nomad-hzb/nomad-hysprint)
-- [hzb-combinatorial-libraries-plugin](https://github.com/nomad-hzb/hzb-combinatorial-libraries-plugin)
-- [nomad-chemical-energy](https://github.com/nomad-hzb/nomad-chemical-energy)
-- [nomad-pvcomb](https://codebase.helmholtz.cloud/pvcomb/nomad-pvcomb)
+Examples:
 
-You can see this list with the specific versions at the bottom of the information tab of [SE HZB OASIS](https://nomad-hzb-se.de/nomad-oasis/gui/about/information#).
+- NOMAD OASIS at Helmoltz-Zentrum Berlin: [SE HZB OASIS](https://nomad-hzb-se.de/nomad-oasis/gui/about/information)
+
+- Central NOMAD depoyment: [NOMAD](https://nomad-lab.eu/prod/v1/gui/about/information)
+
+- Central example OASIS: [Example OASIS](https://nomad-lab.eu/prod/v1/oasis/gui/about/information)
 
 ## Deploying NOMAD OASIS
 
