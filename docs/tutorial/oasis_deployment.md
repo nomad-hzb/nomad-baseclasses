@@ -39,7 +39,7 @@ or a specific commit hash:
     "nomad-measurements @ git+https://github.com/FAIRmat-NFDI/nomad-measurements.git@71b7e8c9bb376ce9e8610aba9a20be0b5bce6775",
 ```
 
-Note that `nomad-baseclasses` should not itself be on the list of plugins for your OASIS. Instead, it is imported as a python dependancy for plugins utilizing the base classes (for example, [nomad-hysprint](https://github.com/nomad-hzb/nomad-hysprint)).
+Note that `nomad-baseclasses` should not itself be on the list of plugins for your OASIS. Instead, it is imported as a python dependency for plugins utilizing the base classes (for example, [nomad-hysprint](https://github.com/nomad-hzb/nomad-hysprint)).
 
 Every time changes are commited to the main branch of the repository, the action generating docker image will be run automatically. When these workflows are finished, the OASIS can be deployed.
 
