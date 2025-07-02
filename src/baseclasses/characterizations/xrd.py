@@ -126,9 +126,11 @@ class XRDProperties(ArchiveSection):
 
 
 class XRDResults(MeasurementResult):
-    model = Quantity(type=str,
-                     description='The model used for the peak fitting, eg Gaussians, Voigt functions',
-                     a_eln=dict(component='StringEditQuantity'))
+    model = Quantity(
+        type=str,
+        description='The model used for the peak fitting, eg Gaussians, Voigt functions',
+        a_eln=dict(component='StringEditQuantity'),
+    )
 
     peak_position = Quantity(
         type=np.dtype(np.float64),
