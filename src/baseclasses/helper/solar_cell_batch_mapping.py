@@ -135,6 +135,71 @@ def _validate_dimension(quantity, dimensions):
     return False
 
 
+def _process_matching_columns(
+    data, matching_columns, pattern, dimension=None, target_unit=None, number=True
+):
+    """
+    Process matching columns to find one with valid dimension and/or convert units.
+
+    Args:
+        data: The data series
+        matching_columns: List of column names to process
+        pattern: Regex pattern for unit extraction
+        dimension: Optional dimension(s) to validate against
+        target_unit: Optional target unit for conversion
+        number: Whether to return numeric values
+
+    Returns:
+        tuple: (success, result) where success is bool and result is the processed value
+    """
+    for column_name in matching_columns:
+        if pd.isna(data[column_name]):
+            continue
+
+        unit_from_file = _parse_unit_from_column(column_name, pattern)
+        if not unit_from_file:
+            continue
+
+        # Handle time unit normalization if needed
+        if dimension and 'time' in str(dimension):
+            unit_from_file = _normalize_time_units(unit_from_file)
+
+        try:
+            # Create quantity
+            Q_ = ureg.Quantity(float(data[column_name]), ureg(unit_from_file))
+
+            # Validate dimension if specified
+            if dimension and not _validate_dimension(Q_, dimension):
+                continue
+
+            # Convert to target unit if specified
+            if target_unit:
+                return True, Q_.to(target_unit)
+            # Return quantity or string based on number parameter
+            elif number:
+                return True, Q_
+            else:
+                return True, str(data[column_name]).strip()
+
+        except Exception:
+            continue
+
+    return False, None
+
+
+def _handle_simple_case(data, keys, default, number):
+    """Handle the simple case: no unit conversion, no dimension validation."""
+    for k in keys:
+        if k not in data:
+            continue
+        if pd.isna(data[k]):
+            return default
+        if number:
+            return float(data[k])
+        return str(data[k]).strip()
+    return default
+
+
 def get_value_dynamically(
     data, key, default=None, number=True, unit=None, dimension=None
 ):
@@ -185,102 +250,46 @@ def get_value_dynamically(
         - For dimension parameter, use physical dimension names like 'temperature', 'length', etc.
     """
 
+    # Normalize inputs
     if not isinstance(key, list):
         key = [key]
+    if dimension and not isinstance(dimension, list):
+        dimension = [dimension]
+
     pattern = rf'^(?:{"|".join(key)})\s*\[(.*?)\]$'
 
     try:
+        # Handle simple case: no unit conversion, no dimension validation
         if not unit and not dimension:
-            for k in key:
-                if k not in data:
-                    continue
-                if pd.isna(data[k]):
-                    return default
-                if number:
-                    return float(data[k])
-                return str(data[k]).strip()
-        if not unit and dimension:
-            # Handle dimension validation without unit conversion
-            if not isinstance(dimension, list):
-                dimension = [dimension]
+            return _handle_simple_case(data, key, default, number)
 
-            # Find all matching columns
-            matching_columns = _find_matching_columns(data, key)
-
-            if not matching_columns:
-                return default
-
-            # Try each matching column to find one with valid dimension
-            for column_name in matching_columns:
-                if pd.isna(data[column_name]):
-                    continue
-
-                unit_from_file = _parse_unit_from_column(column_name, pattern)
-                if unit_from_file:
-                    if 'time' in dimension:
-                        unit_from_file = _normalize_time_units(unit_from_file)
-
-                    try:
-                        # Create quantity to check dimension
-                        Q_ = ureg.Quantity(data[column_name], ureg(unit_from_file))
-
-                        # Check if any of the allowed dimensions match
-                        if _validate_dimension(Q_, dimension):
-                            # Return the value (not converted, just validated)
-                            if number:
-                                return Q_
-                            return str(data[column_name]).strip()
-                    except:
-                        continue  # Try next column
-
-            # No valid dimension match found
+        # Find all matching columns for complex cases
+        matching_columns = _find_matching_columns(data, key)
+        if not matching_columns:
             return default
 
+        # Handle dimension validation without unit conversion
+        if not unit and dimension:
+            success, result = _process_matching_columns(
+                data, matching_columns, pattern, dimension=dimension, number=number
+            )
+            return result if success else default
+
+        # Handle unit conversion (with optional dimension validation)
         if unit:
-            # Find all matching columns
-            matching_columns = _find_matching_columns(data, key)
+            success, result = _process_matching_columns(
+                data, matching_columns, pattern, dimension=dimension, target_unit=unit
+            )
 
-            if not matching_columns:
-                return default
+            if success:
+                return result
 
-            # Convert dimension to list if needed
-            if dimension and not isinstance(dimension, list):
-                dimension = [dimension]
-
-            # Try each matching column
-            for column_name in matching_columns:
-                if pd.isna(data[column_name]):
-                    continue
-
-                unit_from_file = _parse_unit_from_column(column_name, pattern)
-                if unit_from_file:
-                    if dimension and 'time' in str(dimension):
-                        unit_from_file = _normalize_time_units(unit_from_file)
-
-                    try:
-                        Q_ = ureg.Quantity(
-                            float(data[column_name]), ureg(unit_from_file)
-                        )
-
-                        # Check dimension if specified
-                        if dimension:
-                            if not _validate_dimension(Q_, dimension):
-                                continue  # Try next column instead of raising error
-
-                        # Successfully found matching column with valid dimension
-                        result = Q_.to(unit)
-                        return result
-                    except Exception:
-                        continue  # Try next column
-
-            # If no matching column with valid dimension found, handle based on values
+            # Handle fallback cases
             has_any_values = any(not pd.isna(data[col]) for col in matching_columns)
 
             if not has_any_values:
-                # All matching columns have NaN values, return default
                 return default
             elif dimension:
-                # We have values but no valid dimension match
                 print(
                     f'No column found matching key {key} with valid dimension {dimension}. '
                     f'Available columns: {_find_matching_columns(data, key)}'
@@ -295,7 +304,6 @@ def get_value_dynamically(
                             return Q_
                         except Exception:
                             continue
-
                 return default
     except Exception as e:
         raise e
