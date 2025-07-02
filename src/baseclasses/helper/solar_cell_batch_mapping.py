@@ -1598,5 +1598,5 @@ def map_generic(i, j, lab_ids, data, upload_id, generic_class):
             for lab_id in lab_ids
         ],
     )
-    name = get_value(data, 'Name', '', False)
+    name = get_value_dynamically(data, 'Name', '', False)
     return (f'{i}_{j}_generic_process_{name.replace(" ", "_")}', archive)
