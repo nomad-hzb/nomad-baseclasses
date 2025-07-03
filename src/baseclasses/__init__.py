@@ -384,7 +384,7 @@ class LayerProperties(ArchiveSection):
     )
 
     layer_thickness = Quantity(
-        # links=[],
+        links=["https://purl.archive.org/tfsco/TFSCO_00007001"],
         type=np.dtype(np.float64),
         description=('The thickness of the sample, either measured or assumed.'),
         unit=('nm'),
@@ -401,7 +401,7 @@ class LayerProperties(ArchiveSection):
     )
 
     layer_morphology = Quantity(
-        # links=[],
+        links=["https://purl.archive.org/tfsco/TFSCO_00007000"],
         type=str,
         description=('A description of the morphology of the film'),
         shape=[],
