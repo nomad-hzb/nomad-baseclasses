@@ -144,6 +144,7 @@ class ALDMaterial(ArchiveSection):
     )
 
     purge_flow_rate = Quantity(
+        links=["http://purl.obolibrary.org/obo/PATO_0001574"],
         type=np.dtype(np.float64),
         unit=('cm**3/minute'),
         a_eln=dict(
