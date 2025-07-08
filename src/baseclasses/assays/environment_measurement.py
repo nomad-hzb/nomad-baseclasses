@@ -29,7 +29,7 @@ class TemperatureSensors(ArchiveSection):
     name = Quantity(type=str)
 
     temperature = Quantity(
-        links=[""x],
+        links=["http://purl.obolibrary.org/obo/PATO_0000146"],
         type=np.dtype(np.float64), unit=('°C'), shape=['*'])
 
 

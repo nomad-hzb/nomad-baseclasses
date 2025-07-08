@@ -97,6 +97,8 @@ class NotionNozzleVoltageProfile(NozzleVoltageProfile):
     )
 
     voltage_a = Quantity(
+        links=["http://purl.obolibrary.org/obo/PATO_0001464",
+               "https://purl.archive.org/tfsco/TFSCO_00005005"],
         type=np.dtype(np.float64),
         unit=('V'),
         a_eln=dict(
@@ -107,6 +109,7 @@ class NotionNozzleVoltageProfile(NozzleVoltageProfile):
     )
 
     delay_time_a = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00001124"],
         type=np.dtype(np.float64),
         unit=('us'),
         a_eln=dict(
