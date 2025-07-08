@@ -354,7 +354,9 @@ class MultiTargetSputtering(LayerDeposition):
         a_browser=dict(adaptor='RawFileAdaptor'),
     )
 
-    substrate = Quantity(type=str, shape=[], a_eln=dict(component='StringEditQuantity'))
+    substrate = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00002122"],
+        type=str, shape=[], a_eln=dict(component='StringEditQuantity'))
 
     sample_owner = Quantity(
         type=str, shape=[], a_eln=dict(component='StringEditQuantity')
