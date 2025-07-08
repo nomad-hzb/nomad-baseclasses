@@ -104,6 +104,8 @@ class CSSProcess(ArchiveSection):
     )
 
     deposition_time = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00001063",
+               "https://purl.archive.org/tfsco/TFSCO_00002072"],
         type=np.dtype(np.float64),
         unit=('s'),
         a_eln=dict(
@@ -114,6 +116,7 @@ class CSSProcess(ArchiveSection):
     )
 
     carrier_gas = Quantity(
+        links=["http://purl.obolibrary.org/obo/CHEBI_59999"],
         type=str,
         a_eln=dict(
             component='EnumEditQuantity',
