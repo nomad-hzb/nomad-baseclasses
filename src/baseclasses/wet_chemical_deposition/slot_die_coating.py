@@ -129,7 +129,7 @@ class SlotDieCoatingProperties(ArchiveSection):
     )
 
     coated_area = Quantity(
-        links=[],
+        links=["http://purl.obolibrary.org/obo/PATO_0001323"],
         type=np.dtype(np.float64),
         unit=('mm**2'),
         a_eln=dict(

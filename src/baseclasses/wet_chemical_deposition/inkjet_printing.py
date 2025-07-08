@@ -610,6 +610,7 @@ class LP50InkjetPrintingProperties(InkjetPrintingProperties):
     )
 
     active_nozzles = Quantity(
+        links=["http://purl.allotrope.org/ontologies/equipment#AFE_0002222"],
         type=MEnum('all', 'Spectra', 'DMC', 'Konika Minolta'),
         shape=[],
         a_eln=dict(
