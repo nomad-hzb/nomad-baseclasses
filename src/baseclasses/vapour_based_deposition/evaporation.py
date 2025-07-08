@@ -215,6 +215,8 @@ class Evaporation(ArchiveSection):
     )
 
     time_delay_to_start = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00003312",
+               "https://purl.archive.org/tfsco/TFSCO_00001124"],
         type=np.dtype(np.float64),
         unit=('s'),
         a_eln=dict(
