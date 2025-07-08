@@ -409,6 +409,7 @@ class LayerProperties(ArchiveSection):
         a_eln=dict(component='StringEditQuantity'),
     )
     layer_sheet_resistance = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00007003"],
         type=np.dtype(np.float64),
         unit='ohm',
         a_eln=dict(
