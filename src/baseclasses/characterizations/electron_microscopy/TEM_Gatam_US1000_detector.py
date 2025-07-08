@@ -102,7 +102,7 @@ class GatamScan(Image):
 
 class TEM_Gatam_US1000(TEMMicroscopeTechnique):
     @staticmethod
-    def get_data(file_name):
+    def get_data(file_name, original_file_name=None):
         if file_name.lower().endswith('.dm3'):
             import hyperspy.api as hs
 

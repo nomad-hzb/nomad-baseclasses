@@ -108,7 +108,7 @@ class MicroscopeTechnique(BaseMeasurement):
     images = SubSection(section_def=Image, label_quantity='file_name', repeats=True)
 
     @staticmethod
-    def get_data(file_name):
+    def get_data(file_name, original_file_name=None):
         pass
 
     def normalize(self, archive, logger):
@@ -151,7 +151,7 @@ class MicroscopeTechnique(BaseMeasurement):
                     ) as temp_file:
                         temp_file.write(file_content)
                         temp_file_path = temp_file.name
-                    image_data = self.get_data(temp_file_path)
+                    image_data = self.get_data(temp_file_path, f.name)
 
                     if image_data:
                         if not self.images:
