@@ -213,10 +213,12 @@ class TargetProperties(ArchiveSection):
     )
 
     position = Quantity(
+        links=["http://purl.obolibrary.org/obo/PATO_0000140"],
         type=str,
     )
 
     angle = Quantity(
+        links=["http://purl.obolibrary.org/obo/PATO_0002326"],
         type=np.dtype(np.float64),
         unit=('degree'),
     )
