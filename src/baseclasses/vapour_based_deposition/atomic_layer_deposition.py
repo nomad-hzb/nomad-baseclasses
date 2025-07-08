@@ -133,6 +133,7 @@ class ALDMaterial(ArchiveSection):
     )
 
     purge_duration = Quantity(
+        links=["http://purl.obolibrary.org/obo/PATO_0001309"],
         type=np.dtype(np.float64),
         unit=('s'),
         a_eln=dict(
