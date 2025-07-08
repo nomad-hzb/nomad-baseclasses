@@ -81,6 +81,8 @@ class CSSProcess(ArchiveSection):
     )
 
     substrate_source_distance = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00005720",
+               "https://purl.archive.org/tfsco/TFSCO_00005739"],
         type=np.dtype(np.float64),
         unit=('mm'),
         a_eln=dict(
@@ -91,6 +93,7 @@ class CSSProcess(ArchiveSection):
     )
 
     thickness = Quantity(
+        links=["http://purl.obolibrary.org/obo/PATO_0000915"],
         type=np.dtype(np.float64),
         unit=('nm'),
         a_eln=dict(
