@@ -100,6 +100,8 @@ class PVDProcess(ArchiveSection):
     )
 
     voltage = Quantity(
+        links=["http://purl.obolibrary.org/obo/PATO_0001464",
+               "https://purl.archive.org/tfsco/TFSCO_00005005"],
         type=np.dtype(np.float64),
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),

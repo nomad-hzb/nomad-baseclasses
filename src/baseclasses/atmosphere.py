@@ -26,9 +26,7 @@ class Atmosphere(ArchiveSection):
     )
 
     ambient_pressure = Quantity(
-        links=[
-            'https://purl.archive.org/tfsco/TFSCO_00002027',
-        ],
+        links=['https://purl.archive.org/tfsco/TFSCO_00002027'],
         type=np.dtype(np.float64),
         unit=('bar'),
         a_eln=dict(
