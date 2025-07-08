@@ -227,6 +227,8 @@ class Evaporation(ArchiveSection):
     )
 
     substrate_temparature = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00009996",
+        "https://purl.archive.org/tfsco/TFSCO_00009995"],
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(
