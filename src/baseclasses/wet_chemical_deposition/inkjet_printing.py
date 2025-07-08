@@ -130,6 +130,9 @@ class NotionNozzleVoltageProfile(NozzleVoltageProfile):
     )
 
     peak_time_a = Quantity(
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000165',
+            'http://purl.obolibrary.org/obo/PATO_0000165'],
         type=np.dtype(np.float64),
         unit=('us'),
         a_eln=dict(
