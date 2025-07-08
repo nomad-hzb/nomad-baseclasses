@@ -47,7 +47,8 @@ class CSSProcess(ArchiveSection):
     )
 
     pressure = Quantity(
-        links=[],
+        links=["http://purl.obolibrary.org/obo/PATO_0001025",
+                "https://purl.archive.org/tfsco/TFSCO_00005040"],
         type=np.dtype(np.float64),
         unit=('mbar'),
         a_eln=dict(
@@ -58,6 +59,8 @@ class CSSProcess(ArchiveSection):
     )
 
     source_temperature = Quantity(
+        links=["http://purl.obolibrary.org/obo/PATO_0000146",
+               "https://purl.archive.org/tfsco/TFSCO_00002111"],
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(
@@ -67,6 +70,8 @@ class CSSProcess(ArchiveSection):
     )
 
     substrate_temperature = Quantity(
+        links=["http://purl.obolibrary.org/obo/PATO_0000146",
+               "https://purl.archive.org/tfsco/TFSCO_00002111"],
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(
