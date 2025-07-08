@@ -579,6 +579,7 @@ class InkjetPrintingProperties(ArchiveSection):
     )
 
     printed_area = Quantity(
+        links=["http://purl.obolibrary.org/obo/PATO_0001323"],
         type=np.dtype(np.float64),
         unit=('mm**2'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm**2'),
