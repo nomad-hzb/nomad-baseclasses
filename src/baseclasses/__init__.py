@@ -393,6 +393,7 @@ class LayerProperties(ArchiveSection):
     )
 
     layer_transmission = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00007002"],
         type=np.dtype(np.float64),
         description=('Percentage of light that gets transmitted through the layer.'),
         a_eln=dict(

@@ -28,7 +28,9 @@ class TemperatureSensors(ArchiveSection):
 
     name = Quantity(type=str)
 
-    temperature = Quantity(type=np.dtype(np.float64), unit=('°C'), shape=['*'])
+    temperature = Quantity(
+        links=[""x],
+        type=np.dtype(np.float64), unit=('°C'), shape=['*'])
 
 
 class EnvironmentData(ArchiveSection):
