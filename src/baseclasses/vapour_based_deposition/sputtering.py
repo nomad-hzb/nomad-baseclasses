@@ -244,6 +244,7 @@ class MultiTargetSputteringProcess(ArchiveSection):
     )
 
     orientation = Quantity(
+        links=["http://purl.obolibrary.org/obo/PATO_0000133"],
         type=np.dtype(np.float64),
         unit=('degree'),
     )
@@ -303,6 +304,8 @@ class MultiTargetSputteringProcess(ArchiveSection):
     )
 
     flow_rate = Quantity(
+        links=["http://purl.obolibrary.org/obo/PATO_0001574",
+               "https://purl.archive.org/tfsco/TFSCO_00005733"],
         type=np.dtype(np.float64),
         unit=('mL/minute'),
     )
@@ -325,7 +328,9 @@ class MultiTargetSputteringObservables(ArchiveSection):
         unit=('°C'),
     )
 
-    bias_voltage = Quantity(type=np.dtype(np.float64), shape=['*'], unit='V')
+    bias_voltage = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00002127"],
+        type=np.dtype(np.float64), shape=['*'], unit='V')
 
     bias_current = Quantity(type=np.dtype(np.float64), shape=['*'], unit='A')
 
