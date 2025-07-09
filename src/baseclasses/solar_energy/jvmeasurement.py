@@ -130,6 +130,7 @@ class SolarCellJV(PlotSection):
     )
 
     short_circuit_current_density = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00001108"],
         type=np.dtype(np.float64),
         unit='mA / cm**2',
         shape=[],
