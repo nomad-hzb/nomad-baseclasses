@@ -106,6 +106,7 @@ class PixelData(ProcessedEfficiency):
     )
 
     current_density = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00000064"],
         type=np.dtype(np.float64),
         description='Current density array of the MPP tracking measurement',
         shape=['*'],
@@ -204,6 +205,7 @@ class SampleData(CompositeSystemReference):
     )
 
     temperature = Quantity(
+        links=["http://purl.obolibrary.org/obo/PATO_0000146"],
         type=np.dtype(np.float64),
         description='Temperature of sample during measurement',
         shape=['*'],
@@ -265,6 +267,7 @@ class MPPTrackingHsprintCustom(BaseMeasurement):
     )
 
     pixel_area = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO/TFSCO_00003507"],
         type=np.dtype(np.float64),
         unit='cm**2',
         default=0.18,

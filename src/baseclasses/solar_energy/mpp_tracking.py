@@ -68,6 +68,7 @@ class MPPTrackingProperties(ArchiveSection):
     )
 
     time = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00001063"],
         type=np.dtype(np.float64),
         description='Total time of the measurement',
         unit=('s'),
