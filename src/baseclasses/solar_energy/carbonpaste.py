@@ -23,6 +23,8 @@ class CarbonPasteLayerProperties(LayerProperties):
     )
 
     drying_time = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00001063",
+               "https://purl.archive.org/tfsco/TFSCO_00002072"],
         type=np.dtype(np.float64),
         unit='s',
         description='Drying time for the carbon paste layer.',
