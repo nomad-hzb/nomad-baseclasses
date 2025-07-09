@@ -54,6 +54,7 @@ class ProcessedEfficiency(ArchiveSection):
     )
 
     efficiency = Quantity(
+        links=["http://purl.obolibrary.org/obo/PATO_0001029"],
         type=np.dtype(np.float64),
         description='Efficiency array of the MPP tracking measurement',
         shape=['*'],
@@ -61,11 +62,17 @@ class ProcessedEfficiency(ArchiveSection):
 
 
 class JVData(ProcessedEfficiency):
-    v_oc = Quantity(type=np.dtype(np.float64), shape=['*'], unit='V')
+    v_oc = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00001034"],
+        type=np.dtype(np.float64), shape=['*'], unit='V')
 
-    j_sc = Quantity(type=np.dtype(np.float64), shape=['*'], unit='mA/cm^2')
+    j_sc = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00001108"],
+        type=np.dtype(np.float64), shape=['*'], unit='mA/cm^2')
 
-    fill_factor = Quantity(type=np.dtype(np.float64), shape=['*'])
+    fill_factor = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00001107"],
+        type=np.dtype(np.float64), shape=['*'])
 
 
 class PixelData(ProcessedEfficiency):
@@ -78,6 +85,8 @@ class PixelData(ProcessedEfficiency):
     )
 
     voltage = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00005005",
+               "http://purl.obolibrary.org/obo/PATO_0001464"],
         type=np.dtype(np.float64),
         description='Voltage array of the MPP tracking measurement',
         shape=['*'],
@@ -187,6 +196,7 @@ class SampleData(CompositeSystemReference):
     #     a_eln=dict(component='ReferenceEditQuantity'))
 
     time = Quantity(
+        links=["http://purl.obolibrary.org/obo/PATO_0001309"],
         type=np.dtype(np.float64),
         description='Time array of the MPP tracking measurement',
         shape=['*'],
