@@ -113,6 +113,7 @@ class StabilityFiguresOfMerit(ArchiveSection):
     """
 
     T95 = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00007004"],
         type=np.dtype(np.float64),
         unit=('hour'),
         shape=[],
@@ -141,6 +142,7 @@ class StabilityFiguresOfMerit(ArchiveSection):
     )
 
     T80 = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO/TFSCO_00003503"],
         type=np.dtype(np.float64),
         unit=('hour'),
         shape=[],

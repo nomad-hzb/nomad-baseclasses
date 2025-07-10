@@ -289,10 +289,6 @@ class SolarCellJVCurve(SolarCellJV):
     )
 
     current_density = Quantity(
-        links=[
-            'https://purl.archive.org/tfsco/TFSCO_00000064',
-            'https://purl.archive.org/tfsco/TFSCO_00005061',
-        ],
         type=np.dtype(np.float64),
         shape=['n_values'],
         unit='mA/cm^2',
@@ -300,10 +296,6 @@ class SolarCellJVCurve(SolarCellJV):
     )
 
     voltage = Quantity(
-        links=[
-            'http://purl.obolibrary.org/obo/PATO_0001464',
-            'https://purl.archive.org/tfsco/TFSCO_00005005',
-        ],
         type=np.dtype(np.float64),
         shape=['n_values'],
         unit='V',
