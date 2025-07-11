@@ -13,7 +13,6 @@ def get_xas_archive(data, dateline, entry_class):
     entry_class.k0 = data.get('K0')
     entry_class.k1 = data.get('K1')
     entry_class.k3 = data.get('K3')
-    entry_class.k00 = data.get('K00')
 
     kmc3_data = []
     for index in range(1, 14):
