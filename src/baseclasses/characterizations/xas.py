@@ -17,15 +17,16 @@
 #
 
 import json
+
 import numpy as np
-
-from nomad.metainfo import Quantity, SubSection
-
-from .. import BaseMeasurement
 from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.plot import PlotlyFigure, PlotSection
+from nomad.metainfo import Quantity, SubSection
+from scipy.optimize import curve_fit
 
 from baseclasses.helper.plotly_plots import make_xas_plot
+
+from .. import BaseMeasurement
 
 
 class XAS(BaseMeasurement):
@@ -132,11 +133,11 @@ class SiliconDriftDetector(PlotSection, ArchiveSection):
     rt = Quantity(
         type=np.dtype(np.float64),
         shape=['*'],
-        description='Real Life Time',
+        description='Real Time',
     )
     slope = Quantity(
         type=np.dtype(np.float64),
-        description='slope of linear fit of log(ICR) over log(OCR)',
+        description='slope=A*k for fit of OCR = A * (1 - exp(-k * ICR))',
     )
     fluo_dead_time_corrected = Quantity(
         type=np.dtype(np.float64),
@@ -157,32 +158,37 @@ class SiliconDriftDetector(PlotSection, ArchiveSection):
     def normalize(self, archive, logger, k0):
         super().normalize(archive, logger)
         if self.fluo is not None and self.icr is not None and self.ocr is not None:
-            self.slope, _ = np.polyfit(np.log10(self.ocr), np.log10(self.icr), 1)
-            self.fluo_dead_time_corrected = self.fluo * self.slope * self.icr / np.where(self.ocr == 0, np.nan, self.ocr)
+
+            def exp_func(icr, a, k):
+                return a * (1 - np.exp(-k * icr))
+
+            # estimate starting values
+            a0 = self.ocr.max()
+            k0 = 1e-5
+            try:
+                params, _ = curve_fit(
+                    exp_func, self.icr, self.ocr, p0=(a0, k0), maxfev=10000
+                )
+                a_fit, k_fit = params
+            except Exception:
+                a_fit, k_fit = (1, 1)
+
+            self.slope = a_fit * k_fit
+            self.fluo_dead_time_corrected = (
+                self.fluo
+                * self.slope
+                * self.icr
+                / np.where(self.ocr == 0, np.nan, self.ocr)
+            )
             self.fluo_tlt = self.fluo_dead_time_corrected / self.tlt
             self.fluo_tlt_result = self.fluo_tlt / k0
-        fig1 = make_xas_plot('log(ICR)/log(OCR)', np.log10(self.ocr), 'log(OCR)', [np.log10(self.icr)], 'log(ICR)')
+        fig1 = make_xas_plot('OCR/ICR', self.ocr, 'ICR', [self.icr], 'OCR')
         self.figures = [
-            PlotlyFigure(label='log(ICR)/log(OCR) Plot', figure=json.loads(fig1.to_json())),
+            PlotlyFigure(label='OCR vs ICR Plot', figure=json.loads(fig1.to_json())),
         ]
 
 
 class XASWithSDD(XAS, PlotSection):
-    k00 = Quantity(
-        type=np.dtype(np.float64),
-        shape=['*'],
-        a_plot=[
-            {
-                'x': 'energy',
-                'y': 'k0',
-                'layout': {
-                    'yaxis': {'fixedrange': False},
-                    'xaxis': {'fixedrange': False},
-                },
-            }
-        ],
-    )
-
     sdd_parameters = SubSection(section_def=SiliconDriftDetector, repeats=True)
 
     def normalize(self, archive, logger):
@@ -190,13 +196,18 @@ class XASWithSDD(XAS, PlotSection):
         for detector in self.sdd_parameters:
             detector.normalize(archive, logger, self.k0)
         super().normalize(archive, logger)
-        icr_list = [sdd.get('icr') for sdd in self.sdd_parameters]
-        ocr_list = [sdd.get('icr') for sdd in self.sdd_parameters]
-        fig1 = make_xas_plot('Input Count Rate (ICR)', self.energy, 'Energy', icr_list, 'ICR')
-        fig2 = make_xas_plot('Output Count Rate (OCR)', self.energy, 'Energy', ocr_list, 'OCR')
+        fluo_result_list = [sdd.get('fluo_tlt_result') for sdd in self.sdd_parameters]
+        fig1 = make_xas_plot(
+            'Absorption of Sample (FluoResult/k0)',
+            self.energy,
+            'Energy',
+            fluo_result_list,
+            'Fluo corrected',
+        )
         self.figures = [
-            PlotlyFigure(label='ICR Plot', figure=json.loads(fig1.to_json())),
-            PlotlyFigure(label='OCR Plot', figure=json.loads(fig2.to_json())),
+            PlotlyFigure(
+                label='Sample Absorbance Plot', figure=json.loads(fig1.to_json())
+            ),
         ]
 
 
