@@ -113,12 +113,12 @@ class SiliconDriftDetector(PlotSection, ArchiveSection):
     icr = Quantity(
         type=np.dtype(np.float64),
         shape=['*'],
-        description='Input Count Rate',
+        description='Incoming Count Rate',
     )
     ocr = Quantity(
         type=np.dtype(np.float64),
         shape=['*'],
-        description='Output Count Rate',
+        description='Outgoing Count Rate',
     )
     tlt = Quantity(
         type=np.dtype(np.float64),
@@ -190,6 +190,13 @@ class SiliconDriftDetector(PlotSection, ArchiveSection):
 
 class XASWithSDD(XAS, PlotSection):
     sdd_parameters = SubSection(section_def=SiliconDriftDetector, repeats=True)
+
+    manual_energy_shift = Quantity(
+        type=np.dtype(np.float64),
+        description='manual energy shift',
+        unit='keV',
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='keV'),
+    )
 
     def normalize(self, archive, logger):
         self.method = 'XAS Fluoresence'
