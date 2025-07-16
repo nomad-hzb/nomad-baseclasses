@@ -31,9 +31,21 @@ def get_xas_archive(data, dateline, entry_class):
         if 'time_ms' in data.columns
         else None
     )
-    entry_class.k0 = data.get('K0') or data.get('I0_A')
-    entry_class.k1 = data.get('K1') or data.get('I1_A')
-    entry_class.k3 = data.get('K3') or data.get('I2_A')
+    entry_class.k0 = (
+        data['K0'] if 'K0' in data.columns
+        else data['I0_A'] if 'I0_A' in data.columns
+        else None
+    )
+    entry_class.k1 = (
+        data['K1'] if 'K1' in data.columns
+        else data['I1_A'] if 'I1_A' in data.columns
+        else None
+    )
+    entry_class.k3 = (
+        data['K3'] if 'K3' in data.columns
+        else data['I2_A'] if 'I2_A' in data.columns
+        else None
+    )
 
     kmc3_data = []
 
