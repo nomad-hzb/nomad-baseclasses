@@ -8,20 +8,27 @@ def get_xas_archive(data, dateline, entry_class):
         if dateline.startswith('#D'):
             datetime_object = datetime.strptime(dateline, '#D\t%a %b %d\t%H:%M:%S\t%Y')
         elif dateline.startswith('# start_time:'):
-            datetime_object = datetime.strptime(dateline, '# start_time: %Y-%m-%d %H:%M:%S.%f')
+            datetime_object = datetime.strptime(
+                dateline, '# start_time: %Y-%m-%d %H:%M:%S.%f'
+            )
         else:
-            raise ValueError("Unknown Date format")
+            raise ValueError('Unknown Date format')
         entry_class.datetime = datetime_object.strftime('%Y-%m-%d %H:%M:%S.%f')
 
     entry_class.energy = (
-        data['#monoE'] if '#monoE' in data.columns
-        else data['mono_eV'] / 1000 if 'mono_eV' in data.columns
-        else data['monoE_eV'] / 1000 if 'monoE_eV' in data.columns
+        data['#monoE']
+        if '#monoE' in data.columns
+        else data['mono_eV'] / 1000
+        if 'mono_eV' in data.columns
+        else data['monoE_eV'] / 1000
+        if 'monoE_eV' in data.columns
         else None
     )
     entry_class.seconds = (
-        data['Seconds'] if 'Seconds' in data.columns
-        else data['time_ms'] / 1000 if 'time_ms' in data.columns
+        data['Seconds']
+        if 'Seconds' in data.columns
+        else data['time_ms'] / 1000
+        if 'time_ms' in data.columns
         else None
     )
     entry_class.k0 = data.get('K0') or data.get('I0_A')
