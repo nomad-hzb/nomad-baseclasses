@@ -23,7 +23,7 @@ from nomad.metainfo import Quantity, Section, SubSection
 from .. import BaseMeasurement, LibraryMeasurement
 
 
-class XPSSpecsLabProdigyAnalyzerParameters(ArchiveSection):
+class PESSpecsLabProdigyAnalyzerParameters(ArchiveSection):
     polar_angle = Quantity(type=np.dtype(np.float64), unit='degree')
     azimuth_angle = Quantity(type=np.dtype(np.float64), unit='degree')
     rotation_angle = Quantity(type=np.dtype(np.float64), unit='degree')
@@ -36,7 +36,7 @@ class XPSSpecsLabProdigyAnalyzerParameters(ArchiveSection):
     l1 = Quantity(type=np.dtype(np.float64))
 
 
-class XPSSpecsLabProdigySourceParameters(ArchiveSection):
+class PESSpecsLabProdigySourceParameters(ArchiveSection):
     polar_angle = Quantity(type=np.dtype(np.float64), unit='degree')
     azimuth_angle = Quantity(type=np.dtype(np.float64), unit='degree')
     excitation_energy = Quantity(type=np.dtype(np.float64), unit='eV')
@@ -56,7 +56,7 @@ class XPSSpecsLabProdigySourceParameters(ArchiveSection):
     settings_summary = Quantity(type=str)
 
 
-class XPSSpecsLabProdigySettings(ArchiveSection):
+class PESSpecsLabProdigySettings(ArchiveSection):
     region = Quantity(type=str)
     calibration_file = Quantity(type=str)
     analyzer_lens_mode = Quantity(type=str)
@@ -75,18 +75,27 @@ class XPSSpecsLabProdigySettings(ArchiveSection):
     he_gas_pressure = Quantity(type=np.dtype(np.float64), unit='mbar')
     analyzer_slit = Quantity(type=str)
     analyzer_lens_voltage = Quantity(type=str)
-    analyzer_parameters = SubSection(section_def=XPSSpecsLabProdigyAnalyzerParameters)
-    source_parameters = SubSection(section_def=XPSSpecsLabProdigySourceParameters)
+    analyzer_parameters = SubSection(section_def=PESSpecsLabProdigyAnalyzerParameters)
+    source_parameters = SubSection(section_def=PESSpecsLabProdigySourceParameters)
 
 
-class XPS(BaseMeasurement):
-    """XPS Measurement"""
+class PES(BaseMeasurement):
+    """PES Measurement"""
 
     data_file = Quantity(
         type=str,
         a_eln=dict(component='FileEditQuantity'),
         a_browser=dict(adaptor='RawFileAdaptor'),
     )
+
+    def normalize(self, archive, logger):
+        if not self.method:
+            self.method = 'Photoemission spectroscopy'
+        super().normalize(archive, logger)
+
+
+class XPS(PES):
+    """XPS Measurement"""
 
     def normalize(self, archive, logger):
         if not self.method:
