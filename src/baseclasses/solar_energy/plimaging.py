@@ -26,24 +26,28 @@ class PLIproperties(ArchiveSection):
     lamp = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
     integration_time = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00002076","https://purl.archive.org/tfsco/TFSCO_00002093"],
         type=np.dtype(np.float64),
         unit=('s'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ms'),
     )
 
     excitation_wavelength = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00003108","https://purl.archive.org/tfsco/TFSCO_00003114"],
         type=np.dtype(np.float64),
         unit=('nm'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
     )
 
     excitation_current = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00003105","https://purl.archive.org/tfsco/TFSCO_00003112"],
         type=np.dtype(np.float64),
         unit=('A'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA'),
     )
 
     light_intensity = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00002034"],
         type=np.dtype(np.float64),
         unit=('W/m^2'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mW/cm^2'),
