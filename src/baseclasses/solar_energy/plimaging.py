@@ -54,14 +54,17 @@ class PLIproperties(ArchiveSection):
     )
 
     number_of_averages = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00003100","https://purl.archive.org/tfsco/TFSCO_00005762"],
         type=np.dtype(np.int64), a_eln=dict(component='NumberEditQuantity')
     )
 
     long_pass_filter = Quantity(
+        links=["http://purl.obolibrary.org/obo/OBI_0400067"],
         type=str, shape=['*'], a_eln=dict(component='StringEditQuantity')
     )
 
     image_pixel_length = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00003109"],
         type=np.dtype(np.float64),
         unit=('um'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='um'),
