@@ -26,21 +26,24 @@ class PLIproperties(ArchiveSection):
     lamp = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
     integration_time = Quantity(
-        links=["https://purl.archive.org/tfsco/TFSCO_00002076","https://purl.archive.org/tfsco/TFSCO_00002093"],
+        links=["https://purl.archive.org/tfsco/TFSCO_00002076",
+               "https://purl.archive.org/tfsco/TFSCO_00002093"],
         type=np.dtype(np.float64),
         unit=('s'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ms'),
     )
 
     excitation_wavelength = Quantity(
-        links=["https://purl.archive.org/tfsco/TFSCO_00003108","https://purl.archive.org/tfsco/TFSCO_00003114"],
+        links=["https://purl.archive.org/tfsco/TFSCO_00003108",
+               "https://purl.archive.org/tfsco/TFSCO_00003114"],
         type=np.dtype(np.float64),
         unit=('nm'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
     )
 
     excitation_current = Quantity(
-        links=["https://purl.archive.org/tfsco/TFSCO_00003105","https://purl.archive.org/tfsco/TFSCO_00003112"],
+        links=["https://purl.archive.org/tfsco/TFSCO_00003105",
+               "https://purl.archive.org/tfsco/TFSCO_00003112"],
         type=np.dtype(np.float64),
         unit=('A'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA'),
@@ -54,7 +57,8 @@ class PLIproperties(ArchiveSection):
     )
 
     number_of_averages = Quantity(
-        links=["https://purl.archive.org/tfsco/TFSCO_00003100","https://purl.archive.org/tfsco/TFSCO_00005762"],
+        links=["https://purl.archive.org/tfsco/TFSCO_00003100",
+               "https://purl.archive.org/tfsco/TFSCO_00005762"],
         type=np.dtype(np.int64), a_eln=dict(component='NumberEditQuantity')
     )
 
