@@ -193,7 +193,7 @@ class XASWithSDD(XAS, PlotSection):
 
     manual_energy_shift = Quantity(
         type=np.dtype(np.float64),
-        description='manual energy shift',
+        description='Fixed value to substract when performing energy calibration.',
         unit='keV',
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='keV'),
     )
