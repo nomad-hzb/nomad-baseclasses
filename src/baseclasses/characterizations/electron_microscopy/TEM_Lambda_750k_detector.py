@@ -85,7 +85,7 @@ class TEM_lambda750k(TEMMicroscopeTechnique):
     )
 
     @staticmethod
-    def get_data(file_name):
+    def get_data(file_name, original_file_name=None):
         if file_name.lower().endswith('.nxs'):
             import h5py
 

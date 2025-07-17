@@ -164,7 +164,7 @@ def get_eis_properties(metadata):
     nd = metadata.get('Nd', [])
     points = metadata.get('Points', [])
 
-    num_cycles = len(metadata.get('nc cycles'))
+    num_cycles = len(metadata.get('nc cycles', ['']))
     property_list = []
     for cycle in range(num_cycles):
         properties = EISPropertiesWithData()

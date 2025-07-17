@@ -19,9 +19,9 @@ def make_xas_plot(title, x, x_label, y_list, y_label):
         )
 
     x_unit = getattr(x, 'units', None)
-    x_unit_str = f"{x_unit:~P}" if x_unit else "a.u."
+    x_unit_str = f'{x_unit:~P}' if x_unit else 'a.u.'
     y_unit = getattr(y_list[0], 'units', None)
-    y_unit_str = f"{y_unit:~P}" if y_unit else "a.u."
+    y_unit_str = f'{y_unit:~P}' if y_unit else 'a.u.'
     fig.update_layout(
         title_text=title,
         xaxis={

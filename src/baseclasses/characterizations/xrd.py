@@ -18,6 +18,7 @@
 
 import numpy as np
 from nomad.datamodel.data import ArchiveSection
+from nomad.datamodel.metainfo.basesections import MeasurementResult
 from nomad.metainfo import Quantity, Section, SubSection
 
 from .. import BaseMeasurement, LibraryMeasurement
@@ -124,8 +125,35 @@ class XRDProperties(ArchiveSection):
     )
 
 
+class XRDResults(MeasurementResult):
+    model = Quantity(
+        type=str,
+        description='The model used for the peak fitting, eg Gaussians, Voigt functions',
+        a_eln=dict(component='StringEditQuantity'),
+    )
+
+    peak_position = Quantity(
+        type=np.dtype(np.float64),
+        description='The position of an identified peak in units of the angle.',
+        unit=('degree'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='degree'),
+    )
+
+    peak_height = Quantity(
+        type=np.dtype(np.float64),
+        description='The height of an identified peak',
+        a_eln=dict(component='NumberEditQuantity'),
+    )
+
+    comment = Quantity(
+        type=str,
+        description='Comment on the XRD Analysis',
+        a_eln=dict(component='RichTextEditQuantity', props=dict(height=200)),
+    )
+
+
 class XRD(BaseMeasurement):
-    """UV vis Measurement"""
+    """XRD Measurement"""
 
     m_def = Section(a_eln=dict(hide=['certified_values', 'certification_institute']))
 
@@ -138,15 +166,18 @@ class XRD(BaseMeasurement):
     data = SubSection(section_def=XRDData)
 
     properties = SubSection(section_def=XRDProperties)
-    # shifted_data = SubSection(
-    #     section_def=XRDShiftedData, repeats=True)
 
-    # identifier = Quantity(
-    #     type=str)
+    results = SubSection(
+        section_def=XRDResults,
+        description="""
+        The result of the XRD measurement.
+        """,
+        repeats=True,
+    )
 
     def normalize(self, archive, logger):
-        super().normalize(archive, logger)
         self.method = 'XRD'
+        super().normalize(archive, logger)
 
 
 class XRDLibrary(LibraryMeasurement):

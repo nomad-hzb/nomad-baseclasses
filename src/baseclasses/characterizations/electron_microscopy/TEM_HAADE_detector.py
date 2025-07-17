@@ -102,7 +102,7 @@ class HAADEScan(Image):
 
 class TEM_HAADE(TEMMicroscopeTechnique):
     @staticmethod
-    def get_data(file_name):
+    def get_data(file_name, original_file_name=None):
         if file_name.lower().endswith('.tif'):
             import hyperspy.api as hs
 

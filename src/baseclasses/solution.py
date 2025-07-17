@@ -86,6 +86,12 @@ class SolutionChemical(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mmol/ml'),
     )
 
+    amount_mol = Quantity(
+        type=np.dtype(np.float64),
+        unit=('mol'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mol'),
+    )
+
     amount_relative = Quantity(
         type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
     )

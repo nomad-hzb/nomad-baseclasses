@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pandas as pd
 from nomad.datamodel.metainfo.basesections import CompositeSystemReference
 from nomad.units import ureg
@@ -86,8 +88,53 @@ def get_value(data, key, default=None, number=True, unit=None):
         raise e
 
 
+def get_datetime(data, key):
+    """
+    Parse datetime from data using multiple date formats.
+
+    Args:
+        data: Dictionary containing the date value
+        key: Key to access the date value in data
+
+    Returns:
+        str: Formatted datetime string in NOMAD format ('%Y-%m-%d %H:%M:%S.%f')
+        None: If key is missing, value is NaN, or parsing fails
+    """
+    # Check if key exists and value is not NaN
+    if key not in data or pd.isna(data[key]):
+        return None
+
+    # List of supported date formats to try
+    date_formats = [
+        '%d-%m-%Y',  # 25-12-2024
+        '%d/%m/%Y',  # 25/12/2024
+        '%d.%m.%Y',  # 25.12.2024
+        '%Y-%m-%d',  # 2024-12-25 (ISO format)
+        '%d-%m-%y',  # 25-12-24 (2-digit year)
+        '%d/%m/%y',  # 25/12/24 (2-digit year)
+    ]
+
+    date_value = str(data[key]).strip()
+
+    # Try each format until one works
+    for date_format in date_formats:
+        try:
+            datetime_object = datetime.strptime(date_value, date_format)
+            # Convert to NOMAD format with midnight time
+            return datetime_object.strftime('%Y-%m-%d %H:%M:%S.%f')
+        except ValueError:
+            continue  # Try next format
+
+    # If no format worked, log warning and return None
+    print(
+        f"Warning: Could not parse date '{date_value}' with key '{key}'. Supported formats: {date_formats}"
+    )
+    return None
+
+
 def map_basic_sample(data, substrate_name, upload_id, sample_class):
     archive = sample_class(
+        datetime=get_datetime(data, 'Date'),
         name=data['Nomad ID'],
         lab_id=data['Nomad ID'],
         substrate=get_reference(upload_id, substrate_name) if substrate_name else None,
@@ -133,7 +180,7 @@ def map_atmosphere(data):
 
 
 def map_layer(data):
-    if 'Carbon Paste Layer' in get_value(data, 'Layer type', None, False):
+    if 'Carbon Paste Layer' in get_value(data, 'Layer type', '', False):
         return [
             CarbonPasteLayerProperties(
                 layer_type=get_value(data, 'Layer type', None, False),
@@ -677,6 +724,7 @@ def map_substrate(data, substrate_class):
         )
     ]
     archive = substrate_class(
+        datetime=get_datetime(data, 'Date'),
         name='Substrate '
         + get_value(data, 'Sample dimension', '', False)
         + ' '
