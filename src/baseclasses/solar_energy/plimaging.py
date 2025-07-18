@@ -78,7 +78,9 @@ class PLIproperties(ArchiveSection):
 class PLImaging(BaseMeasurement):
     """PL Imaging"""
 
-    m_def = Section(a_eln=dict(hide=['certified_values', 'certification_institute']))
+    m_def = Section(
+        links=["https://purl.archive.org/tfsco/TFSCO_00001035"],
+        a_eln=dict(hide=['certified_values', 'certification_institute']))
 
     data_file = Quantity(
         type=str,
