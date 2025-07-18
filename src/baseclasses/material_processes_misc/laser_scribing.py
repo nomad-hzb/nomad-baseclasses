@@ -79,6 +79,31 @@ class LaserScribingProperties(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity', props=dict(minValue=0)),
     )
 
+    cell_width = Quantity(
+        type=np.dtype(np.float64),
+        unit=('mm'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mm',
+        ),
+    )
+
+    dead_area = Quantity(
+        type=np.dtype(np.float64),
+        unit=('cm**2'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='cm**2',
+        ),
+    )
+
+    number_of_cells = Quantity(
+        type=np.dtype(np.int64),
+        a_eln=dict(
+            component='NumberEditQuantity',
+        ),
+    )
+
 
 class LaserScribing(BaseProcess):
     """Baseclass for laser scribing of ITO substrates"""
