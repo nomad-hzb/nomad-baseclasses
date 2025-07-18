@@ -428,6 +428,9 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
             ),
             slot_die_head_speed=get_value(data, 'Speed [mm/s]', unit='mm/s'),
             coated_area=get_value(data, 'Coated area [mm²]', unit='mm**2'),
+            temperature=get_value(
+                data, 'Chuck heating temperature [°C]', None, unit='°C'
+            ),
         ),
         quenching=AirKnifeGasQuenching(
             air_knife_angle=get_value(data, 'Air knife angle [°]', None),
@@ -1018,6 +1021,9 @@ def map_laser_scribing(i, j, lab_ids, data, upload_id, laser_class):
             speed=get_value(data, 'Speed [mm/s]', None),
             fluence=get_value(data, 'Fluence [J/cm2]', None),
             power_in_percent=get_value(data, 'Power [%]', None),
+            cell_width=get_value(data, 'Width of cell [mm]', None),
+            dead_area=get_value(data, 'Dead area [cm2]', None),
+            number_of_cells=get_value(data, 'Number of cells', None),
         ),
     )
 
