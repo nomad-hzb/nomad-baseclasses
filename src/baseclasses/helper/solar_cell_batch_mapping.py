@@ -292,42 +292,43 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
 
 
 def map_inkjet_nozzle_voltage_profile(data):
+    print("data zum anschauen: ", data)
     location = get_value(data, 'Tool/GB name', '', False)
     if location in ['Pixdro', 'iLPixdro']: # printer param
                 print_head_waveform_parameters=LP50NozzleVoltageProfile(
-                    number_of_pulses=get_value(data, 'Wf Number of Pulses', None, False),
+                    number_of_pulses=get_value(data, 'Wf Number of Pulses', None),
                     # for loop over number of pulses with changing _a suffix of variales below needed? There can be max 3 Pulses but if there is less they are potentially not in data..
-                    voltage_a=get_value(data, 'Wf Level 1[V]', None, False),
-                    rise_edge_a=get_value(data, 'Wf Level 1[V]', None, False) / get_value(data, 'Wf Rise 1[V/us]', None, False), # umrechnen time [us] = V_level [V]/ rise[V/us]
-                    peak_time_a=get_value(data, 'Wf Width 1[us]', None, False),
-                    fall_edge_a=get_value(data, 'Wf Level 1[V]', None, False) / get_value(data, 'Wf Fall 1[V/us]', None, False), #umrechnen
-                    time_space_a=get_value(data, 'Wf Space 1[us]', None, False),
-                    voltage_b=get_value(data, 'Wf Level 2[V]', None, False),
-                    rise_edge_b=get_value(data, 'Wf Level 2[V]', None, False) / get_value(data, 'Wf Rise 2[V/us]', None, False), # umrechnen time [us] = V_level [V]/ rise[V/us]
-                    peak_time_b=get_value(data, 'Wf Width 2[us]', None, False),
-                    fall_edge_b=get_value(data, 'Wf Level 2[V]', None, False) / get_value(data, 'Wf Fall 2[V/us]', None, False), #umrechnen
-                    time_space_b=get_value(data, 'Wf Space 2[us]', None, False),
-                    voltage_c=get_value(data, 'Wf Level 3[V]', None, False),
-                    rise_edge_c=get_value(data, 'Wf Level 3[V]', None, False) / get_value(data, 'Wf Rise 3[V/us]', None, False), # umrechnen time [us] = V_level [V]/ rise[V/us]
-                    peak_time_c=get_value(data, 'Wf Width 3[us]', None, False),
-                    fall_edge_c=get_value(data, 'Wf Level 3[V]', None, False) / get_value(data, 'Wf Fall 3[V/us]', None, False), #umrechnen
-                    time_space_c=get_value(data, 'Wf Space 3[us]', None, False),
+                    voltage_a=get_value(data, 'Wf Level 1[V]', None),
+                    rise_edge_a=get_value(data, 'Wf Level 1[V]', None) / get_value(data, 'Wf Rise 1[V/us]', None), # umrechnen time [us] = V_level [V]/ rise[V/us]
+                    peak_time_a=get_value(data, 'Wf Width 1[us]', None),
+                    fall_edge_a=get_value(data, 'Wf Level 1[V]', None) / get_value(data, 'Wf Fall 1[V/us]', None), #umrechnen
+                    time_space_a=get_value(data, 'Wf Space 1[us]', None),
+                    voltage_b=get_value(data, 'Wf Level 2[V]', None),
+                    rise_edge_b=get_value(data, 'Wf Level 2[V]', None) / get_value(data, 'Wf Rise 2[V/us]', None), # umrechnen time [us] = V_level [V]/ rise[V/us]
+                    peak_time_b=get_value(data, 'Wf Width 2[us]', None),
+                    fall_edge_b=get_value(data, 'Wf Level 2[V]', None) / get_value(data, 'Wf Fall 2[V/us]', None), #umrechnen
+                    time_space_b=get_value(data, 'Wf Space 2[us]', None),
+                    voltage_c=get_value(data, 'Wf Level 3[V]', None),
+                    rise_edge_c=get_value(data, 'Wf Level 3[V]', None) / get_value(data, 'Wf Rise 3[V/us]', None), # umrechnen time [us] = V_level [V]/ rise[V/us]
+                    peak_time_c=get_value(data, 'Wf Width 3[us]', None),
+                    fall_edge_c=get_value(data, 'Wf Level 3[V]', None) / get_value(data, 'Wf Fall 3[V/us]', None), #umrechnen
+                    time_space_c=get_value(data, 'Wf Space 3[us]', None),
                     ),
 
     elif location in ['iLNotion', 'Notion']: # printer param
                 print_head_waveform_parameters=NotionNozzleVoltageProfile(
-                    number_of_pulses=get_value(data, 'Wf Number of Pulses', None, False),
+                    number_of_pulses=get_value(data, 'Wf Number of Pulses', None),
                     #for loop over number of pulses with changing _a suffix of variales below
-                    delay_time_a=get_value(data, 'Wf Delay Time [us]', None, False),
-                    rise_edge_a=get_value(data, 'Wf Rise Time [us]', None, False),
-                    peak_time_a=get_value(data, 'Wf Hold Time [us]', None, False),
-                    fall_edge_a=get_value(data, 'Wf Fall Time [us]', None, False),
-                    time_space_a=get_value(data, 'Wf Relax Time [us]', None, False),
-                    voltage_a=get_value(data, 'Wf Voltage [V]', None, False),
-                    #multipulse_a=get_value(data, 'Wf Multipulse [1/0]', None, False),
-                    number_of_greylevels_a=get_value(data, 'Wf Number Greylevels', None, False),
-                    grey_level_0_pulse_a=get_value(data, 'Wf Grey Level 0 Use Pulse [1/0]', None, False),
-                    grey_level_1_pulse_a=get_value(data, 'Wf Grey Level 1 Use Pulse [1/0]', None, False),
+                    delay_time_a=get_value(data, 'Wf Delay Time [us]', None),
+                    rise_edge_a=get_value(data, 'Wf Rise Time [us]', None),
+                    peak_time_a=get_value(data, 'Wf Hold Time [us]', None),
+                    fall_edge_a=get_value(data, 'Wf Fall Time [us]', None),
+                    time_space_a=get_value(data, 'Wf Relax Time [us]', None),
+                    voltage_a=get_value(data, 'Wf Voltage [V]', None),
+                    #multipulse_a=get_value(data, 'Wf Multipulse [1/0]', None),
+                    number_of_greylevels_a=get_value(data, 'Wf Number Greylevels', None),
+                    grey_level_0_pulse_a=get_value(data, 'Wf Grey Level 0 Use Pulse [1/0]', None),
+                    grey_level_1_pulse_a=get_value(data, 'Wf Grey Level 1 Use Pulse [1/0]', None),
                     )
     return print_head_waveform_parameters
 
