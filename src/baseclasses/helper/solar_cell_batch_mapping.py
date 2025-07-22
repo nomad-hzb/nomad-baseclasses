@@ -294,26 +294,31 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
 def map_inkjet_nozzle_voltage_profile(data):
     print("data zum anschauen: ", data)
     location = get_value(data, 'Tool/GB name', '', False)
-    if location in ['Pixdro', 'iLPixdro']: # printer param
-                print_head_waveform_parameters=LP50NozzleVoltageProfile(
-                    number_of_pulses=get_value(data, 'Wf Number of Pulses', None),
-                    # for loop over number of pulses with changing _a suffix of variales below needed? There can be max 3 Pulses but if there is less they are potentially not in data..
-                    voltage_a=get_value(data, 'Wf Level 1[V]', None),
-                    rise_edge_a=get_value(data, 'Wf Level 1[V]', None) / get_value(data, 'Wf Rise 1[V/us]', None), # umrechnen time [us] = V_level [V]/ rise[V/us]
-                    peak_time_a=get_value(data, 'Wf Width 1[us]', None),
-                    fall_edge_a=get_value(data, 'Wf Level 1[V]', None) / get_value(data, 'Wf Fall 1[V/us]', None), #umrechnen
-                    time_space_a=get_value(data, 'Wf Space 1[us]', None),
-                    voltage_b=get_value(data, 'Wf Level 2[V]', None),
-                    rise_edge_b=get_value(data, 'Wf Level 2[V]', None) / get_value(data, 'Wf Rise 2[V/us]', None), # umrechnen time [us] = V_level [V]/ rise[V/us]
-                    peak_time_b=get_value(data, 'Wf Width 2[us]', None),
-                    fall_edge_b=get_value(data, 'Wf Level 2[V]', None) / get_value(data, 'Wf Fall 2[V/us]', None), #umrechnen
-                    time_space_b=get_value(data, 'Wf Space 2[us]', None),
-                    voltage_c=get_value(data, 'Wf Level 3[V]', None),
-                    rise_edge_c=get_value(data, 'Wf Level 3[V]', None) / get_value(data, 'Wf Rise 3[V/us]', None), # umrechnen time [us] = V_level [V]/ rise[V/us]
-                    peak_time_c=get_value(data, 'Wf Width 3[us]', None),
-                    fall_edge_c=get_value(data, 'Wf Level 3[V]', None) / get_value(data, 'Wf Fall 3[V/us]', None), #umrechnen
-                    time_space_c=get_value(data, 'Wf Space 3[us]', None),
-                    ),
+    if location in ['Pixdro', 'iLPixdro']:
+        number_of_pulses = get_value(data, 'Wf Number of Pulses', 0)
+        
+        params = {}
+        for i, suffix in enumerate(['a', 'b', 'c'], start=1):
+            if i <= number_of_pulses:
+                level = get_value(data, f'Wf Level {i}[V]', None)
+                rise = get_value(data, f'Wf Rise {i}[V/us]', None)
+                fall = get_value(data, f'Wf Fall {i}[V/us]', None)
+                params[f'voltage_{suffix}'] = level
+                params[f'rise_edge_{suffix}'] = level / rise if level and rise else None
+                params[f'peak_time_{suffix}'] = get_value(data, f'Wf Width {i}[us]', None)
+                params[f'fall_edge_{suffix}'] = level / fall if level and fall else None
+                params[f'time_space_{suffix}'] = get_value(data, f'Wf Space {i}[us]', None)
+            else:
+                params[f'voltage_{suffix}'] = None
+                params[f'rise_edge_{suffix}'] = None
+                params[f'peak_time_{suffix}'] = None
+                params[f'fall_edge_{suffix}'] = None
+                params[f'time_space_{suffix}'] = None
+    
+        print_head_waveform_parameters = LP50NozzleVoltageProfile(
+            number_of_pulses=number_of_pulses,
+            **params
+    )
 
     elif location in ['iLNotion', 'Notion']: # printer param
                 print_head_waveform_parameters=NotionNozzleVoltageProfile(
