@@ -398,6 +398,33 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
     return (f'{i}_{j}_inkjet_printing_{material}', archive)
 
 
+def map_lamination(i, j, lab_ids, data, upload_id, lamination_class):
+    archive = lamination_class(
+        name='Lamination',
+        location=get_value(data, 'Tool/GB name', '', False),
+        position_in_experimental_plan=i, # Hier muss man evtl was anpassen, da das Lamination ja als letztes von zwei halbstacks ist...
+        description=get_value(data, 'Notes', '', False),
+        samples=[
+            CompositeSystemReference(
+                reference=get_reference(upload_id, f'{lab_id}.archive.json'),
+                lab_id=lab_id,
+            )
+            for lab_id in lab_ids
+        ],
+        temperature=get_value(data, 'Temperature [°C]', None),
+        pressure=get_value(data, 'Pressure [MPa]', None),
+        force=get_value(data, 'Force [N]', None),
+        area=get_value(data, 'Area [mm²]', None),
+        time=get_value(data, 'Time [s]', None),
+        heat_up_time=get_value(data, 'Heat up time [s]', None),
+        cool_down_time=get_value(data, 'Cool down time [s]', None),
+        stamp_material=get_value(data, 'Stamp Material', '', False),
+        stamp_thickness=get_value(data, 'Stamp Thickness [mm]', None),
+        stamp_area=get_value(data, 'Stamp Area [mm²]', None),
+    )
+    return (f'{i}_{j}_lamination', archive)
+
+
 def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
     archive = cleaning_class(
         name='Cleaning',
