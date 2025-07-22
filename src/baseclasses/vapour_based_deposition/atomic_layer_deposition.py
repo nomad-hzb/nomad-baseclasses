@@ -123,10 +123,10 @@ class ALDMaterial(ArchiveSection):
 
     pulse_flow_rate = Quantity(
         type=np.dtype(np.float64),
-        unit=('ccm'),
+        unit=('cm**3/min'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='ccm',
+            defaultDisplayUnit='cm**3/min',
             props=dict(minValue=0),
         ),
     )
@@ -143,10 +143,10 @@ class ALDMaterial(ArchiveSection):
 
     purge_flow_rate = Quantity(
         type=np.dtype(np.float64),
-        unit=('ccm'),
+        unit=('cm**3/min'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='ccm',
+            defaultDisplayUnit='cm**3/min',
             props=dict(minValue=0),
         ),
     )
@@ -190,10 +190,10 @@ class ALDOxidizerReducer(ArchiveSection):
 
     pulse_flow_rate = Quantity(
         type=np.dtype(np.float64),
-        unit=('ccm'),
+        unit=('cm**3/min'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='ccm',
+            defaultDisplayUnit='cm**3/min',
             props=dict(minValue=0),
         ),
     )
@@ -210,10 +210,10 @@ class ALDOxidizerReducer(ArchiveSection):
 
     purge_flow_rate = Quantity(
         type=np.dtype(np.float64),
-        unit=('ccm'),
+        unit=('cm**3/min'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='ccm',
+            defaultDisplayUnit='cm**3/min',
             props=dict(minValue=0),
         ),
     )
