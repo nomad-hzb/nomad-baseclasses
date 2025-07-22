@@ -160,12 +160,12 @@ class NotionNozzleVoltageProfile(NozzleVoltageProfile):
     )
 
     grey_level_0_pulse_a = Quantity(
-        type=np.dtype(np.bool),
+        type=np.dtype(bool),
         a_eln=dict(component='BoolEditQuantity'),
     )
 
     grey_level_1_pulse_a = Quantity(
-        type=np.dtype(np.bool),
+        type=np.dtype(bool),
         a_eln=dict(component='BoolEditQuantity'),
     )
     ## Add the rest of the parameters here
