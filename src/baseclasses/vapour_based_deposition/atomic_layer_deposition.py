@@ -123,10 +123,17 @@ class ALDMaterial(ArchiveSection):
 
     pulse_flow_rate = Quantity(
         type=np.dtype(np.float64),
+<<<<<<< HEAD
         unit=('cm**3 / min'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='cm**3 / min',
+=======
+        unit=('cm**3/min'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='cm**3/min',
+>>>>>>> fc19f14f486d4e3ed05dffc8cf44b864635fffbf
             props=dict(minValue=0),
         ),
     )
@@ -143,10 +150,17 @@ class ALDMaterial(ArchiveSection):
 
     purge_flow_rate = Quantity(
         type=np.dtype(np.float64),
+<<<<<<< HEAD
         unit=('cm**3 / min'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='cm**3 / min',
+=======
+        unit=('cm**3/min'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='cm**3/min',
+>>>>>>> fc19f14f486d4e3ed05dffc8cf44b864635fffbf
             props=dict(minValue=0),
         ),
     )
@@ -190,10 +204,17 @@ class ALDOxidizerReducer(ArchiveSection):
 
     pulse_flow_rate = Quantity(
         type=np.dtype(np.float64),
+<<<<<<< HEAD
         unit=('cm**3 / min'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='cm**3 / min',
+=======
+        unit=('cm**3/min'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='cm**3/min',
+>>>>>>> fc19f14f486d4e3ed05dffc8cf44b864635fffbf
             props=dict(minValue=0),
         ),
     )
@@ -210,10 +231,17 @@ class ALDOxidizerReducer(ArchiveSection):
 
     purge_flow_rate = Quantity(
         type=np.dtype(np.float64),
+<<<<<<< HEAD
         unit=('cm**3 / min'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='cm**3 / min',
+=======
+        unit=('cm**3/min'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='cm**3/min',
+>>>>>>> fc19f14f486d4e3ed05dffc8cf44b864635fffbf
             props=dict(minValue=0),
         ),
     )
