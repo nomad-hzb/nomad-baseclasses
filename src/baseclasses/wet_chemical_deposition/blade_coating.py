@@ -17,14 +17,15 @@
 #
 
 import numpy as np
-from nomad.metainfo import Quantity, Section, SubSection
 from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity, Section, SubSection
 
 from .wet_chemical_deposition import WetChemicalDeposition
 
+
 class BladeCoatingProperties(ArchiveSection):
     blade_speed = Quantity(
-        #links=['placeholder for ontology link]
+        # links=['placeholder for ontology link]
         type=np.dtype(np.float64),
         unit=('mm/s'),
         a_eln=dict(
@@ -32,7 +33,7 @@ class BladeCoatingProperties(ArchiveSection):
             DefaultDisplayUnit='mm/s',
             props=dict(minValue=0),
         ),
-        description = 'Speed of the blade during coating process',
+        description='Speed of the blade during coating process',
     )
 
     dispensed_volume = Quantity(
@@ -44,26 +45,30 @@ class BladeCoatingProperties(ArchiveSection):
             DefaultDisplayUnit='uL',
             props=dict(minValue=0),
         ),
-        description = 'Volume of dispensed ink administered by a pipette on the sample surface',
+        description='Volume of dispensed ink administered by a pipette on the sample'
+        'surface',
     )
 
-    blade_substrate_gap =Quantity(
+    blade_substrate_gap = Quantity(
         links=[],
         type=np.dtype(np.float64),
         unit=('um'),
         a_eln=dict(
-        component='NumberEditQuantity',
-        defaultDisplayUnit='um',
-        props=dict(minValue=0),
+            component='NumberEditQuantity',
+            defaultDisplayUnit='um',
+            props=dict(minValue=0),
         ),
-        description = 'The distance between the blade and the substrate'
+        description='The distance between the blade and the substrate',
     )
 
     blade_size = Quantity(
         links=[],
         type=str,
         a_eln=dict(component='StringEditQuantity'),
-        description = 'Size of the blade. Normally, the blade is larger than the substrate, resulting in the coating of the whole available area. If the substrate is larger than the blade size, the coating area is that of the blade size.'
+        description='Size of the blade. Normally, the blade is larger than the '
+        'substrate, resulting in the coating of the whole available area.'
+        'If the substrate is larger than the blade size, the coating area is that of'
+        ' the blade size.',
     )
 
     substrate_temperature = Quantity(
@@ -78,7 +83,8 @@ class BladeCoatingProperties(ArchiveSection):
             defaultDisplayUnit='°C',
             props=dict(minValue=0),
         ),
-        description = 'Temperature of the substrate at the start of blade coating. Measured by heated chuck, IR Thermometer or other methods.'
+        description='Temperature of the substrate at the start of blade coating. '
+        'Measured by heated chuck, infrared thermometer or other methods',
     )
 
     ink_temperature = Quantity(
@@ -93,18 +99,19 @@ class BladeCoatingProperties(ArchiveSection):
             defaultDisplayUnit='°C',
             props=dict(minValue=0),
         ),
-        description = 'Temperature of hot plate where the vial containing the ink solution is placed'
+        description='Temperature of hot plate where the vial containing the ink '
+        'solution is placed',
     )
 
-    
+
 class BladeCoating(WetChemicalDeposition):
     """Base class for blade coating of a sample"""
 
     m_def = Section(
         # links = ['http://purl.obolibrary.org/obo/CHMO_0001471'],
     )
-    
-    properties= SubSection(section_def=BladeCoatingProperties)
+
+    properties = SubSection(section_def=BladeCoatingProperties)
 
     def normalize(self, archive, logger):
         self.method = 'Blade Coating'
