@@ -16,18 +16,95 @@
 # limitations under the License.
 #
 
-
-from nomad.metainfo import Section
+import numpy as np
+from nomad.metainfo import Quantity, Section, SubSection
+from nomad.datamodel.data import ArchiveSection
 
 from .wet_chemical_deposition import WetChemicalDeposition
 
+class BladeCoatingProperties(ArchiveSection):
+    blade_speed = Quantity(
+        #links=['placeholder for ontology link]
+        type=np.dtype(np.float64),
+        unit=('mm/s'),
+        a_eln=dict(
+            compontent='NumberEditQuantity',
+            DefaultDisplayUnit='mm/s',
+            props=dict(minValue=0),
+        ),
+        description = 'Speed of the blade during coating process',
+    )
 
+    dispensed_volume = Quantity(
+        links=[],
+        type=np.dtype(np.float64),
+        unit=('uL'),
+        a_eln=dict(
+            compontent='NumberEditQuantity',
+            DefaultDisplayUnit='uL',
+            props=dict(minValue=0),
+        ),
+        description = 'Volume of dispensed ink, usually administered by a pipette',
+    )
+
+    blade_substrate_gap =Quantity(
+        links=[],
+        type=np.dtype(np.float64),
+        unit=('um'),
+        a_eln=dict(
+        component='NumberEditQuantity',
+        defaultDisplayUnit='um',
+        props=dict(minValue=0),
+        ),
+        description = 'The distance between the blade and the substrate'
+    )
+
+    blade_size = Quantity(
+        links=[],
+        type=str,
+        a_eln=dict(component='StringEditQuantity'),
+        description = 'Size of the blade. Normally, the blade is larger than the substrate, resulting in the coating of the whole available area. If the substrate is larger than the blade size, the coating area is that of the blade size.'
+    )
+
+    substrate_temperature = Quantity(
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000146',
+            'https://purl.archive.org/tfsco/TFSCO_00002111',
+        ],
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='°C',
+            props=dict(minValue=0),
+        ),
+        description = 'Temperature of the substrate at the start of blade coating'
+    )
+
+    ink_temperature = Quantity(
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0000146',
+            'https://purl.archive.org/tfsco/TFSCO_00002111',
+        ],
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='°C',
+            props=dict(minValue=0),
+        ),
+        description = 'Temperature of hot plate where the vial containing the ink solution is placed'
+    )
+
+    
 class BladeCoating(WetChemicalDeposition):
     """Base class for blade coating of a sample"""
 
     m_def = Section(
         # links = ['http://purl.obolibrary.org/obo/CHMO_0001471'],
     )
+    
+    properties= SubSection(section_def=BladeCoatingProperties)
 
     def normalize(self, archive, logger):
         self.method = 'Blade Coating'
