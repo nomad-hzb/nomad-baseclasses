@@ -44,7 +44,7 @@ class BladeCoatingProperties(ArchiveSection):
             DefaultDisplayUnit='uL',
             props=dict(minValue=0),
         ),
-        description = 'Volume of dispensed ink, usually administered by a pipette',
+        description = 'Volume of dispensed ink administered by a pipette on the sample surface',
     )
 
     blade_substrate_gap =Quantity(
@@ -78,7 +78,7 @@ class BladeCoatingProperties(ArchiveSection):
             defaultDisplayUnit='°C',
             props=dict(minValue=0),
         ),
-        description = 'Temperature of the substrate at the start of blade coating'
+        description = 'Temperature of the substrate at the start of blade coating. Measured by heated chuck, IR Thermometer or other methods.'
     )
 
     ink_temperature = Quantity(

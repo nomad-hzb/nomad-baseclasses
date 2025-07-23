@@ -44,6 +44,7 @@ from baseclasses.wet_chemical_deposition.inkjet_printing import (
 from baseclasses.wet_chemical_deposition.slot_die_coating import (
     SlotDieCoatingProperties,
 )
+from baseclasses.wet_chemical_deposition.blade_coating import BladeCoatingProperties
 from baseclasses.wet_chemical_deposition.spin_coating import SpinCoatingRecipeSteps
 
 
@@ -383,6 +384,108 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
 
     material = get_value(data, 'Material name', '', False)
     return (f'{i}_{j}_spin_coating_{material}', archive)
+
+def map_blade_coating(i, j, lab_ids, data, upload_id,blade_coating_class):
+    archive = blade_coating_class(
+        name='blade coating ' + get_value(data, 'Material name', '', False),
+        location=get_value(data, 'Tool/GB name', '', False),
+        positon_in_experimental_plan=i,
+        description=get_value(data, 'Notes', None, False),
+        samples=[
+            CompositeSystemReference(
+                reference=get_reference(upload_id, f'{lab_id}.archive.json'),
+                lab_id=lab_id,
+            )
+            for lab_id in lab_ids
+        ],
+        solution=[
+            PrecursorSolution(
+                solution_details=map_solutions(data),  
+                solution_volume=get_value(
+                    data,
+                    ['Solution volume [um]', 'Solution volume [uL]'],
+                    None,
+                    unit=['uL', 'uL'],
+                ),
+                solution_viscosity=get_value(
+                    data,
+                    'Viscosity [mPa*s]',
+                    None,
+                    unit=['mPa*s'],
+                ),
+                solution_contact_angle=get_value(
+                    data,
+                    'Contact angle [°]',
+                    None,
+                    unit=['°'],
+                ),
+            )
+        ],
+        layer=map_layer(data),
+        atmosphere=map_atmosphere(data),
+        annealing=map_annealing(data),
+        properties=BladeCoatingProperties(
+            blade_speed=get_value(data, 'Blade Speed [mm/s]', unit='mm/s'),
+            dispensed_volume = get_value(data, 'Dispensed Ink Volume [uL]', unit = 'uL'),
+            blade_substrate_gap = get_value(data, 'Blade Gap [um]', unit='um'),
+            blade_size = get_value(data, 'Blade Size', None, False),
+            substrate_temperature = get_value(data, 'Substrate Temperature [°C]'), unit='°C'),
+            ink_temperature = get_value(data, 'Ink Temperature [°C]', unit='°C'),
+        ),
+
+    if get_value(data, 'Vacuum quenching duration [s]', None, unit='s'):
+        archive.quenching = VacuumQuenching(
+            start_time=get_value(
+                data, 'Vacuum quenching start time [s]', None, unit='s'
+            ),
+            duration=get_value(data, 'Vacuum quenching duration [s]', None, unit='s'),
+            pressure=get_value(
+                data, 'Vacuum quenching pressure [bar]', None, unit='bar'
+            ),
+        )
+
+    if get_value(data, 'Gas', None, False):
+        archive.quenching = GasQuenchingWithNozzle(
+            starting_delay=get_value(
+                data, 'Gas quenching start time [s]', None, unit='s'
+            ),
+            flow_rate=get_value(
+                data, 'Gas quenching flow rate [ml/s]', None, unit='ml/s'
+            ),
+            height=get_value(data, 'Gas quenching height [mm]', None, unit='mm'),
+            duration=get_value(data, 'Gas quenching duration [s]', None, unit='s'),
+            pressure=get_value(data, 'Gas quenching pressure [bar]', None, unit='bar'),
+            velocity=get_value(data, 'Gas quenching velocity [m/s]', None, unit='m/s'),
+            nozzle_shape=get_value(data, 'Nozzle shape', None, False),
+            nozzle_size=get_value(data, 'Nozzle size [mm²]', None, False),
+            gas=get_value(data, 'Gas', None, False),
+        )
+    
+    if get_value(data, 'Air knife angle [°]', None, False):
+        archive.quenching=AirKnifeGasQuenching(
+            air_knife_angle=get_value(data, 'Air knife angle [°]', None),
+            # is this the same as (drying) gas flow rate/velocity?
+            bead_volume=get_value(data, 'Bead volume [mm/s]', None, unit='mm/s'),
+            drying_speed=get_value(
+                data, 'Drying speed [cm/min]', None, unit='cm/minute'
+            ),
+            air_knife_distance_to_thin_film=get_value(
+                data, 'Air knife gap [cm]', None, unit='cm'
+            ),
+            drying_gas_temperature=get_value(
+                data,
+                ['Drying gas temperature [°]', 'Drying gas temperature [°C]'],
+                None,
+                unit=['°C', '°C'],
+            ),
+            heat_transfer_coefficient=get_value(
+                data, 'Heat transfer coefficient [W m^-2 K^-1]', None, unit='W/(K*m**2)'
+            ),
+        ),
+    
+    material = get_value(data, 'Material name', '', False)
+    
+    return (f'{i}_{j}_blade_coating_{material}', archive)
 
 
 def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
