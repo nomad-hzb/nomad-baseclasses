@@ -90,8 +90,10 @@ def get_jv_archive(jv_dict, mainfile, jvm, append=False):
             # Recalculate efficiency based on scaled values (if intensity is available)
             if original_intensity and original_intensity != 0:
                 new_efficiency = (
-                    new_J_sc * original_V_oc * new_fill_factor
-                ) / original_intensity
+                    (new_J_sc * original_V_oc * new_fill_factor)
+                    / original_intensity
+                    * 100
+                )
             else:
                 new_efficiency = jv_dict['Efficiency'][
                     light_idx

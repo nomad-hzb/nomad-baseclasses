@@ -32,18 +32,24 @@ def get_xas_archive(data, dateline, entry_class):
         else None
     )
     entry_class.k0 = (
-        data['K0'] if 'K0' in data.columns
-        else data['I0_A'] if 'I0_A' in data.columns
+        data['K0']
+        if 'K0' in data.columns
+        else data['I0_A']
+        if 'I0_A' in data.columns
         else None
     )
     entry_class.k1 = (
-        data['K1'] if 'K1' in data.columns
-        else data['I1_A'] if 'I1_A' in data.columns
+        data['K1']
+        if 'K1' in data.columns
+        else data['I1_A']
+        if 'I1_A' in data.columns
         else None
     )
     entry_class.k3 = (
-        data['K3'] if 'K3' in data.columns
-        else data['I2_A'] if 'I2_A' in data.columns
+        data['K3']
+        if 'K3' in data.columns
+        else data['I2_A']
+        if 'I2_A' in data.columns
         else None
     )
 
