@@ -37,6 +37,7 @@ class Substrate(Entity):
     )
 
     pixel_area = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO/TFSCO_00003507"],
         type=np.dtype(np.float64),
         unit='cm**2',
         shape=[],

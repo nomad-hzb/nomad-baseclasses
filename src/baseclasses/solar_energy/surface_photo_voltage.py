@@ -46,6 +46,7 @@ class trSPVProperties(ArchiveSection):
     )
 
     number_of_averages = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00003100","https://purl.archive.org/tfsco/TFSCO_00005762"],
         type=np.dtype(np.int64),
         a_eln=dict(
             component='NumberEditQuantity',
