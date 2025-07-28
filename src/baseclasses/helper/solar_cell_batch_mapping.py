@@ -34,6 +34,9 @@ from baseclasses.vapour_based_deposition.sputtering import SputteringProcess
 from baseclasses.wet_chemical_deposition import PrecursorSolution
 from baseclasses.wet_chemical_deposition.blade_coating import BladeCoatingProperties
 from baseclasses.wet_chemical_deposition.dip_coating import DipCoatingProperties
+from baseclasses.wet_chemical_deposition.gravure_printing import (
+    GravurePrintingProperties,
+)
 from baseclasses.wet_chemical_deposition.inkjet_printing import (
     InkjetPrintingProperties,
     LP50NozzleVoltageProfile,
@@ -492,6 +495,110 @@ def map_blade_coating(i, j, lab_ids, data, upload_id, blade_coating_class):
 
     material = get_value(data, 'Material name', '', False)
     return (f'{i}_{j}_blade_coating_{material}', archive)
+
+
+def map_gravure_printing(i, j, lab_ids, data, upload_id, gravure_printing_class):
+    archive = gravure_printing_class(
+        name='gravure printing ' + get_value(data, 'Material name', '', False),
+        location=get_value(data, 'Tool/GB name', '', False),
+        positon_in_experimental_plan=i,
+        description=get_value(data, 'Notes', None, False),
+        samples=[
+            CompositeSystemReference(
+                reference=get_reference(upload_id, f'{lab_id}.archive.json'),
+                lab_id=lab_id,
+            )
+            for lab_id in lab_ids
+        ],
+        solution=[
+            PrecursorSolution(
+                solution_details=map_solutions(data),
+                solution_volume=get_value(
+                    data,
+                    ['Solution volume [um]', 'Solution volume [uL]'],
+                    None,
+                    unit=['uL', 'uL'],
+                ),
+                solution_viscosity=get_value(
+                    data,
+                    'Viscosity [mPa*s]',
+                    None,
+                    unit=['mPa*s'],
+                ),
+                solution_contact_angle=get_value(
+                    data,
+                    'Contact angle [°]',
+                    None,
+                    unit=['°'],
+                ),
+            )
+        ],
+        layer=map_layer(data),
+        atmosphere=map_atmosphere(data),
+        annealing=map_annealing(data),
+        properties=GravurePrintingProperties(
+            gp_coating_speed=get_value(
+                data, 'Coating Speed [m/min]', None, True, unit='m/minute'
+            ),
+            screen_ruling=get_value(data, 'Screen Ruling [lines/cm]', None, True, None),
+            gp_method=get_value(data, 'R2R or S2S', '', False),
+            gp_direction=get_value(data, 'Forward or Reverse', '', False),
+            cell_type=get_value(data, 'Cell Type', None, False),
+        ),
+    )
+
+    if get_value(data, 'Anti solvent name', None, False):
+        archive.quenching = AntiSolventQuenching(
+            anti_solvent_volume=get_value(
+                data, 'Anti solvent volume [ml]', None, unit='mL'
+            ),
+            anti_solvent_dropping_time=get_value(
+                data, 'Anti solvent dropping time [s]', None, unit='s'
+            ),
+            anti_solvent_dropping_height=get_value(
+                data, 'Anti solvent dropping heigt [mm]', None, unit='mm'
+            ),
+            anti_solvent_dropping_flow_rate=get_value(
+                data,
+                [
+                    'Anti solvent dropping speed [ul/s]',
+                    'Anti solvent dropping speed [uL/s]',
+                ],
+                None,
+                unit=['uL/s', 'uL/s'],
+            ),
+            anti_solvent_2=PubChemPureSubstanceSectionCustom(
+                name=get_value(data, 'Anti solvent name', None, False), load_data=False
+            ),
+        )
+
+    if get_value(data, 'Air knife angle [°]', None, unit='°'):
+        archive.quenching = AirKnifeGasQuenching(
+            air_knife_angle=get_value(data, 'Air knife angle [°]', None, unit='°'),
+            # is this the same as (drying) gas flow rate/velocity?
+            bead_volume=get_value(data, 'Bead volume [mm/s]', None, unit='mm/s'),
+            drying_speed=get_value(
+                data, 'Drying speed [cm/min]', None, unit='cm/minute'
+            ),
+            air_knife_distance_to_thin_film=get_value(
+                data, 'Air knife gap [cm]', None, unit='cm'
+            ),
+            drying_gas_temperature=get_value(
+                data,
+                ['Drying gas temperature [°]', 'Drying gas temperature [°C]'],
+                None,
+                unit=['°C', '°C'],
+            ),
+            heat_transfer_coefficient=get_value(
+                data,
+                'Heat transfer coefficient [W m^-2 K^-1]',
+                None,
+                unit='W/(K*m**2)',
+            ),
+        )
+
+    material = get_value(data, 'Material name', '', False)
+    return (f'{i}_{j}_gravure_printing_{material}', archive)
 
 
 def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
