@@ -52,6 +52,8 @@ class TRPLPropertiesBasic(ArchiveSection):
     )
 
     integration_time = Quantity(
+        links=["https://purl.archive.org/tfsco/TFSCO_00002076",
+               "https://purl.archive.org/tfsco/TFSCO_00002093"],
         type=np.dtype(np.float64),
         unit=('s'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
