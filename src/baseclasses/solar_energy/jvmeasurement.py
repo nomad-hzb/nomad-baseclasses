@@ -314,7 +314,7 @@ class SolarCellJVCurve(SolarCellJV):
         if (
             self.current_density is not None
             and self.efficiency is None
-            and not self.dark
+            and not getattr(self, 'dark', False)
         ):
             if self.voltage is not None:
                 (
