@@ -23,6 +23,7 @@ from nomad.units import ureg
 from baseclasses.solar_energy.jvmeasurement import (
     SolarCellJVCurveCustom,
     SolarCellJVCurveDarkCustom,
+    SolarCellJVCurve
 )
 
 
@@ -49,6 +50,13 @@ def get_jv_archive(jv_dict, mainfile, jvm, append=False):
                 current_density=curve['current_density'],
                 dark=True,
             )
+        elif curve.get('name').startswith('pixel'): #for the tfsc measurements
+            jv_set = SolarCellJVCurve(
+                cell_name=curve['name'],
+                voltage=curve['voltage'],
+                current_density=curve['current_density'],
+            )
+            
         else:
             jv_set = SolarCellJVCurveCustom(
                 cell_name=curve['name'],
