@@ -100,34 +100,44 @@ def get_datetime(data, key):
         str: Formatted datetime string in NOMAD format ('%Y-%m-%d %H:%M:%S.%f')
         None: If key is missing, value is NaN, or parsing fails
     """
-    # Check if key exists and value is not NaN
+    import pandas as pd
+
     if key not in data or pd.isna(data[key]):
         return None
 
-    # List of supported date formats to try
-    date_formats = [
-        '%d-%m-%Y',  # 25-12-2024
-        '%d/%m/%Y',  # 25/12/2024
-        '%d.%m.%Y',  # 25.12.2024
-        '%Y-%m-%d',  # 2024-12-25 (ISO format)
-        '%d-%m-%y',  # 25-12-24 (2-digit year)
-        '%d/%m/%y',  # 25/12/24 (2-digit year)
-    ]
-
     date_value = str(data[key]).strip()
 
-    # Try each format until one works
+    # List of supported date formats to try (with and without time)
+    date_formats = [
+        '%d-%m-%Y',
+        '%d/%m/%Y',
+        '%d.%m.%Y',
+        '%Y-%m-%d',  # ISO date
+        '%d-%m-%y',
+        '%d/%m/%y',
+        '%Y-%m-%d %H:%M:%S',  # ISO with time
+        '%Y-%m-%d %H:%M:%S.%f',
+        '%d-%m-%Y %H:%M:%S',
+        '%d/%m/%Y %H:%M:%S',
+        '%d.%m.%Y %H:%M:%S',
+    ]
+
     for date_format in date_formats:
         try:
-            datetime_object = datetime.strptime(date_value, date_format)
-            # Convert to NOMAD format with midnight time
-            return datetime_object.strftime('%Y-%m-%d %H:%M:%S.%f')
+            dt = datetime.strptime(date_value, date_format)
+            return dt.strftime('%Y-%m-%d %H:%M:%S.%f')
         except ValueError:
-            continue  # Try next format
+            continue
 
-    # If no format worked, log warning and return None
+    # Try pandas as a fallback (handles many formats)
+    try:
+        dt = pd.to_datetime(date_value)
+        return dt.strftime('%Y-%m-%d %H:%M:%S.%f')
+    except Exception:
+        pass
+
     print(
-        f"Warning: Could not parse date '{date_value}' with key '{key}'. Supported formats: {date_formats}"
+        f"Warning: Could not parse date '{date_value}' with key '{key}'. Tried formats: {date_formats}"
     )
     return None
 
