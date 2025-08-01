@@ -135,7 +135,7 @@ class SEMImage_Zeiss_Detector(Image):
 
 class SEM_Microscope_Merlin(SEMMicroscopeTechnique):
     @staticmethod
-    def get_data(file_name):
+    def get_data(file_name, original_file_name=None):
         if file_name.lower().endswith('.tif'):
             from datetime import datetime
 
@@ -143,9 +143,13 @@ class SEM_Microscope_Merlin(SEMMicroscopeTechnique):
 
             try:
                 tif_file = hs.load(file_name)
-
-                png_file = os.path.splitext(file_name)[0] + '_preview.png'
-                tif_file.save(png_file, overwrite=True)
+                png_file = None
+                if original_file_name:
+                    png_file = os.path.splitext(original_file_name)[0] + '_preview.png'
+                    try:
+                        tif_file.save(png_file, overwrite=False)
+                    except Exception:
+                        pass
 
                 store_resolution = get_parameter(
                     ['CZ_SEM', 'dp_image_store'], tif_file.original_metadata, 1

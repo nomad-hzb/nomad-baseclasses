@@ -58,7 +58,8 @@ class CPOERAnalysisResult(AnalysisResult):
     experiment_duration = Quantity(type=np.dtype(np.float64), unit=('s'))
     reaction_type = Quantity(
         type=str,
-        description='At the moment only OER CP is supported. In the future maybe also NRR CP.',
+        description='At the moment only OER CP is supported.'
+        'In the future maybe also NRR CP.',
     )
     voltage_shift = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0007219'],
@@ -111,7 +112,7 @@ class CPAnalysis(Analysis):
             duration = input_obj.time[-1]
 
             # start a new group if the current density changes
-            # only group together if same current density is immediately following each other
+            # group together if same current density is immediately following each other
             if (
                 recent_group is None
                 or recent_group['current_density'] != current_density
@@ -156,7 +157,6 @@ class CPAnalysis(Analysis):
 
         if self.inputs is not None and len(self.inputs) > 0:
             for sample in self.inputs[0].reference.samples:
-                export_lab_id(archive, sample.lab_id)
                 if sample.reference.chemical_composition_or_formulas is not None:
                     if not archive.results:
                         archive.results = Results()

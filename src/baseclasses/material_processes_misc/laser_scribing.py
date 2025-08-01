@@ -79,6 +79,31 @@ class LaserScribingProperties(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity', props=dict(minValue=0)),
     )
 
+    cell_width = Quantity(
+        type=np.dtype(np.float64),
+        unit=('mm'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mm',
+        ),
+    )
+
+    dead_area = Quantity(
+        type=np.dtype(np.float64),
+        unit=('cm**2'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='cm**2',
+        ),
+    )
+
+    number_of_cells = Quantity(
+        type=np.dtype(np.int64),
+        a_eln=dict(
+            component='NumberEditQuantity',
+        ),
+    )
+
 
 class LaserScribing(BaseProcess):
     """Baseclass for laser scribing of ITO substrates"""
@@ -87,6 +112,23 @@ class LaserScribing(BaseProcess):
         type=str,
         a_eln=dict(component='FileEditQuantity'),
         a_browser=dict(adaptor='RawFileAdaptor'),
+    )
+
+    patterning = Quantity(
+        type=str,
+        description=('States the patterning step'),
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(suggestions=['P1', 'P2', 'P3', 'Commercially Etched']),
+        ),
+    )
+
+    layout = Quantity(
+        type=str,
+        description=(
+            'Layout of solar cell electrodes and connections dictating the laser scribing paths'
+        ),
+        a_eln=dict(component='StringEditQuantity'),
     )
 
     properties = SubSection(section_def=LaserScribingProperties)

@@ -26,11 +26,22 @@ import pandas as pd
 import pytz
 from ase.formula import Formula as ASEFormula
 from nomad.datamodel.metainfo.basesections import CompositeSystemReference
+from nomad.datamodel.results import ELN, Results
 from tabulate import tabulate
 
 
 def get_elements_from_formula(formula):
     return list(ASEFormula(formula).count().keys())
+
+
+def export_lab_id(archive, lab_id):
+    if not archive.results:
+        archive.results = Results(eln=ELN())
+    if not archive.results.eln:
+        archive.results.eln = ELN()
+    if lab_id:
+        archive.results.eln.lab_ids = []
+        archive.results.eln.lab_ids = [lab_id, lab_id[:4]]
 
 
 def traverse_dictionary(entry_dict, key, value):
@@ -143,7 +154,7 @@ def add_key_item(md, key, item, item_entry, indent=0):
         md += f'{shift}**{key.capitalize()}**:  \n'
         for list_idx, subsection in enumerate(item):
             shift2 = '&nbsp;' * 4
-            md += f'{shift}{shift2}**{list_idx+1}.** '
+            md += f'{shift}{shift2}**{list_idx + 1}.** '
             if isinstance(subsection, dict):
                 indent2 = 0
                 for key2, item2 in subsection.items():
@@ -214,7 +225,7 @@ def get_solutions(list_sol):
             ]
         )
         sol_table = get_solution(sol)
-        final_string += f"<br><b>{getattr(sol, 'name', [])}</b>:  <br>"
+        final_string += f'<br><b>{getattr(sol, "name", [])}</b>:  <br>'
         params_str = ', '.join(
             [
                 f'{key}={get_as_displayunit(sol, key)}'
@@ -223,7 +234,7 @@ def get_solutions(list_sol):
         )
         final_string += f'{params_str}  <br>'
         final_string += (
-            f"Description: <br> {getattr(sol, 'description', '     ')}  <br>"
+            f'Description: <br> {getattr(sol, "description", "     ")}  <br>'
         )
         final_string += sol_table
         final_strings.append(final_string)
@@ -231,7 +242,9 @@ def get_solutions(list_sol):
 
 
 def add_section_markdown(md, index_plan, index_batch, batch_process, process_batch):
-    md += f'### {index_plan+1}.{index_batch+1} {batch_process.name.capitalize()}  \n'
+    md += (
+        f'### {index_plan + 1}.{index_batch + 1} {batch_process.name.capitalize()}  \n'
+    )
     data_dict = batch_process.m_to_dict()
     md += f'**Batch Id**: {process_batch}  \n'
     for key, item in data_dict.items():
@@ -352,6 +365,34 @@ def set_sample_reference(archive, entry, search_id, upload_id=None):
             entry.samples = [
                 CompositeSystemReference(reference=get_reference(upload_id, entry_id))
             ]
+        if 'electrolyser' in data['entry_type'].lower():
+            entry.samples = [
+                CompositeSystemReference(reference=get_reference(upload_id, entry_id))
+            ]
+
+
+def create_short_id(archive, lab_id_base, entry_type):
+    from nomad.app.v1.models import MetadataPagination
+    from nomad.search import search
+
+    query = {'entry_type': entry_type, 'results.eln.lab_ids': lab_id_base}
+    pagination = MetadataPagination()
+    pagination.page_size = 9999
+    search_result = search(
+        owner='all',
+        query=query,
+        pagination=pagination,
+        user_id=archive.metadata.main_author.user_id,
+    )
+    from nomad_chemical_energy.schema_packages.hzb_catlab_package import (
+        get_next_project_sample_number,
+    )
+
+    project_sample_number = get_next_project_sample_number(
+        search_result.data, archive.metadata.entry_id
+    )
+
+    return f'{lab_id_base}{project_sample_number:04d}'
 
 
 def get_entry_reference(archive, entry, search_id):

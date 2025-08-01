@@ -29,8 +29,8 @@ maintainers = [
 ]
 license = { file = "LICENSE" }
 dependencies = [
-    "nomad-lab>=1.3.10",
-    "nomad-lab[infrastructure]>=1.3.10",
+    "nomad-lab>=1.3.16",
+    "nomad-lab[infrastructure]>=1.3.16",
     'openpyxl>=3.0.0',
     'networkx>=3.3',
     'matid>=2.0.0.dev2',
@@ -38,7 +38,10 @@ dependencies = [
     'markdown2>=2.4.8',
     'qrcode>=7.4.2 ',
     'hdf5plugin>=4.3',
-    'hyperspy>=2.1.1'
+    'hyperspy>=2.1.1',
+    'pydantic<2.11', 
+    'nomad-schema-plugin-run>=1.0.1',
+    'nomad-schema-plugin-simulation-workflow>=1.0.1'
 ]
 
 [project.urls]

@@ -49,7 +49,7 @@ class SolutionChemicalNew(ArchiveSection):
                     'chemical_volumne',
                     'concentration_mass',
                     'concentration_mol',
-                    'amount_relative' '',
+                    'amount_relative',
                 ],
             ),
         ),

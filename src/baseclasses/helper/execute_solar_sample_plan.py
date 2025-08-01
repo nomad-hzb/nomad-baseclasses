@@ -89,7 +89,7 @@ def set_process_parameters(process, parameters, i, plan_obj, logger):
                     logger,
                     f'Could not set {p[1]} to {p[2]} {p[3]}, likely due to a faulty path or unit',
                 )
-    process.name += f" {','.join(names)}"
+    process.name += f' {",".join(names)}'
 
 
 def add_sample(plan_obj, archive, idx1, idx2, sample_cls):
@@ -201,7 +201,7 @@ def add_process(plan_obj, archive, step, process, idx1, idx2):
 
     # file_name_process = f'{name.replace(" ","_")}_{file_name_base}_{randStr()}.archive.json'
     file_name_process = (
-        f'{idx2+1}_{name.replace("  ","_").replace(" ","_")}.archive.json'
+        f'{idx2 + 1}_{name.replace("  ", "_").replace(" ", "_")}.archive.json'
     )
     process.positon_in_experimental_plan = idx2 + 1
     entry_id = get_entry_id_from_file_name(file_name_process, archive)

@@ -24,9 +24,16 @@ from .spv import SPV
 from .sxm import SXM
 from .tem import TEM
 from .tga import TGA
-from .xas import XAS, XASFluorescence, XASTransmission
+from .xas import XAS, XASFluorescence, XASTransmission, XASWithSDD
 from .xpeem import XPEEM
-from .xps import XPS, XPSLibrary
+from .xps import (
+    PES,
+    XPS,
+    PESSpecsLabProdigyAnalyzerParameters,
+    PESSpecsLabProdigySettings,
+    PESSpecsLabProdigySourceParameters,
+    XPSLibrary,
+)
 from .xrd import XRD, XRDData, XRDLibrary
 from .xrf import (
     XRF,

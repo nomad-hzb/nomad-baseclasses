@@ -22,7 +22,7 @@ from nomad.datamodel.metainfo.basesections import (
     CompositeSystemReference,
     Measurement,
 )
-from nomad.datamodel.results import Material
+from nomad.datamodel.results import Material, Results
 from nomad.metainfo import Quantity, Reference, SubSection
 from nomad_material_processing.combinatorial import (
     CombinatorialLibrary,
@@ -46,6 +46,7 @@ def collectSampleData(archive):
     # search for all archives referencing this archive
     query = {
         'entry_references.target_entry_id': archive.metadata.entry_id,
+        'section_defs.definition_qualified_name:any': ['baseclasses.BaseProcess'],
     }
     pagination = MetadataPagination()
     pagination.page_size = 100
@@ -136,7 +137,7 @@ class SynthesisVariation(ArchiveSection):
     )
 
     variation_value_number = Quantity(
-        type=str,
+        type=float,
         description="""
         The numerical value of a continous paramter which is varied over a campaign
         """,
@@ -217,8 +218,8 @@ class CatalysisSample(CombinatorialLibrary):
     parent = SubSection(section_def=CompositeSystemReference)
 
     def normalize(self, archive, logger):
-        super().normalize(archive, logger)
-
+        if not archive.results:
+            archive.results = Results()
         if not archive.results.material:
             archive.results.material = Material()
         archive.results.material.elements = []
@@ -229,6 +230,7 @@ class CatalysisSample(CombinatorialLibrary):
                 continue
             archive.results.material.elements.extend(process['elements'])
         archive.results.material.elements = list(set(archive.results.material.elements))
+        super().normalize(archive, logger)
 
 
 class CatalysisLibrary(LibrarySample):

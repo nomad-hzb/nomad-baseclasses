@@ -16,13 +16,71 @@
 # limitations under the License.
 #
 
-from nomad.metainfo import Quantity, Section
+import numpy as np
+from nomad.datamodel.data import ArchiveSection
+from nomad.metainfo import Quantity, Section, SubSection
 
 from .. import BaseMeasurement, LibraryMeasurement
 
 
-class XPS(BaseMeasurement):
-    """XPS Measurement"""
+class PESSpecsLabProdigyAnalyzerParameters(ArchiveSection):
+    polar_angle = Quantity(type=np.dtype(np.float64), unit='degree')
+    azimuth_angle = Quantity(type=np.dtype(np.float64), unit='degree')
+    rotation_angle = Quantity(type=np.dtype(np.float64), unit='degree')
+    coil_current = Quantity(type=np.dtype(np.float64), unit='A')
+    bias_voltage_ions = Quantity(type=np.dtype(np.float64), unit='V')
+    bias_voltage_electrons = Quantity(type=np.dtype(np.float64), unit='V')
+    detector_voltage = Quantity(type=np.dtype(np.float64), unit='V')
+    work_function = Quantity(type=np.dtype(np.float64))
+    focus_displacement = Quantity(type=np.dtype(np.float64))
+    l1 = Quantity(type=np.dtype(np.float64))
+
+
+class PESSpecsLabProdigySourceParameters(ArchiveSection):
+    polar_angle = Quantity(type=np.dtype(np.float64), unit='degree')
+    azimuth_angle = Quantity(type=np.dtype(np.float64), unit='degree')
+    excitation_energy = Quantity(type=np.dtype(np.float64), unit='eV')
+    device_state = Quantity(type=str)
+    preset_name = Quantity(type=str)
+    anode = Quantity(type=str)
+    anode_voltage = Quantity(type=np.dtype(np.float64), unit='V')
+    anode_current = Quantity(type=np.dtype(np.float64), unit='mA')
+    filament_current = Quantity(type=np.dtype(np.float64), unit='mA')
+    filament_voltage = Quantity(type=np.dtype(np.float64), unit='V')
+    power = Quantity(type=np.dtype(np.float64), unit='W')
+    emission = Quantity(type=np.dtype(np.float64), unit='mA')
+    arcs = Quantity(type=np.dtype(np.float64))
+    lens_voltage = Quantity(type=np.dtype(np.float64), unit='V')
+    lens_current = Quantity(type=np.dtype(np.float64), unit='mA')
+    focused = Quantity(type=str)
+    settings_summary = Quantity(type=str)
+
+
+class PESSpecsLabProdigySettings(ArchiveSection):
+    region = Quantity(type=str)
+    calibration_file = Quantity(type=str)
+    analyzer_lens_mode = Quantity(type=str)
+    scan_variable = Quantity(type=str)
+    step_size = Quantity(type=np.dtype(np.float64), unit='eV')
+    dwell_time = Quantity(type=np.dtype(np.float64), unit='s')
+    excitation_energy = Quantity(type=np.dtype(np.float64), unit='eV')
+    kinetic_energy = Quantity(type=np.dtype(np.float64), unit='eV')
+    binding_energy = Quantity(type=np.dtype(np.float64), unit='eV')
+    pass_energy = Quantity(type=np.dtype(np.float64), unit='eV')
+    bias_voltage = Quantity(type=np.dtype(np.float64), unit='V')
+    detector_voltage = Quantity(type=np.dtype(np.float64), unit='V')
+    effective_work_function = Quantity(type=np.dtype(np.float64), unit='eV')
+    iris_diameter = Quantity(type=np.dtype(np.float64), unit='mm')
+    sample_bias_voltage = Quantity(type=np.dtype(np.float64), unit='V')
+    he_gas_pressure = Quantity(type=np.dtype(np.float64), unit='mbar')
+    analyzer_slit = Quantity(type=str)
+    analyzer_lens_voltage = Quantity(type=str)
+    analyzer_parameters = SubSection(section_def=PESSpecsLabProdigyAnalyzerParameters)
+    source_parameters = SubSection(section_def=PESSpecsLabProdigySourceParameters)
+
+
+class PES(BaseMeasurement):
+    """PES Measurement"""
 
     data_file = Quantity(
         type=str,
@@ -31,8 +89,18 @@ class XPS(BaseMeasurement):
     )
 
     def normalize(self, archive, logger):
+        if not self.method:
+            self.method = 'Photoemission spectroscopy'
         super().normalize(archive, logger)
-        self.method = 'X-ray photoelectron spectroscopy'
+
+
+class XPS(PES):
+    """XPS Measurement"""
+
+    def normalize(self, archive, logger):
+        if not self.method:
+            self.method = 'X-ray photoelectron spectroscopy'
+        super().normalize(archive, logger)
 
 
 class XPSLibrary(LibraryMeasurement):

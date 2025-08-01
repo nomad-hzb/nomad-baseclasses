@@ -95,7 +95,7 @@ class UVvisProperties(ArchiveSection):
     )
 
     number_of_averages = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO/TFSCO_00003003'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00003003'],
         type=np.dtype(np.int64),
         a_eln=dict(component='NumberEditQuantity'),
     )

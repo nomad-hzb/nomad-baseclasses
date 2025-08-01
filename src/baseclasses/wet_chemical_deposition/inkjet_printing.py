@@ -25,7 +25,11 @@ from .wet_chemical_deposition import WetChemicalDeposition
 
 
 class NozzleVoltageProfile(ArchiveSection):
-    pass
+    config_file = Quantity(
+        type=str,
+        a_eln=dict(component='FileEditQuantity'),
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
 
 
 class PrintHeadPath(ArchiveSection):
@@ -76,8 +80,7 @@ class PrintHeadPath(ArchiveSection):
 
     directional = Quantity(
         links=['https://purl.archive.org/tfsco/TFSCO_00005077'],
-        type=MEnum('uni-directional', 'bi-directional', 'uni-directional reverse'),
-        shape=[],
+        type=str,
         a_eln=dict(
             component='EnumEditQuantity',
         ),
@@ -177,7 +180,6 @@ class LP50NozzleVoltageProfile(NozzleVoltageProfile):
     number_of_pulses = Quantity(
         type=np.dtype(np.int64),
         a_eln=dict(component='NumberEditQuantity', props=dict(minValue=1)),
-
     )
 
     voltage_a = Quantity(
@@ -200,6 +202,7 @@ class LP50NozzleVoltageProfile(NozzleVoltageProfile):
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='us',
+            props=dict(minValue=0.1, maxValue=25),
             props=dict(minValue=0.1, maxValue=25),
         ),
     )
@@ -475,6 +478,14 @@ class PrintHeadProperties(ArchiveSection):
         type=np.dtype(np.int64), a_eln=dict(component='NumberEditQuantity')
     )
 
+    active_nozzles = Quantity(
+        type=str,
+        shape=[],
+        a_eln=dict(
+            component='StringEditQuantity',
+        ),
+    )
+
 
 class InkjetPrintingProperties(ArchiveSection):
     # m_def = Section(label_quantity='name')
@@ -502,6 +513,12 @@ class InkjetPrintingProperties(ArchiveSection):
     )
 
     drop_density = Quantity(
+        type=np.dtype(np.float64),
+        unit=('1/in'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='1/in'),
+    )
+
+    drop_density_y = Quantity(
         type=np.dtype(np.float64),
         unit=('1/in'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='1/in'),
@@ -568,6 +585,12 @@ class InkjetPrintingProperties(ArchiveSection):
         a_eln=dict(component='StringEditQuantity'),
     )
 
+    image_used = Quantity(
+        links=[],
+        type=str,
+        a_eln=dict(component='StringEditQuantity'),
+    )
+
     print_head_properties = SubSection(section_def=PrintHeadProperties)
 
 
@@ -601,6 +624,11 @@ class InkjetPrinting(WetChemicalDeposition):
     print_head_path = SubSection(
         links=['http://purl.obolibrary.org/obo/OBI_0000293'],
         section_def=PrintHeadPath,
+    )
+
+    nozzle_voltage_profile = SubSection(
+        links=['http://purl.obolibrary.org/obo/OBI_0000293'],
+        section_def=NozzleVoltageProfile,
     )
 
     def normalize(self, archive, logger):

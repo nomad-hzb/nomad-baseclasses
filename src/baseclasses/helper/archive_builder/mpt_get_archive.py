@@ -6,7 +6,7 @@ from nomad.units import ureg
 
 import baseclasses
 from baseclasses.chemical_energy.cyclicvoltammetry import CVProperties
-from baseclasses.chemical_energy.electorchemical_impedance_spectroscopy import (
+from baseclasses.chemical_energy.electrochemical_impedance_spectroscopy import (
     EISCycle,
     EISProperties,
 )

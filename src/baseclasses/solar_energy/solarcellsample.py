@@ -214,31 +214,31 @@ def addLayerDepositionToStack(archive, process):
             layer_name
         )
 
-        if 'absorber' in layer['layer_type'].lower():
+        if 'absorber' in layer.get('layer_type', '').lower():
             archive.results.properties.optoelectronic.solar_cell.absorber.append(
                 layer_name
             )
             archive.results.properties.optoelectronic.solar_cell.absorber_fabrication = [
-                f"{process['method']}"
+                f'{process["method"]}'
             ]
 
         if (
-            'etl' in layer['layer_type'].lower()
-            or 'electron' in layer['layer_type'].lower()
+            'etl' in layer.get('layer_type', '').lower()
+            or 'electron' in layer.get('layer_type', '').lower()
         ):
             archive.results.properties.optoelectronic.solar_cell.electron_transport_layer.append(
                 layer_name
             )
 
         if (
-            'htl' in layer['layer_type'].lower()
-            or 'hole' in layer['layer_type'].lower()
+            'htl' in layer.get('layer_type', '').lower()
+            or 'hole' in layer.get('layer_type', '').lower()
         ):
             archive.results.properties.optoelectronic.solar_cell.hole_transport_layer.append(
                 layer_name
             )
 
-        if 'back' in layer['layer_type'].lower():
+        if 'back' in layer.get('layer_type', '').lower():
             archive.results.properties.optoelectronic.solar_cell.back_contact.append(
                 layer_name
             )

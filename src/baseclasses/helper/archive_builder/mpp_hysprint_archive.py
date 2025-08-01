@@ -13,7 +13,7 @@ def get_mpp_hysprint_samples(entry_self, data):
         ):
             sample_entry = entry_self.samples[sample_idx]
 
-        sample_entry.name = f"Sample {sample['id']} (in Box)"
+        sample_entry.name = f'Sample {sample["id"]} (in Box)'
         sample_entry.time = df.groupby(
             pd.Grouper(
                 key='Timestamp', freq=f'{entry_self.averaging_grouping_minutes}Min'
@@ -38,7 +38,7 @@ def get_mpp_hysprint_samples(entry_self, data):
                 sample['pixels']
             ):
                 pixel_entry = sample_entry.pixels[pixel_idx]
-            pixel_entry.name = f"Pixel {pixel['id']}"
+            pixel_entry.name = f'Pixel {pixel["id"]}'
             df_tmp = (
                 df[['Timestamp', 'Duration_h', 'MPPT_V', 'MPPT_EFF', 'MPPT_J']]
                 .groupby(

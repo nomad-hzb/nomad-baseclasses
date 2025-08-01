@@ -25,7 +25,11 @@ from ..chemical import Chemical
 
 
 class Quenching(ArchiveSection):
-    pass
+    comment = Quantity(
+        type=str,
+        description='Comments regarding the drying/quenching procedures.',
+        a_eln=dict(component='RichTextEditQuantity'),
+    )
 
 
 class AntiSolventQuenching(Quenching):
@@ -120,12 +124,12 @@ class GasQuenching(Quenching):
 
 
 class GasQuenchingWithNozzle(GasQuenching):
-    m_def = Section(links=['https://purl.archive.org/tfsco/TFSCO/TFSCO_00003300'])
+    m_def = Section(links=['https://purl.archive.org/tfsco/TFSCO_00003300'])
 
     starting_delay = Quantity(
         links=[
-            'https://purl.archive.org/tfsco/TFSCO/TFSCO_00003301',
-            'https://purl.archive.org/tfsco/TFSCO/TFSCO_00003312',
+            'https://purl.archive.org/tfsco/TFSCO_00003301',
+            'https://purl.archive.org/tfsco/TFSCO_00003312',
         ],
         type=np.dtype(np.float64),
         unit=('s'),
@@ -154,8 +158,8 @@ class GasQuenchingWithNozzle(GasQuenching):
 
     height = Quantity(
         links=[
-            'https://purl.archive.org/tfsco/TFSCO/TFSCO_00003302',
-            'https://purl.archive.org/tfsco/TFSCO/TFSCO_00003308',
+            'https://purl.archive.org/tfsco/TFSCO_00003302',
+            'https://purl.archive.org/tfsco/TFSCO_00003308',
         ],
         type=np.dtype(np.float64),
         description=('Distance Nozzle-Sample.'),
@@ -198,7 +202,7 @@ class GasQuenchingWithNozzle(GasQuenching):
     )
 
     velocity = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO/TFSCO_00003313'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00003313'],
         type=np.dtype(np.float64),
         description=(
             'Speed of gas at the nozzle tip (Calculated from Flow and Nozzle Area)'
@@ -212,7 +216,7 @@ class GasQuenchingWithNozzle(GasQuenching):
     )
 
     nozzle_shape = Quantity(
-        links=['https://purl.archive.org/tfsco/TFSCO/TFSCO_00003304'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00003304'],
         type=str,
         description=('Description of the nozzle shape.'),
         a_eln=dict(component='StringEditQuantity'),
@@ -220,7 +224,13 @@ class GasQuenchingWithNozzle(GasQuenching):
 
     nozzle_size = Quantity(
         type=str,
-        description=('Description of the nozzle size.'),
+        description=('Description of the nozzle size, customary given in [mm²].'),
+        a_eln=dict(component='StringEditQuantity'),
+    )
+
+    nozzle_type = Quantity(
+        type=str,
+        description=('Type/name of the nozzle.'),
         a_eln=dict(component='StringEditQuantity'),
     )
 
@@ -243,6 +253,20 @@ class VacuumQuenching(Quenching):
         unit=('s'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
     )
+
+    temperature = Quantity(
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='°C',
+        ),
+    )
+
+
+class GasFlowAssistedVacuumDrying(Quenching):
+    vacuum_properties = SubSection(section_def=VacuumQuenching)
+    gas_quenching_properties = SubSection(section_def=GasQuenchingWithNozzle)
 
 
 class AirKnifeGasQuenching(GasQuenching):

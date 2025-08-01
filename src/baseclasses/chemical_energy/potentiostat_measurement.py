@@ -20,7 +20,9 @@ import os
 
 import numpy as np
 import pandas as pd
+from nomad.atomutils import Formula
 from nomad.datamodel.data import ArchiveSection
+from nomad.datamodel.results import Material, Results
 from nomad.metainfo import Quantity, Reference, Section, SectionProxy, SubSection
 
 from .. import BaseMeasurement
@@ -34,6 +36,121 @@ class PotentiostatProperties(ArchiveSection):
         unit=('cm^2'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'),
     )
+
+
+class BioLogicSetting(PotentiostatProperties):
+    active_material_mass = Quantity(
+        type=np.dtype(np.float64),
+        unit=('g'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='g'),
+    )
+
+    at_x = Quantity(
+        type=np.dtype(np.float64),
+        a_eln=dict(component='NumberEditQuantity'),
+    )
+
+    molecular_weight = Quantity(
+        type=np.dtype(np.float64),
+        unit=('g/mol'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='g/mol'),
+    )
+
+    atomic_weight = Quantity(
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+    )
+
+    acquisition_start = Quantity(
+        type=np.dtype(np.float64),
+        unit=('s'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
+    )
+
+    e_transferred = Quantity(
+        type=np.dtype(np.int32),
+        a_eln=dict(component='NumberEditQuantity'),
+    )
+
+    electrode_material = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
+
+    electrolyte = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
+
+    reference_electrode = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
+
+    characteristic_mass = Quantity(
+        type=np.dtype(np.float64),
+        unit=('g'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='g'),
+    )
+
+    battery_capacity = Quantity(
+        type=np.dtype(np.float64),
+        unit=('A*hour'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='A*hour'),
+    )
+
+    analog_in_1 = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
+
+    analog_in_1_max_V = Quantity(
+        type=np.dtype(np.float64),
+        unit=('V'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
+
+    analog_in_1_min_V = Quantity(
+        type=np.dtype(np.float64),
+        unit=('V'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
+
+    analog_in_1_max_x = Quantity(
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
+
+    analog_in_1_min_x = Quantity(
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
+
+    analog_in_2 = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
+
+    analog_in_2_max_V = Quantity(
+        type=np.dtype(np.float64),
+        unit=('V'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
+
+    analog_in_2_min_V = Quantity(
+        type=np.dtype(np.float64),
+        unit=('V'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
+
+    analog_in_2_max_x = Quantity(
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
+
+    analog_in_2_min_x = Quantity(
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
+
+    def normalize(self, archive, logger):
+        if self.electrode_material and not archive.results:
+            archive.results = Results()
+            archive.results.material = Material()
+        try:
+            formula = Formula(self.electrode_material, unknown='remove')
+            archive.results.material.elements = list(set(formula.elements()))
+        except Exception as e:
+            logger.warn('Could not analyse material', exc_info=e)
+        super().normalize(archive, logger)
 
 
 class VoltammetryCycle(ArchiveSection):
