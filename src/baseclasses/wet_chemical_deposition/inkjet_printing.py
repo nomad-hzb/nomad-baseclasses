@@ -203,7 +203,6 @@ class LP50NozzleVoltageProfile(NozzleVoltageProfile):
             component='NumberEditQuantity',
             defaultDisplayUnit='us',
             props=dict(minValue=0.1, maxValue=25),
-            props=dict(minValue=0.1, maxValue=25),
         ),
     )
 
