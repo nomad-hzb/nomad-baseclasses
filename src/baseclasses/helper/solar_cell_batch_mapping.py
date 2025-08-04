@@ -40,6 +40,8 @@ from baseclasses.wet_chemical_deposition.inkjet_printing import (
     NozzleVoltageProfile,
     PrintHeadPath,
     PrintHeadProperties,
+    LP50NozzleVoltageProfile,
+    NotionNozzleVoltageProfile,
 )
 from baseclasses.wet_chemical_deposition.slot_die_coating import (
     SlotDieCoatingProperties,
@@ -467,6 +469,53 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
     return (f'{i}_{j}_slot_die_coating_{material}', archive)
 
 
+def map_inkjet_nozzle_voltage_profile(data):
+    print("data zum anschauen: ", data)
+    location = get_value(data, 'Tool/GB name', '', False)
+    if location in ['Pixdro', 'iLPixdro']:
+        number_of_pulses = get_value(data, 'Wf Number of Pulses', 0)
+        
+        params = {}
+        for i, suffix in enumerate(['a', 'b', 'c'], start=1):
+            if i <= number_of_pulses:
+                level = get_value(data, f'Wf Level {i}[V]', None)
+                rise = get_value(data, f'Wf Rise {i}[V/us]', None)
+                fall = get_value(data, f'Wf Fall {i}[V/us]', None)
+                params[f'voltage_{suffix}'] = level
+                params[f'rise_edge_{suffix}'] = level / rise if level and rise else None
+                params[f'peak_time_{suffix}'] = get_value(data, f'Wf Width {i}[us]', None)
+                params[f'fall_edge_{suffix}'] = level / fall if level and fall else None
+                params[f'time_space_{suffix}'] = get_value(data, f'Wf Space {i}[us]', None)
+            else:
+                params[f'voltage_{suffix}'] = None
+                params[f'rise_edge_{suffix}'] = None
+                params[f'peak_time_{suffix}'] = None
+                params[f'fall_edge_{suffix}'] = None
+                params[f'time_space_{suffix}'] = None
+    
+        print_head_waveform_parameters = LP50NozzleVoltageProfile(
+            number_of_pulses=number_of_pulses,
+            **params
+    )
+
+    elif location in ['iLNotion', 'Notion']: # printer param
+                print_head_waveform_parameters=NotionNozzleVoltageProfile(
+                    number_of_pulses=get_value(data, 'Wf Number of Pulses', None),
+                    #for loop over number of pulses with changing _a suffix of variales below
+                    delay_time_a=get_value(data, 'Wf Delay Time [us]', None),
+                    rise_edge_a=get_value(data, 'Wf Rise Time [us]', None),
+                    peak_time_a=get_value(data, 'Wf Hold Time [us]', None),
+                    fall_edge_a=get_value(data, 'Wf Fall Time [us]', None),
+                    time_space_a=get_value(data, 'Wf Relax Time [us]', None),
+                    voltage_a=get_value(data, 'Wf Voltage [V]', None),
+                    #multipulse_a=get_value(data, 'Wf Multipulse [1/0]', None),
+                    number_of_greylevels_a=get_value(data, 'Wf Number Greylevels', None),
+                    grey_level_0_pulse_a=get_value(data, 'Wf Grey Level 0 Use Pulse [1/0]', None),
+                    grey_level_1_pulse_a=get_value(data, 'Wf Grey Level 1 Use Pulse [1/0]', None),
+                    )
+    return print_head_waveform_parameters
+
+
 def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
     location = get_value(data, 'Tool/GB name', '', False)
     archive = inkjet_class(
@@ -540,6 +589,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                     data, 'Dropping Height [mm]', None, unit='mm'
                 ),
                 print_head_name=get_value(data, 'Printhead name', None, False),
+                print_head_waveform_parameters = map_inkjet_nozzle_voltage_profile(data),
             ),
             cartridge_pressure=get_value(
                 data,
@@ -664,6 +714,33 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
         )
     material = get_value(data, 'Material name', '', False)
     return (f'{i}_{j}_inkjet_printing_{material}', archive)
+
+
+def map_lamination(i, j, lab_ids, data, upload_id, lamination_class):
+    archive = lamination_class(
+        name='Lamination',
+        location=get_value(data, 'Tool/GB name', '', False),
+        position_in_experimental_plan=i, # Hier muss man evtl was anpassen, da das Lamination ja als letztes von zwei halbstacks ist...
+        description=get_value(data, 'Notes', '', False),
+        samples=[
+            CompositeSystemReference(
+                reference=get_reference(upload_id, f'{lab_id}.archive.json'),
+                lab_id=lab_id,
+            )
+            for lab_id in lab_ids
+        ],
+        temperature=get_value(data, 'Temperature [°C]', None),
+        pressure=get_value(data, 'Pressure [MPa]', None),
+        force=get_value(data, 'Force [N]', None),
+        area=get_value(data, 'Area [mm²]', None),
+        time=get_value(data, 'Time [s]', None),
+        heat_up_time=get_value(data, 'Heat up time [s]', None),
+        cool_down_time=get_value(data, 'Cool down time [s]', None),
+        stamp_material=get_value(data, 'Stamp Material', '', False),
+        stamp_thickness=get_value(data, 'Stamp Thickness [mm]', None),
+        stamp_area=get_value(data, 'Stamp Area [mm²]', None),
+    )
+    return (f'{i}_{j}_lamination', archive)
 
 
 def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
@@ -808,7 +885,7 @@ def map_evaporation(
             if get_value(data, 'Temperature [°C]', None):
                 evaporation.temparature = [
                     get_value(data, 'Temperature [°C]', None)
-                ] * 2
+                ] * 2       # warum wird hier die temperatur mit 2 multipliziert?
 
         if not evaporation:
             return (file_name, archive)
@@ -1057,7 +1134,7 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
         layer=map_layer(data),
         atmosphere=map_atmosphere(data),
         properties=ALDPropertiesIris(
-            source=get_value(data, 'Source', None, number=False),
+            #source=get_value(data, 'Source', None, number=False),
             thickness=get_value(data, 'Thickness [nm]', None),
             temperature=get_value(
                 data,
