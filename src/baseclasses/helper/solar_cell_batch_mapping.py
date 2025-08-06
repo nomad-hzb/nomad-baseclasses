@@ -433,9 +433,10 @@ def map_blade_coating(i, j, lab_ids, data, upload_id, blade_coating_class):
             dispensed_volume=get_value(data, 'Dispensed Ink Volume [uL]', unit='uL'),
             blade_substrate_gap=get_value(data, 'Blade Gap [um]', unit='um'),
             blade_size=get_value(data, 'Blade Size', None, False),
-            substrate_temperature=get_value(
-                data, 'Substrate Temperature [°C]', unit='°C'
-            ),
+            coating_width=get_value(data, 'Coating Width [mm]', unit='mm'),
+            coating_length=get_value(data, 'Coating Length [mm]', unit='mm'),
+            dead_length=get_value(data, 'Dead Length [mm]', unit='mm'),
+            bed_temperature=get_value(data, 'Bed Temperature [°C]', unit='°C'),
             ink_temperature=get_value(data, 'Ink Temperature [°C]', unit='°C'),
         ),
     )

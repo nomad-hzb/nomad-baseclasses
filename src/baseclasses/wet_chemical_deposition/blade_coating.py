@@ -71,7 +71,44 @@ class BladeCoatingProperties(ArchiveSection):
         ' the blade size.',
     )
 
-    substrate_temperature = Quantity(
+    coating_width = Quantity(
+        links=[],
+        type=np.dtype(np.float64),
+        unit=('mm'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mm',
+            props=dict(minValue=0),
+        ),
+    )
+
+    coating_length = Quantity(
+        links=[],
+        type=np.dtype(np.float64),
+        unit=('mm'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mm',
+            props=dict(minValue=0),
+        ),
+    )
+
+    dead_length = Quantity(
+        links=[],
+        type=np.dtype(np.float64),
+        unit=('mm'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mm',
+            props=dict(minValue=0),
+        ),
+        description=(
+            'The length that is left before the real coating in order to '
+            'stabilise the meniscus'
+        ),
+    )
+
+    bed_temperature = Quantity(
         links=[
             'http://purl.obolibrary.org/obo/PATO_0000146',
             'https://purl.archive.org/tfsco/TFSCO_00002111',
@@ -83,8 +120,11 @@ class BladeCoatingProperties(ArchiveSection):
             defaultDisplayUnit='°C',
             props=dict(minValue=0),
         ),
-        description='Temperature of the substrate at the start of blade coating. '
-        'Measured by heated chuck, infrared thermometer or other methods',
+        description=(
+            'Temperature of the bed at the start of blade coating. '
+            'Measured by heated chuck, infrared thermometer or other methods, '
+            'the substrate temperature is approximated to be equal to bed temperature'
+        ),
     )
 
     ink_temperature = Quantity(
