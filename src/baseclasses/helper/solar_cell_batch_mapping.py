@@ -429,15 +429,15 @@ def map_blade_coating(i, j, lab_ids, data, upload_id, blade_coating_class):
         atmosphere=map_atmosphere(data),
         annealing=map_annealing(data),
         properties=BladeCoatingProperties(
-            blade_speed=get_value(data, 'Blade Speed [mm/s]', unit='mm/s'),
-            dispensed_volume=get_value(data, 'Dispensed Ink Volume [uL]', unit='uL'),
-            blade_substrate_gap=get_value(data, 'Blade Gap [um]', unit='um'),
+            blade_speed=get_value(data, 'Blade Speed [mm/s]', None, unit='mm/s'),
+            dispensed_volume=get_value(data, 'Dispensed Ink Volume [uL]', None, unit='uL'),
+            blade_substrate_gap=get_value(data, 'Blade Gap [um]', None, unit='um'),
             blade_size=get_value(data, 'Blade Size', None, False),
-            coating_width=get_value(data, 'Coating Width [mm]', unit='mm'),
-            coating_length=get_value(data, 'Coating Length [mm]', unit='mm'),
-            dead_length=get_value(data, 'Dead Length [mm]', unit='mm'),
-            bed_temperature=get_value(data, 'Bed Temperature [°C]', unit='°C'),
-            ink_temperature=get_value(data, 'Ink Temperature [°C]', unit='°C'),
+            coating_width=get_value(data, 'Coating Width [mm]', None, unit='mm'),
+            coating_length=get_value(data, 'Coating Length [mm]', None, unit='mm'),
+            dead_length=get_value(data, 'Dead Length [mm]', None, unit='mm'),
+            bed_temperature=get_value(data, 'Bed Temperature [°C]', None, unit='°C'),
+            ink_temperature=get_value(data, 'Ink Temperature [°C]', None, unit='°C'),
         ),
     )
 
