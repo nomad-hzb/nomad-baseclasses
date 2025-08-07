@@ -51,10 +51,11 @@ def get_jv_archive(jv_dict, mainfile, jvm, append=False):
                 dark=True,
             )
         elif curve.get('name').startswith('pixel'): #for the tfsc measurements
-            jv_set = SolarCellJVCurve(
+            jv_set = SolarCellJVCurveCustom(
                 cell_name=curve['name'],
                 voltage=curve['voltage'],
                 current_density=curve['current_density'],
+                dark=False
             )
             
         else:
