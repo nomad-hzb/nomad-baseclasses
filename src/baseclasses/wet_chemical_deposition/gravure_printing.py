@@ -73,7 +73,7 @@ class GravurePrinting(WetChemicalDeposition):
     """Base class for the gravure printing process of a sample"""
 
     m_def = Section(
-        # links=ontology link
+        links= 'https://purl.archive.org/tfsco/TFSCO_00002054'
     )
 
     properties = SubSection(section_def=GravurePrintingProperties)

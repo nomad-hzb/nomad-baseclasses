@@ -25,7 +25,10 @@ from .wet_chemical_deposition import WetChemicalDeposition
 
 class BladeCoatingProperties(ArchiveSection):
     blade_speed = Quantity(
-        # links=['placeholder for ontology link]
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00007009', 
+            'https://purl.archive.org/tfsco/TFSCO_00007010'
+            ],
         type=np.dtype(np.float64),
         unit=('mm/s'),
         a_eln=dict(
@@ -37,7 +40,10 @@ class BladeCoatingProperties(ArchiveSection):
     )
 
     dispensed_volume = Quantity(
-        links=[],
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00007022',
+            'https://purl.archive.org/tfsco/TFSCO_00002160'
+            ],
         type=np.dtype(np.float64),
         unit=('uL'),
         a_eln=dict(
@@ -50,7 +56,10 @@ class BladeCoatingProperties(ArchiveSection):
     )
 
     blade_substrate_gap = Quantity(
-        links=[],
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00007007', 
+            'https://purl.archive.org/tfsco/TFSCO_00007008'
+            ],
         type=np.dtype(np.float64),
         unit=('um'),
         a_eln=dict(
@@ -62,7 +71,7 @@ class BladeCoatingProperties(ArchiveSection):
     )
 
     blade_size = Quantity(
-        links=[],
+        links= 'https://purl.archive.org/tfsco/TFSCO_00007016',
         type=str,
         a_eln=dict(component='StringEditQuantity'),
         description='Size of the blade. Normally, the blade is larger than the '
@@ -109,10 +118,7 @@ class BladeCoatingProperties(ArchiveSection):
     )
 
     bed_temperature = Quantity(
-        links=[
-            'http://purl.obolibrary.org/obo/PATO_0000146',
-            'https://purl.archive.org/tfsco/TFSCO_00002111',
-        ],
+        links=[],
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(
@@ -129,8 +135,8 @@ class BladeCoatingProperties(ArchiveSection):
 
     ink_temperature = Quantity(
         links=[
-            'http://purl.obolibrary.org/obo/PATO_0000146',
-            'https://purl.archive.org/tfsco/TFSCO_00002111',
+            'https://purl.archive.org/tfsco/TFSCO_00002001',
+            'https://purl.archive.org/tfsco/TFSCO_00002073',
         ],
         type=np.dtype(np.float64),
         unit=('°C'),
@@ -148,7 +154,7 @@ class BladeCoating(WetChemicalDeposition):
     """Base class for blade coating of a sample"""
 
     m_def = Section(
-        # links = ['http://purl.obolibrary.org/obo/CHMO_0001471'],
+        links = ['https://purl.archive.org/tfsco/TFSCO_00002060'],
     )
 
     properties = SubSection(section_def=BladeCoatingProperties)
