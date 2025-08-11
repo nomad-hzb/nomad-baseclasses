@@ -20,6 +20,7 @@ from .blade_coating import BladeCoating
 from .crystallization import Crystallization
 from .dip_coating import DipCoating
 from .dropcast import DropCasting
+from .gravure_printing import GravurePrinting
 from .inkjet_printing import InkjetPrinting, LP50InkjetPrinting
 from .slot_die_coating import SlotDieCoating
 from .spin_coating import SpinCoating, SpinCoatingRecipe
