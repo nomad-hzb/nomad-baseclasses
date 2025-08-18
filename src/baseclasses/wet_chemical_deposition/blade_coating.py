@@ -71,7 +71,7 @@ class BladeCoatingProperties(ArchiveSection):
     )
 
     blade_size = Quantity(
-        links= 'https://purl.archive.org/tfsco/TFSCO_00007016',
+        links= ['https://purl.archive.org/tfsco/TFSCO_00007016'],
         type=str,
         a_eln=dict(component='StringEditQuantity'),
         description='Size of the blade. Normally, the blade is larger than the '
