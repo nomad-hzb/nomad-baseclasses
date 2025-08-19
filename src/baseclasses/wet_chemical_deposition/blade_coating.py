@@ -32,8 +32,8 @@ class BladeCoatingProperties(ArchiveSection):
         type=np.dtype(np.float64),
         unit=('mm/s'),
         a_eln=dict(
-            compontent='NumberEditQuantity',
-            DefaultDisplayUnit='mm/s',
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mm/s',
             props=dict(minValue=0),
         ),
         description='Speed of the blade during coating process',
@@ -47,8 +47,8 @@ class BladeCoatingProperties(ArchiveSection):
         type=np.dtype(np.float64),
         unit=('uL'),
         a_eln=dict(
-            compontent='NumberEditQuantity',
-            DefaultDisplayUnit='uL',
+            component='NumberEditQuantity',
+            defaultDisplayUnit='uL',
             props=dict(minValue=0),
         ),
         description='Volume of dispensed ink administered by a pipette on the sample'

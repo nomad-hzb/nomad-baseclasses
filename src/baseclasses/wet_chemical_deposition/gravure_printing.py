@@ -30,7 +30,7 @@ class GravurePrintingProperties(ArchiveSection):
         unit=('m/minute'),
         a_eln=dict(
             component='NumberEditQuantity',
-            DefaultDisplayUnit='m/minute',
+            defaultDisplayUnit='m/minute',
             props=dict(minValue=0),
         ),
         description='Speed of the gravure printing coating process',
@@ -41,7 +41,6 @@ class GravurePrintingProperties(ArchiveSection):
         type=np.dtype(np.float64),
         a_eln=dict(
             component='NumberEditQuantity',
-            DefaultDisplayUnit='lines/cm',  # Display label only
             props=dict(minValue=0),
         ),
         description='Screen ruling of the gravure printing cylinder (lines per cm).',
@@ -72,9 +71,7 @@ class GravurePrintingProperties(ArchiveSection):
 class GravurePrinting(WetChemicalDeposition):
     """Base class for the gravure printing process of a sample"""
 
-    m_def = Section(
-        links= ['https://purl.archive.org/tfsco/TFSCO_00002054']
-    )
+    m_def = Section(links=['https://purl.archive.org/tfsco/TFSCO_00002054'])
 
     properties = SubSection(section_def=GravurePrintingProperties)
 
