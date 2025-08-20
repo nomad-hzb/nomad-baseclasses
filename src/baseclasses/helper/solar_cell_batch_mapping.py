@@ -32,7 +32,11 @@ from baseclasses.vapour_based_deposition.evaporation import (
 )
 from baseclasses.vapour_based_deposition.sputtering import SputteringProcess
 from baseclasses.wet_chemical_deposition import PrecursorSolution
+from baseclasses.wet_chemical_deposition.blade_coating import BladeCoatingProperties
 from baseclasses.wet_chemical_deposition.dip_coating import DipCoatingProperties
+from baseclasses.wet_chemical_deposition.gravure_printing import (
+    GravurePrintingProperties,
+)
 from baseclasses.wet_chemical_deposition.inkjet_printing import (
     InkjetPrintingProperties,
     LP50NozzleVoltageProfile,
@@ -277,6 +281,133 @@ def map_solutions(data):
     return archive
 
 
+def map_anti_solvent_quenching(data):
+    """Map anti-solvent quenching data to AntiSolventQuenching object."""
+    if not get_value(data, 'Anti solvent name', None, False):
+        return None
+    
+    return AntiSolventQuenching(
+        anti_solvent_volume=get_value(
+            data, 'Anti solvent volume [ml]', None, unit='mL'
+        ),
+        anti_solvent_dropping_time=get_value(
+            data, 'Anti solvent dropping time [s]', None, unit='s'
+        ),
+        anti_solvent_dropping_height=get_value(
+            data, 'Anti solvent dropping heigt [mm]', None, unit='mm'
+        ),
+        anti_solvent_dropping_flow_rate=get_value(
+            data,
+            [
+                'Anti solvent dropping speed [ul/s]',
+                'Anti solvent dropping speed [uL/s]',
+            ],
+            None,
+            unit=['uL/s', 'uL/s'],
+        ),
+        anti_solvent_2=PubChemPureSubstanceSectionCustom(
+            name=get_value(data, 'Anti solvent name', None, False), load_data=False
+        ),
+    )
+
+
+def map_vacuum_quenching(data):
+    """Map vacuum quenching data to VacuumQuenching object."""
+    if not get_value(data, 'Vacuum quenching duration [s]', None, unit='s'):
+        return None
+    
+    return VacuumQuenching(
+        start_time=get_value(
+            data, 'Vacuum quenching start time [s]', None, unit='s'
+        ),
+        duration=get_value(data, 'Vacuum quenching duration [s]', None, unit='s'),
+        pressure=get_value(
+            data, 'Vacuum quenching pressure [bar]', None, unit='bar'
+        ),
+    )
+
+
+def map_gas_quenching_with_nozzle(data):
+    """Map gas quenching with nozzle data to GasQuenchingWithNozzle object."""
+    if not get_value(data, 'Gas', None, False):
+        return None
+    
+    return GasQuenchingWithNozzle(
+        starting_delay=get_value(
+            data, 'Gas quenching start time [s]', None, unit='s'
+        ),
+        flow_rate=get_value(
+            data, 'Gas quenching flow rate [ml/s]', None, unit='ml/s'
+        ),
+        height=get_value(data, 'Gas quenching height [mm]', None, unit='mm'),
+        duration=get_value(data, 'Gas quenching duration [s]', None, unit='s'),
+        pressure=get_value(data, 'Gas quenching pressure [bar]', None, unit='bar'),
+        velocity=get_value(data, 'Gas quenching velocity [m/s]', None, unit='m/s'),
+        nozzle_shape=get_value(data, 'Nozzle shape', None, False),
+        nozzle_size=get_value(data, 'Nozzle size [mm²]', None, False),
+        gas=get_value(data, 'Gas', None, False),
+    )
+
+
+def map_air_knife_gas_quenching(data):
+    """Map air knife gas quenching data to AirKnifeGasQuenching object."""
+    if not get_value(data, 'Air knife angle [°]', None, unit='°'):
+        return None
+    
+    return AirKnifeGasQuenching(
+        air_knife_angle=get_value(data, 'Air knife angle [°]', None, unit='°'),
+        bead_volume=get_value(data, 'Bead volume [mm/s]', None, unit='mm/s'),
+        drying_speed=get_value(
+            data, 'Drying speed [cm/min]', None, unit='cm/minute'
+        ),
+        air_knife_distance_to_thin_film=get_value(
+            data, 'Air knife gap [cm]', None, unit='cm'
+        ),
+        drying_gas_temperature=get_value(
+            data,
+            ['Drying gas temperature [°]', 'Drying gas temperature [°C]'],
+            None,
+            unit=['°C', '°C'],
+        ),
+        heat_transfer_coefficient=get_value(
+            data,
+            'Heat transfer coefficient [W m^-2 K^-1]',
+            None,
+            unit='W/(K*m**2)',
+        ),
+    )
+
+
+def map_gas_flow_assisted_vacuum_drying(data):
+    """Map GAVD data to GasFlowAssistedVacuumDrying object."""
+    if not get_value(data, 'GAVD Gas', None, False):
+        return None
+    
+    return GasFlowAssistedVacuumDrying(
+        vacuum_properties=VacuumQuenching(
+            start_time=get_value(data, 'GAVD start time [s]', None, unit='s'),
+            pressure=get_value(
+                data, 'GAVD vacuum pressure [mbar]', None, unit='mbar'
+            ),
+            temperature=get_value(data, 'GAVD temperature [°C]', None, unit='°C'),
+            duration=get_value(data, 'GAVD vacuum time [s]', None, unit='s'),
+        ),
+        gas_quenching_properties=GasQuenchingWithNozzle(
+            duration=get_value(data, 'Gas flow duration [s]', None, unit='s'),
+            pressure=get_value(
+                data,
+                ['Gas flow pressure [bar]', 'Gas flow pressure [mbar]'],
+                None,
+                unit=['bar', 'mbar'],
+            ),
+            nozzle_shape=get_value(data, 'Nozzle shape', None, False),
+            nozzle_type=get_value(data, 'Nozzle type', None, False),
+            gas=get_value(data, 'GAVD Gas', None, False),
+        ),
+        comment=get_value(data, 'GAVD comment', None, False),
+    )
+
+
 def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
     archive = sc_class(
         name='spin coating ' + get_value(data, 'Material name', '', False),
@@ -328,61 +459,139 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
             if get_value(data, f'Rotation time {step}[s]')
         ],
     )
-    if get_value(data, 'Anti solvent name', None, False):
-        archive.quenching = AntiSolventQuenching(
-            anti_solvent_volume=get_value(
-                data, 'Anti solvent volume [ml]', None, unit='mL'
-            ),
-            anti_solvent_dropping_time=get_value(
-                data, 'Anti solvent dropping time [s]', None, unit='s'
-            ),
-            anti_solvent_dropping_height=get_value(
-                data, 'Anti solvent dropping heigt [mm]', None, unit='mm'
-            ),
-            anti_solvent_dropping_flow_rate=get_value(
-                data,
-                [
-                    'Anti solvent dropping speed [ul/s]',
-                    'Anti solvent dropping speed [uL/s]',
-                ],
-                None,
-                unit=['uL/s', 'uL/s'],
-            ),
-            anti_solvent_2=PubChemPureSubstanceSectionCustom(
-                name=get_value(data, 'Anti solvent name', None, False), load_data=False
-            ),
-        )
-
-    if get_value(data, 'Vacuum quenching duration [s]', None, unit='s'):
-        archive.quenching = VacuumQuenching(
-            start_time=get_value(
-                data, 'Vacuum quenching start time [s]', None, unit='s'
-            ),
-            duration=get_value(data, 'Vacuum quenching duration [s]', None, unit='s'),
-            pressure=get_value(
-                data, 'Vacuum quenching pressure [bar]', None, unit='bar'
-            ),
-        )
-
-    if get_value(data, 'Gas', None, False):
-        archive.quenching = GasQuenchingWithNozzle(
-            starting_delay=get_value(
-                data, 'Gas quenching start time [s]', None, unit='s'
-            ),
-            flow_rate=get_value(
-                data, 'Gas quenching flow rate [ml/s]', None, unit='ml/s'
-            ),
-            height=get_value(data, 'Gas quenching height [mm]', None, unit='mm'),
-            duration=get_value(data, 'Gas quenching duration [s]', None, unit='s'),
-            pressure=get_value(data, 'Gas quenching pressure [bar]', None, unit='bar'),
-            velocity=get_value(data, 'Gas quenching velocity [m/s]', None, unit='m/s'),
-            nozzle_shape=get_value(data, 'Nozzle shape', None, False),
-            nozzle_size=get_value(data, 'Nozzle size [mm²]', None, False),
-            gas=get_value(data, 'Gas', None, False),
-        )
+    
+    # Set quenching based on available data
+    archive.quenching = (
+        map_anti_solvent_quenching(data) or
+        map_vacuum_quenching(data) or
+        map_gas_quenching_with_nozzle(data)
+    )
 
     material = get_value(data, 'Material name', '', False)
     return (f'{i}_{j}_spin_coating_{material}', archive)
+
+
+def map_blade_coating(i, j, lab_ids, data, upload_id, blade_coating_class):
+    archive = blade_coating_class(
+        name='blade coating ' + get_value(data, 'Material name', '', False),
+        location=get_value(data, 'Tool/GB name', '', False),
+        positon_in_experimental_plan=i,
+        description=get_value(data, 'Notes', None, False),
+        samples=[
+            CompositeSystemReference(
+                reference=get_reference(upload_id, f'{lab_id}.archive.json'),
+                lab_id=lab_id,
+            )
+            for lab_id in lab_ids
+        ],
+        solution=[
+            PrecursorSolution(
+                solution_details=map_solutions(data),
+                solution_volume=get_value(
+                    data,
+                    ['Solution volume [um]', 'Solution volume [uL]'],
+                    None,
+                    unit=['uL', 'uL'],
+                ),
+                solution_viscosity=get_value(
+                    data,
+                    'Viscosity [mPa*s]',
+                    None,
+                    unit=['mPa*s'],
+                ),
+                solution_contact_angle=get_value(
+                    data,
+                    'Contact angle [°]',
+                    None,
+                    unit=['°'],
+                ),
+            )
+        ],
+        layer=map_layer(data),
+        atmosphere=map_atmosphere(data),
+        annealing=map_annealing(data),
+        properties=BladeCoatingProperties(
+            blade_speed=get_value(data, 'Blade Speed [mm/s]', None, unit='mm/s'),
+            dispensed_volume=get_value(data, 'Dispensed Ink Volume [uL]', None, unit='uL'),
+            blade_substrate_gap=get_value(data, 'Blade Gap [um]', None, unit='um'),
+            blade_size=get_value(data, 'Blade Size', None, False),
+            coating_width=get_value(data, 'Coating Width [mm]', None, unit='mm'),
+            coating_length=get_value(data, 'Coating Length [mm]', None, unit='mm'),
+            dead_length=get_value(data, 'Dead Length [mm]', None, unit='mm'),
+            bed_temperature=get_value(data, 'Bed Temperature [°C]', None, unit='°C'),
+            ink_temperature=get_value(data, 'Ink Temperature [°C]', None, unit='°C'),
+        ),
+    )
+
+    # Set quenching based on available data
+    archive.quenching = (
+        map_vacuum_quenching(data) or
+        map_gas_quenching_with_nozzle(data) or
+        map_air_knife_gas_quenching(data)
+    )
+
+    material = get_value(data, 'Material name', '', False)
+    return (f'{i}_{j}_blade_coating_{material}', archive)
+
+
+def map_gravure_printing(i, j, lab_ids, data, upload_id, gravure_printing_class):
+    archive = gravure_printing_class(
+        name='gravure printing ' + get_value(data, 'Material name', '', False),
+        location=get_value(data, 'Tool/GB name', '', False),
+        positon_in_experimental_plan=i,
+        description=get_value(data, 'Notes', None, False),
+        samples=[
+            CompositeSystemReference(
+                reference=get_reference(upload_id, f'{lab_id}.archive.json'),
+                lab_id=lab_id,
+            )
+            for lab_id in lab_ids
+        ],
+        solution=[
+            PrecursorSolution(
+                solution_details=map_solutions(data),
+                solution_volume=get_value(
+                    data,
+                    ['Solution volume [um]', 'Solution volume [uL]'],
+                    None,
+                    unit=['uL', 'uL'],
+                ),
+                solution_viscosity=get_value(
+                    data,
+                    'Viscosity [mPa*s]',
+                    None,
+                    unit=['mPa*s'],
+                ),
+                solution_contact_angle=get_value(
+                    data,
+                    'Contact angle [°]',
+                    None,
+                    unit=['°'],
+                ),
+            )
+        ],
+        layer=map_layer(data),
+        atmosphere=map_atmosphere(data),
+        annealing=map_annealing(data),
+        properties=GravurePrintingProperties(
+            gp_coating_speed=get_value(
+                data, 'Coating Speed [m/min]', None, True, unit='m/minute'
+            ),
+            screen_ruling=get_value(data, 'Screen Ruling [lines/cm]', None, True, None),
+            gp_method=get_value(data, 'R2R or S2S', '', False),
+            gp_direction=get_value(data, 'Forward or Reverse', '', False),
+            cell_type=get_value(data, 'Cell Type', None, False),
+        ),
+    )
+
+    # Set quenching based on available data
+    archive.quenching = (
+        map_anti_solvent_quenching(data) or
+        map_air_knife_gas_quenching(data)
+    )
+
+    material = get_value(data, 'Material name', '', False)
+    return (f'{i}_{j}_gravure_printing_{material}', archive)
 
 
 def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
@@ -400,8 +609,7 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
         ],
         solution=[
             PrecursorSolution(
-                solution_details=map_solutions(data),  # check unit
-                # check unit
+                solution_details=map_solutions(data),
                 solution_volume=get_value(
                     data,
                     ['Solution volume [um]', 'Solution volume [uL]'],
@@ -442,26 +650,7 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
                 data, 'Chuck heating temperature [°C]', None, unit='°C'
             ),
         ),
-        quenching=AirKnifeGasQuenching(
-            air_knife_angle=get_value(data, 'Air knife angle [°]', None),
-            # is this the same as (drying) gas flow rate/velocity?
-            bead_volume=get_value(data, 'Bead volume [mm/s]', None, unit='mm/s'),
-            drying_speed=get_value(
-                data, 'Drying speed [cm/min]', None, unit='cm/minute'
-            ),
-            air_knife_distance_to_thin_film=get_value(
-                data, 'Air knife gap [cm]', None, unit='cm'
-            ),
-            drying_gas_temperature=get_value(
-                data,
-                ['Drying gas temperature [°]', 'Drying gas temperature [°C]'],
-                None,
-                unit=['°C', '°C'],
-            ),
-            heat_transfer_coefficient=get_value(
-                data, 'Heat transfer coefficient [W m^-2 K^-1]', None, unit='W/(K*m**2)'
-            ),
-        ),
+        quenching=map_air_knife_gas_quenching(data),
     )
     material = get_value(data, 'Material name', '', False)
     return (f'{i}_{j}_slot_die_coating_{material}', archive)
@@ -483,8 +672,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
         ],
         solution=[
             PrecursorSolution(
-                solution_details=map_solutions(data),  # check unit
-                # check unit
+                solution_details=map_solutions(data),
                 solution_volume=get_value(
                     data,
                     [
@@ -574,30 +762,8 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
         annealing=map_annealing(data),
     )
 
-    if get_value(data, 'GAVD Gas', None, False):
-        archive.quenching = GasFlowAssistedVacuumDrying(
-            vacuum_properties=VacuumQuenching(
-                start_time=get_value(data, 'GAVD start time [s]', None, unit='s'),
-                pressure=get_value(
-                    data, 'GAVD vacuum pressure [mbar]', None, unit='mbar'
-                ),
-                temperature=get_value(data, 'GAVD temperature [°C]', None, unit='°C'),
-                duration=get_value(data, 'GAVD vacuum time [s]', None, unit='s'),
-            ),
-            gas_quenching_properties=GasQuenchingWithNozzle(
-                duration=get_value(data, 'Gas flow duration [s]', None, unit='s'),
-                pressure=get_value(
-                    data,
-                    ['Gas flow pressure [bar]', 'Gas flow pressure [mbar]'],
-                    None,
-                    unit=['bar', 'mbar'],
-                ),
-                nozzle_shape=get_value(data, 'Nozzle shape', None, False),
-                nozzle_type=get_value(data, 'Nozzle type', None, False),
-                gas=get_value(data, 'GAVD Gas', None, False),
-            ),
-            comment=get_value(data, 'GAVD comment', None, False),
-        )
+    # Set quenching based on available data
+    archive.quenching = map_gas_flow_assisted_vacuum_drying(data)
 
     if location in ['Pixdro', 'iLPixdro']:  # printer param
         voltage_a = get_value(data, 'Wf Level 1[V]', None, unit='V')
