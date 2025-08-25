@@ -29,14 +29,16 @@ class NMRData(ArchiveSection):
 
     name = Quantity(type=str)
 
-    shift = Quantity(
+    chemical_shift = Quantity(
         type=np.dtype(np.float64),
         shape=['*'],
+        description='This axis represents the frequency of the absorbed radiofrequency radiation by the atomic nuclei in the sample. The chemical shift value indicates the electronic environment of the nucleus within the molecule, providing information about the types of chemical bonds and functional groups present. The scale is typically expressed in parts per million (ppm) relative to a reference compound (often tetramethylsilane or TMS).',
     )
 
     intensity = Quantity(
         type=np.dtype(np.float64),
         shape=['*'],
+        description="This axis represents the intensity or strength of the NMR signal. The area under each peak on this axis is proportional to the number of nuclei contributing to that signal, which can be used to determine the relative abundance of different types of nuclei in the molecule. The y-axis can also be labeled as 'intensity' or 'signal intensity'",
     )
 
 
