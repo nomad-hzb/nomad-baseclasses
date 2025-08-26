@@ -228,14 +228,19 @@ def map_layer(data):
 def map_solutions(data):
     solvents = []
     solutes = []
+    additives = []
     for col in data.index:
         if col.lower().startswith('solvent'):
             solvents.append(' '.join(col.split(' ')[:2]))
         if col.lower().startswith('solute'):
             solutes.append(' '.join(col.split(' ')[:2]))
+        if col.lower().startswith('additive'):
+            additives.append(' '.join(col.split(' ')[:2]))
 
     final_solvents = []
     final_solutes = []
+    final_additives = []
+
     for solvent in sorted(set(solvents)):
         final_solvents.append(
             SolutionChemical(
@@ -275,8 +280,33 @@ def map_solutions(data):
                 chemical_id=get_value(data, f'{solute} chemical ID', None, False),
             )
         )
+    for additive in sorted(set(additives)):
+        final_additives.append(
+            SolutionChemical(
+                chemical_2=PubChemPureSubstanceSectionCustom(
+                    name=get_value(
+                        data, [f'{additive} name'], None, False
+                    ),
+                    load_data=False,
+                ),
+                concentration_mol=get_value(
+                    data, f'{additive} Concentration [mM]', None, unit='mM'
+                ),
+                concentration_mass=get_value(
+                    data,
+                    [
+                        f'{additive} Concentration [wt%]',
+                        f'{additive} Concentration [mg/ml]',
+                    ],
+                    None,
+                    unit=['wt%', 'mg/ml'],
+                ),
+                amount_relative=get_value(data, f'{additive} relative amount', None),
+                chemical_id=get_value(data, f'{additive} chemical ID', None, False),
+            )
+        )        
 
-    archive = Solution(solvent=final_solvents, solute=final_solutes)
+    archive = Solution(solvent=final_solvents, solute=final_solutes, additive=final_additives)
 
     return archive
 
@@ -1131,8 +1161,7 @@ def map_dip_coating(i, j, lab_ids, data, upload_id, dc_class):
         ],
         solution=[
             PrecursorSolution(
-                solution_details=map_solutions(data),  # check unit
-                # check unit
+                solution_details=map_solutions(data), 
                 solution_volume=get_value(
                     data,
                     ['Solution volume [um]', 'Solution volume [uL]'],
