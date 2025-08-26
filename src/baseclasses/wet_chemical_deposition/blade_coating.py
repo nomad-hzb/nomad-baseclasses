@@ -26,9 +26,9 @@ from .wet_chemical_deposition import WetChemicalDeposition
 class BladeCoatingProperties(ArchiveSection):
     blade_speed = Quantity(
         links=[
-            'https://purl.archive.org/tfsco/TFSCO_00007009', 
-            'https://purl.archive.org/tfsco/TFSCO_00007010'
-            ],
+            'https://purl.archive.org/tfsco/TFSCO_00007009',
+            'https://purl.archive.org/tfsco/TFSCO_00007010',
+        ],
         type=np.dtype(np.float64),
         unit=('mm/s'),
         a_eln=dict(
@@ -42,8 +42,8 @@ class BladeCoatingProperties(ArchiveSection):
     dispensed_volume = Quantity(
         links=[
             'https://purl.archive.org/tfsco/TFSCO_00007022',
-            'https://purl.archive.org/tfsco/TFSCO_00002160'
-            ],
+            'https://purl.archive.org/tfsco/TFSCO_00002160',
+        ],
         type=np.dtype(np.float64),
         unit=('uL'),
         a_eln=dict(
@@ -57,9 +57,9 @@ class BladeCoatingProperties(ArchiveSection):
 
     blade_substrate_gap = Quantity(
         links=[
-            'https://purl.archive.org/tfsco/TFSCO_00007007', 
-            'https://purl.archive.org/tfsco/TFSCO_00007008'
-            ],
+            'https://purl.archive.org/tfsco/TFSCO_00007007',
+            'https://purl.archive.org/tfsco/TFSCO_00007008',
+        ],
         type=np.dtype(np.float64),
         unit=('um'),
         a_eln=dict(
@@ -71,7 +71,7 @@ class BladeCoatingProperties(ArchiveSection):
     )
 
     blade_size = Quantity(
-        links= ['https://purl.archive.org/tfsco/TFSCO_00007016'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00007016'],
         type=str,
         a_eln=dict(component='StringEditQuantity'),
         description='Size of the blade. Normally, the blade is larger than the '
@@ -154,7 +154,7 @@ class BladeCoating(WetChemicalDeposition):
     """Base class for blade coating of a sample"""
 
     m_def = Section(
-        links = ['https://purl.archive.org/tfsco/TFSCO_00002060'],
+        links=['https://purl.archive.org/tfsco/TFSCO_00002060'],
     )
 
     properties = SubSection(section_def=BladeCoatingProperties)
