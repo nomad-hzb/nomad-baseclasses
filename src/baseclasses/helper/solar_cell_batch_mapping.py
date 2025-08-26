@@ -284,9 +284,7 @@ def map_solutions(data):
         final_additives.append(
             SolutionChemical(
                 chemical_2=PubChemPureSubstanceSectionCustom(
-                    name=get_value(
-                        data, [f'{additive} name'], None, False
-                    ),
+                    name=get_value(data, [f'{additive} name'], None, False),
                     load_data=False,
                 ),
                 concentration_mol=get_value(
@@ -304,9 +302,11 @@ def map_solutions(data):
                 amount_relative=get_value(data, f'{additive} relative amount', None),
                 chemical_id=get_value(data, f'{additive} chemical ID', None, False),
             )
-        )        
+        )
 
-    archive = Solution(solvent=final_solvents, solute=final_solutes, additive=final_additives)
+    archive = Solution(
+        solvent=final_solvents, solute=final_solutes, additive=final_additives
+    )
 
     return archive
 
@@ -400,7 +400,11 @@ def map_air_knife_gas_quenching(data):
 
 def map_gas_flow_assisted_vacuum_drying(data):
     """Map GAVD data to GasFlowAssistedVacuumDrying object."""
-    if not get_value(data, 'GAVD Gas', None, False):
+    if (
+        not get_value(data, 'GAVD Gas', None, False)
+        and not get_value(data, 'GAVD start time [s]', None, unit='s')
+        and not get_value(data, 'Nozzle type', None, False)
+    ):
         return None
 
     return GasFlowAssistedVacuumDrying(
@@ -1161,7 +1165,7 @@ def map_dip_coating(i, j, lab_ids, data, upload_id, dc_class):
         ],
         solution=[
             PrecursorSolution(
-                solution_details=map_solutions(data), 
+                solution_details=map_solutions(data),
                 solution_volume=get_value(
                     data,
                     ['Solution volume [um]', 'Solution volume [uL]'],
