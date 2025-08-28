@@ -45,17 +45,33 @@ class CPOERReference(SectionReference):
 
 
 class CPOERAnalysisResult(AnalysisResult):
-    voltage_avg_first5 = Quantity(type=np.dtype(np.float64), unit=('V'))
-    voltage_avg_last5 = Quantity(type=np.dtype(np.float64), unit=('V'))
+    voltage_avg_first5 = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007216'],
+        type=np.dtype(np.float64),
+        unit=('V'),
+    )
+    voltage_avg_last5 = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007217'],
+        type=np.dtype(np.float64),
+        unit=('V'),
+    )
     voltage_difference = Quantity(type=np.dtype(np.float64), unit=('V'))
     j = Quantity(
-        type=np.dtype(np.float64), description='current density', unit=('A/cm^2')
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007221'],
+        type=np.dtype(np.float64),
+        description='current density',
+        unit=('A/cm^2'),
     )
     current_density_string = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007221'],
         type=str,
         description='string representation of j (needed for terms in explore view)',
     )
-    experiment_duration = Quantity(type=np.dtype(np.float64), unit=('s'))
+    experiment_duration = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000111'],
+        type=np.dtype(np.float64),
+        unit=('s'),
+    )
     reaction_type = Quantity(
         type=str,
         description='At the moment only OER CP is supported.'
@@ -72,6 +88,7 @@ class CPOERAnalysisResult(AnalysisResult):
         unit=('ohm'),
     )
     samples = SubSection(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0005013'],
         section_def=CompositeSystemReference,
         repeats=True,
     )
@@ -191,7 +208,8 @@ def get_all_cp_in_upload(data_archive, upload_id):
     from nomad.search import search
 
     query = {
-        'section_defs.definition_qualified_name': 'baseclasses.chemical_energy.chronopotentiometry.Chronopotentiometry',
+        'section_defs.definition_qualified_name':
+            'baseclasses.chemical_energy.chronopotentiometry.Chronopotentiometry',
         'results.eln.methods': 'OER Chronopotentiometry',
         'upload_id': upload_id,
     }
