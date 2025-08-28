@@ -169,22 +169,20 @@ def get_cc_properties(metadata):
     return properties
 
 
+def get_valid_float(value):
+    if value is None:
+        return None
+    try:
+        return float(str(value).replace(',', '.'))
+    except (ValueError, TypeError):
+        return None
+
+
 def get_atmosphere_data(metadata):
     properties = Atmosphere()
-    try:
-        properties.temperature = metadata.get('AIRTEMPERATURE')
-        properties.relative_humidity = metadata.get('AIRHUMIDITY')
-        properties.ambient_pressure = metadata.get('AIRPRESSURE')
-    except ValueError:
-        properties.temperature = float(
-            str(metadata.get('AIRTEMPERATURE')).replace(',', '.')
-        )
-        properties.relative_humidity = float(
-            str(metadata.get('AIRHUMIDITY')).replace(',', '.')
-        )
-        properties.ambient_pressure = float(
-            str(metadata.get('AIRPRESSURE')).replace(',', '.')
-        )
+    properties.temperature = get_valid_float(metadata.get('AIRTEMPERATURE'))
+    properties.relative_humidity = get_valid_float(metadata.get('AIRHUMIDITY'))
+    properties.ambient_pressure = get_valid_float(metadata.get('AIRPRESSURE'))
     if properties.ambient_pressure is not None:
         properties.ambient_pressure /= 1000
     return properties
