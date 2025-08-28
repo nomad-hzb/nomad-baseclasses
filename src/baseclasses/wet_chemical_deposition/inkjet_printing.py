@@ -92,7 +92,7 @@ class NotionNozzleVoltageProfile(NozzleVoltageProfile):
         links=['https://purl.archive.org/tfsco/TFSCO_00005083'],
     )
     number_of_pulses = Quantity(
-        type=np.dtype(np.int64),
+        type=np.dtype(np.float64),
         a_eln=dict(component='NumberEditQuantity', props=dict(minValue=1)),
 
     )
@@ -158,7 +158,7 @@ class NotionNozzleVoltageProfile(NozzleVoltageProfile):
     )
 
     number_of_greylevels_a = Quantity(
-        type=np.dtype(np.int64),
+        type=np.dtype(np.float64),
         a_eln=dict(component='NumberEditQuantity', props=dict(minValue=1)),
     )
 
@@ -178,7 +178,7 @@ class LP50NozzleVoltageProfile(NozzleVoltageProfile):
         links=['https://purl.archive.org/tfsco/TFSCO_00005083'],
     )
     number_of_pulses = Quantity(
-        type=np.dtype(np.int64),
+        type=np.dtype(np.float64),
         a_eln=dict(component='NumberEditQuantity', props=dict(minValue=1)),
     )
 
@@ -474,7 +474,7 @@ class PrintHeadProperties(ArchiveSection):
     )
 
     number_of_active_print_nozzles = Quantity(
-        type=np.dtype(np.int64), a_eln=dict(component='NumberEditQuantity')
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
     )
 
     active_nozzles = Quantity(
