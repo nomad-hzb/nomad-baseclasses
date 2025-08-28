@@ -445,27 +445,34 @@ class SolarCellEQECustom(SolarCellEQE):
     def normalize(self, archive, logger):
         if self.photon_energy_array is not None and self.eqe_array is not None:
             photon_energy_array = np.array(self.photon_energy_array)
-            self.bandgap_eqe = calculate_bandgap(photon_energy_array, self.eqe_array)
-            self.integrated_jsc = calculate_jsc(
-                photon_energy_array, self.eqe_array
-            ) * ureg('A/m**2')
             try:
-                self.integrated_j0rad = calculate_j0rad(
+                self.bandgap_eqe = calculate_bandgap(
                     photon_energy_array, self.eqe_array
-                )[0] * ureg('A/m**2')
-                self.voc_rad = calculate_voc_rad(photon_energy_array, self.eqe_array)
-            except ValueError:
-                print('Urbach energy is > 0.026 eV (~kB*T for T = 300K).\n')
-            urbach_enery, *_, urbach_energy_fit_std_dev, _ = fit_urbach_tail(
-                photon_energy_array, self.eqe_array
-            )
-            if urbach_enery <= 0.0 or urbach_enery >= 0.5:
-                print('Failed to estimate a reasonable Urbach Energy')
-            else:
-                self.urbach_energy, self.urbach_energy_fit_std_dev = (
-                    urbach_enery,
-                    urbach_energy_fit_std_dev,
                 )
+                self.integrated_jsc = calculate_jsc(
+                    photon_energy_array, self.eqe_array
+                ) * ureg('A/m**2')
+                try:
+                    self.integrated_j0rad = calculate_j0rad(
+                        photon_energy_array, self.eqe_array
+                    )[0] * ureg('A/m**2')
+                    self.voc_rad = calculate_voc_rad(
+                        photon_energy_array, self.eqe_array
+                    )
+                except ValueError:
+                    print('Urbach energy is > 0.026 eV (~kB*T for T = 300K).\n')
+                urbach_enery, *_, urbach_energy_fit_std_dev, _ = fit_urbach_tail(
+                    photon_energy_array, self.eqe_array
+                )
+                if urbach_enery <= 0.0 or urbach_enery >= 0.5:
+                    print('Failed to estimate a reasonable Urbach Energy')
+                else:
+                    self.urbach_energy, self.urbach_energy_fit_std_dev = (
+                        urbach_enery,
+                        urbach_energy_fit_std_dev,
+                    )
+            except Exception:
+                print('EQE analysis failed')
 
         if self.photon_energy_array is not None:
             self.wavelength_array = self.photon_energy_array.to('nm', 'sp')  # pylint: disable=E1101

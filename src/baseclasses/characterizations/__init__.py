@@ -18,6 +18,7 @@
 
 from .ellipsometry import Ellipsometry, EllipsometryLibrary
 from .infraredspectroscopy import InfraredSpectroscopy
+from .nmr import NMR, NMRData
 from .ramanspectroscopy import Raman
 from .sem import SEM
 from .spv import SPV
