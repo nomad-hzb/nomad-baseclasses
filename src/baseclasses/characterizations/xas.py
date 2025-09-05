@@ -101,6 +101,15 @@ class XAS(BaseMeasurement):
         ],
     )
 
+    manual_energy_shift = Quantity(
+        type=np.dtype(np.float64),
+        description='User-applied offset to shift the measured X-ray photon energy scale, where positive values are added and negative values are subtracted, in order to align the spectrum with a known reference (e.g. absorption edge of a reference foil).',
+        unit='keV',
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='keV'),
+    )
+
+    # TODO add connected experiments and maybe redo description
+
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
 
@@ -155,7 +164,9 @@ class SiliconDriftDetector(PlotSection, ArchiveSection):
         description='fluo_tlt_result = fluo_tlt / k0',
     )
 
-    def normalize(self, archive, logger, k0):
+    def normalize(self, archive, logger, k0=None):
+        if k0 is None:  # needed for reprocessing
+            return
         super().normalize(archive, logger)
         if self.fluo is not None and self.icr is not None and self.ocr is not None:
 
@@ -164,7 +175,6 @@ class SiliconDriftDetector(PlotSection, ArchiveSection):
 
             # estimate starting values
             a0 = self.ocr.max()
-            k0 = 1e-5
             try:
                 params, _ = curve_fit(
                     exp_func, self.icr, self.ocr, p0=(a0, k0), maxfev=10000
@@ -191,31 +201,70 @@ class SiliconDriftDetector(PlotSection, ArchiveSection):
 class XASWithSDD(XAS, PlotSection):
     sdd_parameters = SubSection(section_def=SiliconDriftDetector, repeats=True)
 
-    manual_energy_shift = Quantity(
+    quality_annotation = Quantity(
+        type=str,
+        description='Label for basic quality assessment of the measured values.',
+        shape=[],
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(suggestions=['ICR out of bounds', 'ICR within specified bounds']),
+        ),
+    )
+
+    absorbance_of_the_sample = Quantity(
         type=np.dtype(np.float64),
-        description='Fixed value to substract when performing energy calibration.',
-        unit='keV',
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='keV'),
+        shape=['*'],
+        a_plot=[
+            {
+                'x': 'energy',
+                'y': 'absorbance_of_the_sample',
+                'layout': {
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+            },
+        ],
     )
 
     def normalize(self, archive, logger):
-        self.method = 'XAS Fluoresence'
+        super().normalize(archive, logger)
         for detector in self.sdd_parameters:
             detector.normalize(archive, logger, self.k0)
-        super().normalize(archive, logger)
+
+        if all(((0 <= sdd.get('icr')) & (sdd.get('icr') <= 250000)).all() for sdd in self.sdd_parameters):
+            self.quality_annotation = 'ICR within specified bounds'
+        else:
+            self.quality_annotation = 'ICR out of bounds'
+            return
+            # TODO return here or just set the flag
+
         fluo_result_list = [sdd.get('fluo_tlt_result') for sdd in self.sdd_parameters]
-        fig1 = make_xas_plot(
-            'Absorption of Sample (FluoResult/k0)',
-            self.energy,
-            'Energy',
-            fluo_result_list,
-            'Fluo corrected',
-        )
-        self.figures = [
-            PlotlyFigure(
-                label='Sample Absorbance Plot', figure=json.loads(fig1.to_json())
-            ),
-        ]
+        if self.absorbance_of_the_sample is None:
+            if self.method == 'XAS Fluorescence' and fluo_result_list is not None:
+                self.absorbance_of_the_sample = np.nanmean(fluo_result_list, axis=0)
+            if self.method == 'XAS Transmission' and self.k1 is not None and self.k0 is not None:
+                self.absorbance_of_the_sample = -np.log(self.k1 / self.k0)
+
+        self.figures = []
+        if self.sdd_parameters is not None:
+            fig1 = make_xas_plot(
+                'Absorbance of Sample (FluoResult of SDD channels)',
+                self.energy,
+                'Energy',
+                fluo_result_list,
+                'Fluo corrected',
+            )
+            self.figures.append(PlotlyFigure(label='SDD overview', figure=json.loads(fig1.to_json())))
+
+        if self.manual_energy_shift is not None and self.absorbance_of_the_sample is not None:
+            fig2 = make_xas_plot(
+                'Absorbance of Sample',
+                self.energy + self.manual_energy_shift,
+                'Energy (aligned energy scale)',
+                [self.absorbance_of_the_sample],
+                'µ',
+            )
+            self.figures.append(PlotlyFigure(label='Sample Absorbance Plot', figure=json.loads(fig2.to_json())))
 
 
 class XASFluorescence(XAS):
@@ -250,7 +299,7 @@ class XASFluorescence(XAS):
     )
 
     def normalize(self, archive, logger):
-        self.method = 'XAS Fluoresence'
+        self.method = 'XAS Fluorescence'
         super().normalize(archive, logger)
 
         if self.k1 is not None and self.k0 is not None:
