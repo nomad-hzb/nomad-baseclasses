@@ -20,8 +20,9 @@ import numpy as np
 from nomad.datamodel.data import ArchiveSection
 from nomad.metainfo import Quantity
 
+from .. import BaseProcess
 
-class Lamination(ArchiveSection):
+class Lamination(BaseProcess):
     """Base class for lamination of a sample"""
 
     temperature = Quantity(
