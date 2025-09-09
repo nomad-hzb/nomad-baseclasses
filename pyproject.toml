@@ -103,7 +103,8 @@ select = [
 ignore = [
     "F403", # 'from module import *' used; unable to detect undefined names
     "F401",
-    "PLR2004"
+    "PLR2004",
+    "PLC0415", # `import` should be at the top-level of a file
 ]
 pylint.max-branches = 25
 pylint.max-statements = 65
