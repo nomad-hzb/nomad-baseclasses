@@ -18,6 +18,8 @@ def get_xas_archive(data, dateline, entry_class):
     entry_class.energy = (
         data['#monoE']
         if '#monoE' in data.columns
+        else data['monoE']
+        if 'monoE' in data.columns
         else data['mono_eV'] / 1000
         if 'mono_eV' in data.columns
         else data['monoE_eV'] / 1000

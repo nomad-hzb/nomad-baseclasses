@@ -21,7 +21,7 @@ import json
 import numpy as np
 from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.plot import PlotlyFigure, PlotSection
-from nomad.metainfo import Quantity, SubSection
+from nomad.metainfo import Quantity, Reference, Section, SectionProxy, SubSection
 from scipy.optimize import curve_fit
 
 from baseclasses.helper.plotly_plots import make_xas_plot
@@ -31,6 +31,9 @@ from .. import BaseMeasurement
 
 class XAS(BaseMeasurement):
     """XAS Measurement"""
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000286']
+    )
 
     data_file = Quantity(
         type=str,
@@ -38,7 +41,13 @@ class XAS(BaseMeasurement):
         a_browser=dict(adaptor='RawFileAdaptor'),
     )
 
-    energy = Quantity(type=np.dtype(np.float64), shape=['*'], unit='keV')
+    energy = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0008097'],
+        type=np.dtype(np.float64),
+        shape=['*'],
+        unit='keV',
+        description='The energy range of the spectrum.',
+    )
 
     seconds = Quantity(
         type=np.dtype(np.float64),
@@ -59,6 +68,7 @@ class XAS(BaseMeasurement):
     k0 = Quantity(
         type=np.dtype(np.float64),
         shape=['*'],
+        description='X-ray intensity before the sample.',
         a_plot=[
             {
                 'x': 'energy',
@@ -74,6 +84,7 @@ class XAS(BaseMeasurement):
     k1 = Quantity(
         type=np.dtype(np.float64),
         shape=['*'],
+        description='X-ray intensity after the sample.',
         a_plot=[
             {
                 'x': 'energy',
@@ -89,6 +100,10 @@ class XAS(BaseMeasurement):
     k3 = Quantity(
         type=np.dtype(np.float64),
         shape=['*'],
+        description='X-ray intensity after sample and after energy standard/reference '
+                    '(depending on the setup in the beamline). '
+                    'In KMC-2 the setup in transmission mode may contain a metal foil as the energy reference '
+                    'while KMC-3 uses a fixed energy standard.',
         a_plot=[
             {
                 'x': 'energy',
@@ -101,45 +116,62 @@ class XAS(BaseMeasurement):
         ],
     )
 
+
     manual_energy_shift = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0008090'],
         type=np.dtype(np.float64),
-        description='User-applied offset to shift the measured X-ray photon energy scale, where positive values are added and negative values are subtracted, in order to align the spectrum with a known reference (e.g. absorption edge of a reference foil).',
+        description='Aligns the energy spectrum with a known reference like the absorption edge of a reference foil. '
+                    '(true energy value = measured energy value + manual_energy_shift)',
         unit='keV',
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='keV'),
     )
 
-    # TODO add connected experiments and maybe redo description
+    connected_measurements = Quantity(
+        type=Reference(SectionProxy('XAS')),
+        shape=['*'],
+        a_eln=dict(component='ReferenceEditQuantity'),
+    )
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
 
 
 class SiliconDriftDetector(PlotSection, ArchiveSection):
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0008083'],
+    )
     fluo = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0008091'],
         type=np.dtype(np.float64),
         shape=['*'],
     )
     icr = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0008092'],
         type=np.dtype(np.float64),
         shape=['*'],
         description='Incoming Count Rate',
     )
     ocr = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0008093'],
         type=np.dtype(np.float64),
         shape=['*'],
         description='Outgoing Count Rate',
     )
     tlt = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0008094'],
         type=np.dtype(np.float64),
         shape=['*'],
-        description='Trigger Life Time',
+        description='Trigger Live Time',
     )
     lt = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0008095'],
         type=np.dtype(np.float64),
         shape=['*'],
-        description='Life Time',
+        description='Live Time',
     )
     rt = Quantity(
+        links=['https://manual.nexusformat.org/classes/base_classes/NXdetector.html#nxdetector-real-time-field',
+               'https://w3id.org/nfdi4cat/voc4cat_0008096'],
         type=np.dtype(np.float64),
         shape=['*'],
         description='Real Time',
@@ -149,6 +181,7 @@ class SiliconDriftDetector(PlotSection, ArchiveSection):
         description='slope=A*k for fit of OCR = A * (1 - exp(-k * ICR))',
     )
     fluo_dead_time_corrected = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0008085'],
         type=np.dtype(np.float64),
         shape=['*'],
         description='fluo_dead_time_corrected = fluo * slope * ICR/OCR',
@@ -175,9 +208,10 @@ class SiliconDriftDetector(PlotSection, ArchiveSection):
 
             # estimate starting values
             a0 = self.ocr.max()
+            initial_k = 1e-5
             try:
                 params, _ = curve_fit(
-                    exp_func, self.icr, self.ocr, p0=(a0, k0), maxfev=10000
+                    exp_func, self.icr, self.ocr, p0=(a0, initial_k), maxfev=10000
                 )
                 a_fit, k_fit = params
             except Exception:
@@ -212,6 +246,7 @@ class XASWithSDD(XAS, PlotSection):
     )
 
     absorbance_of_the_sample = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0008089'],
         type=np.dtype(np.float64),
         shape=['*'],
         a_plot=[
@@ -235,10 +270,9 @@ class XASWithSDD(XAS, PlotSection):
             self.quality_annotation = 'ICR within specified bounds'
         else:
             self.quality_annotation = 'ICR out of bounds'
-            return
-            # TODO return here or just set the flag
 
         fluo_result_list = [sdd.get('fluo_tlt_result') for sdd in self.sdd_parameters]
+        fluo_result_list = np.array(fluo_result_list, dtype=float)
         if self.absorbance_of_the_sample is None:
             if self.method == 'XAS Fluorescence' and fluo_result_list is not None:
                 self.absorbance_of_the_sample = np.nanmean(fluo_result_list, axis=0)
@@ -268,7 +302,11 @@ class XASWithSDD(XAS, PlotSection):
 
 
 class XASFluorescence(XAS):
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0008082']
+    )
     absorbance_of_the_reference = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0008088'],
         type=np.dtype(np.float64),
         shape=['*'],
         a_plot=[
@@ -284,6 +322,7 @@ class XASFluorescence(XAS):
     )
 
     fluorescence_yield = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0008086'],
         type=np.dtype(np.float64),
         shape=['*'],
         a_plot=[
@@ -310,7 +349,12 @@ class XASFluorescence(XAS):
 
 
 class XASTransmission(XAS):
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0008081']
+    )
+
     absorbance_of_the_reference = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0008088'],
         type=np.dtype(np.float64),
         shape=['*'],
         a_plot=[
@@ -326,6 +370,7 @@ class XASTransmission(XAS):
     )
 
     absorbance_of_the_sample = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0008089'],
         type=np.dtype(np.float64),
         shape=['*'],
         a_plot=[
