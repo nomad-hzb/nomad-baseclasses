@@ -172,63 +172,6 @@ class ALDMaterial(ArchiveSection):
     )
 
 
-class ALDOxidizerReducer(ArchiveSection):
-    material = SubSection(
-        links=['http://purl.obolibrary.org/obo/RO_0000057'],
-        section_def=PubChemPureSubstanceSectionCustom,
-    )
-
-    pulse_duration = Quantity(
-        type=np.dtype(np.float64),
-        unit=('s'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='s',
-            props=dict(minValue=0),
-        ),
-    )
-
-    pulse_flow_rate = Quantity(
-        type=np.dtype(np.float64),
-        unit=('cm**3 / min'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='cm**3 / min',
-            props=dict(minValue=0),
-        ),
-    )
-
-    purge_duration = Quantity(
-        type=np.dtype(np.float64),
-        unit=('s'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='s',
-            props=dict(minValue=0),
-        ),
-    )
-
-    purge_flow_rate = Quantity(
-        type=np.dtype(np.float64),
-        unit=('cm**3 / min'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='cm**3 / min',
-            props=dict(minValue=0),
-        ),
-    )
-
-    manifold_temperature = Quantity(
-        links=[
-            'http://purl.obolibrary.org/obo/PATO_0000146',
-            'https://purl.archive.org/tfsco/TFSCO_00002111',
-        ],
-        type=np.dtype(np.float64),
-        unit=('°C'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
-    )
-
-
 class ALDPropertiesIris(ALDProperties):
     m_def = Section(
         label_quantity='name',

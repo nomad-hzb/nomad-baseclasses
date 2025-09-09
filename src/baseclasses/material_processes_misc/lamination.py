@@ -22,6 +22,7 @@ from nomad.metainfo import Quantity
 
 from .. import BaseProcess
 
+
 class Lamination(BaseProcess):
     """Base class for lamination of a sample"""
 

@@ -44,8 +44,6 @@ from baseclasses.wet_chemical_deposition.inkjet_printing import (
     NozzleVoltageProfile,
     PrintHeadPath,
     PrintHeadProperties,
-    LP50NozzleVoltageProfile,
-    NotionNozzleVoltageProfile,
 )
 from baseclasses.wet_chemical_deposition.slot_die_coating import (
     SlotDieCoatingProperties,
@@ -681,7 +679,6 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
     return (f'{i}_{j}_slot_die_coating_{material}', archive)
 
 
-
 def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
     location = get_value(data, 'Tool/GB name', '', False)
     archive = inkjet_class(
@@ -862,7 +859,8 @@ def map_lamination(i, j, lab_ids, data, upload_id, lamination_class):
     archive = lamination_class(
         name='Lamination',
         location=get_value(data, 'Tool/GB name', '', False),
-        position_in_experimental_plan=i, # Hier muss man evtl was anpassen, da das Lamination ja als letztes von zwei halbstacks ist...
+        # Hier muss man evtl was anpassen, da das Lamination ja als letztes von zwei halbstacks ist...
+        position_in_experimental_plan=i,
         description=get_value(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
@@ -1027,7 +1025,7 @@ def map_evaporation(
             if get_value(data, 'Temperature [°C]', None):
                 evaporation.temparature = [
                     get_value(data, 'Temperature [°C]', None)
-                ] * 2       # warum wird hier die temperatur mit 2 multipliziert?
+                ] * 2
 
         if not evaporation:
             return (file_name, archive)
@@ -1275,7 +1273,7 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
         layer=map_layer(data),
         atmosphere=map_atmosphere(data),
         properties=ALDPropertiesIris(
-            #source=get_value(data, 'Source', None, number=False),
+            source=get_value(data, 'Source', None, number=False),
             thickness=get_value(data, 'Thickness [nm]', None),
             temperature=get_value(
                 data,

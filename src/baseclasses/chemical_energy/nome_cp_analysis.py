@@ -208,8 +208,7 @@ def get_all_cp_in_upload(data_archive, upload_id):
     from nomad.search import search
 
     query = {
-        'section_defs.definition_qualified_name':
-            'baseclasses.chemical_energy.chronopotentiometry.Chronopotentiometry',
+        'section_defs.definition_qualified_name': 'baseclasses.chemical_energy.chronopotentiometry.Chronopotentiometry',
         'results.eln.methods': 'OER Chronopotentiometry',
         'upload_id': upload_id,
     }
