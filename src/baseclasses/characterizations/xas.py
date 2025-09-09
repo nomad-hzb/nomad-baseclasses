@@ -249,6 +249,8 @@ class XASWithSDD(XAS, PlotSection):
         links=['https://w3id.org/nfdi4cat/voc4cat_0008089'],
         type=np.dtype(np.float64),
         shape=['*'],
+        description='For XAS Fluorescence absorbance_of_the_sample = mean(all fluo_tlt_results from the sdd channels). '
+                    'For XAS Transmission absorbance_of_the_sample = -ln(k1 / k0) .',
         a_plot=[
             {
                 'x': 'energy',
@@ -309,6 +311,7 @@ class XASFluorescence(XAS):
         links=['https://w3id.org/nfdi4cat/voc4cat_0008088'],
         type=np.dtype(np.float64),
         shape=['*'],
+        description='absorbance_of_the_reference = -ln(k1 / k0)',
         a_plot=[
             {
                 'x': 'energy',
@@ -325,6 +328,7 @@ class XASFluorescence(XAS):
         links=['https://w3id.org/nfdi4cat/voc4cat_0008086'],
         type=np.dtype(np.float64),
         shape=['*'],
+        description='fluorescence_yield = k3 / k0',
         a_plot=[
             {
                 'x': 'energy',
@@ -357,6 +361,7 @@ class XASTransmission(XAS):
         links=['https://w3id.org/nfdi4cat/voc4cat_0008088'],
         type=np.dtype(np.float64),
         shape=['*'],
+        description='absorbance_of_the_reference = -ln(k3/k1)',
         a_plot=[
             {
                 'x': 'energy',
@@ -373,6 +378,7 @@ class XASTransmission(XAS):
         links=['https://w3id.org/nfdi4cat/voc4cat_0008089'],
         type=np.dtype(np.float64),
         shape=['*'],
+        description='absorbance_of_the_sample = -ln(k1/k0)',
         a_plot=[
             {
                 'x': 'energy',
