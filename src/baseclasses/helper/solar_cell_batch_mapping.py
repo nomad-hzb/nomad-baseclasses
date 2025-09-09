@@ -794,7 +794,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
         voltage_b = get_value(data, 'Wf Level 2[V]', None, unit='V')
         voltage_c = get_value(data, 'Wf Level 3[V]', None, unit='V')
         archive.nozzle_voltage_profile = LP50NozzleVoltageProfile(
-            number_of_pulses=get_value(data, 'Wf Number of Pulses', None, False),
+            number_of_pulses=get_value(data, 'Wf Number of Pulses', None),
             voltage_a=voltage_a,
             # umrechnen time [us] = V_level [V]/ rise[V/us]
             rise_edge_a=voltage_a
