@@ -109,7 +109,7 @@ class LaminationSettings(ArchiveSection):
         type=str,
         shape=[],
         a_eln=dict(
-            component='TextEditQuantity',
+            component='StringEditQuantity',
         ),
     )
 
