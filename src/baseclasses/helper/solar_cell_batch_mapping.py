@@ -12,6 +12,7 @@ from baseclasses.material_processes_misc import (
     AntiSolventQuenching,
     GasFlowAssistedVacuumDrying,
     GasQuenchingWithNozzle,
+    LaminationSettings,
     PlasmaCleaning,
     SolutionCleaning,
     UVCleaning,
@@ -869,16 +870,18 @@ def map_lamination(i, j, lab_ids, data, upload_id, lamination_class):
             )
             for lab_id in lab_ids
         ],
-        temperature=get_value(data, 'Temperature [°C]', None),
-        pressure=get_value(data, 'Pressure [MPa]', None),
-        force=get_value(data, 'Force [N]', None),
-        area=get_value(data, 'Area [mm²]', None),
-        time=get_value(data, 'Time [s]', None),
-        heat_up_time=get_value(data, 'Heat up time [s]', None),
-        cool_down_time=get_value(data, 'Cool down time [s]', None),
-        stamp_material=get_value(data, 'Stamp Material', '', False),
-        stamp_thickness=get_value(data, 'Stamp Thickness [mm]', None),
-        stamp_area=get_value(data, 'Stamp Area [mm²]', None),
+        settings=LaminationSettings(
+            temperature=get_value(data, 'Temperature [°C]', None),
+            pressure=get_value(data, 'Pressure [MPa]', None),
+            force=get_value(data, 'Force [N]', None),
+            area=get_value(data, 'Area [mm²]', None),
+            time=get_value(data, 'Time [s]', None),
+            heat_up_time=get_value(data, 'Heat up time [s]', None),
+            cool_down_time=get_value(data, 'Cool down time [s]', None),
+            stamp_material=get_value(data, 'Stamp Material', '', False),
+            stamp_thickness=get_value(data, 'Stamp Thickness [mm]', None),
+            stamp_area=get_value(data, 'Stamp Area [mm²]', None),
+        ),
     )
     return (f'{i}_{j}_lamination', archive)
 

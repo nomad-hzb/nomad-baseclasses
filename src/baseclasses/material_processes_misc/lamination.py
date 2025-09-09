@@ -18,14 +18,12 @@
 
 import numpy as np
 from nomad.datamodel.data import ArchiveSection
-from nomad.metainfo import Quantity
+from nomad.metainfo import Quantity, SubSection
 
 from .. import BaseProcess
 
 
-class Lamination(BaseProcess):
-    """Base class for lamination of a sample"""
-
+class LaminationSettings(ArchiveSection):
     temperature = Quantity(
         links=[
             'http://purl.obolibrary.org/obo/PATO_0000146',
@@ -137,11 +135,8 @@ class Lamination(BaseProcess):
         ),
     )
 
-    notes = Quantity(
-        type=str,
-        shape=[],
-        a_eln=dict(
-            component='TextEditQuantity',
-            props=dict(multiline=True),
-        ),
-    )
+
+class Lamination(BaseProcess):
+    """Base class for lamination of a sample"""
+
+    settings = SubSection(section_def=LaminationSettings)

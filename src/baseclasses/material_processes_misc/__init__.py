@@ -18,6 +18,7 @@
 
 from .annealing import Annealing
 from .cleaning import Cleaning, PlasmaCleaning, SolutionCleaning, UVCleaning
+from .lamination import Lamination, LaminationSettings
 from .laser_scribing import LaserScribing
 from .quenching import (
     AirKnifeGasQuenching,
