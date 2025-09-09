@@ -82,7 +82,7 @@ class PrintHeadPath(ArchiveSection):
         links=['https://purl.archive.org/tfsco/TFSCO_00005077'],
         type=str,
         a_eln=dict(
-            component='StringEditQuantity',
+            component='EnumEditQuantity',
         ),
     )
 
@@ -92,10 +92,11 @@ class NotionNozzleVoltageProfile(NozzleVoltageProfile):
         links=['https://purl.archive.org/tfsco/TFSCO_00005083'],
     )
     number_of_pulses = Quantity(
-        type=np.dtype(np.int64),
+        type=np.dtype(np.float64),
         a_eln=dict(component='NumberEditQuantity', props=dict(minValue=1)),
-    )
 
+    )
+    
     voltage_a = Quantity(
         type=np.dtype(np.float64),
         unit=('V'),
@@ -113,17 +114,17 @@ class NotionNozzleVoltageProfile(NozzleVoltageProfile):
             component='NumberEditQuantity',
             defaultDisplayUnit='us',
             props=dict(minValue=0, maxValue=25),
-        ),
+        )
     )
 
     rise_edge_a = Quantity(
-        type=np.dtype(np.float64),
+        type=np.dtype(np.float64),  
         unit=('us'),
-        a_eln=dict(
+          a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='us',
             props=dict(minValue=1, maxValue=25),
-        ),
+        )
     )
 
     peak_time_a = Quantity(
@@ -145,7 +146,7 @@ class NotionNozzleVoltageProfile(NozzleVoltageProfile):
             props=dict(minValue=1, maxValue=25),
         ),
     )
-
+    
     time_space_a = Quantity(
         type=np.dtype(np.float64),
         unit=('us'),
@@ -157,28 +158,27 @@ class NotionNozzleVoltageProfile(NozzleVoltageProfile):
     )
 
     number_of_greylevels_a = Quantity(
-        type=np.dtype(np.int64),
+        type=np.dtype(np.float64),
         a_eln=dict(component='NumberEditQuantity', props=dict(minValue=1)),
     )
 
     grey_level_0_pulse_a = Quantity(
-        type=bool,
+        type=np.dtype(bool),
         a_eln=dict(component='BoolEditQuantity'),
     )
 
     grey_level_1_pulse_a = Quantity(
-        type=bool,
+        type=np.dtype(bool),
         a_eln=dict(component='BoolEditQuantity'),
     )
-    # Add the rest of the parameters here
-
+    ## Add the rest of the parameters here
 
 class LP50NozzleVoltageProfile(NozzleVoltageProfile):
     m_def = Section(
         links=['https://purl.archive.org/tfsco/TFSCO_00005083'],
     )
     number_of_pulses = Quantity(
-        type=np.dtype(np.int64),
+        type=np.dtype(np.float64),
         a_eln=dict(component='NumberEditQuantity', props=dict(minValue=1)),
     )
 
@@ -474,7 +474,7 @@ class PrintHeadProperties(ArchiveSection):
     )
 
     number_of_active_print_nozzles = Quantity(
-        type=np.dtype(np.int64), a_eln=dict(component='NumberEditQuantity')
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
     )
 
     active_nozzles = Quantity(
@@ -670,4 +670,42 @@ class LP50InkjetPrinting(InkjetPrinting):
 
     def normalize(self, archive, logger):
         self.method = 'LP50 Inkjet printing'
+        super().normalize(archive, logger)
+
+
+class NotionInkjetPrinting(InkjetPrinting):
+    """Base class for inkjet printing of a layer on a sample"""
+
+    m_def = Section(links=['https://purl.archive.org/tfsco/TFSCO_00002053'])
+
+    recipe_used = Quantity(
+        type=str,
+        a_eln=dict(component='FileEditQuantity'),
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
+
+    print_head_used = Quantity(
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00005064',
+            'http://purl.obolibrary.org/obo/RO_0000057',
+        ],
+        type=str,
+        a_eln=dict(component='FileEditQuantity'),
+        a_browser=dict(adaptor='RawFileAdaptor'),
+    )
+
+    properties = SubSection(section_def=InkjetPrintingProperties)
+
+    print_head_path = SubSection(
+        links=['http://purl.obolibrary.org/obo/OBI_0000293'],
+        section_def=PrintHeadPath,
+    )
+
+    nozzle_voltage_profile = SubSection(
+        links=['http://purl.obolibrary.org/obo/OBI_0000293'],
+        section_def=NotionNozzleVoltageProfile,
+    )
+
+    def normalize(self, archive, logger):
+        self.method = 'Notion Inkjet printing'
         super().normalize(archive, logger)
