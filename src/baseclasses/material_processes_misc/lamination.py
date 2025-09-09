@@ -45,7 +45,7 @@ class LaminationSettings(ArchiveSection):
         shape=[],
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='seconds',
+            defaultDisplayUnit='s',
             props=dict(minValue=0),
         ),
     )
@@ -74,11 +74,11 @@ class LaminationSettings(ArchiveSection):
 
     area = Quantity(
         type=np.dtype(np.float64),
-        unit=('mm^2'),
+        unit=('mm**2'),
         shape=[],
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='mm^2',
+            defaultDisplayUnit='mm**2',
             props=dict(minValue=0),
         ),
     )
@@ -89,7 +89,7 @@ class LaminationSettings(ArchiveSection):
         shape=[],
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='seconds',
+            defaultDisplayUnit='s',
             props=dict(minValue=0),
         ),
     )
@@ -100,7 +100,7 @@ class LaminationSettings(ArchiveSection):
         shape=[],
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='seconds',
+            defaultDisplayUnit='s',
             props=dict(minValue=0),
         ),
     )
@@ -126,11 +126,11 @@ class LaminationSettings(ArchiveSection):
 
     stamp_area = Quantity(
         type=np.dtype(np.float64),
-        unit=('mm^2'),
+        unit=('mm**2'),
         shape=[],
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='mm^2',
+            defaultDisplayUnit='mm**2',
             props=dict(minValue=0),
         ),
     )
