@@ -49,7 +49,7 @@ def get_jv_archive(jv_dict, mainfile, jvm, append=False):
                 current_density=curve['current_density'],
                 dark=True,
             )
-        elif 'pixel' in curve['name'].lower():
+        elif 'pixel' in curve['name'].lower(): #for location 1 of tfsc plugin
             # Extract pixel number from name to use correct index
             pixel_num = int(curve['name'].split('_')[1]) - 1  # Convert to 0-based index
             jv_set = SolarCellJVCurveCustom(
@@ -60,12 +60,30 @@ def get_jv_archive(jv_dict, mainfile, jvm, append=False):
                 open_circuit_voltage=round(jv_dict['V_oc'][pixel_num], 8) * ureg('V'),
                 short_circuit_current_density=round(jv_dict['J_sc'][pixel_num], 8)
                 * ureg('mA/cm^2'),
-                fill_factor=round(jv_dict['Fill_factor'][pixel_num], 8) * 0.01,
+                fill_factor=round(jv_dict['Fill_factor'][pixel_num], 8),
                 efficiency=round(jv_dict['Efficiency'][pixel_num], 8) if 'Efficiency' in jv_dict else None,
                 potential_at_maximum_power_point=round(jv_dict['U_MPP'][pixel_num], 8)
                 * ureg('V'),
                 current_density_at_maximun_power_point=round(
                     jv_dict['J_MPP'][pixel_num], 8
+                )
+                * ureg('mA/cm^2'),
+            )
+        elif 'loc2' in curve['name'].lower(): #for location 2 of tfsc plugin
+                jv_set = SolarCellJVCurveCustom(
+                cell_name=curve['name'],
+                voltage=curve['voltage'],
+                current_density=curve['current_density'],
+                light_intensity=jv_dict['intensity'],
+                open_circuit_voltage=round(jv_dict['V_oc'][curve_idx], 8) * ureg('V'),
+                short_circuit_current_density=round(jv_dict['J_sc'][curve_idx], 8)
+                * ureg('mA/cm^2'),
+                fill_factor=round(jv_dict['Fill_factor'][curve_idx], 8),
+                efficiency=round(jv_dict['Efficiency'][curve_idx], 8) if 'Efficiency' in jv_dict else None,
+                potential_at_maximum_power_point=round(jv_dict['U_MPP'][curve_idx], 8)
+                * ureg('V'),
+                current_density_at_maximun_power_point=round(
+                    jv_dict['J_MPP'][curve_idx], 8
                 )
                 * ureg('mA/cm^2'),
             )
