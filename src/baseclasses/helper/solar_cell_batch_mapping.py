@@ -20,7 +20,7 @@ from baseclasses.material_processes_misc import (
 )
 from baseclasses.material_processes_misc.laser_scribing import LaserScribingProperties
 from baseclasses.solar_energy.carbonpaste import CarbonPasteLayerProperties
-from baseclasses.solution import Solution, SolutionChemical
+from baseclasses.solution import Solution, SolutionChemical, SolutionWaschingFiltration
 from baseclasses.vapour_based_deposition.atomic_layer_deposition import (
     ALDMaterial,
     ALDPropertiesIris,
@@ -227,6 +227,17 @@ def map_layer(data):
 
 
 def map_solutions(data):
+    if get_value(data, 'Filter Material', None, False):
+        filtration = [
+            SolutionWaschingFiltration(
+                washing_technique='Filtration',
+                filter_material=get_value(data, 'Filter Material', None, False),
+                filter_pore_size=get_value(data, 'Filter Pore Size [um]', None, unit='um')
+            )
+    ]
+    else:
+        filtration= None
+        
     solvents = []
     solutes = []
     additives = []
@@ -306,7 +317,7 @@ def map_solutions(data):
         )
 
     archive = Solution(
-        solvent=final_solvents, solute=final_solutes, additive=final_additives
+        solvent=final_solvents, solute=final_solutes, additive=final_additives, filtration= filtration
     )
 
     return archive
