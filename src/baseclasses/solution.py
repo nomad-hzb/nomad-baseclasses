@@ -390,17 +390,18 @@ class SolutionWasching(ArchiveSection):
 
 class SolutionWaschingFiltration(SolutionWasching):
     filter_material = Quantity(
-        links= [],
+        links=[],
         type=str,
         a_eln=dict(
-            component='EnumEditQuantity', props=dict(suggestions=['PTFE', 'PVDF', 'GHP'])
-        ), 
+            component='EnumEditQuantity',
+            props=dict(suggestions=['PTFE', 'PVDF', 'GHP']),
+        ),
     )
     filter_pore_size = Quantity(
         links=[],
         type=np.dtype(np.float64),
         unit=('um'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='um')
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='um'),
     )
 
 

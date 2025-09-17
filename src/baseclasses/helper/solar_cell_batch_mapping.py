@@ -232,12 +232,14 @@ def map_solutions(data):
             SolutionWaschingFiltration(
                 washing_technique='Filtration',
                 filter_material=get_value(data, 'Filter Material', None, False),
-                filter_pore_size=get_value(data, 'Filter Pore Size [um]', None, unit='um')
+                filter_pore_size=get_value(
+                    data, 'Filter Pore Size [um]', None, unit='um'
+                ),
             )
-    ]
+        ]
     else:
-        filtration= None
-        
+        filtration = None
+
     solvents = []
     solutes = []
     additives = []
@@ -317,7 +319,10 @@ def map_solutions(data):
         )
 
     archive = Solution(
-        solvent=final_solvents, solute=final_solutes, additive=final_additives, filtration= filtration
+        solvent=final_solvents,
+        solute=final_solutes,
+        additive=final_additives,
+        filtration=filtration,
     )
 
     return archive
