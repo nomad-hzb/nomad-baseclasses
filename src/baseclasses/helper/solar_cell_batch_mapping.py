@@ -227,18 +227,16 @@ def map_layer(data):
 
 
 def map_solutions(data):
+    filtration = None
+    
     if get_value(data, 'Filter Material', None, False):
-        filtration = [
-            SolutionWaschingFiltration(
+        filtration = SolutionWaschingFiltration(
                 washing_technique='Filtration',
                 filter_material=get_value(data, 'Filter Material', None, False),
                 filter_pore_size=get_value(
                     data, 'Filter Pore Size [um]', None, unit='um'
                 ),
             )
-        ]
-    else:
-        filtration = None
 
     solvents = []
     solutes = []
