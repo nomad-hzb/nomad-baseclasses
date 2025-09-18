@@ -389,7 +389,20 @@ class SolutionWasching(ArchiveSection):
 
 
 class SolutionWaschingFiltration(SolutionWasching):
-    pass
+    filter_material = Quantity(
+        links=[],
+        type=str,
+        a_eln=dict(
+            component='StringEditQuantity',
+            props=dict(suggestions=['PTFE', 'PVDF', 'GHP']),
+        ),
+    )
+    filter_pore_size = Quantity(
+        links=[],
+        type=np.dtype(np.float64),
+        unit=('um'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='um'),
+    )
 
 
 class SolutionWaschingCentrifuge(SolutionWasching):
@@ -512,6 +525,7 @@ class Solution(CompositeSystem):
     )
     preparation = SubSection(section_def=SolutionPreparation)
     properties = SubSection(section_def=SolutionProperties)
+    filtration = SubSection(section_def=SolutionWaschingFiltration)
     storage = SubSection(
         links=['http://purl.obolibrary.org/obo/OBI_0302893'],
         section_def=SolutionStorage,
