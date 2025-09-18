@@ -393,7 +393,7 @@ class SolutionWaschingFiltration(SolutionWasching):
         links=[],
         type=str,
         a_eln=dict(
-            component='EnumEditQuantity',
+            component='StringEditQuantity',
             props=dict(suggestions=['PTFE', 'PVDF', 'GHP']),
         ),
     )
