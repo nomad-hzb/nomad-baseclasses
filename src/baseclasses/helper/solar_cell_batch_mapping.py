@@ -63,11 +63,13 @@ def get_reference(upload_id, file_name):
     return f'../uploads/{upload_id}/archive/{entry_id}#data'
 
 
-def get_value(data, key, default=None, number=True, unit=None):
+def get_value(data, key, default=None, number=True, unit=None, factor=1.0):
     if not isinstance(key, list):
         key = [key]
     if unit and not isinstance(unit, list):
         unit = [unit]
+    if factor and not isinstance(factor,list):
+        factor = [factor]
 
     try:
         if not unit:
@@ -80,14 +82,14 @@ def get_value(data, key, default=None, number=True, unit=None):
                     return float(data[k])
                 return str(data[k]).strip()
         if unit:
-            for k, u in zip(key, unit):
+            for k, u, f in zip(key, unit, factor):
                 if k not in data:
                     continue
                 if pd.isna(data[k]):
                     return default
                 if number and u:
                     Q_ = ureg.Quantity
-                    return Q_(float(data[k]), ureg(u))
+                    return Q_(float(data[k])*f, ureg(u))
         return default
     except Exception as e:
         raise e
@@ -286,7 +288,8 @@ def map_solutions(data):
                         f'{solute} Concentration [mg/ml]',
                     ],
                     None,
-                    unit=['wt%', 'mg/ml'],
+                    unit=['mg/ml', 'mg/ml'],
+                    factor=[10,1]
                 ),
                 amount_relative=get_value(data, f'{solute} relative amount', None),
                 chemical_id=get_value(data, f'{solute} chemical ID', None, False),
@@ -309,7 +312,8 @@ def map_solutions(data):
                         f'{additive} Concentration [mg/ml]',
                     ],
                     None,
-                    unit=['wt%', 'mg/ml'],
+                    unit=['mg/ml', 'mg/ml'],
+                    factor=[10,1]
                 ),
                 amount_relative=get_value(data, f'{additive} relative amount', None),
                 chemical_id=get_value(data, f'{additive} chemical ID', None, False),
