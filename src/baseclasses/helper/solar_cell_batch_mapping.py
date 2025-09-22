@@ -68,18 +68,18 @@ def get_value(data, key, default=None, number=True, unit=None, factor=1.0):
         key = [key]
     if unit and not isinstance(unit, list):
         unit = [unit]
-    if factor and not isinstance(factor,list):
-        factor = [factor]
+    if factor and not isinstance(factor, list):
+        factor = [factor]*len(key)
 
     try:
         if not unit:
-            for k in key:
+            for k, f in zip(key,factor):
                 if k not in data:
                     continue
                 if pd.isna(data[k]):
                     return default
                 if number:
-                    return float(data[k])
+                    return float(data[k]) * f
                 return str(data[k]).strip()
         if unit:
             for k, u, f in zip(key, unit, factor):
@@ -89,7 +89,7 @@ def get_value(data, key, default=None, number=True, unit=None, factor=1.0):
                     return default
                 if number and u:
                     Q_ = ureg.Quantity
-                    return Q_(float(data[k])*f, ureg(u))
+                    return Q_(float(data[k]) * f, ureg(u))
         return default
     except Exception as e:
         raise e
