@@ -57,7 +57,10 @@ class GravurePrintingProperties(ArchiveSection):
         type=MEnum('Forward', 'Reverse'),
         shape=[],
         a_eln=dict(component='EnumEditQuantity'),
-        description='Material and cylinder moving in the same direction for forward mode, and in opposite directions for reverse mode.',
+        description=(
+            'Material and cylinder moving in the same direction for forward mode, '
+            'and in opposite directions for reverse mode.'
+        ),
     )
 
     cell_type = Quantity(
@@ -65,6 +68,21 @@ class GravurePrintingProperties(ArchiveSection):
         type=str,
         a_eln=dict(component='StringEditQuantity'),
         description='The shape of the engraving cell.',
+    )
+
+    ink_temperature = Quantity(
+        links=[],
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='°C',
+            props=dict(minValue=0),
+        ),
+        description=(
+            'Measured by the water temperature when ink in water bath in S2S,'
+            'and by the whole ink reservoir temperature in R2R'
+        ),
     )
 
 
