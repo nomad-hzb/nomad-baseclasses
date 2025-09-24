@@ -624,6 +624,7 @@ def map_gravure_printing(i, j, lab_ids, data, upload_id, gravure_printing_class)
             gp_method=get_value(data, 'R2R or S2S', '', False),
             gp_direction=get_value(data, 'Forward or Reverse', '', False),
             cell_type=get_value(data, 'Cell Type', None, False),
+            ink_temperature=get_value(data, 'Ink Temperature [°C]', None, unit='°C')
         ),
     )
 
