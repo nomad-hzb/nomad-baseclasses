@@ -22,7 +22,11 @@ import numpy as np
 import pandas as pd
 from nomad.metainfo import Quantity, Section, SubSection
 
-from .potentiostat_measurement import PotentiostatMeasurement, VoltammetryCycle
+from .potentiostat_measurement import (
+    PotentiostatMeasurement,
+    PotentiostatProperties,
+    VoltammetryCycle,
+)
 
 # encoding = "iso-8859-1"
 
@@ -383,6 +387,8 @@ class Voltammetry(PotentiostatMeasurement):
                 and getattr(self.samples[0]['reference'], 'active_area', None)
             ):
                 area = self.samples[0]['reference'].active_area
+                if self.properties is None:
+                    self.properties = PotentiostatProperties()
                 self.properties.sample_area = area
 
             if self.properties is not None and area is not None:

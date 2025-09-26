@@ -122,6 +122,27 @@ class CyclicVoltammetry(Voltammetry):
 
     properties = SubSection(section_def=CVProperties)
 
+    def get_scan_rate(self):
+        if self.cycles is None:
+            return None
+        if self.cycles[0].get('voltage') is None or self.cycles[0].get('time') is None:
+            return None
+        v = np.median(np.abs(np.diff(self.cycles[0].voltage)))
+        t = np.median(np.abs(np.diff(self.cycles[0].time)))
+        return v / t
+
+    def set_calculated_properties(self):
+        # This can be called if the parser does not read properties from the file.
+        # We should not call this by default because it would break the "if not self.properties" logic of all
+        # normalizers/parsers that set information from the raw files.
+        if self.properties is None:
+            self.properties = CVProperties()
+        if isinstance(self.properties, PotentiostatProperties):
+            area = self.properties.sample_area
+            self.properties = CVProperties(sample_area=area)
+        if self.properties.scan_rate is None:
+            self.properties.scan_rate = self.get_scan_rate()
+
     def normalize(self, archive, logger):
         self.method = 'Cyclic Voltammetry'
         super().normalize(archive, logger)

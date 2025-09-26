@@ -29,6 +29,8 @@ from .cesample import (
     Equipment,
     ExpectedStructure,
     Purging,
+    ReferenceElectrode,
+    SampleIDCENESD,
     SampleIDCENOME,
     SubstanceWithConcentration,
     SubstrateProperties,
