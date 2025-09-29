@@ -382,6 +382,57 @@ class SampleIDCENOME(SampleIDCE2):
         super().normalize(archive, logger)
 
 
+class SampleIDCENESD(SampleIDCE2):
+    m_def = Section(
+        a_eln=dict(
+            hide=[
+                'sample_owner',
+                'sample_short_name',
+                'sample_id',
+                'short_name',
+                'datetime',
+            ]
+        )
+    )
+
+    institute = Quantity(
+        type=str,
+        description='Alias/short name of the home institute of the owner, i.e. *HZB*.',
+        default='CE-NESD',
+        a_eln=dict(component='EnumEditQuantity', props=dict(suggestions=['CE-NESD'])),
+    )
+
+    owner = Quantity(
+        type=str,
+        description='Alias/short name of the home institute of the owner, i.e. *HZB*.',
+        default='Michelle Browne',
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=[
+                    'Michelle philippa Browne',
+                    'Maximilian Reinhardt',
+                    'Ahmed Aboubakr',
+                    'Can Kaplan',
+                    'Sweta Sharma',
+                    'Aline Alencar Emerenciano',
+                    'Iris Dorbandt',
+                    'Merve Aktürk',
+                    'Mehmet Turan Görüryilmaz',
+                    'Karuppasamy Dharmaraj',
+                    'Sana Akir',
+                    'Bastian Schmiedecke',
+                    'Rory Bagacki',
+                    'Steffi Hlawenka',
+                ]
+            ),
+        ),
+    )
+
+    def normalize(self, archive, logger):
+        super().normalize(archive, logger)
+
+
 class CENSLISample(CESample):
     sample_id = SubSection(section_def=SampleIDCE)
 
@@ -532,6 +583,26 @@ class Electrode(CESample):
     location = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
     producer = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
+
+
+class ReferenceElectrode(Electrode):
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007204'],
+    )
+
+    internal_solution = SubSection(section_def=SubstanceWithConcentration)
+
+    standard_potential = Quantity(
+        type=np.dtype(np.float64),
+        unit='V',
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
+
+    temperature = Quantity(
+        type=np.dtype(np.float64),
+        unit='°C',
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
 
 
 class Equipment(Entity):
