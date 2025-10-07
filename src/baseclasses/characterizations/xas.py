@@ -197,9 +197,7 @@ class SiliconDriftDetector(PlotSection, ArchiveSection):
         description='fluo_tlt_result = fluo_tlt / k0',
     )
 
-    def normalize(self, archive, logger, k0=None):
-        if k0 is None:  # needed for reprocessing
-            return
+    def normalize(self, archive, logger):
         super().normalize(archive, logger)
         if self.fluo is not None and self.icr is not None and self.ocr is not None:
 
@@ -225,7 +223,7 @@ class SiliconDriftDetector(PlotSection, ArchiveSection):
                 / np.where(self.ocr == 0, np.nan, self.ocr)
             )
             self.fluo_tlt = self.fluo_dead_time_corrected / self.tlt
-            self.fluo_tlt_result = self.fluo_tlt / k0
+            self.fluo_tlt_result = self.fluo_tlt / self.m_parent.k0
         fig1 = make_xas_plot('OCR/ICR', self.ocr, 'ICR', [self.icr], 'OCR')
         self.figures = [
             PlotlyFigure(label='OCR vs ICR Plot', figure=json.loads(fig1.to_json())),
@@ -266,7 +264,7 @@ class XASWithSDD(XAS, PlotSection):
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
         for detector in self.sdd_parameters:
-            detector.normalize(archive, logger, self.k0)
+            detector.normalize(archive, logger)
 
         if all(((0 <= sdd.get('icr')) & (sdd.get('icr') <= 250000)).all() for sdd in self.sdd_parameters):
             self.quality_annotation = 'ICR within specified bounds'
