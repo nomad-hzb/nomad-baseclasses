@@ -241,6 +241,11 @@ class SubstrateProperties(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'),
     )
 
+    substrate_cleaning = Quantity(
+        type=str,
+        a_eln=dict(component='RichTextEditQuantity'),
+    )
+
 
 class CESample(CompositeSystem):
     origin = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
@@ -504,6 +509,39 @@ class ExpectedStructure(ArchiveSection):
         type=str,
         description='Further description of the expected structure',
         a_eln=dict(component='RichTextEditQuantity'),
+    )
+
+
+class CENESDSample(CESample):
+    preparation_date = Quantity(
+        type=Datetime,
+        description='The date where the sample was prepared.',
+        a_eln=dict(component='DateTimeEditQuantity'),
+    )
+
+    origin = Quantity(
+        type=str, a_eln=dict(component='StringEditQuantity', label='preparing person')
+    )
+
+    active_area = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007258'],
+        type=np.dtype(np.float64),
+        unit=('cm^2'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm^2'),
+    )
+
+    substrate = SubSection(section_def=SubstrateProperties)
+
+    drying_temperature = Quantity(
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
+
+    description = Quantity(
+        type=str,
+        description='Any information that cannot be captured in the other fields.',
+        a_eln=dict(component='RichTextEditQuantity', label='Notes'),
     )
 
 
