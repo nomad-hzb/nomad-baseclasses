@@ -137,9 +137,6 @@ class CyclicVoltammetry(Voltammetry):
         # normalizers/parsers that set information from the raw files.
         if self.properties is None:
             self.properties = CVProperties()
-        if isinstance(self.properties, PotentiostatProperties):
-            area = self.properties.sample_area
-            self.properties = CVProperties(sample_area=area)
         if self.properties.scan_rate is None:
             self.properties.scan_rate = self.get_scan_rate()
 

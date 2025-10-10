@@ -69,11 +69,11 @@ def get_value(data, key, default=None, number=True, unit=None, factor=1.0):
     if unit and not isinstance(unit, list):
         unit = [unit]
     if factor and not isinstance(factor, list):
-        factor = [factor]*len(key)
+        factor = [factor] * len(key)
 
     try:
         if not unit:
-            for k, f in zip(key,factor):
+            for k, f in zip(key, factor):
                 if k not in data:
                     continue
                 if pd.isna(data[k]):
@@ -230,15 +230,13 @@ def map_layer(data):
 
 def map_solutions(data):
     filtration = None
-    
+
     if get_value(data, 'Filter Material', None, False):
         filtration = SolutionWaschingFiltration(
-                washing_technique='Filtration',
-                filter_material=get_value(data, 'Filter Material', None, False),
-                filter_pore_size=get_value(
-                    data, 'Filter Pore Size [um]', None, unit='um'
-                ),
-            )
+            washing_technique='Filtration',
+            filter_material=get_value(data, 'Filter Material', None, False),
+            filter_pore_size=get_value(data, 'Filter Pore Size [um]', None, unit='um'),
+        )
 
     solvents = []
     solutes = []
@@ -289,7 +287,7 @@ def map_solutions(data):
                     ],
                     None,
                     unit=['mg/ml', 'mg/ml'],
-                    factor=[10,1]
+                    factor=[10, 1],
                 ),
                 amount_relative=get_value(data, f'{solute} relative amount', None),
                 chemical_id=get_value(data, f'{solute} chemical ID', None, False),
@@ -313,7 +311,7 @@ def map_solutions(data):
                     ],
                     None,
                     unit=['mg/ml', 'mg/ml'],
-                    factor=[10,1]
+                    factor=[10, 1],
                 ),
                 amount_relative=get_value(data, f'{additive} relative amount', None),
                 chemical_id=get_value(data, f'{additive} chemical ID', None, False),
@@ -624,7 +622,7 @@ def map_gravure_printing(i, j, lab_ids, data, upload_id, gravure_printing_class)
             gp_method=get_value(data, 'R2R or S2S', '', False),
             gp_direction=get_value(data, 'Forward or Reverse', '', False),
             cell_type=get_value(data, 'Cell Type', None, False),
-            ink_temperature=get_value(data, 'Ink Temperature [°C]', None, unit='°C')
+            ink_temperature=get_value(data, 'Ink Temperature [°C]', None, unit='°C'),
         ),
     )
 

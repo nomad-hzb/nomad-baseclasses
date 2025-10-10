@@ -31,9 +31,8 @@ from .. import BaseMeasurement
 
 class XAS(BaseMeasurement):
     """XAS Measurement"""
-    m_def = Section(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0000286']
-    )
+
+    m_def = Section(links=['https://w3id.org/nfdi4cat/voc4cat_0000286'])
 
     data_file = Quantity(
         type=str,
@@ -101,9 +100,9 @@ class XAS(BaseMeasurement):
         type=np.dtype(np.float64),
         shape=['*'],
         description='X-ray intensity after sample and after energy standard/reference '
-                    '(depending on the setup in the beamline). '
-                    'In KMC-2 the setup in transmission mode may contain a metal foil as the energy reference '
-                    'while KMC-3 uses a fixed energy standard.',
+        '(depending on the setup in the beamline). '
+        'In KMC-2 the setup in transmission mode may contain a metal foil as the energy reference '
+        'while KMC-3 uses a fixed energy standard.',
         a_plot=[
             {
                 'x': 'energy',
@@ -116,12 +115,11 @@ class XAS(BaseMeasurement):
         ],
     )
 
-
     manual_energy_shift = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0008090'],
         type=np.dtype(np.float64),
         description='Aligns the energy spectrum with a known reference like the absorption edge of a reference foil. '
-                    '(true energy value = measured energy value + manual_energy_shift)',
+        '(true energy value = measured energy value + manual_energy_shift)',
         unit='keV',
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='keV'),
     )
@@ -170,8 +168,10 @@ class SiliconDriftDetector(PlotSection, ArchiveSection):
         description='Live Time',
     )
     rt = Quantity(
-        links=['https://manual.nexusformat.org/classes/base_classes/NXdetector.html#nxdetector-real-time-field',
-               'https://w3id.org/nfdi4cat/voc4cat_0008096'],
+        links=[
+            'https://manual.nexusformat.org/classes/base_classes/NXdetector.html#nxdetector-real-time-field',
+            'https://w3id.org/nfdi4cat/voc4cat_0008096',
+        ],
         type=np.dtype(np.float64),
         shape=['*'],
         description='Real Time',
@@ -239,7 +239,9 @@ class XASWithSDD(XAS, PlotSection):
         shape=[],
         a_eln=dict(
             component='EnumEditQuantity',
-            props=dict(suggestions=['ICR out of bounds', 'ICR within specified bounds']),
+            props=dict(
+                suggestions=['ICR out of bounds', 'ICR within specified bounds']
+            ),
         ),
     )
 
@@ -248,7 +250,7 @@ class XASWithSDD(XAS, PlotSection):
         type=np.dtype(np.float64),
         shape=['*'],
         description='For XAS Fluorescence absorbance_of_the_sample = mean(all fluo_tlt_results from the sdd channels). '
-                    'For XAS Transmission absorbance_of_the_sample = -ln(k1 / k0) .',
+        'For XAS Transmission absorbance_of_the_sample = -ln(k1 / k0) .',
         a_plot=[
             {
                 'x': 'energy',
@@ -266,7 +268,10 @@ class XASWithSDD(XAS, PlotSection):
         for detector in self.sdd_parameters:
             detector.normalize(archive, logger)
 
-        if all(((0 <= sdd.get('icr')) & (sdd.get('icr') <= 250000)).all() for sdd in self.sdd_parameters):
+        if all(
+            ((0 <= sdd.get('icr')) & (sdd.get('icr') <= 250000)).all()
+            for sdd in self.sdd_parameters
+        ):
             self.quality_annotation = 'ICR within specified bounds'
         else:
             self.quality_annotation = 'ICR out of bounds'
@@ -276,7 +281,11 @@ class XASWithSDD(XAS, PlotSection):
         if self.absorbance_of_the_sample is None:
             if self.method == 'XAS Fluorescence' and fluo_result_list is not None:
                 self.absorbance_of_the_sample = np.nanmean(fluo_result_list, axis=0)
-            if self.method == 'XAS Transmission' and self.k1 is not None and self.k0 is not None:
+            if (
+                self.method == 'XAS Transmission'
+                and self.k1 is not None
+                and self.k0 is not None
+            ):
                 self.absorbance_of_the_sample = -np.log(self.k1 / self.k0)
 
         self.figures = []
@@ -288,9 +297,14 @@ class XASWithSDD(XAS, PlotSection):
                 fluo_result_list,
                 'Fluo corrected',
             )
-            self.figures.append(PlotlyFigure(label='SDD overview', figure=json.loads(fig1.to_json())))
+            self.figures.append(
+                PlotlyFigure(label='SDD overview', figure=json.loads(fig1.to_json()))
+            )
 
-        if self.manual_energy_shift is not None and self.absorbance_of_the_sample is not None:
+        if (
+            self.manual_energy_shift is not None
+            and self.absorbance_of_the_sample is not None
+        ):
             fig2 = make_xas_plot(
                 'Absorbance of Sample',
                 self.energy + self.manual_energy_shift,
@@ -298,13 +312,15 @@ class XASWithSDD(XAS, PlotSection):
                 [self.absorbance_of_the_sample],
                 'µ',
             )
-            self.figures.append(PlotlyFigure(label='Sample Absorbance Plot', figure=json.loads(fig2.to_json())))
+            self.figures.append(
+                PlotlyFigure(
+                    label='Sample Absorbance Plot', figure=json.loads(fig2.to_json())
+                )
+            )
 
 
 class XASFluorescence(XAS):
-    m_def = Section(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0008082']
-    )
+    m_def = Section(links=['https://w3id.org/nfdi4cat/voc4cat_0008082'])
     absorbance_of_the_reference = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0008088'],
         type=np.dtype(np.float64),
@@ -351,9 +367,7 @@ class XASFluorescence(XAS):
 
 
 class XASTransmission(XAS):
-    m_def = Section(
-        links=['https://w3id.org/nfdi4cat/voc4cat_0008081']
-    )
+    m_def = Section(links=['https://w3id.org/nfdi4cat/voc4cat_0008081'])
 
     absorbance_of_the_reference = Quantity(
         links=['https://w3id.org/nfdi4cat/voc4cat_0008088'],
