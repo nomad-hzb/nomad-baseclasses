@@ -18,6 +18,7 @@
 
 from .cesample import (
     CatalystSynthesis,
+    CENESDSample,
     CENOMESample,
     CENSLISample,
     CESample,
