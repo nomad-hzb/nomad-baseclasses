@@ -615,7 +615,7 @@ def map_gravure_printing(i, j, lab_ids, data, upload_id, gravure_printing_class)
         atmosphere=map_atmosphere(data),
         annealing=map_annealing(data),
         properties=GravurePrintingProperties(
-            gp_coating_speed=get_value(
+            gp_speed=get_value(
                 data, 'Coating Speed [m/min]', None, True, unit='m/minute'
             ),
             screen_ruling=get_value(data, 'Screen Ruling [lines/cm]', None, True, None),
