@@ -33,7 +33,7 @@ class GravurePrintingProperties(ArchiveSection):
             defaultDisplayUnit='m/minute',
             props=dict(minValue=0),
         ),
-        description='Speed of the gravure printing coating process',
+        description='The speed of substrate during gravure printing',
     )
 
     screen_ruling = Quantity(
