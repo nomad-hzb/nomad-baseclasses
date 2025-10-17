@@ -24,7 +24,7 @@ from .wet_chemical_deposition import WetChemicalDeposition
 
 
 class GravurePrintingProperties(ArchiveSection):
-    gp_speed = Quantity(
+    gp_coating_speed = Quantity(
         links=[],
         type=np.dtype(np.float64),
         unit=('m/minute'),
