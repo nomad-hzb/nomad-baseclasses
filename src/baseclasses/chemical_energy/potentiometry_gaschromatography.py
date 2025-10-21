@@ -502,6 +502,47 @@ class ThermocoupleMeasurement(PlotSection, ArchiveSection):
     )
 
 
+class LiquidFEResults(ArchiveSection):
+    compound = Quantity(
+        type=str,
+        shape=[],
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(suggestions=['formate', 'methanol', 'acetate', 'ethanol', 'propanol']),
+        ),
+    )
+
+    faradaic_efficiency = Quantity(
+        type=np.dtype(np.float64),
+        unit='%',
+    )
+
+
+class HPLCMeasurement(ArchiveSection):
+    injection_name = Quantity(type=str)
+
+    ec_charge = Quantity(
+        type=np.dtype(np.float64),
+        unit=('C'),
+    )
+
+    volume = Quantity(
+        type=np.dtype(np.float64),
+        unit=('ml'),
+    )
+
+    feed_gas = Quantity(
+        type=str,
+        shape=[],
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(suggestions=['CO', 'C02']),
+        ),
+    )
+
+    liquid_fe = SubSection(section_def=LiquidFEResults, repeats=True)
+
+
 class GasFEResults(ArchiveSection):
     m_def = Section(label_quantity='gas_type')
 
@@ -653,6 +694,8 @@ class PotentiometryGasChromatographyMeasurement(BaseMeasurement):
     potentiometry = SubSection(section_def=NECCPotentiostatMeasurement)
 
     thermocouple = SubSection(section_def=ThermocoupleMeasurement)
+
+    hplc = SubSection(section_def=HPLCMeasurement)
 
     fe_results = SubSection(section_def=PotentiometryGasChromatographyResults)
 
