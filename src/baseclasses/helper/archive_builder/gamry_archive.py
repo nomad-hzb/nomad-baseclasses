@@ -242,7 +242,12 @@ def get_meta_data(metadata, entry):
 
     get_meta_datetime(metadata, entry)
 
-    if not entry.description:
+    r_compensation_label = metadata.get('NOTES', '')
+    if 'PFCORMEASURED T' in r_compensation_label:
+        entry.resistance = metadata.get('PFCOR') * ureg('ohm')
+    elif 'ZGUESSMEASURED T' in r_compensation_label:
+        entry.resistance = metadata.get('ZGUESS') * ureg('ohm')
+    elif not entry.description:
         entry.description = (
             metadata.get('NOTES') if metadata.get('NOTES') is not None else None
         )
