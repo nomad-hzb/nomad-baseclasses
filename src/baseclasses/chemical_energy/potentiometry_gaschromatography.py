@@ -591,13 +591,33 @@ class GasFEResults(ArchiveSection):
         ),
     )
 
-    mean_fe = Quantity(type=np.dtype(np.float64))
+    mean_fe = Quantity(
+        type=np.dtype(np.float64),
+        unit='%',
+        a_eln=dict(
+            defaultDisplayUnit='%',
+        ),
+    )
 
-    variance_fe = Quantity(type=np.dtype(np.float64))
+    variance_fe = Quantity(
+        type=np.dtype(np.float64),
+    )
 
-    minimum_fe = Quantity(type=np.dtype(np.float64))
+    minimum_fe = Quantity(
+        type=np.dtype(np.float64),
+        unit='%',
+        a_eln=dict(
+            defaultDisplayUnit='%',
+        ),
+    )
 
-    maximum_fe = Quantity(type=np.dtype(np.float64))
+    maximum_fe = Quantity(
+        type=np.dtype(np.float64),
+        unit='%',
+        a_eln=dict(
+            defaultDisplayUnit='%',
+        ),
+    )
 
     def normalize(self, archive, logger):
         if any(fe > 100 for fe in self.faradaic_efficiency):
