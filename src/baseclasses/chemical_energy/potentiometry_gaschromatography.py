@@ -190,8 +190,8 @@ class NECCExperimentalProperties(ArchiveSection):
 
     nitrogen_start_value = Quantity(
         type=np.dtype(np.float64),
-        description='Specified in ppm',
         a_eln=dict(component='NumberEditQuantity'),
+        unit='ppm',
     )
 
     chronoanalysis_method = Quantity(
@@ -265,7 +265,9 @@ class GasChromatographyMeasurement(ArchiveSection):
     area = Quantity(type=np.dtype(np.float64), shape=['*'], unit='pA*minute')
 
     ppm = Quantity(
-        type=np.dtype(np.float64), description='Specified in ppm', shape=['*']
+        type=np.dtype(np.float64),
+        shape=['*'],
+        unit='ppm',
     )
 
 
@@ -561,7 +563,6 @@ class GasFEResults(ArchiveSection):
 
     faradaic_efficiency = Quantity(
         type=np.dtype(np.float64),
-        description='Faradaic efficiency specified in %',
         shape=['*'],
         a_plot=[
             {
@@ -575,6 +576,7 @@ class GasFEResults(ArchiveSection):
                 'config': {'editable': True, 'scrollZoom': True},
             }
         ],
+        unit='%',
     )
 
     mean_fe = Quantity(type=np.dtype(np.float64))
@@ -615,6 +617,7 @@ class PotentiometryGasChromatographyResults(ArchiveSection):
         type=np.dtype(np.float64),
         shape=['*'],
         description='Total faradaic efficiency specified in %',
+        unit='%',
     )
 
     pH_start = Quantity(type=np.dtype(np.float64))
