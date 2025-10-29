@@ -317,6 +317,5 @@ class Evaporations(LayerDeposition):
     perovskite_evaporation = SubSection(section_def=PerovskiteEvaporation, repeats=True)
 
     def normalize(self, archive, logger):
-        super().normalize(archive, logger)
-
         self.method = 'Evaporation'
+        super().normalize(archive, logger)
