@@ -190,8 +190,11 @@ class NECCExperimentalProperties(ArchiveSection):
 
     nitrogen_start_value = Quantity(
         type=np.dtype(np.float64),
-        description='Specified in ppm',
-        a_eln=dict(component='NumberEditQuantity'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='ppm',
+        ),
+        unit='ppm',
     )
 
     chronoanalysis_method = Quantity(
@@ -265,7 +268,12 @@ class GasChromatographyMeasurement(ArchiveSection):
     area = Quantity(type=np.dtype(np.float64), shape=['*'], unit='pA*minute')
 
     ppm = Quantity(
-        type=np.dtype(np.float64), description='Specified in ppm', shape=['*']
+        type=np.dtype(np.float64),
+        shape=['*'],
+        unit='ppm',
+        a_eln=dict(
+            defaultDisplayUnit='ppm',
+        ),
     )
 
 
@@ -502,6 +510,50 @@ class ThermocoupleMeasurement(PlotSection, ArchiveSection):
     )
 
 
+class LiquidFEResults(ArchiveSection):
+    m_def = Section(label_quantity='compound')
+
+    compound = Quantity(
+        type=str,
+        shape=[],
+        a_eln=dict(
+            props=dict(suggestions=['formate', 'methanol', 'acetate', 'ethanol', 'propanol']),
+        ),
+    )
+
+    faradaic_efficiency = Quantity(
+        type=np.dtype(np.float64),
+        unit='%',
+        a_eln=dict(
+            defaultDisplayUnit='%',
+        ),
+    )
+
+
+class HPLCMeasurement(ArchiveSection):
+    injection_name = Quantity(type=str)
+
+    ec_charge = Quantity(
+        type=np.dtype(np.float64),
+        unit=('C'),
+    )
+
+    volume = Quantity(
+        type=np.dtype(np.float64),
+        unit=('ml'),
+    )
+
+    feed_gas = Quantity(
+        type=str,
+        shape=[],
+        a_eln=dict(
+            props=dict(suggestions=['CO', 'C02']),
+        ),
+    )
+
+    liquid_fe = SubSection(section_def=LiquidFEResults, repeats=True)
+
+
 class GasFEResults(ArchiveSection):
     m_def = Section(label_quantity='gas_type')
 
@@ -520,7 +572,6 @@ class GasFEResults(ArchiveSection):
 
     faradaic_efficiency = Quantity(
         type=np.dtype(np.float64),
-        description='Faradaic efficiency specified in %',
         shape=['*'],
         a_plot=[
             {
@@ -534,15 +585,39 @@ class GasFEResults(ArchiveSection):
                 'config': {'editable': True, 'scrollZoom': True},
             }
         ],
+        unit='%',
+        a_eln=dict(
+            defaultDisplayUnit='%',
+        ),
     )
 
-    mean_fe = Quantity(type=np.dtype(np.float64))
+    mean_fe = Quantity(
+        type=np.dtype(np.float64),
+        unit='%',
+        a_eln=dict(
+            defaultDisplayUnit='%',
+        ),
+    )
 
-    variance_fe = Quantity(type=np.dtype(np.float64))
+    variance_fe = Quantity(
+        type=np.dtype(np.float64),
+    )
 
-    minimum_fe = Quantity(type=np.dtype(np.float64))
+    minimum_fe = Quantity(
+        type=np.dtype(np.float64),
+        unit='%',
+        a_eln=dict(
+            defaultDisplayUnit='%',
+        ),
+    )
 
-    maximum_fe = Quantity(type=np.dtype(np.float64))
+    maximum_fe = Quantity(
+        type=np.dtype(np.float64),
+        unit='%',
+        a_eln=dict(
+            defaultDisplayUnit='%',
+        ),
+    )
 
     def normalize(self, archive, logger):
         if any(fe > 100 for fe in self.faradaic_efficiency):
@@ -574,6 +649,10 @@ class PotentiometryGasChromatographyResults(ArchiveSection):
         type=np.dtype(np.float64),
         shape=['*'],
         description='Total faradaic efficiency specified in %',
+        unit='%',
+        a_eln=dict(
+            defaultDisplayUnit='%',
+        ),
     )
 
     pH_start = Quantity(type=np.dtype(np.float64))
@@ -653,6 +732,8 @@ class PotentiometryGasChromatographyMeasurement(BaseMeasurement):
     potentiometry = SubSection(section_def=NECCPotentiostatMeasurement)
 
     thermocouple = SubSection(section_def=ThermocoupleMeasurement)
+
+    hplc = SubSection(section_def=HPLCMeasurement)
 
     fe_results = SubSection(section_def=PotentiometryGasChromatographyResults)
 
