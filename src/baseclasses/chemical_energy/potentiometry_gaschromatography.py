@@ -17,6 +17,7 @@
 #
 
 import numpy as np
+from nomad.units import ureg
 from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.basesections import CompositeSystemReference
 from nomad.datamodel.metainfo.plot import PlotSection
@@ -620,7 +621,7 @@ class GasFEResults(ArchiveSection):
     )
 
     def normalize(self, archive, logger):
-        if any(fe > 100 for fe in self.faradaic_efficiency):
+        if any(fe.to(ureg.percent).magnitude > 100 for fe in self.faradaic_efficiency):
             self.faradaic_efficiency = [0] * len(self.faradaic_efficiency)
             logger.warn(
                 f'The FE of {self.gas_type} is removed because it is more than 100%. '
@@ -733,7 +734,7 @@ class PotentiometryGasChromatographyMeasurement(BaseMeasurement):
 
     thermocouple = SubSection(section_def=ThermocoupleMeasurement)
 
-    hplc = SubSection(section_def=HPLCMeasurement)
+    hplc = SubSection(section_def=HPLCMeasurement, repeats=True)
 
     fe_results = SubSection(section_def=PotentiometryGasChromatographyResults)
 
