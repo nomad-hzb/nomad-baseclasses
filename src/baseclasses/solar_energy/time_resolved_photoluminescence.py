@@ -165,7 +165,7 @@ class TimeResolvedPhotoluminescence(BaseMeasurement):
         a_browser=dict(adaptor='RawFileAdaptor'),
     )
 
-    trpl_properties = SubSection(section_def=TRPLProperties, repeats=True)
+    trpl_properties = SubSection(section_def=TRPLProperties)
 
     def normalize(self, archive, logger):
         self.method = 'Time-Resolved Photoluminescence'
