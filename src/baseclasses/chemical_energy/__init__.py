@@ -45,6 +45,7 @@ from .cleaning import Cleaning, SolutionCleaning
 from .constantpotential import ConstantPotential
 from .cyclicvoltammetry import CVProperties, CyclicVoltammetry
 from .diamondsample import DiamondSample
+from .differential_pulse_voltammetry import DifferentialPulseVoltammetry
 from .electrochemical_impedance_spectroscopy import (
     EISProperties,
     EISPropertiesWithData,

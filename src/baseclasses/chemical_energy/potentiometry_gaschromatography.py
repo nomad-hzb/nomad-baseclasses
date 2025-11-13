@@ -17,11 +17,11 @@
 #
 
 import numpy as np
-from nomad.units import ureg
 from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.basesections import CompositeSystemReference
 from nomad.datamodel.metainfo.plot import PlotSection
 from nomad.metainfo import Datetime, Quantity, Section, SubSection
+from nomad.units import ureg
 
 from .. import BaseMeasurement, ReadableIdentifiersCustom
 from .cesample import build_initial_id, create_id
@@ -518,7 +518,9 @@ class LiquidFEResults(ArchiveSection):
         type=str,
         shape=[],
         a_eln=dict(
-            props=dict(suggestions=['formate', 'methanol', 'acetate', 'ethanol', 'propanol']),
+            props=dict(
+                suggestions=['formate', 'methanol', 'acetate', 'ethanol', 'propanol']
+            ),
         ),
     )
 
