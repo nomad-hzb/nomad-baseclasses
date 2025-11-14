@@ -283,6 +283,14 @@ def map_solutions(data):
                         data, [f'{solute} type', f'{solute} name'], None, False
                     ),
                     load_data=False,
+                    product_number = get_value(data, 'Product Number', None, False),
+                    lot_number = get_value(data, 'Lot Number', None, False),
+                    product_volume = get_value(data, 'Delivered Product Volume [ml]', None, unit='ml'),
+                    product_weight = get_value(data, 'Delivered Product Weight [g]', None, unit='g'),
+                    shipping_date = get_datetime(data, 'Shipping Date'),
+                    opening_date = get_datetime(data, 'Opening Date'),
+                    supplier=get_value(data, 'Supplier', None, False),
+                    product_description=get_value(data, 'Product Description', None, False),
                 ),
                 concentration_mol=get_value(
                     data, f'{solute} Concentration [mM]', None, unit='mM'
@@ -307,6 +315,14 @@ def map_solutions(data):
                 chemical_2=PubChemPureSubstanceSectionCustom(
                     name=get_value(data, [f'{additive} name'], None, False),
                     load_data=False,
+                    product_number = get_value(data, 'Product Number', None, False),
+                    lot_number = get_value(data, 'Lot Number', None, False),
+                    product_volume = get_value(data, 'Delivered Product Volume [ml]', None, unit='ml'),
+                    product_weight = get_value(data, 'Delivered Product Weight [g]', None, unit='g'),
+                    shipping_date = get_datetime(data, 'Shipping Date'),
+                    opening_date = get_datetime(data, 'Opening Date'),
+                    supplier=get_value(data, 'Supplier', None, False),
+                    product_description=get_value(data, 'Product Description', None, False),
                 ),
                 concentration_mol=get_value(
                     data, f'{additive} Concentration [mM]', None, unit='mM'
