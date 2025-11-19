@@ -154,10 +154,7 @@ class CoronaCleaning(CleaningTechnique):
         links=[],
     )
     power = Quantity(
-        links=[
-            'http://purl.obolibrary.org/obo/PATO_0001024',
-            'https://purl.archive.org/tfsco/TFSCO_00002104',
-        ],
+        links=[],
         type=np.dtype(np.float64),
         unit=('W'),
         a_eln=dict(
