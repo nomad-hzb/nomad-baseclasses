@@ -148,7 +148,7 @@ class PlasmaCleaning(CleaningTechnique):
     )
 
 class CoronaCleaning(CleaningTechnique):
-    """Base class for cleaning of a sample with corona treatment in ambient atmosphere"""
+    """Base class for cleaning of sample with corona treatment in ambient atmosphere"""
 
     m_def = Section(
         links=[],

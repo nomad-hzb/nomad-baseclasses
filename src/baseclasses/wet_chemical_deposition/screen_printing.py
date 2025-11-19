@@ -22,21 +22,20 @@ from nomad.metainfo import MEnum, Quantity, Section, SubSection
 
 from .wet_chemical_deposition import WetChemicalDeposition
 
+
 class MeshProperties(ArchiveSection):
-    '''A screen mesh to enable the deposition of exactly the right amount of ink onto
-      the substrate and holds the emulsion that makes patterning possible. It consists
-      of nodes, threads, and the openings between them.'''
-    
-    mesh_material=Quantity(
+    """A screen mesh to enable the deposition of exactly the right amount of ink onto
+    the substrate and holds the emulsion that makes patterning possible. It consists
+    of nodes, threads, and the openings between them."""
+
+    mesh_material = Quantity(
         links=[],
         type=str,
         a_eln=dict(component='StringEditQuantity'),
-        description=(
-            'Material of screen mesh.'
-        ),
+        description=('Material of screen mesh.'),
     )
 
-    mesh_count=Quantity(
+    mesh_count = Quantity(
         links=[],
         type=np.dtype(np.float64),
         a_eln=dict(
@@ -47,10 +46,10 @@ class MeshProperties(ArchiveSection):
         '(meshes/cm).',
     )
 
-    mesh_thickness=Quantity(
+    mesh_thickness = Quantity(
         links=[],
         type=np.dtype(np.float64),
-        unit = ('um'),
+        unit=('um'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='um',
@@ -59,10 +58,10 @@ class MeshProperties(ArchiveSection):
         description='The combined thickness of the overlapping threads.',
     )
 
-    thread_diameter=Quantity(
+    thread_diameter = Quantity(
         links=[],
         type=np.dtype(np.float64),
-        unit = ('um'),
+        unit=('um'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='um',
@@ -71,22 +70,22 @@ class MeshProperties(ArchiveSection):
         description='Diameter of a thread of the mesh.',
     )
 
-    mesh_opening=Quantity(
+    mesh_opening = Quantity(
         links=[],
         type=np.dtype(np.float64),
-        unit = ('um'),
+        unit=('um'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='um',
             props=dict(minValue=0),
         ),
         description='The empty area between a mesh.',
-    ) 
+    )
 
-    mesh_tension=Quantity(
+    mesh_tension = Quantity(
         links=[],
         type=np.dtype(np.float64),
-        unit = ('N/cm'),
+        unit=('N/cm'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='N/cm',
@@ -95,10 +94,10 @@ class MeshProperties(ArchiveSection):
         description='Screen mesh tension measured by a tension meter.',
     )
 
-    mesh_angle=Quantity(
+    mesh_angle = Quantity(
         links=[],
         type=np.dtype(np.float64),
-        unit = ('°'),
+        unit=('°'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='°',
@@ -106,40 +105,37 @@ class MeshProperties(ArchiveSection):
         ),
         description='The angle at which the mesh is mounted relative to the direction '
         'of the threads.',
-    ) 
+    )
+
 
 class ScreenPrintingProperties(ArchiveSection):
     screen_mesh = SubSection(section_def=MeshProperties, repeats=False)
-    
-    emulsion_material=Quantity(
+
+    emulsion_material = Quantity(
         links=[],
         type=str,
         a_eln=dict(component='StringEditQuantity'),
-        description=(
-            'A photosensitive emulsion spread over the screen and dried.'
-        ),
+        description=('A photosensitive emulsion spread over the screen and dried.'),
     )
 
-    emulsion_thickness=Quantity(
+    emulsion_thickness = Quantity(
         links=[],
         type=np.dtype(np.float64),
-        unit = ('um'),
+        unit=('um'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='um',
             props=dict(minValue=0),
         ),
     )
-    squeegee_material=Quantity(
+    squeegee_material = Quantity(
         links=[],
         type=str,
         a_eln=dict(component='StringEditQuantity'),
-        description=(
-            'Material of the squeegee used for screen printing.'
-        ),
+        description=('Material of the squeegee used for screen printing.'),
     )
 
-    squeegee_shape=Quantity(
+    squeegee_shape = Quantity(
         links=[],
         type=str,
         a_eln=dict(component='StringEditQuantity'),
@@ -147,18 +143,18 @@ class ScreenPrintingProperties(ArchiveSection):
             'The shape of the queegee rubbers/blades, e.g. rectangle, diamond.'
         ),
     )
-    
-    squeegee_angle=Quantity(
+
+    squeegee_angle = Quantity(
         links=[],
         type=np.dtype(np.float64),
-        unit = ('°'),
+        unit=('°'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='°',
             props=dict(minValue=0),
         ),
         description='The angle of the squeegee during the printing process.',
-    ) 
+    )
 
     sp_speed = Quantity(
         links=[],
@@ -171,32 +167,30 @@ class ScreenPrintingProperties(ArchiveSection):
         ),
         description='The speed of squeegee printing the ink.',
     )
-    
+
     sp_direction = Quantity(
         type=MEnum('Forward', 'Backward'),
         shape=[],
         a_eln=dict(component='EnumEditQuantity'),
-        description=(
-            'Moving direction of the squeegee with reference to the screen.'
-        ),
+        description=('Moving direction of the squeegee with reference to the screen.'),
     )
 
-    sp_pressure=Quantity(
+    sp_pressure = Quantity(
         links=[],
         type=np.dtype(np.float64),
-        unit = ('bar'),
+        unit=('bar'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='bar',
             props=dict(minValue=0),
         ),
         description='Pressure of printing squeegee.',
-    ) 
+    )
 
     snap_off = Quantity(
         links=[],
         type=np.dtype(np.float64),
-        unit = ('mm'),
+        unit=('mm'),
         a_eln=dict(
             component='NumberEditQuantity',
             defaultDisplayUnit='mm',
@@ -211,7 +205,8 @@ class ScreenPrintingProperties(ArchiveSection):
         a_eln=dict(component='EnumEditQuantity'),
         description='Rotary screen(R2R) or Flatbed(S2S) screen printing.',
     )
-    
+
+
 class ScreenPrinting(WetChemicalDeposition):
     """Base class for the screen printing process of a sample"""
 
@@ -222,5 +217,3 @@ class ScreenPrinting(WetChemicalDeposition):
     def normalize(self, archive, logger):
         self.method = 'Screen Printing'
         super().normalize(archive, logger)
-
-

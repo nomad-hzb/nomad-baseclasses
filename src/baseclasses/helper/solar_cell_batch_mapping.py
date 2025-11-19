@@ -48,12 +48,12 @@ from baseclasses.wet_chemical_deposition.inkjet_printing import (
     PrintHeadPath,
     PrintHeadProperties,
 )
-from baseclasses.wet_chemical_deposition.slot_die_coating import (
-    SlotDieCoatingProperties,
-)
 from baseclasses.wet_chemical_deposition.screen_printing import (
     MeshProperties,
     ScreenPrintingProperties,
+)
+from baseclasses.wet_chemical_deposition.slot_die_coating import (
+    SlotDieCoatingProperties,
 )
 from baseclasses.wet_chemical_deposition.spin_coating import SpinCoatingRecipeSteps
 
