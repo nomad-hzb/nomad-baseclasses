@@ -147,6 +147,25 @@ class PlasmaCleaning(CleaningTechnique):
         ),
     )
 
+class CoronaCleaning(CleaningTechnique):
+    """Base class for cleaning of a sample with corona treatment in ambient atmosphere"""
+
+    m_def = Section(
+        links=[],
+    )
+    power = Quantity(
+        links=[
+            'http://purl.obolibrary.org/obo/PATO_0001024',
+            'https://purl.archive.org/tfsco/TFSCO_00002104',
+        ],
+        type=np.dtype(np.float64),
+        unit=('W'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='W',
+            props=dict(minValue=0),
+        ),
+    )
 
 class Cleaning(BaseProcess):
     m_def = Section(
