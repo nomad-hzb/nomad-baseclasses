@@ -10,6 +10,7 @@ from baseclasses.material_processes_misc import (
     AirKnifeGasQuenching,
     Annealing,
     AntiSolventQuenching,
+    CoronaCleaning,
     GasFlowAssistedVacuumDrying,
     GasQuenchingWithNozzle,
     LaminationSettings,
@@ -18,6 +19,7 @@ from baseclasses.material_processes_misc import (
     UVCleaning,
     VacuumQuenching,
 )
+from baseclasses.material_processes_misc.annealing import IRAnnealing
 from baseclasses.material_processes_misc.laser_scribing import LaserScribingProperties
 from baseclasses.solar_energy.carbonpaste import CarbonPasteLayerProperties
 from baseclasses.solution import Solution, SolutionChemical, SolutionWaschingFiltration
@@ -48,6 +50,10 @@ from baseclasses.wet_chemical_deposition.inkjet_printing import (
 )
 from baseclasses.wet_chemical_deposition.slot_die_coating import (
     SlotDieCoatingProperties,
+)
+from baseclasses.wet_chemical_deposition.screen_printing import (
+    MeshProperties,
+    ScreenPrintingProperties,
 )
 from baseclasses.wet_chemical_deposition.spin_coating import SpinCoatingRecipeSteps
 
@@ -177,12 +183,18 @@ def map_batch(batch_ids, batch_id, upload_id, batch_class):
 
 
 def map_annealing(data):
+    ir_annealing = IRAnnealing(
+            power=get_value(data, 'IR annealing power [W]', None, unit='W'),
+            distance=get_value(data, 'IR annealing distance [mm]', None, unit='mm'),
+        )
+
     return Annealing(
         temperature=get_value(data, 'Annealing temperature [°C]', None, unit='°C'),
         time=get_value(data, 'Annealing time [min]', None, unit='minute'),
         atmosphere=get_value(
             data, ['Annealing athmosphere', 'Annealing atmosphere'], None, False
         ),
+        ir_annealing=ir_annealing,
     )
 
 
@@ -873,6 +885,81 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
     return (f'{i}_{j}_inkjet_printing_{material}', archive)
 
 
+def map_screen_printing(i, j, lab_ids, data, upload_id, screen_printing_class):
+    archive = screen_printing_class(
+        name='screen printing ' + get_value(data, 'Material name', '', False),
+        location=get_value(data, 'Tool/GB name', '', False),
+        positon_in_experimental_plan=i,
+        description=get_value(data, 'Notes', None, False),
+        samples=[
+            CompositeSystemReference(
+                reference=get_reference(upload_id, f'{lab_id}.archive.json'),
+                lab_id=lab_id,
+            )
+            for lab_id in lab_ids
+        ],
+        solution=[
+            PrecursorSolution(
+                solution_details=map_solutions(data),
+                solution_volume=get_value(
+                    data,
+                    ['Solution volume [um]', 'Solution volume [uL]'],
+                    None,
+                    unit=['uL', 'uL'],
+                ),
+                solution_viscosity=get_value(
+                    data,
+                    'Viscosity [mPa*s]',
+                    None,
+                    unit=['mPa*s'],
+                ),
+                solution_contact_angle=get_value(
+                    data,
+                    'Contact angle [°]',
+                    None,
+                    unit=['°'],
+                ),
+            )
+        ],
+        layer=map_layer(data),
+        atmosphere=map_atmosphere(data),
+        annealing=map_annealing(data),
+        properties=ScreenPrintingProperties(
+            screen_mesh = MeshProperties(
+                mesh_material=get_value(data, 'Mesh material', None, False),
+                mesh_count=get_value(data, 'Mesh count [meshes/cm]', None),
+                mesh_thickness=get_value(data, 'Mesh thickness [um]', None, unit='um'),
+                thread_diameter=get_value(data, 'Thread diameter [um]', None, unit='um'),
+                mesh_opening=get_value(data, 'Mesh opening [um]', None, unit='um'),
+                mesh_tension=get_value(data, 'Mesh tension [N/cm]', None, unit='N/cm'),
+                mesh_angle=get_value(data, 'Mesh angle [°]', None, unit='°'),
+            ),
+            emulsion_material=get_value(data, 'Emulsion material', None, False),
+            emulsion_thickness=get_value(
+                data, 'Emulsion thickness [um]', None, unit='um'
+            ),
+            squeegee_material=get_value(data, 'Squeegee material', None, False),
+            squeegee_shape=get_value(data, 'Squeegee shape', None, False),
+            squeegee_angle=get_value(data, 'Squeegee angle [°]', None, unit='°'),
+            sp_speed=get_value(data, 'Printing speed [mm/s]', None, unit='mm/s'),
+            sp_direction=get_value(data, 'Printing direction', None, False),
+            sp_pressure=get_value(data, 'Printing pressure [bar]', None, unit='bar'),
+            snap_off=get_value(data, 'Snap-off distance [mm]', None, unit='mm'),
+            sp_method=get_value(data, 'Printing method', None, False),
+        ),
+    )
+
+    # Set quenching based on available data
+    archive.quenching = (
+    map_vacuum_quenching(data)
+    or map_gas_quenching_with_nozzle(data)
+    or map_air_knife_gas_quenching(data)
+    )
+
+    material = get_value(data, 'Material name', '', False)
+    return (f'{i}_{j}_screen_printing_{material}', archive)
+
+
 def map_lamination(i, j, lab_ids, data, upload_id, lamination_class):
     archive = lamination_class(
         name='Lamination',
@@ -954,7 +1041,20 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
                 plasma_type=get_value(data, 'Gas-Plasma Gas', None, False),
             )
         ],
+        cleaning_corona=[
+            CoronaCleaning(
+                time=get_value(
+                    data,
+                    ['Corona Time [s]', 'Corona Time [min]'],
+                    None,
+                    unit=['s', 'minute'],
+                ),
+                power=get_value(data, 'Corona Power [W]', None, unit='W'),
+            )
+        ]
     )
+
+
     return (f'{i}_{j}_cleaning', archive)
 
 

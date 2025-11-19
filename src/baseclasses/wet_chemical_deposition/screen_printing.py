@@ -126,7 +126,7 @@ class ScreenPrintingProperties(ArchiveSection):
         unit = ('um'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='°um',
+            defaultDisplayUnit='um',
             props=dict(minValue=0),
         ),
     )
@@ -173,7 +173,7 @@ class ScreenPrintingProperties(ArchiveSection):
     )
     
     sp_direction = Quantity(
-        type=MEnum('Forward', 'Reverse'),
+        type=MEnum('Forward', 'Backward'),
         shape=[],
         a_eln=dict(component='EnumEditQuantity'),
         description=(
