@@ -1,21 +1,76 @@
-# Welcome to the Documentation for NOMAD base sections at HZB
 
-## Introduction
+# NOMAD HZB base classes Plugin
 
-This is a NOMAD plugin. For information on how to use plugins, see [NOMAD Plugins](https://nomad-lab/prod/v1/staging/docs/plugins.html).
+## What is this Plugin?
 
-## About the Plugin
+This plugin provides a set of base schemas for the digital representation of synthesis and characterization techniques in materials science with focus on thin film solar cell and electro chemistry research. Developed at Helmholtz-Zentrum Berlin (HZB), it serves as a foundation for the NOMAD ecosystem, enabling standardized, interoperable, and extensible data management for a wide range of experimental workflows.
 
-The core of this plugin includes deposition techniques used in perovskite solar cells, characterization methods for these solar cells, and electrochemical techniques, such as those involving a potentiostat. The plugin offers a structured approach to managing and analyzing data related to these techniques, facilitating a deeper understanding and innovations in solar cell and electrocatalysis research.
+The plugin is under active development. We take care that the schemas in the plugins remains compatible through extensions and changes and are open for feedback and discussions. We believe that science digitalization and data management is subject to changes through usage of and exchange with lab scientist. The schemas are using vocabulary from [voc4cat](https://github.com/nfdi4cat/voc4cat) fir catalysis and from the [TFSCO](https://github.com/nomad-hzb/autoperosol) for thin film solar cells. Nomad quantities contain links referencing the respective concepts.
 
-## Baseclasses Folder
+We believe that it is key to link digital information of all synthesis and characterization steps against the material science samples. With this plugin we give structure to all of this information.
 
-The `baseclasses` folder is the heart of this plugin, containing several NOMAD schemas developed at Helmoltz-Zentrum Berlin (HZB). These schemas are critical for organizing and interpreting experimental data.
+## Key Features
 
-## Application Plugins and Parsers
+- **Broad Coverage:** Includes schemas for synthesis, processing, and characterization of materials, with a focus on photovoltaics and electro chemistry.
+- **Specializations:** Offers models for perovskite solar cell research, and electro chemistry.
+- **Extensibility:** Designed to be extended for new techniques and custom workflows in further plugins extending and specializing these classes further.
 
-The schemas and techniques provided by this plugin can be used to derive application-specific plugins and parsers. Here are some examples of how our baseclasses have been utilized in different contexts:
+## Main Schema Areas
+
+
+### Synthesis & Processing
+
+The plugin provides a rich set of schemas to capture the full complexity of modern materials synthesis, supporting both traditional and advanced methods:
+
+- **Wet Chemical Deposition:**
+
+    - Covers solution-based techniques such as spin coating, dip coating, drop casting, inkjet printing, doctor blading, spray pyrolysis, slot die coating.
+    - Includes tracking of precursor solutions, concentrations, solvents, additives, and process parameters (e.g., temperature, humidity, atmosphere).
+    - Supports multi-step protocols for layer-by-layer fabrication, post-deposition treatments (e.g., annealing, quenching), and combinatorial approaches.
+    - Enables documentation of substrate cleaning.
+
+- **Vapour-Based Deposition:**
+
+    - Models for evaporations, sputtering, atomic layer deposition (ALD), and related techniques.
+    - Captures source materials, gas flows, chamber conditions, substrate preparation.
+    - Enables documentation of multi-source and multi-step processes, essential for advanced thin-film and nanostructure fabrication.
+    - Supports hybrid and sequential deposition strategies, such as co-evaporation.
+
+- **Electro chemical deposition:**
+
+    - Schemas for the documentation of the electro chemical environment (electrolyte, puurging) and setup (electrodes, tools used)
+    - Framework for linking various kinds of potentiometries with used sample, environment and setup.
+
+
+These synthesis schemas are designed to interoperate with characterization and assay schemas, enabling tracking of a material’s full experimental history from initial preparation to final measurement.
+
+
+### Characterization Techniques
+
+- **Solar Energy Specializations:**
+
+    - JV (current-voltage) measurements
+    - Maximum power point (MPP) tracking
+    - Photoluminescence (PL) and time-resolved PL
+    - EQE (external quantum efficiency)
+    - Conductivity and substrate characterization
+
+- **Electrochemical & Catalysis:**
+
+    - Cyclic voltammetry, chronoamperometry, chronopotentiometry, OCP
+    - Electrochemical impedance spectroscopy
+ 
+- **General Characterizations:** (general techniques are not covered in detail since they are planned to be covered by the NeXus Standard see also [pynxtools](https://github.com/FAIRmat-NFDI/pynxtools))
+
+    - There are some comprehensive schemas, e.g. for XPS and SEM as well as XRF for combinatorial measurements.
+    - There are general schemas to link arbitrary data to samples as a placeholder for future extension.
+
+## How to Use
+
+These schemas are intended as building blocks for labs specific plugins and parsers. They can be extended and specialized a new lab specific needs. They are already used by several groups in NOMAD plugins, such as:
 
 - [HZB Solar Cells](https://github.com/nomad-hzb/nomad-hysprint)
 - [HZB Electro Catalysis](https://github.com/nomad-hzb/nomad-chemical-energy)
 - [KIT Solar Cells](https://github.com/nomad-hzb/nomad-perotf)
+
+To learn more about plugins, check the official [NOMAD documentation](https://nomad-lab.eu/prod/v1/staging/docs/howto/plugins/plugins.html)
