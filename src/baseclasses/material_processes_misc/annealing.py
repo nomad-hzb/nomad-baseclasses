@@ -20,6 +20,7 @@ import numpy as np
 from nomad.datamodel.data import ArchiveSection
 from nomad.metainfo import Quantity, Section
 
+
 class Annealing(ArchiveSection):
     """Base class for annealing of a sample"""
 
@@ -70,8 +71,9 @@ class Annealing(ArchiveSection):
         ),
     )
 
+
 class IRAnnealing(Annealing):
-    power=Quantity(
+    power = Quantity(
         links=[],
         type=np.dtype(np.float64),
         unit=('W'),
@@ -82,7 +84,7 @@ class IRAnnealing(Annealing):
         ),
     )
 
-    distance=Quantity(
+    distance = Quantity(
         links=[],
         type=np.dtype(np.float64),
         unit=('mm'),
@@ -91,12 +93,12 @@ class IRAnnealing(Annealing):
             defaultDisplayUnit='mm',
             props=dict(minValue=0),
         ),
-        description= 'Distance of IR lamp from the sample surface.'
+        description='Distance of IR lamp from the sample surface.',
     )
-    
+
+
 class HotPlateAnnealing(Annealing):
     pass
-
 
     # humidity = Quantity(
     #     type=np.dtype(np.float64),
