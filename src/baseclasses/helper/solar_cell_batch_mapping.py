@@ -183,19 +183,28 @@ def map_batch(batch_ids, batch_id, upload_id, batch_class):
 
 
 def map_annealing(data):
-    ir_annealing = IRAnnealing(
-            power=get_value(data, 'IR annealing power [W]', None, unit='W'),
-            distance=get_value(data, 'IR annealing distance [mm]', None, unit='mm'),
+    if get_value(data, 'IR annealing power [W]', None, unit='W') is not None:
+        return [
+            IRAnnealing(
+                power=get_value(data, 'IR annealing power [W]', None, unit='W'),
+                distance=get_value(data, 'IR annealing distance [mm]', None, unit='mm'),
+                temperature=get_value(data, 'Annealing temperature [°C]', None, unit='°C'),
+                time=get_value(data, 'Annealing time [min]', None, unit='minute'),
+                atmosphere=get_value(
+                data, ['Annealing athmosphere', 'Annealing atmosphere'], None, False
+                )
+            )
+        ]
+    else:
+        return [
+            Annealing(
+            temperature=get_value(data, 'Annealing temperature [°C]', None, unit='°C'),
+            time=get_value(data, 'Annealing time [min]', None, unit='minute'),
+            atmosphere=get_value(
+                data, ['Annealing athmosphere', 'Annealing atmosphere'], None, False
+            ),
         )
-
-    return Annealing(
-        temperature=get_value(data, 'Annealing temperature [°C]', None, unit='°C'),
-        time=get_value(data, 'Annealing time [min]', None, unit='minute'),
-        atmosphere=get_value(
-            data, ['Annealing athmosphere', 'Annealing atmosphere'], None, False
-        ),
-        ir_annealing=ir_annealing,
-    )
+        ]
 
 
 def map_atmosphere(data):

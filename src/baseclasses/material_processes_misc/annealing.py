@@ -18,32 +18,7 @@
 
 import numpy as np
 from nomad.datamodel.data import ArchiveSection
-from nomad.metainfo import Quantity, Section, SubSection
-
-class IRAnnealing(ArchiveSection):      
-    power=Quantity(
-        links=[],
-        type=np.dtype(np.float64),
-        unit=('W'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='W',
-            props=dict(minValue=0),
-        ),
-    )
-
-    distance=Quantity(
-        links=[],
-        type=np.dtype(np.float64),
-        unit=('mm'),
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='mm',
-            props=dict(minValue=0),
-        ),
-        description= 'Distance of IR lamp from the sample surface.'
-    )
-
+from nomad.metainfo import Quantity, Section
 
 class Annealing(ArchiveSection):
     """Base class for annealing of a sample"""
@@ -95,7 +70,32 @@ class Annealing(ArchiveSection):
         ),
     )
 
-    ir_annealing = SubSection(section_def=IRAnnealing, repeats=False)
+class IRAnnealing(Annealing):
+    power=Quantity(
+        links=[],
+        type=np.dtype(np.float64),
+        unit=('W'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='W',
+            props=dict(minValue=0),
+        ),
+    )
+
+    distance=Quantity(
+        links=[],
+        type=np.dtype(np.float64),
+        unit=('mm'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mm',
+            props=dict(minValue=0),
+        ),
+        description= 'Distance of IR lamp from the sample surface.'
+    )
+    
+class HotPlateAnnealing(Annealing):
+    pass
 
 
     # humidity = Quantity(

@@ -140,7 +140,7 @@ class ScreenPrintingProperties(ArchiveSection):
         type=str,
         a_eln=dict(component='StringEditQuantity'),
         description=(
-            'The shape of the queegee rubbers/blades, e.g. rectangle, diamond.'
+            'The shape of the queegee`s rubbers/blades, e.g. rectangle, diamond.'
         ),
     )
 
