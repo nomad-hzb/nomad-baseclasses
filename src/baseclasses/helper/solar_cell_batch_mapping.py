@@ -183,28 +183,20 @@ def map_batch(batch_ids, batch_id, upload_id, batch_class):
 
 
 def map_annealing(data):
+    annealing = Annealing()
     if get_value(data, 'IR annealing power [W]', None, unit='W') is not None:
-        return [
-            IRAnnealing(
-                power=get_value(data, 'IR annealing power [W]', None, unit='W'),
-                distance=get_value(data, 'IR annealing distance [mm]', None, unit='mm'),
-                temperature=get_value(data, 'Annealing temperature [°C]', None, unit='°C'),
-                time=get_value(data, 'Annealing time [min]', None, unit='minute'),
-                atmosphere=get_value(
-                data, ['Annealing athmosphere', 'Annealing atmosphere'], None, False
-                )
-            )
-        ]
-    else:
-        return [
-            Annealing(
-            temperature=get_value(data, 'Annealing temperature [°C]', None, unit='°C'),
-            time=get_value(data, 'Annealing time [min]', None, unit='minute'),
-            atmosphere=get_value(
-                data, ['Annealing athmosphere', 'Annealing atmosphere'], None, False
-            ),
+        annealing = IRAnnealing(
+            power=get_value(data, 'IR annealing power [W]', None, unit='W'),
+            distance=get_value(data, 'IR annealing distance [mm]', None, unit='mm'),
         )
-        ]
+    annealing.temperature = get_value(
+        data, 'Annealing temperature [°C]', None, unit='°C'
+    )
+    annealing.time = get_value(data, 'Annealing time [min]', None, unit='minute')
+    annealing.atmosphere = get_value(
+        data, ['Annealing athmosphere', 'Annealing atmosphere'], None, False
+    )
+    return annealing
 
 
 def map_atmosphere(data):
@@ -934,11 +926,13 @@ def map_screen_printing(i, j, lab_ids, data, upload_id, screen_printing_class):
         atmosphere=map_atmosphere(data),
         annealing=map_annealing(data),
         properties=ScreenPrintingProperties(
-            screen_mesh = MeshProperties(
+            screen_mesh=MeshProperties(
                 mesh_material=get_value(data, 'Mesh material', None, False),
                 mesh_count=get_value(data, 'Mesh count [meshes/cm]', None),
                 mesh_thickness=get_value(data, 'Mesh thickness [um]', None, unit='um'),
-                thread_diameter=get_value(data, 'Thread diameter [um]', None, unit='um'),
+                thread_diameter=get_value(
+                    data, 'Thread diameter [um]', None, unit='um'
+                ),
                 mesh_opening=get_value(data, 'Mesh opening [um]', None, unit='um'),
                 mesh_tension=get_value(data, 'Mesh tension [N/cm]', None, unit='N/cm'),
                 mesh_angle=get_value(data, 'Mesh angle [°]', None, unit='°'),
@@ -960,9 +954,9 @@ def map_screen_printing(i, j, lab_ids, data, upload_id, screen_printing_class):
 
     # Set quenching based on available data
     archive.quenching = (
-    map_vacuum_quenching(data)
-    or map_gas_quenching_with_nozzle(data)
-    or map_air_knife_gas_quenching(data)
+        map_vacuum_quenching(data)
+        or map_gas_quenching_with_nozzle(data)
+        or map_air_knife_gas_quenching(data)
     )
 
     material = get_value(data, 'Material name', '', False)
@@ -1060,9 +1054,8 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
                 ),
                 power=get_value(data, 'Corona Power [W]', None, unit='W'),
             )
-        ]
+        ],
     )
-
 
     return (f'{i}_{j}_cleaning', archive)
 

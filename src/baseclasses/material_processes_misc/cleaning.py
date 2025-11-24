@@ -147,6 +147,7 @@ class PlasmaCleaning(CleaningTechnique):
         ),
     )
 
+
 class CoronaCleaning(CleaningTechnique):
     """Base class for cleaning of sample with corona treatment in ambient atmosphere"""
 
@@ -163,6 +164,7 @@ class CoronaCleaning(CleaningTechnique):
             props=dict(minValue=0),
         ),
     )
+
 
 class Cleaning(BaseProcess):
     m_def = Section(

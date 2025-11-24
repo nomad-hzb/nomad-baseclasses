@@ -17,7 +17,13 @@
 #
 
 from .annealing import Annealing, IRAnnealing
-from .cleaning import Cleaning, PlasmaCleaning, SolutionCleaning, UVCleaning, CoronaCleaning
+from .cleaning import (
+    Cleaning,
+    CoronaCleaning,
+    PlasmaCleaning,
+    SolutionCleaning,
+    UVCleaning,
+)
 from .lamination import Lamination, LaminationSettings
 from .laser_scribing import LaserScribing
 from .quenching import (
