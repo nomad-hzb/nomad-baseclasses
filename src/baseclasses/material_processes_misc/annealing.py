@@ -71,6 +71,35 @@ class Annealing(ArchiveSection):
         ),
     )
 
+
+class IRAnnealing(Annealing):
+    power = Quantity(
+        links=[],
+        type=np.dtype(np.float64),
+        unit=('W'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='W',
+            props=dict(minValue=0),
+        ),
+    )
+
+    distance = Quantity(
+        links=[],
+        type=np.dtype(np.float64),
+        unit=('mm'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mm',
+            props=dict(minValue=0),
+        ),
+        description='Distance of IR lamp from the sample surface.',
+    )
+
+
+class HotPlateAnnealing(Annealing):
+    pass
+
     # humidity = Quantity(
     #     type=np.dtype(np.float64),
     #     a_eln=dict(component='NumberEditQuantity'))
