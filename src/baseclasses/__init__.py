@@ -57,6 +57,11 @@ class PubChemPureSubstanceSectionCustom(PubChemPureSubstanceSection):
             component='BoolEditQuantity',
         ),
     )
+    
+    product_info = SubSection(
+        section_def=ProductInfo,
+        description='Product information and chemical identifier'
+    )
 
     def normalize(self, archive, logger):
         if self.load_data:

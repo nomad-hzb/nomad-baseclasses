@@ -97,11 +97,6 @@ class SolutionChemical(ArchiveSection):
         type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
     )
 
-    product_info = SubSection(
-        section_def=ProductInfo,
-        description='Product information and chemical identifier'
-    )
-
     def normalize(self, archive, logger):
         if self.chemical is not None and self.chemical.name is not None:
             if self.chemical_volume is not None:
