@@ -6,6 +6,7 @@ from nomad.units import ureg
 
 from baseclasses import LayerProperties, PubChemPureSubstanceSectionCustom
 from baseclasses.atmosphere import Atmosphere
+from baseclasses.product_info import ProductInfo
 from baseclasses.material_processes_misc import (
     AirKnifeGasQuenching,
     Annealing,
@@ -272,20 +273,22 @@ def map_solutions(data):
                 chemical_2=PubChemPureSubstanceSectionCustom(
                     name=get_value(data, f'{solvent} name', None, False),
                     load_data=False,
-                    product_number = get_value(data, f'{solvent} Product Number', None, False),
-                    lot_number = get_value(data, f'{solvent} Lot Number', None, False),
-                    product_volume = get_value(data, f'{solvent} Delivered Product Volume [ml]', None, unit='ml'),
-                    product_weight = get_value(data, f'{solvent} Delivered Product Weight [g]', None, unit='g'),
-                    shipping_date = get_datetime(data, f'{solvent} Shipping Date'),
-                    opening_date = get_datetime(data, f'{solvent} Opening Date'),
-                    supplier=get_value(data, f'{solvent} Supplier', None, False),
-                    product_description=get_value(data, f'{solvent} Product Description', None, False),
                 ),
                 chemical_volume=get_value(
                     data, f'{solvent} volume [uL]', None, unit='uL'
                 ),
                 amount_relative=get_value(data, f'{solvent} relative amount', None),
-                chemical_id=get_value(data, f'{solvent} chemical ID', None, False),
+                product_info=ProductInfo(
+                        chemical_id=get_value(data, f'{solvent} chemical ID', None, False),
+                        product_number=get_value(data, f'{solvent} Product Number', None, False),
+                        lot_number=get_value(data, f'{solvent} Lot Number', None, False),
+                        product_volume=get_value(data, f'{solvent} Delivered Product Volume [ml]', None, unit='ml'),
+                        product_weight=get_value(data, f'{solvent} Delivered Product Weight [g]', None, unit='g'),
+                        shipping_date=get_datetime(data, f'{solvent} Shipping Date'),
+                        opening_date=get_datetime(data, f'{solvent} Opening Date'),
+                        supplier=get_value(data, f'{solvent} Supplier', None, False),
+                        product_description=get_value(data, f'{solvent} Product Description', None, False),
+                    )
             )
         )
     for solute in sorted(set(solutes)):
@@ -296,14 +299,6 @@ def map_solutions(data):
                         data, [f'{solute} type', f'{solute} name'], None, False
                     ),
                     load_data=False,
-                    product_number = get_value(data, f'{solute} Product Number', None, False),
-                    lot_number = get_value(data, f'{solute} Lot Number', None, False),
-                    product_volume = get_value(data, f'{solute} Delivered Product Volume [ml]', None, unit='ml'),
-                    product_weight = get_value(data, f'{solute} Delivered Product Weight [g]', None, unit='g'),
-                    shipping_date = get_datetime(data, f'{solute} Shipping Date'),
-                    opening_date = get_datetime(data, f'{solute} Opening Date'),
-                    supplier=get_value(data, f'{solute} Supplier', None, False),
-                    product_description=get_value(data, f'{solute} Product Description', None, False),
                 ),
                 concentration_mol=get_value(
                     data, f'{solute} Concentration [mM]', None, unit='mM'
@@ -319,7 +314,17 @@ def map_solutions(data):
                     factor=[10, 1],
                 ),
                 amount_relative=get_value(data, f'{solute} relative amount', None),
-                chemical_id=get_value(data, f'{solute} chemical ID', None, False),
+                product_info=ProductInfo(
+                        chemical_id=get_value(data, f'{solute} chemical ID', None, False),
+                        product_number=get_value(data, f'{solute} Product Number', None, False),
+                        lot_number=get_value(data, f'{solute} Lot Number', None, False),
+                        product_volume=get_value(data, f'{solute} Delivered Product Volume [ml]', None, unit='ml'),
+                        product_weight=get_value(data, f'{solute} Delivered Product Weight [g]', None, unit='g'),
+                        shipping_date=get_datetime(data, f'{solute} Shipping Date'),
+                        opening_date=get_datetime(data, f'{solute} Opening Date'),
+                        supplier=get_value(data, f'{solute} Supplier', None, False),
+                        product_description=get_value(data, f'{solute} Product Description', None, False),
+                    )
             )
         )
     for additive in sorted(set(additives)):
@@ -328,14 +333,6 @@ def map_solutions(data):
                 chemical_2=PubChemPureSubstanceSectionCustom(
                     name=get_value(data, [f'{additive} name'], None, False),
                     load_data=False,
-                    product_number = get_value(data, f'{additive} Product Number', None, False),
-                    lot_number = get_value(data, f'{additive} Lot Number', None, False),
-                    product_volume = get_value(data, f'{additive} Delivered Product Volume [ml]', None, unit='ml'),
-                    product_weight = get_value(data, f'{additive} Delivered Product Weight [g]', None, unit='g'),
-                    shipping_date = get_datetime(data, f'{additive} Shipping Date'),
-                    opening_date = get_datetime(data, f'{additive} Opening Date'),
-                    supplier=get_value(data, f'{additive} Supplier', None, False),
-                    product_description=get_value(data, f'{additive} Product Description', None, False),
                 ),
                 concentration_mol=get_value(
                     data, f'{additive} Concentration [mM]', None, unit='mM'
@@ -351,7 +348,17 @@ def map_solutions(data):
                     factor=[10, 1],
                 ),
                 amount_relative=get_value(data, f'{additive} relative amount', None),
-                chemical_id=get_value(data, f'{additive} chemical ID', None, False),
+                product_info=ProductInfo(
+                        chemical_id=get_value(data, f'{additive} chemical ID', None, False),
+                        product_number=get_value(data, f'{additive} Product Number', None, False),
+                        lot_number=get_value(data, f'{additive} Lot Number', None, False),
+                        product_volume=get_value(data, f'{additive} Delivered Product Volume [ml]', None, unit='ml'),
+                        product_weight=get_value(data, f'{additive} Delivered Product Weight [g]', None, unit='g'),
+                        shipping_date=get_datetime(data, f'{additive} Shipping Date'),
+                        opening_date=get_datetime(data, f'{additive} Opening Date'),
+                        supplier=get_value(data, f'{additive} Supplier', None, False),
+                        product_description=get_value(data, f'{additive} Product Description', None, False),
+                    )
             )
         )
 

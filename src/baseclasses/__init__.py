@@ -41,6 +41,7 @@ from .atmosphere import Atmosphere
 from .customreadable_identifier import ReadableIdentifiersCustom
 from .helper.add_solar_cell import add_solar_cell
 from .helper.utilities import get_processes, update_archive
+from .product_info import ProductInfo
 
 
 class PubChemPureSubstanceSectionCustom(PubChemPureSubstanceSection):
@@ -48,47 +49,6 @@ class PubChemPureSubstanceSectionCustom(PubChemPureSubstanceSection):
     A section for pure substances existing as "compounds" in the PubChem database
     and for tracking substances provided by suppliers
     """
-    product_number = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'),
-        description='Product Number, as defined by materials sent by the suppliers',
-    )
-
-    lot_number = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'),
-        description='LOT, Experiment or Batch Number, as defined by suppliers',
-    )
-
-    product_volume = Quantity(
-        type=np.dtype(np.float64),
-        unit=('ml'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'),
-        description = 'Delivered Product Volume'
-    )
-
-    product_weight = Quantity(
-        type=np.dtype(np.float64),
-        unit=('g'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='g'),
-        description = 'Delivered Product Weight'
-    )
-
-    shipping_date = Quantity(type=Datetime, a_eln=dict(component='DateTimeEditQuantity')
-                             )
-
-    opening_date = Quantity(type=Datetime, a_eln=dict(component='DateTimeEditQuantity'))
-
-    supplier = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'),
-        description = 'Partner/Company that supplies the product to the end user'
-    )
-    
-    product_description = Quantity(
-        type=str,
-        a_eln=dict(component='StringEditQuantity'),
-    )
 
     load_data = Quantity(
         type=bool,
