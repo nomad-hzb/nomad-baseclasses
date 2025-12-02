@@ -71,7 +71,6 @@ def create_product_info(data, prefix):
         ProductInfo object with populated fields
     """
     return ProductInfo(
-        chemical_id=get_value(data, f'{prefix} chemical ID', None, False),
         product_number=get_value(data, f'{prefix} Product Number', None, False),
         lot_number=get_value(data, f'{prefix} Lot Number', None, False),
         product_volume=get_value(
@@ -307,7 +306,8 @@ def map_solutions(data):
                     data, f'{solvent} volume [uL]', None, unit='uL'
                 ),
                 amount_relative=get_value(data, f'{solvent} relative amount', None),
-            )
+                chemical_id=get_value(data, f'{solvent} chemical ID', None, False),
+            ),  
         )
     for solute in sorted(set(solutes)):
         final_solutes.append(
@@ -333,7 +333,8 @@ def map_solutions(data):
                     factor=[10, 1],
                 ),
                 amount_relative=get_value(data, f'{solute} relative amount', None),
-            )
+                chemical_id=get_value(data, f'{solute} chemical ID', None, False),
+            ),               
         )
     for additive in sorted(set(additives)):
         final_additives.append(
@@ -357,6 +358,7 @@ def map_solutions(data):
                     factor=[10, 1],
                 ),
                 amount_relative=get_value(data, f'{additive} relative amount', None),
+                chemical_id=get_value(data, f'{additive} chemical ID', None, False),
             )
         )
 

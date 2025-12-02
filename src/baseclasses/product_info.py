@@ -7,13 +7,7 @@ class ProductInfo(ArchiveSection):
     """
     A section for tracking product information and chemical identifiers
     """
-    m_def = Section(label_quantity='chemical_id')
-    
-    chemical_id = Quantity(
-        type=str, 
-        a_eln=dict(component='StringEditQuantity'),
-        description='Chemical identifier'
-    )
+    m_def = Section(label_quantity='product_number')
     
     product_number = Quantity(
         type=str,
