@@ -31,6 +31,7 @@ from nomad.metainfo import (
 
 from baseclasses import PubChemPureSubstanceSectionCustom
 from baseclasses.helper.utilities import rewrite_json_recursively
+from baseclasses.product_info import ProductInfo
 
 from .chemical import Chemical
 from .customreadable_identifier import ReadableIdentifiersCustom
@@ -93,10 +94,12 @@ class SolutionChemical(ArchiveSection):
     )
 
     amount_relative = Quantity(
-        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity')
+        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity'),
     )
 
-    chemical_id = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
+    chemical_id = Quantity(
+        type=str, a_eln=dict(component='StringEditQuantity'),
+        )
 
     def normalize(self, archive, logger):
         if self.chemical is not None and self.chemical.name is not None:

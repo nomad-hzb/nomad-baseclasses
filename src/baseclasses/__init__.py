@@ -35,17 +35,19 @@ from nomad.datamodel.metainfo.basesections import (
 )
 from nomad.datamodel.metainfo.eln import ElnWithFormulaBaseSection
 from nomad.datamodel.results import Material, Results
-from nomad.metainfo import MEnum, Quantity, Reference, Section, SectionProxy, SubSection
+from nomad.metainfo import Datetime, MEnum, Quantity, Reference, Section, SectionProxy, SubSection
 
 from .atmosphere import Atmosphere
 from .customreadable_identifier import ReadableIdentifiersCustom
 from .helper.add_solar_cell import add_solar_cell
 from .helper.utilities import get_processes, update_archive
+from .product_info import ProductInfo
 
 
 class PubChemPureSubstanceSectionCustom(PubChemPureSubstanceSection):
     """
-    A section for pure substances existing as "compounds" in the PubChem database.
+    A section for pure substances existing as "compounds" in the PubChem database
+    and for tracking substances provided by suppliers
     """
 
     load_data = Quantity(
@@ -54,6 +56,11 @@ class PubChemPureSubstanceSectionCustom(PubChemPureSubstanceSection):
         a_eln=dict(
             component='BoolEditQuantity',
         ),
+    )
+    
+    product_info = SubSection(
+        section_def=ProductInfo,
+        description='Product information and chemical identifier'
     )
 
     def normalize(self, archive, logger):

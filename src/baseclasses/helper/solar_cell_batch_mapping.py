@@ -6,6 +6,7 @@ from nomad.units import ureg
 
 from baseclasses import LayerProperties, PubChemPureSubstanceSectionCustom
 from baseclasses.atmosphere import Atmosphere
+from baseclasses.product_info import ProductInfo
 from baseclasses.material_processes_misc import (
     AirKnifeGasQuenching,
     Annealing,
@@ -56,6 +57,33 @@ from baseclasses.wet_chemical_deposition.slot_die_coating import (
     SlotDieCoatingProperties,
 )
 from baseclasses.wet_chemical_deposition.spin_coating import SpinCoatingRecipeSteps
+
+
+def create_product_info(data, prefix):
+    """
+    Create a ProductInfo object with data for a specific chemical prefix.
+    
+    Args:
+        data: pandas Series containing the experimental data
+        prefix: Chemical prefix (e.g., 'Solvent 1', 'Solute 2', 'Additive 1')
+        
+    Returns:
+        ProductInfo object with populated fields
+    """
+    return ProductInfo(
+        product_number=get_value(data, f'{prefix} Product Number', None, False),
+        lot_number=get_value(data, f'{prefix} Lot Number', None, False),
+        product_volume=get_value(
+            data, f'{prefix} Delivered Product Volume [ml]', None, unit='ml'
+        ),
+        product_weight=get_value(
+            data, f'{prefix} Delivered Product Weight [g]', None, unit='g'
+        ),
+        shipping_date=get_datetime(data, f'{prefix} Shipping Date'),
+        opening_date=get_datetime(data, f'{prefix} Opening Date'),
+        supplier=get_value(data, f'{prefix} Supplier', None, False),
+        product_description=get_value(data, f'{prefix} Product Description', None, False),
+    )
 
 
 def get_entry_id_from_file_name(file_name, upload_id):
@@ -272,13 +300,14 @@ def map_solutions(data):
                 chemical_2=PubChemPureSubstanceSectionCustom(
                     name=get_value(data, f'{solvent} name', None, False),
                     load_data=False,
+                    product_info=create_product_info(data, solvent)
                 ),
                 chemical_volume=get_value(
                     data, f'{solvent} volume [uL]', None, unit='uL'
                 ),
                 amount_relative=get_value(data, f'{solvent} relative amount', None),
                 chemical_id=get_value(data, f'{solvent} chemical ID', None, False),
-            )
+            ),  
         )
     for solute in sorted(set(solutes)):
         final_solutes.append(
@@ -288,6 +317,7 @@ def map_solutions(data):
                         data, [f'{solute} type', f'{solute} name'], None, False
                     ),
                     load_data=False,
+                    product_info=create_product_info(data, solute)
                 ),
                 concentration_mol=get_value(
                     data, f'{solute} Concentration [mM]', None, unit='mM'
@@ -304,7 +334,7 @@ def map_solutions(data):
                 ),
                 amount_relative=get_value(data, f'{solute} relative amount', None),
                 chemical_id=get_value(data, f'{solute} chemical ID', None, False),
-            )
+            ),               
         )
     for additive in sorted(set(additives)):
         final_additives.append(
@@ -312,6 +342,7 @@ def map_solutions(data):
                 chemical_2=PubChemPureSubstanceSectionCustom(
                     name=get_value(data, [f'{additive} name'], None, False),
                     load_data=False,
+                    product_info=create_product_info(data, additive)
                 ),
                 concentration_mol=get_value(
                     data, f'{additive} Concentration [mM]', None, unit='mM'
