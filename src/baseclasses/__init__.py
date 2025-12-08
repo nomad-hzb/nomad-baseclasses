@@ -429,10 +429,10 @@ class LayerProperties(ArchiveSection):
     
     layer_chemical_id = Quantity(
         type=str,
+        description='Identifier of the product used for creating the layer'
+            'in case it is purchased from supplier',
         a_eln=dict(
             component='StringEditQuantity',
-            description='Identifier of the product used for creating the layer'
-            'in case it is purchased from supplier'
         ),
     )
 
