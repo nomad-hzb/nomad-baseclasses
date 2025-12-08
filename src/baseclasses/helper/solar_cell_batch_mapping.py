@@ -83,6 +83,7 @@ def create_product_info(data, prefix):
         opening_date=get_datetime(data, f'{prefix} Opening Date'),
         supplier=get_value(data, f'{prefix} Supplier', None, False),
         product_description=get_value(data, f'{prefix} Product Description', None, False),
+        cost=get_value(data, f'{prefix} Cost [EUR]', None, True),
     )
 
 
@@ -246,10 +247,9 @@ def map_layer(data):
                 layer_thickness=get_value(
                     data, 'Layer thickness [nm]', None, unit='nm'
                 ),
-                supplier=get_value(data, 'Supplier', None, False),
-                batch=get_value(data, 'Batch', None, False),
                 drying_time=get_value(data, 'Drying Time [s]', None, unit='s'),
-                cost=get_value(data, 'Cost [EUR]', None, True),
+                layer_chemical_id = get_value(data, 'Layer Chemical ID', None, False),
+                product_info = create_product_info(data, 'Layer'),
             )
         ]
     else:
@@ -265,7 +265,9 @@ def map_layer(data):
                 layer_sheet_resistance=get_value(
                     data, 'Sheet Resistance [Ohms/square]', None, True
                 ),
-            )
+                layer_chemical_id = get_value(data, 'Layer Chemical ID', None, False),
+                product_info = create_product_info(data, 'Layer'),
+                )
         ]
 
 
@@ -306,7 +308,7 @@ def map_solutions(data):
                     data, f'{solvent} volume [uL]', None, unit='uL'
                 ),
                 amount_relative=get_value(data, f'{solvent} relative amount', None),
-                chemical_id=get_value(data, f'{solvent} chemical ID', None, False),
+                chemical_id=get_value(data, f'{solvent} Chemical ID', None, False),
             ),  
         )
     for solute in sorted(set(solutes)):
@@ -333,7 +335,7 @@ def map_solutions(data):
                     factor=[10, 1],
                 ),
                 amount_relative=get_value(data, f'{solute} relative amount', None),
-                chemical_id=get_value(data, f'{solute} chemical ID', None, False),
+                chemical_id=get_value(data, f'{solute} Chemical ID', None, False),
             ),               
         )
     for additive in sorted(set(additives)):
@@ -358,7 +360,7 @@ def map_solutions(data):
                     factor=[10, 1],
                 ),
                 amount_relative=get_value(data, f'{additive} relative amount', None),
-                chemical_id=get_value(data, f'{additive} chemical ID', None, False),
+                chemical_id=get_value(data, f'{additive} Chemical ID', None, False),
             )
         )
 

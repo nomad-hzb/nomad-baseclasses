@@ -58,3 +58,9 @@ class ProductInfo(ArchiveSection):
         a_eln=dict(component='StringEditQuantity'),
         description='Product description'
     )
+
+    cost = Quantity(
+        type=np.dtype(np.float64),
+        description='Cost of product (in EUR).',
+        a_eln=dict(component='NumberEditQuantity'),
+    )
