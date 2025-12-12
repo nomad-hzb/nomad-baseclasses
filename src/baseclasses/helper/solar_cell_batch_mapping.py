@@ -6,7 +6,6 @@ from nomad.units import ureg
 
 from baseclasses import LayerProperties, PubChemPureSubstanceSectionCustom
 from baseclasses.atmosphere import Atmosphere
-from baseclasses.product_info import ProductInfo
 from baseclasses.material_processes_misc import (
     AirKnifeGasQuenching,
     Annealing,
@@ -22,6 +21,7 @@ from baseclasses.material_processes_misc import (
 )
 from baseclasses.material_processes_misc.annealing import IRAnnealing
 from baseclasses.material_processes_misc.laser_scribing import LaserScribingProperties
+from baseclasses.product_info import ProductInfo
 from baseclasses.solar_energy.carbonpaste import CarbonPasteLayerProperties
 from baseclasses.solution import Solution, SolutionChemical, SolutionWaschingFiltration
 from baseclasses.vapour_based_deposition.atomic_layer_deposition import (
@@ -239,36 +239,31 @@ def map_atmosphere(data):
 
 
 def map_layer(data):
+    # Common properties for all layer types
+    common_layer_props = {
+        'layer_type': get_value(data, 'Layer type', None, False),
+        'layer_material_name': get_value(data, 'Material name', None, False),
+        'layer_thickness': get_value(data, 'Layer thickness [nm]', None, unit='nm'),
+        'layer_chemical_id': get_value(data, 'Layer chemical ID', None, False),
+        'product_info': create_product_info(data, 'Layer'),
+    }
+    
+    # Guard clause: handle Carbon Paste Layer early
     if 'Carbon Paste Layer' in get_value(data, 'Layer type', '', False):
-        return [
-            CarbonPasteLayerProperties(
-                layer_type=get_value(data, 'Layer type', None, False),
-                layer_material_name=get_value(data, 'Material name', None, False),
-                layer_thickness=get_value(
-                    data, 'Layer thickness [nm]', None, unit='nm'
-                ),
-                drying_time=get_value(data, 'Drying Time [s]', None, unit='s'),
-                layer_chemical_id = get_value(data, 'Layer Chemical ID', None, False),
-                product_info = create_product_info(data, 'Layer'),
-            )
-        ]
-    else:
-        return [
-            LayerProperties(
-                layer_type=get_value(data, 'Layer type', None, False),
-                layer_material_name=get_value(data, 'Material name', None, False),
-                layer_thickness=get_value(
-                    data, 'Layer thickness [nm]', None, unit='nm'
-                ),
-                layer_transmission=get_value(data, 'Transmission [%]', None, True),
-                layer_morphology=get_value(data, 'Morphology', None, False),
-                layer_sheet_resistance=get_value(
-                    data, 'Sheet Resistance [Ohms/square]', None, True
-                ),
-                layer_chemical_id = get_value(data, 'Layer Chemical ID', None, False),
-                product_info = create_product_info(data, 'Layer'),
-                )
-        ]
+        return [CarbonPasteLayerProperties(
+            **common_layer_props,
+            drying_time=get_value(data, 'Drying Time [s]', None, unit='s'),
+        )]
+    
+    # Default case: regular LayerProperties
+    return [LayerProperties(
+        **common_layer_props,
+        layer_transmission=get_value(data, 'Transmission [%]', None, True),
+        layer_morphology=get_value(data, 'Morphology', None, False),
+        layer_sheet_resistance=get_value(
+            data, 'Sheet Resistance [Ohms/square]', None, True
+        ),
+    )]
 
 
 def map_solutions(data):
@@ -308,7 +303,7 @@ def map_solutions(data):
                     data, f'{solvent} volume [uL]', None, unit='uL'
                 ),
                 amount_relative=get_value(data, f'{solvent} relative amount', None),
-                chemical_id=get_value(data, f'{solvent} Chemical ID', None, False),
+                chemical_id=get_value(data, f'{solvent} chemical ID', None, False),
             ),  
         )
     for solute in sorted(set(solutes)):
@@ -335,7 +330,7 @@ def map_solutions(data):
                     factor=[10, 1],
                 ),
                 amount_relative=get_value(data, f'{solute} relative amount', None),
-                chemical_id=get_value(data, f'{solute} Chemical ID', None, False),
+                chemical_id=get_value(data, f'{solute} chemical ID', None, False),
             ),               
         )
     for additive in sorted(set(additives)):
@@ -360,7 +355,7 @@ def map_solutions(data):
                     factor=[10, 1],
                 ),
                 amount_relative=get_value(data, f'{additive} relative amount', None),
-                chemical_id=get_value(data, f'{additive} Chemical ID', None, False),
+                chemical_id=get_value(data, f'{additive} chemical ID', None, False),
             )
         )
 
