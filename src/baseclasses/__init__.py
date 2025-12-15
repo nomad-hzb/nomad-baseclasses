@@ -60,7 +60,7 @@ class PubChemPureSubstanceSectionCustom(PubChemPureSubstanceSection):
     
     product_info = SubSection(
         section_def=ProductInfo,
-        description='Product information and chemical identifier'
+        description='Product information'
     )
 
     def normalize(self, archive, logger):
@@ -414,6 +414,7 @@ class LayerProperties(ArchiveSection):
         shape=[],
         a_eln=dict(component='StringEditQuantity'),
     )
+
     layer_sheet_resistance = Quantity(
         type=np.dtype(np.float64),
         unit='ohm',
@@ -424,6 +425,20 @@ class LayerProperties(ArchiveSection):
                 minValue=0, description='Sheet resistance in ohms per square (Ω/□)'
             ),
         ),
+    )
+    
+    layer_chemical_id = Quantity(
+        type=str,
+        description='Identifier of the product used for creating the layer'
+            'in case it is purchased from supplier',
+        a_eln=dict(
+            component='StringEditQuantity',
+        ),
+    )
+
+    product_info = SubSection(
+        section_def=ProductInfo,
+        description='Product information'
     )
 
 
