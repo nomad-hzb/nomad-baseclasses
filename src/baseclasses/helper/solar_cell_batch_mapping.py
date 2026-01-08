@@ -225,6 +225,7 @@ def map_annealing(data):
     annealing.atmosphere = get_value(
         data, ['Annealing athmosphere', 'Annealing atmosphere'], None, False
     )
+    annealing.datetime = get_datetime(data, 'Datetime'),
     return annealing
 
 
@@ -493,6 +494,7 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
         name='spin coating ' + get_value(data, 'Material name', '', False),
         location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
+        datetime = get_datetime(data, 'Datetime'),
         description=get_value(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
@@ -556,6 +558,7 @@ def map_blade_coating(i, j, lab_ids, data, upload_id, blade_coating_class):
         name='blade coating ' + get_value(data, 'Material name', '', False),
         location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
+        datetime = get_datetime(data, 'Datetime'),
         description=get_value(data, 'Notes', None, False),
         samples=[
             CompositeSystemReference(
@@ -621,6 +624,7 @@ def map_gravure_printing(i, j, lab_ids, data, upload_id, gravure_printing_class)
         name='gravure printing ' + get_value(data, 'Material name', '', False),
         location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
+        datetime = get_datetime(data, 'Datetime'),
         description=get_value(data, 'Notes', None, False),
         samples=[
             CompositeSystemReference(
@@ -681,6 +685,7 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
         name='slot die coating ' + get_value(data, 'Material name', '', False),
         location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
+        datetime = get_datetime(data, 'Datetime'),
         description=get_value(data, 'Notes', None, False),
         samples=[
             CompositeSystemReference(
@@ -744,6 +749,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
         name='inkjet printing ' + get_value(data, 'Material name', '', False),
         location=location,
         positon_in_experimental_plan=i,
+        datetime = get_datetime(data, 'Datetime'),
         description=get_value(data, 'Notes', None, False),
         samples=[
             CompositeSystemReference(
@@ -919,6 +925,7 @@ def map_screen_printing(i, j, lab_ids, data, upload_id, screen_printing_class):
         name='screen printing ' + get_value(data, 'Material name', '', False),
         location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
+        datetime = get_datetime(data, 'Datetime'),
         description=get_value(data, 'Notes', None, False),
         samples=[
             CompositeSystemReference(
@@ -997,6 +1004,7 @@ def map_lamination(i, j, lab_ids, data, upload_id, lamination_class):
         location=get_value(data, 'Tool/GB name', '', False),
         # Hier muss man evtl was anpassen, da das Lamination ja als letztes von zwei halbstacks ist...
         position_in_experimental_plan=i,
+        datetime = get_datetime(data, 'Datetime'),
         description=get_value(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
@@ -1025,6 +1033,7 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
     archive = cleaning_class(
         name='Cleaning',
         positon_in_experimental_plan=i,
+        datetime = get_datetime(data, 'Datetime'),
         location=get_value(data, 'Tool/GB name', '', False),
         description=get_value(data, 'Notes', '', False),
         samples=[
@@ -1138,6 +1147,7 @@ def map_evaporation(
         name='evaporation ' + get_value(data, 'Material name', '', False),
         location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
+        datetime = get_datetime(data, 'Datetime'),
         description=get_value(data, 'Notes', '', False),
         co_evaporation=coevaporation,
         samples=[
@@ -1239,6 +1249,7 @@ def map_annealing_class(i, j, lab_ids, data, upload_id, annealing_class):
     archive = annealing_class(
         name='Thermal Annealing',
         positon_in_experimental_plan=i,
+        datetime = get_datetime(data, 'Datetime'),
         location=get_value(data, 'Tool/GB name', '', False),
         description=get_value(data, 'Notes', '', False),
         samples=[
@@ -1260,6 +1271,7 @@ def map_sputtering(i, j, lab_ids, data, upload_id, sputter_class):
     archive = sputter_class(
         name='sputtering ' + get_value(data, 'Material name', '', False),
         positon_in_experimental_plan=i,
+        datetime = get_datetime(data, 'Datetime'),
         location=get_value(data, 'Tool/GB name', '', False),
         description=get_value(data, 'Notes', '', False),
         samples=[
@@ -1299,6 +1311,7 @@ def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
         name='Close Space Sublimation ' + get_value(data, 'Material name', '', False),
         location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
+        datetime = get_datetime(data, 'Datetime'),
         description=get_value(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
@@ -1333,6 +1346,7 @@ def map_dip_coating(i, j, lab_ids, data, upload_id, dc_class):
         name='dip coating ' + get_value(data, 'Material name', '', False),
         location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
+        datetime = get_datetime(data, 'Datetime'),
         description=get_value(data, 'Notes', None, False),
         samples=[
             CompositeSystemReference(
@@ -1379,6 +1393,7 @@ def map_laser_scribing(i, j, lab_ids, data, upload_id, laser_class):
     archive = laser_class(
         name='laser scribing',
         positon_in_experimental_plan=i,
+        datetime = get_datetime(data, 'Datetime'),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -1412,6 +1427,7 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
         + get_value(data, 'Material name', '', number=False),
         location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
+        datetime = get_datetime(data, 'Datetime'),
         description=get_value(data, 'Notes', '', number=False),
         samples=[
             CompositeSystemReference(
@@ -1481,6 +1497,7 @@ def map_generic(i, j, lab_ids, data, upload_id, generic_class):
     archive = generic_class(
         name=get_value(data, 'Name', '', False),
         positon_in_experimental_plan=i,
+        datetime = get_datetime(data, 'Datetime'),
         description=get_value(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
