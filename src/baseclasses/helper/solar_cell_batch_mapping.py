@@ -5,7 +5,7 @@ from nomad.datamodel.metainfo.basesections import CompositeSystemReference
 from nomad.units import ureg
 
 from baseclasses import LayerProperties, PubChemPureSubstanceSectionCustom
-from baseclasses.atmosphere import Atmosphere
+from baseclasses.atmosphere import Atmosphere, GloveboxAtmosphere
 from baseclasses.material_processes_misc import (
     AirKnifeGasQuenching,
     Annealing,
@@ -232,13 +232,30 @@ def map_annealing(data):
 
 
 def map_atmosphere(data):
-    return Atmosphere(
-        oxygen_level_ppm=get_value(data, 'GB oxygen level [ppm]', None),
-        relative_humidity=get_value(
-            data, ['rel. humidity [%]', 'Room/GB humidity [%]'], None
-        ),
-        temperature=get_value(data, 'Room temperature [°C]', None, unit='°C'),
-    )
+    # Check if we have any atmosphere-related data
+    gb_oxygen = get_value(data, 'GB oxygen level [ppm]', None)
+    humidity = get_value(data, ['rel. humidity [%]', 'Room/GB humidity [%]'], None)
+    temperature = get_value(data, 'Room temperature [°C]', None, unit='°C')
+    
+    # If no atmosphere data exists, return None
+    if all(val is None for val in [gb_oxygen, humidity, temperature]):
+        return None
+    
+    # Create appropriate atmosphere type based on available data
+    if gb_oxygen is not None:
+        # Glovebox atmosphere - only has oxygen level and temperature
+        atmosphere = GloveboxAtmosphere(
+            oxygen_level_ppm=gb_oxygen,
+            temperature=temperature,
+        )
+    else:
+        # Regular atmosphere - can have humidity, temperature
+        atmosphere = Atmosphere(
+            relative_humidity=humidity,
+            temperature=temperature,
+        )
+    
+    return atmosphere
 
 
 def map_layer(data):

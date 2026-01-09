@@ -11,6 +11,7 @@ from nomad.metainfo import Datetime, Quantity, Section
 
 
 class Atmosphere(ArchiveSection):
+    # ambient atmosphere
     m_def = Section(links=['https://purl.archive.org/tfsco/TFSCO_00001012'])
 
     datetime = Quantity(type=Datetime, a_eln=dict(component='DateTimeEditQuantity'))
@@ -45,7 +46,13 @@ class Atmosphere(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity'),
     )
 
-    # adding oxygen_level so that Atmosphere can be also used for tracking Glovebox conditions
+
+class GloveboxAtmosphere(Atmosphere):
+    """
+    This class is created to host the data from the sensors that will be
+    placed in the gloveboxes (gasses, particulates etc). H2O sensing in ppm is
+    not available and therefore not added
+    """
     oxygen_level_ppm = Quantity(
         # links=[''],
         type=np.dtype(np.float64),
