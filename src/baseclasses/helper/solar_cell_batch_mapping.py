@@ -235,11 +235,16 @@ def map_atmosphere(data):
     atmosphere = Atmosphere()
     if  get_value(data, 'GB oxygen level [ppm]', None) is not None:
         atmosphere = GloveboxAtmosphere(
-            oxygen_level_ppm = get_value(data, 'GB oxygen level [ppm]', None)
+            start_oxygen_level_ppm = get_value(data, ['GB start oxygen [ppm]','GB oxygen level [ppm]'], None),
+            end_oxygen_level_ppm = get_value(data, 'GB end oxygen level [ppm]', None),
+            start_gb_temperature = get_value(data, 'GB start temperature [°C]', None, unit='°C'),
+            end_gb_temperature = get_value(data, 'GB end temperature [°C]', None, unit='°C'),
+            start_water_level_ppm = get_value(data, 'GB start water level [ppm]', None),
+            end_water_level_ppm = get_value(data, 'GB end water level [ppm]', None),
         )
     atmosphere.relative_humidity = get_value(
         data, ['rel. humidity [%]', 'Room/GB humidity [%]'], None
-        )
+        ) #leave the Room/GB humidity [%], it is a PERSEUS legacy feature
     atmosphere.temperature =  get_value(
         data, 'Room temperature [°C]', None, unit='°C'
         )
@@ -1239,7 +1244,12 @@ def map_evaporation(
             None,
             unit=['bar', 'mbar'],
         )
-        evaporation.tooling_factor = get_value(data, f'Tooling factor{mat}')
+        evaporation.tooling_factor = get_value(
+            data, f'Tooling factor{mat}'
+            )
+        evaporation.sample_holder = get_value(
+            data, 'Sample holder side length [mm]', None, unit='mm'
+            )
 
         evaporation.chemical_2 = PubChemPureSubstanceSectionCustom(
             name=get_value(data, f'Material name{mat}', None, False), load_data=False

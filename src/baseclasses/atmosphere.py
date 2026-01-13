@@ -24,6 +24,7 @@ class Atmosphere(ArchiveSection):
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+        description = 'Temperature of the room'
     )
 
     ambient_pressure = Quantity(
@@ -50,10 +51,9 @@ class Atmosphere(ArchiveSection):
 class GloveboxAtmosphere(Atmosphere):
     """
     This class is created to host the data from the sensors that will be
-    placed in the gloveboxes (gasses, particulates etc). H2O sensing in ppm is
-    not available and therefore not added
+    placed in the gloveboxes (gasses, particulates etc).
     """
-    oxygen_level_ppm = Quantity(
+    start_oxygen_level_ppm = Quantity(
         # links=[''],
         type=np.dtype(np.float64),
         a_eln=dict(
@@ -61,3 +61,49 @@ class GloveboxAtmosphere(Atmosphere):
             defaultDisplayUnit='ppm',
         ),
     )
+
+    end_oxygen_level_ppm = Quantity(
+        # links=[''],
+        type=np.dtype(np.float64),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='ppm',
+        ),
+    )
+
+    start_gb_temperature = Quantity(
+        # links=[''],
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
+
+    end_gb_temperature = Quantity(
+        # links=[''],
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
+    
+    start_water_level_ppm = Quantity(
+        # links=[''],
+        type=np.dtype(np.float64),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='ppm',
+        ),
+    )
+
+    end_water_level_ppm = Quantity(
+        # links=[''],
+        type=np.dtype(np.float64),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='ppm',
+        ),
+    )
+
+
+
+
+    
