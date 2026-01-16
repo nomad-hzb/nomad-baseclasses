@@ -260,7 +260,7 @@ class Evaporation(ArchiveSection):
         a_eln=dict(
             component='NumberEditQuantity', defaultDisplayUnit='mm'
         ),
-        description ='Side length of the sample holder, from 25mm to 150mm(full tray)' 
+        description ='Sample holder width, from 25mm to 150mm(full tray)' 
     )
 
     def normalize(self, archive, logger):

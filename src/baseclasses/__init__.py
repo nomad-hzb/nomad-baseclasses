@@ -300,6 +300,12 @@ class BaseProcess(Process):
         section_def=Atmosphere,
     )
 
+    operator = Quantity(
+        type = str,
+        a_eln=dict(component='StringEditQuantity'),
+        description = "Name of process operator"
+    )
+
     def normalize(self, archive, logger):
         if not self.positon_in_experimental_plan:
             try:
@@ -549,6 +555,12 @@ class BaseMeasurement(Measurement):
         section_def=Atmosphere,
         repeats=True,
     )
+
+    operator = Quantity(
+        type = str,
+        a_eln=dict(component='StringEditQuantity'), 
+        description = "Name of measurement operator"
+    ) 
 
     def normalize(self, archive, logger):
         if self.samples:
