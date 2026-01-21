@@ -384,7 +384,20 @@ class JVMeasurement(BaseMeasurement):
             props=dict(minValue=0),
         ),
     )
-
+    corrected_active_area = Quantity(
+        links=[
+            'https://purl.archive.org/tfsco/TFSCO_00001004',
+            'https://purl.archive.org/tfsco/TFSCO_00002097',
+        ],
+        type=np.dtype(np.float64),
+        unit=('cm^2'),
+        shape=[],
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='cm^2',
+            props=dict(minValue=0),
+        ),
+    )
     intensity = Quantity(
         links=['https://purl.archive.org/tfsco/TFSCO_00001128'],
         type=np.dtype(np.float64),
