@@ -11,6 +11,7 @@ from nomad.metainfo import Datetime, Quantity, Section
 
 
 class Atmosphere(ArchiveSection):
+    # ambient atmosphere
     m_def = Section(links=['https://purl.archive.org/tfsco/TFSCO_00001012'])
 
     datetime = Quantity(type=Datetime, a_eln=dict(component='DateTimeEditQuantity'))
@@ -23,6 +24,7 @@ class Atmosphere(ArchiveSection):
         type=np.dtype(np.float64),
         unit=('°C'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+        description = 'Temperature of the room'
     )
 
     ambient_pressure = Quantity(
@@ -45,8 +47,13 @@ class Atmosphere(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity'),
     )
 
-    # adding oxygen_level so that Atmosphere can be also used for tracking Glovebox conditions
-    oxygen_level_ppm = Quantity(
+
+class GloveboxAtmosphere(Atmosphere):
+    """
+    This class is created to host the data from the sensors that will be
+    placed in the gloveboxes (gasses, particulates etc).
+    """
+    start_oxygen_level_ppm = Quantity(
         # links=[''],
         type=np.dtype(np.float64),
         a_eln=dict(
@@ -54,3 +61,49 @@ class Atmosphere(ArchiveSection):
             defaultDisplayUnit='ppm',
         ),
     )
+
+    end_oxygen_level_ppm = Quantity(
+        # links=[''],
+        type=np.dtype(np.float64),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='ppm',
+        ),
+    )
+
+    start_gb_temperature = Quantity(
+        # links=[''],
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
+
+    end_gb_temperature = Quantity(
+        # links=[''],
+        type=np.dtype(np.float64),
+        unit=('°C'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
+    )
+    
+    start_water_level_ppm = Quantity(
+        # links=[''],
+        type=np.dtype(np.float64),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='ppm',
+        ),
+    )
+
+    end_water_level_ppm = Quantity(
+        # links=[''],
+        type=np.dtype(np.float64),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='ppm',
+        ),
+    )
+
+
+
+
+    
