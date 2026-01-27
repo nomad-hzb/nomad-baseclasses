@@ -545,7 +545,7 @@ class LiquidFEResults(ArchiveSection):
 class HPLCMeasurement(ArchiveSection):
     injection_name = Quantity(type=str)
 
-    datetime = Quantity(type=Datetime, shape=['*'])
+    datetime = Quantity(type=Datetime)
 
     ec_charge = Quantity(
         type=np.dtype(np.float64),
@@ -749,7 +749,7 @@ class PotentiometryGasChromatographyMeasurement(BaseMeasurement):
 
     hplc = SubSection(section_def=HPLCMeasurement, repeats=True)
 
-    ph = SubSection(section_def=PHMeasurement, repeats=True)
+    ph = SubSection(section_def=PHMeasurement)
 
     fe_results = SubSection(section_def=PotentiometryGasChromatographyResults)
 
