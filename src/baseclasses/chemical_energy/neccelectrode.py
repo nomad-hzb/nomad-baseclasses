@@ -69,6 +69,12 @@ class CENECCElectrodeRecipeID(ReadableIdentifiersCustom):
 
     element = Quantity(type=str, shape=[], a_eln=dict(component='StringEditQuantity'))
 
+    element_mass = Quantity(
+        type=np.dtype(np.float64),
+        unit=('mg'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mg'),
+    )
+
     deposition_method = Quantity(
         type=MEnum('Spray Dep', 'Ultrasonic Nozzle', 'Dropcast'),
         shape=[],
@@ -125,7 +131,44 @@ class Ionomer(ArchiveSection):
     )
 
 
-class CENECCElectrodeRecipe(CESample):
+class SearchableCESample(CESample):
+    entry_dict_hash = Quantity(
+        type=str,
+        description='Searchable string for easy comparison of '
+        'SearchableCESample entries in terms of their similarity.',
+        a_display={'visible': False},
+    )
+
+    def _normalize_string(self, s: str) -> str:
+        import re
+
+        s = s.lower()
+        return re.sub(r'[^a-z0-9]', '', s)
+
+    def _normalize_object(self, obj):
+        if isinstance(obj, dict):
+            return {
+                self._normalize_string(k)
+                if isinstance(k, str)
+                else k: self._normalize_object(v)
+                for k, v in obj.items()
+                if v is not None and v not in (' ', '', {}, [])
+            }
+
+        elif isinstance(obj, list):
+            return [self._normalize_object(v) for v in obj]
+
+        elif isinstance(obj, tuple):
+            return tuple(self._normalize_object(v) for v in obj)
+
+        elif isinstance(obj, str):
+            return self._normalize_string(obj)
+
+        else:
+            return obj
+
+
+class CENECCElectrodeRecipe(SearchableCESample):
     electrode_recipe_id = SubSection(section_def=CENECCElectrodeRecipeID)
 
     deposition_temperature = Quantity(
@@ -158,10 +201,31 @@ class CENECCElectrodeRecipe(CESample):
 
     ionomer = SubSection(section_def=Ionomer, repeats=True)
 
+    def set_entry_dict_hash(self):
+        from nomad.utils import hash
+
+        complete_entry_dict = self.m_to_dict()
+        keys_to_remove = {
+            'entry_dict_hash',
+            'm_def',
+            'name',
+            'datetime',
+            'lab_id',
+            'chemical_composition_or_formulas',
+            'description',
+        }
+        for k in keys_to_remove:
+            complete_entry_dict.pop(k, None)
+        id_keys_to_remove = {'lab_id', 'owner', 'short_name', 'datetime'}
+        for k in id_keys_to_remove:
+            complete_entry_dict.get('electrode_recipe_id', {}).pop(k, None)
+        self.entry_dict_hash = hash(self._normalize_object(complete_entry_dict))
+
     def normalize(self, archive, logger):
         self.chemical_composition_or_formulas = self.electrode_recipe_id.element
         super().normalize(archive, logger)
         export_lab_id(archive, self.lab_id)
+        self.set_entry_dict_hash()
 
 
 class CENECCElectrodeID(ReadableIdentifiersCustom):
@@ -222,14 +286,44 @@ class CENECCElectrodeID(ReadableIdentifiersCustom):
         create_id(archive, self.lab_id)
 
 
-class CENECCElectrode(CESample):
+class CENECCElectrode(SearchableCESample):
     electrode_id = SubSection(section_def=CENECCElectrodeID)
 
     description = Quantity(
         type=str,
         description='Any information that cannot be captured in the other fields.',
-        a_eln=dict(component='RichTextEditQuantity', label='Remarks'),
+        a_eln={'component': 'RichTextEditQuantity', 'label': 'Remarks'},
     )
+
+    measured_mass_loading = Quantity(
+        type=np.dtype(np.float64),
+        unit='mg/cm^2',
+        description='Should correspond to the mass loading specified in the recipe. '
+        'The actual mass loading of the electrode is specified here.',
+        a_eln={'component': 'NumberEditQuantity'},
+        a_display={'unit': 'mg/cm^2'},
+    )
+
+    bottle_number = Quantity(
+        type=str,
+        description='This number can be found on the bottle used during the '
+        'manufacture of the electrode in the laboratory.',
+        a_eln={'component': 'StringEditQuantity'},
+    )
+
+    def set_entry_dict_hash(self):
+        from nomad.utils import hash
+
+        complete_entry_dict = self.m_to_dict()
+        basic_dict = {
+            'owner': complete_entry_dict.get('electrode_id', {}).get('owner'),
+            'institute': complete_entry_dict.get('electrode_id', {}).get('institute'),
+            'date': complete_entry_dict.get('electrode_id', {}).get('datetime'),
+            'recipe': complete_entry_dict.get('electrode_id', {}).get('recipe'),
+            'mass_loading': complete_entry_dict.get('measured_mass_loading'),
+            'bottle': complete_entry_dict.get('bottle_number'),
+        }
+        self.entry_dict_hash = hash(self._normalize_object(basic_dict))
 
     def normalize(self, archive, logger):
         self.chemical_composition_or_formulas = (
@@ -239,3 +333,4 @@ class CENECCElectrode(CESample):
         export_lab_id(archive, self.lab_id)
         if archive.data == self and self.name:
             archive.metadata.entry_name = self.name
+        self.set_entry_dict_hash()
