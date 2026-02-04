@@ -187,7 +187,7 @@ def get_datetime(data, key):
 
 
 def map_basic_sample(data, substrate_name, upload_id, sample_class):
-    parent_id = data['Parent ID']
+    parent_id = get_value(data, 'Parent ID', None, False)
     archive = sample_class(
         datetime=get_datetime(data, 'Date'),
         name=data['Nomad ID'],
