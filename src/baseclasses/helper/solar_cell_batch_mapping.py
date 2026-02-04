@@ -232,21 +232,25 @@ def map_annealing(data):
 
 def map_atmosphere(data):
     atmosphere = Atmosphere()
-    if  get_value(data, 'GB start oxygen level [ppm]', None) is not None:
+    if get_value(data, 'GB start oxygen level [ppm]', None) is not None:
         atmosphere = GloveboxAtmosphere(
-            start_oxygen_level_ppm = get_value(data, ['GB start oxygen level [ppm]','GB oxygen level [ppm]'], None),
-            end_oxygen_level_ppm = get_value(data, 'GB end oxygen level [ppm]', None),
-            start_gb_temperature = get_value(data, 'GB start temperature [°C]', None, unit='°C'),
-            end_gb_temperature = get_value(data, 'GB end temperature [°C]', None, unit='°C'),
-            start_water_level_ppm = get_value(data, 'GB start water level [ppm]', None),
-            end_water_level_ppm = get_value(data, 'GB end water level [ppm]', None),
+            start_oxygen_level_ppm=get_value(
+                data, ['GB start oxygen level [ppm]', 'GB oxygen level [ppm]'], None
+            ),
+            end_oxygen_level_ppm=get_value(data, 'GB end oxygen level [ppm]', None),
+            start_gb_temperature=get_value(
+                data, 'GB start temperature [°C]', None, unit='°C'
+            ),
+            end_gb_temperature=get_value(
+                data, 'GB end temperature [°C]', None, unit='°C'
+            ),
+            start_water_level_ppm=get_value(data, 'GB start water level [ppm]', None),
+            end_water_level_ppm=get_value(data, 'GB end water level [ppm]', None),
         )
     atmosphere.relative_humidity = get_value(
         data, ['rel. humidity [%]', 'Room/GB humidity [%]'], None
-        ) #leave the Room/GB humidity [%], it is a PERSEUS legacy feature
-    atmosphere.temperature =  get_value(
-        data, 'Room temperature [°C]', None, unit='°C'
-        )
+    )  # leave the Room/GB humidity [%], it is a PERSEUS legacy feature
+    atmosphere.temperature = get_value(data, 'Room temperature [°C]', None, unit='°C')
     return atmosphere
 
 
@@ -510,7 +514,7 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
         location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
-        operator = get_value(data, 'Operator', '', False),
+        operator=get_value(data, 'Operator', '', False),
         description=get_value(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
@@ -575,7 +579,7 @@ def map_blade_coating(i, j, lab_ids, data, upload_id, blade_coating_class):
         location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
-        operator = get_value(data, 'Operator', '', False),
+        operator=get_value(data, 'Operator', '', False),
         description=get_value(data, 'Notes', None, False),
         samples=[
             CompositeSystemReference(
@@ -642,7 +646,7 @@ def map_gravure_printing(i, j, lab_ids, data, upload_id, gravure_printing_class)
         location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
-        operator = get_value(data, 'Operator', '', False),
+        operator=get_value(data, 'Operator', '', False),
         description=get_value(data, 'Notes', None, False),
         samples=[
             CompositeSystemReference(
@@ -704,7 +708,7 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
         location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
-        operator = get_value(data, 'Operator', '', False),
+        operator=get_value(data, 'Operator', '', False),
         description=get_value(data, 'Notes', None, False),
         samples=[
             CompositeSystemReference(
@@ -769,7 +773,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
         location=location,
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
-        operator = get_value(data, 'Operator', '', False),
+        operator=get_value(data, 'Operator', '', False),
         description=get_value(data, 'Notes', None, False),
         samples=[
             CompositeSystemReference(
@@ -946,7 +950,7 @@ def map_screen_printing(i, j, lab_ids, data, upload_id, screen_printing_class):
         location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
-        operator = get_value(data, 'Operator', '', False),
+        operator=get_value(data, 'Operator', '', False),
         description=get_value(data, 'Notes', None, False),
         samples=[
             CompositeSystemReference(
@@ -1026,7 +1030,7 @@ def map_lamination(i, j, lab_ids, data, upload_id, lamination_class):
         # Hier muss man evtl was anpassen, da das Lamination ja als letztes von zwei halbstacks ist...
         position_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
-        operator = get_value(data, 'Operator', '', False),
+        operator=get_value(data, 'Operator', '', False),
         description=get_value(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
@@ -1056,7 +1060,7 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
         name='Cleaning',
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
-        operator = get_value(data, 'Operator', '', False),
+        operator=get_value(data, 'Operator', '', False),
         location=get_value(data, 'Tool/GB name', '', False),
         description=get_value(data, 'Notes', '', False),
         samples=[
@@ -1171,7 +1175,7 @@ def map_evaporation(
         location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
-        operator = get_value(data, 'Operator', '', False),
+        operator=get_value(data, 'Operator', '', False),
         description=get_value(data, 'Notes', '', False),
         co_evaporation=coevaporation,
         samples=[
@@ -1252,12 +1256,10 @@ def map_evaporation(
             None,
             unit=['bar', 'mbar'],
         )
-        evaporation.tooling_factor = get_value(
-            data, f'Tooling factor{mat}'
-            )
+        evaporation.tooling_factor = get_value(data, f'Tooling factor{mat}')
         evaporation.sample_holder = get_value(
             data, 'Sample holder width [mm]', None, unit='mm'
-            )
+        )
 
         evaporation.chemical_2 = PubChemPureSubstanceSectionCustom(
             name=get_value(data, f'Material name{mat}', None, False), load_data=False
@@ -1279,7 +1281,7 @@ def map_annealing_class(i, j, lab_ids, data, upload_id, annealing_class):
         name='Thermal Annealing',
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
-        operator = get_value(data, 'Operator', '', False),
+        operator=get_value(data, 'Operator', '', False),
         location=get_value(data, 'Tool/GB name', '', False),
         description=get_value(data, 'Notes', '', False),
         samples=[
@@ -1302,7 +1304,7 @@ def map_sputtering(i, j, lab_ids, data, upload_id, sputter_class):
         name='sputtering ' + get_value(data, 'Material name', '', False),
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
-        operator = get_value(data, 'Operator', '', False),
+        operator=get_value(data, 'Operator', '', False),
         location=get_value(data, 'Tool/GB name', '', False),
         description=get_value(data, 'Notes', '', False),
         samples=[
@@ -1343,7 +1345,7 @@ def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
         location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
-        operator = get_value(data, 'Operator', '', False),
+        operator=get_value(data, 'Operator', '', False),
         description=get_value(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
@@ -1379,7 +1381,7 @@ def map_dip_coating(i, j, lab_ids, data, upload_id, dc_class):
         location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
-        operator = get_value(data, 'Operator', '', False),
+        operator=get_value(data, 'Operator', '', False),
         description=get_value(data, 'Notes', None, False),
         samples=[
             CompositeSystemReference(
@@ -1427,7 +1429,7 @@ def map_laser_scribing(i, j, lab_ids, data, upload_id, laser_class):
         name='laser scribing',
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
-        operator = get_value(data, 'Operator', '', False),
+        operator=get_value(data, 'Operator', '', False),
         samples=[
             CompositeSystemReference(
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
@@ -1462,7 +1464,7 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
         location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
-        operator = get_value(data, 'Operator', '', False),
+        operator=get_value(data, 'Operator', '', False),
         description=get_value(data, 'Notes', '', number=False),
         samples=[
             CompositeSystemReference(
@@ -1533,7 +1535,7 @@ def map_generic(i, j, lab_ids, data, upload_id, generic_class):
         name=get_value(data, 'Name', '', False),
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
-        operator = get_value(data, 'Operator', '', False),
+        operator=get_value(data, 'Operator', '', False),
         description=get_value(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(

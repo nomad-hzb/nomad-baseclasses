@@ -28,7 +28,9 @@ def get_eis_properties(metadata):
     properties = EISProperties()
 
     properties.dc_voltage = metadata.get('VDC', [None])[0]
-    properties.dc_voltage_measured_against = 'Eoc' if metadata.get('VDC', [None, None])[1] else 'Eref'
+    properties.dc_voltage_measured_against = (
+        'Eoc' if metadata.get('VDC', [None, None])[1] else 'Eref'
+    )
     properties.initial_frequency = metadata.get('FREQINIT')
     properties.final_frequency = metadata.get('FREQFINAL')
     properties.points_per_decade = metadata.get('PTSPERDEC')

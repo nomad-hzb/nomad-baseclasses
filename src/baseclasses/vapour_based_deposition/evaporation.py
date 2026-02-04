@@ -257,10 +257,8 @@ class Evaporation(ArchiveSection):
         # links=[''],
         type=np.dtype(np.float64),
         unit=('mm'),
-        a_eln=dict(
-            component='NumberEditQuantity', defaultDisplayUnit='mm'
-        ),
-        description ='Sample holder width, from 25mm to 150mm(full tray)' 
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mm'),
+        description='Sample holder width, from 25mm to 150mm(full tray)',
     )
 
     def normalize(self, archive, logger):

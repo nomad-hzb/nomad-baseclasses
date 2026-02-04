@@ -94,12 +94,14 @@ class SolutionChemical(ArchiveSection):
     )
 
     amount_relative = Quantity(
-        type=np.dtype(np.float64), a_eln=dict(component='NumberEditQuantity'),
+        type=np.dtype(np.float64),
+        a_eln=dict(component='NumberEditQuantity'),
     )
 
     chemical_id = Quantity(
-        type=str, a_eln=dict(component='StringEditQuantity'),
-        )
+        type=str,
+        a_eln=dict(component='StringEditQuantity'),
+    )
 
     def normalize(self, archive, logger):
         if self.chemical is not None and self.chemical.name is not None:

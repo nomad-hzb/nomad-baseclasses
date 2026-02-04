@@ -35,7 +35,15 @@ from nomad.datamodel.metainfo.basesections import (
 )
 from nomad.datamodel.metainfo.eln import ElnWithFormulaBaseSection
 from nomad.datamodel.results import Material, Results
-from nomad.metainfo import Datetime, MEnum, Quantity, Reference, Section, SectionProxy, SubSection
+from nomad.metainfo import (
+    Datetime,
+    MEnum,
+    Quantity,
+    Reference,
+    Section,
+    SectionProxy,
+    SubSection,
+)
 
 from .atmosphere import Atmosphere
 from .customreadable_identifier import ReadableIdentifiersCustom
@@ -57,10 +65,9 @@ class PubChemPureSubstanceSectionCustom(PubChemPureSubstanceSection):
             component='BoolEditQuantity',
         ),
     )
-    
+
     product_info = SubSection(
-        section_def=ProductInfo,
-        description='Product information'
+        section_def=ProductInfo, description='Product information'
     )
 
     def normalize(self, archive, logger):
@@ -301,9 +308,9 @@ class BaseProcess(Process):
     )
 
     operator = Quantity(
-        type = str,
+        type=str,
         a_eln=dict(component='StringEditQuantity'),
-        description = "Name of process operator"
+        description='Name of process operator',
     )
 
     def normalize(self, archive, logger):
@@ -432,19 +439,18 @@ class LayerProperties(ArchiveSection):
             ),
         ),
     )
-    
+
     layer_chemical_id = Quantity(
         type=str,
         description='Identifier of the product used for creating the layer'
-            'in case it is purchased from supplier',
+        'in case it is purchased from supplier',
         a_eln=dict(
             component='StringEditQuantity',
         ),
     )
 
     product_info = SubSection(
-        section_def=ProductInfo,
-        description='Product information'
+        section_def=ProductInfo, description='Product information'
     )
 
 
@@ -557,10 +563,10 @@ class BaseMeasurement(Measurement):
     )
 
     operator = Quantity(
-        type = str,
-        a_eln=dict(component='StringEditQuantity'), 
-        description = "Name of measurement operator"
-    ) 
+        type=str,
+        a_eln=dict(component='StringEditQuantity'),
+        description='Name of measurement operator',
+    )
 
     def normalize(self, archive, logger):
         if self.samples:
