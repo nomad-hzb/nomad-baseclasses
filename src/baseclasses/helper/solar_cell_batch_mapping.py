@@ -187,6 +187,7 @@ def get_datetime(data, key):
 
 
 def map_basic_sample(data, substrate_name, upload_id, sample_class):
+    parent_id = data['Parent ID']
     archive = sample_class(
         datetime=get_datetime(data, 'Date'),
         name=data['Nomad ID'],
@@ -195,6 +196,12 @@ def map_basic_sample(data, substrate_name, upload_id, sample_class):
         description=get_value(data, 'Variation', None, False),
         number_of_junctions=get_value(data, 'Number of junctions', None),
     )
+    if parent_id:
+        archive.parent = CompositeSystemReference(
+            reference=get_reference(upload_id, f'{parent_id}.archive.json'),
+            lab_id=parent_id,
+        )
+
     return (data['Nomad ID'], archive)
 
 
