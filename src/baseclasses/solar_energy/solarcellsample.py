@@ -16,7 +16,10 @@
 # limitations under the License.
 #
 import numpy as np
-from nomad.datamodel.metainfo.basesections import CompositeSystem
+from nomad.datamodel.metainfo.basesections import (
+    CompositeSystem,
+    CompositeSystemReference,
+)
 from nomad.datamodel.results import Material  # BandGapOptical, Material
 from nomad.metainfo import Quantity, Reference, SubSection
 from nomad.units import ureg
@@ -292,6 +295,7 @@ class SolcarCellSample(CompositeSystem):
     number_of_junctions = Quantity(type=int, a_eln=dict(component='NumberEditQuantity'))
 
     sample_id = SubSection(section_def=ReadableIdentifiersCustom)
+    parent = SubSection(section_def=CompositeSystemReference)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
