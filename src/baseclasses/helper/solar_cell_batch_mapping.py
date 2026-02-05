@@ -232,7 +232,10 @@ def map_annealing(data):
 
 def map_atmosphere(data):
     atmosphere = Atmosphere()
-    if get_value(data, 'GB start oxygen level [ppm]', None) is not None:
+    if (
+        get_value(data, 'GB start oxygen level [ppm]', 'GB oxygen level [ppm]', None)
+        is not None
+    ):
         atmosphere = GloveboxAtmosphere(
             start_oxygen_level_ppm=get_value(
                 data, ['GB start oxygen level [ppm]', 'GB oxygen level [ppm]'], None
