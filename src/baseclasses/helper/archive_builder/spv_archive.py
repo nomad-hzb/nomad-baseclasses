@@ -37,10 +37,10 @@ def get_spv_archive(spv_dict, spv_data, main_file_path, spv_entry):
     spv_entry.data = trSPVData(
         time=spv_data[spv_data.columns[0]], voltages=measurements
     )
-
-    spv_entry.properties = trSPVProperties(
-        number_of_transients=spv_dict['Number of Transients'],
-        number_of_averages=spv_dict['Number of Averages'],
-        points_per_transient=spv_dict['Points per Transients'],
-        capacitance=capacitance,
-    )
+    if spv_dict:
+        spv_entry.properties = trSPVProperties(
+            number_of_transients=spv_dict.get('Number of Transients'),
+            number_of_averages=spv_dict.get('Number of Averages'),
+            points_per_transient=spv_dict.get('Points per Transients'),
+            capacitance=capacitance,
+        )
