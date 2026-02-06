@@ -77,6 +77,7 @@ from .potentiometry_gaschromatography import (
     NECCExperimentalProperties,
     NECCFeedGas,
     NECCPotentiostatMeasurement,
+    PHMeasurement,
     PotentiometryGasChromatographyMeasurement,
     PotentiometryGasChromatographyResults,
     ThermocoupleMeasurement,

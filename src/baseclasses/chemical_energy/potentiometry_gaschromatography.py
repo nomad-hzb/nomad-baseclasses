@@ -517,6 +517,18 @@ class PHMeasurement(ArchiveSection):
     ph_value = Quantity(
         type=np.dtype(np.float64),
         shape=['*'],
+        a_plot=[
+            {
+                'label': 'pH',
+                'x': 'datetime',
+                'y': 'ph_value',
+                'layout': {
+                    'yaxis': {'fixedrange': False, 'title': {'text': 'pH'}},
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
     )
 
 
@@ -544,6 +556,15 @@ class LiquidFEResults(ArchiveSection):
 
 class HPLCMeasurement(ArchiveSection):
     injection_name = Quantity(type=str)
+
+    injection_type = Quantity(
+        type=str,
+        shape=[],
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(suggestions=['Anolyte', 'WaterTrap']),
+        ),
+    )
 
     datetime = Quantity(type=Datetime)
 
