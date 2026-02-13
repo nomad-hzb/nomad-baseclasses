@@ -17,8 +17,12 @@
 #
 
 import numpy as np
+import plotly.graph_objects as go
 from nomad.datamodel.data import ArchiveSection
+from nomad.datamodel.metainfo.basesections import MeasurementResult
+from nomad.datamodel.metainfo.plot import PlotlyFigure, PlotSection
 from nomad.metainfo import Quantity, Section, SubSection
+from nomad.units import ureg
 
 from .. import BaseMeasurement
 
@@ -103,7 +107,7 @@ class MPPTrackingProperties(ArchiveSection):
     )
 
 
-class StabilityFiguresOfMerit(ArchiveSection):
+class StabilityFiguresOfMerit(MeasurementResult):
     """
     Perovskite solar cell stability figures of merit. More information can be found in
     the publication Consensus statement for stability assessment and reporting for
@@ -113,7 +117,7 @@ class StabilityFiguresOfMerit(ArchiveSection):
 
     T95 = Quantity(
         type=np.dtype(np.float64),
-        unit=('hour'),
+        unit=('s'),
         shape=[],
         description="""
     The time after which the cell performance has degraded by 5 % with respect to the
@@ -127,11 +131,11 @@ class StabilityFiguresOfMerit(ArchiveSection):
 
     Ts95 = Quantity(
         type=np.dtype(np.float64),
-        unit=('hour'),
+        unit=('s'),
         shape=[],
         description="""
             The time after which the cell performance has degraded by 5 % with respect
-            to the performance after any initial burn in phase.
+            to the maximal reached efficiency after a possbile burn in phase.
         - If there are uncertainties, only state the best estimate, e.g. write
         1000 and not 950-1050
         - If unknown or not applicable, leave this field empty.
@@ -141,11 +145,11 @@ class StabilityFiguresOfMerit(ArchiveSection):
 
     T80 = Quantity(
         type=np.dtype(np.float64),
-        unit=('hour'),
+        unit=('s'),
         shape=[],
         description="""
-            The time after which the cell performance has degraded by 20 %
-            with respect to the initial performance.
+           The time after which the cell performance has degraded by 5 % with respect
+           to the maximal reached efficiency after a possbile burn in phase.
         - If there are uncertainties, only state the best estimate,
         e.g. write 1000 and not 950-1050
         - If unknown or not applicable, leave this field empty.
@@ -155,7 +159,7 @@ class StabilityFiguresOfMerit(ArchiveSection):
 
     Ts80 = Quantity(
         type=np.dtype(np.float64),
-        unit=('hour'),
+        unit=('s'),
         shape=[],
         description="""
             The time after which the cell performance has degraded by 20 %
@@ -182,7 +186,7 @@ class StabilityFiguresOfMerit(ArchiveSection):
 
     initial_stabilization_time = Quantity(
         type=np.dtype(np.float64),
-        unit=('hour'),
+        unit=('s'),
         description="""The time that it takes for the cell to stabilize after
         an initial burn-in *(fast peroformance decrease) or a fast increase in
         performance
@@ -193,7 +197,7 @@ class StabilityFiguresOfMerit(ArchiveSection):
     )
 
 
-class MPPTracking(BaseMeasurement):
+class MPPTracking(BaseMeasurement, PlotSection):
     """
     MPP tracking measurement
     """
@@ -289,7 +293,147 @@ class MPPTracking(BaseMeasurement):
     )
 
     properties = SubSection(section_def=MPPTrackingProperties)
+    results = SubSection(section_def=StabilityFiguresOfMerit, repeats=True)
+
+    def make_mppt_figure(
+        self, T95, T80, Ts95, Ts80, t_at_p_max, power_density_abs_filtered
+    ):
+        # Base trace
+        fig = go.Figure()
+        fig.add_trace(
+            go.Scatter(
+                x=self.time.to('hr'),
+                y=np.abs(self.power_density),
+                mode='lines',
+                name='Power density',
+            )
+        )
+
+        fig.add_trace(
+            go.Scatter(
+                x=self.time.to('hr'),
+                y=power_density_abs_filtered,
+                mode='lines',
+                name='Power density filtered',
+            )
+        )
+
+        # Add vertical lines for thresholds
+        line_specs = [
+            (T95, 'T95'),
+            (T80, 'T80'),
+            (Ts95, 'Ts95'),
+            (Ts80, 'Ts80'),
+            (t_at_p_max, 'IST'),
+        ]
+        for x_val, label in line_specs:
+            if x_val is None:
+                continue
+            fig.add_vline(
+                x=x_val.to('hr').magnitude,
+                line_dash='dash',
+                line_width=1.5,
+                annotation_text=label,
+                annotation_position='bottom right',
+            )
+
+        fig.update_layout(
+            title='Power density over time with thresholds',
+            xaxis_title='Time (hr)',
+            yaxis_title='Power density (mW/cm²)',
+            template='plotly_white',
+        )
+        return fig
+
+    def calculate_performance_parameters(self):
+        from scipy.signal import savgol_filter
+
+        time = self.time
+        power_density = self.power_density
+        # Initial setup
+        t0 = np.min(time)
+        power_density_abs = np.abs(power_density)
+        window_size = len(power_density_abs) // 5
+        power_density_abs_filtered = savgol_filter(power_density_abs, window_size, 3)
+
+        # Get reference values
+        p_at_t0 = power_density_abs_filtered[np.argmin(time)]
+        p_max_idx = np.argmax(power_density_abs_filtered)
+        t_at_p_max = time[p_max_idx]
+        p_at_max = power_density_abs_filtered[p_max_idx]
+
+        # Helper function to find time when power drops below threshold
+        def find_threshold_time(time_ref, power_ref, threshold_fraction):
+            """Find the time when power drops below threshold_fraction of power_ref"""
+            mask = time > time_ref
+            power_below = (
+                power_density_abs_filtered[mask] < threshold_fraction * power_ref
+            )
+
+            if not np.any(power_below):
+                return None
+
+            time_subset = time[mask]
+            threshold_time = time_ref + np.min(
+                np.abs(
+                    time_ref
+                    - time_subset[
+                        power_density_abs_filtered[mask]
+                        < threshold_fraction * power_ref
+                    ]
+                )
+            )
+            return threshold_time
+
+        # Calculate all threshold times
+        T95 = find_threshold_time(t0, p_at_t0, 0.95)
+        T80 = find_threshold_time(t0, p_at_t0, 0.80)
+        Ts95 = find_threshold_time(t_at_p_max, p_at_max, 0.95)
+        Ts80 = find_threshold_time(t_at_p_max, p_at_max, 0.80)
+        return T95, T80, Ts95, Ts80, t_at_p_max, power_density_abs_filtered
 
     def normalize(self, archive, logger):
-        super().normalize(archive, logger)
         self.method = 'MPP Tracking'
+        super().normalize(archive, logger)
+        if self.time is not None and self.power_density is not None:
+            (
+                T95,
+                T80,
+                Ts95,
+                Ts80,
+                initial_stabilization_time,
+                power_density_abs_filtered,
+            ) = self.calculate_performance_parameters()
+            if not self.results:
+                self.results = [StabilityFiguresOfMerit()]
+            self.results[0].T95 = (
+                self.results[0].T95 if self.results and self.results[0].T95 else T95
+            )
+            self.results[0].T80 = (
+                self.results[0].T80 if self.results and self.results[0].T80 else T80
+            )
+            self.results[0].Ts95 = (
+                self.results[0].Ts95 if self.results and self.results[0].Ts95 else Ts95
+            )
+            self.results[0].Ts80 = (
+                self.results[0].Ts80 if self.results and self.results[0].Ts80 else Ts80
+            )
+            self.results[0].initial_stabilization_time = (
+                self.results[0].initial_stabilization_time
+                if self.results and self.results[0].initial_stabilization_time
+                else initial_stabilization_time
+            )
+
+            fig1 = self.make_mppt_figure(
+                self.results[0].T95,
+                self.results[0].T80,
+                self.results[0].Ts95,
+                self.results[0].Ts80,
+                self.results[0].initial_stabilization_time,
+                power_density_abs_filtered,
+            )
+            self.figures = [
+                PlotlyFigure(
+                    label='Figure of Merits for Stability', figure=fig1.to_plotly_json()
+                )
+            ]
