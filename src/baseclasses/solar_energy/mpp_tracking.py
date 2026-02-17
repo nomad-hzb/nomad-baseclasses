@@ -135,7 +135,7 @@ class StabilityFiguresOfMerit(MeasurementResult):
         shape=[],
         description="""
             The time after which the cell performance has degraded by 5 % with respect
-            to the maximal reached efficiency after a possbile burn in phase.
+            to the reached efficiency after a possbile burn in phase.
         - If there are uncertainties, only state the best estimate, e.g. write
         1000 and not 950-1050
         - If unknown or not applicable, leave this field empty.
@@ -148,8 +148,8 @@ class StabilityFiguresOfMerit(MeasurementResult):
         unit=('s'),
         shape=[],
         description="""
-           The time after which the cell performance has degraded by 5 % with respect
-           to the maximal reached efficiency after a possbile burn in phase.
+           The time after which the cell performance has degraded by 20 %
+            with respect to the initial performance.
         - If there are uncertainties, only state the best estimate,
         e.g. write 1000 and not 950-1050
         - If unknown or not applicable, leave this field empty.
@@ -162,8 +162,8 @@ class StabilityFiguresOfMerit(MeasurementResult):
         unit=('s'),
         shape=[],
         description="""
-            The time after which the cell performance has degraded by 20 %
-            with respect to the performance after any initial burn in phase.
+             The time after which the cell performance has degraded by 20 % with respect
+            to the reached efficiency after a possbile burn in phase.
         - If there are uncertainties, only state the best estimate, e.g.
         write 1000 and not 950-1050
         - If unknown or not applicable, leave this field empty.
