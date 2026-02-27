@@ -240,27 +240,68 @@ def map_annealing(data):
 def map_atmosphere(data):
     atmosphere = Atmosphere()
     if (
-        get_value(data, 'GB start oxygen level [ppm]', 'GB oxygen level [ppm]', None)
+        get_value(
+            data,
+            [
+                'GB start oxygen level [ppm]',
+                'GB oxygen level [ppm]',
+                'Start GB Oxygen level [ppm]',
+            ],
+            None,
+        )
         is not None
     ):
         atmosphere = GloveboxAtmosphere(
             start_oxygen_level_ppm=get_value(
-                data, ['GB start oxygen level [ppm]', 'GB oxygen level [ppm]'], None
+                data,
+                [
+                    'GB start oxygen level [ppm]',
+                    'GB oxygen level [ppm]',
+                    'Start GB Oxygen level [ppm]',
+                ],
+                None,
             ),
-            end_oxygen_level_ppm=get_value(data, 'GB end oxygen level [ppm]', None),
+            end_oxygen_level_ppm=get_value(
+                data, ['GB end oxygen level [ppm]', 'End GB Oxygen level [ppm]'], None
+            ),
             start_gb_temperature=get_value(
-                data, 'GB start temperature [°C]', None, unit='°C'
+                data,
+                [
+                    'GB start temperature [°C]',
+                    'GB Start Temperature [°C]',
+                    'Start GB Temperature [°C]',
+                ],
+                None,
+                unit=['°C', '°C', '°C'],
             ),
             end_gb_temperature=get_value(
-                data, 'GB end temperature [°C]', None, unit='°C'
+                data,
+                [
+                    'GB end temperature [°C]',
+                    'GB End Temperature [°C]',
+                    'End GB Temperature [°C]',
+                ],
+                None,
+                unit=['°C', '°C', '°C'],
             ),
-            start_water_level_ppm=get_value(data, 'GB start water level [ppm]', None),
-            end_water_level_ppm=get_value(data, 'GB end water level [ppm]', None),
+            start_water_level_ppm=get_value(
+                data, ['GB start water level [ppm]', 'Start GB Water level [ppm]'], None
+            ),
+            end_water_level_ppm=get_value(
+                data, ['GB end water level [ppm]', 'End GB Water level [ppm]'], None
+            ),
         )
     atmosphere.relative_humidity = get_value(
-        data, ['rel. humidity [%]', 'Room/GB humidity [%]'], None
+        data,
+        ['rel. humidity [%]', 'Room/GB humidity [%]', 'Room Rel. Humidity [%]'],
+        None,
     )  # leave the Room/GB humidity [%], it is a PERSEUS legacy feature
-    atmosphere.temperature = get_value(data, 'Room temperature [°C]', None, unit='°C')
+    atmosphere.temperature = get_value(
+        data,
+        ['Room temperature [°C]', 'Room Temperature [°C]'],
+        None,
+        unit=['°C', '°C'],
+    )
     return atmosphere
 
 
