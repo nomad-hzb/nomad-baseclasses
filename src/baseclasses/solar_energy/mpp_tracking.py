@@ -295,9 +295,7 @@ class MPPTracking(BaseMeasurement, PlotSection):
     properties = SubSection(section_def=MPPTrackingProperties)
     results = SubSection(section_def=StabilityFiguresOfMerit, repeats=True)
 
-    def make_mppt_figure(
-        self, T95, T80, Ts95, Ts80, t_at_p_max, power_density_abs_filtered
-    ):
+    def make_mppt_figure(self, T95, T80, Ts95, Ts80, t_at_p_max):
         # Base trace
         fig = go.Figure()
         fig.add_trace(
@@ -306,15 +304,6 @@ class MPPTracking(BaseMeasurement, PlotSection):
                 y=np.abs(self.power_density),
                 mode='lines',
                 name='Power density',
-            )
-        )
-
-        fig.add_trace(
-            go.Scatter(
-                x=self.time.to('hr'),
-                y=power_density_abs_filtered,
-                mode='lines',
-                name='Power density filtered',
             )
         )
 
@@ -346,29 +335,23 @@ class MPPTracking(BaseMeasurement, PlotSection):
         return fig
 
     def calculate_performance_parameters(self):
-        from scipy.signal import savgol_filter
-
         time = self.time
         power_density = self.power_density
         # Initial setup
         t0 = np.min(time)
         power_density_abs = np.abs(power_density)
-        window_size = len(power_density_abs) // 5
-        power_density_abs_filtered = savgol_filter(power_density_abs, window_size, 3)
 
         # Get reference values
-        p_at_t0 = power_density_abs_filtered[np.argmin(time)]
-        p_max_idx = np.argmax(power_density_abs_filtered)
+        p_at_t0 = power_density_abs[np.argmin(time)]
+        p_max_idx = np.argmax(power_density_abs)
         t_at_p_max = time[p_max_idx]
-        p_at_max = power_density_abs_filtered[p_max_idx]
+        p_at_max = power_density_abs[p_max_idx]
 
         # Helper function to find time when power drops below threshold
         def find_threshold_time(time_ref, power_ref, threshold_fraction):
             """Find the time when power drops below threshold_fraction of power_ref"""
             mask = time > time_ref
-            power_below = (
-                power_density_abs_filtered[mask] < threshold_fraction * power_ref
-            )
+            power_below = power_density_abs[mask] < threshold_fraction * power_ref
 
             if not np.any(power_below):
                 return None
@@ -378,8 +361,7 @@ class MPPTracking(BaseMeasurement, PlotSection):
                 np.abs(
                     time_ref
                     - time_subset[
-                        power_density_abs_filtered[mask]
-                        < threshold_fraction * power_ref
+                        power_density_abs[mask] < threshold_fraction * power_ref
                     ]
                 )
             )
@@ -390,7 +372,7 @@ class MPPTracking(BaseMeasurement, PlotSection):
         T80 = find_threshold_time(t0, p_at_t0, 0.80)
         Ts95 = find_threshold_time(t_at_p_max, p_at_max, 0.95)
         Ts80 = find_threshold_time(t_at_p_max, p_at_max, 0.80)
-        return T95, T80, Ts95, Ts80, t_at_p_max, power_density_abs_filtered
+        return T95, T80, Ts95, Ts80, t_at_p_max
 
     def normalize(self, archive, logger):
         self.method = 'MPP Tracking'
@@ -402,7 +384,6 @@ class MPPTracking(BaseMeasurement, PlotSection):
                 Ts95,
                 Ts80,
                 initial_stabilization_time,
-                power_density_abs_filtered,
             ) = self.calculate_performance_parameters()
             if not self.results:
                 self.results = [StabilityFiguresOfMerit()]
@@ -430,7 +411,6 @@ class MPPTracking(BaseMeasurement, PlotSection):
                 self.results[0].Ts95,
                 self.results[0].Ts80,
                 self.results[0].initial_stabilization_time,
-                power_density_abs_filtered,
             )
             self.figures = [
                 PlotlyFigure(
