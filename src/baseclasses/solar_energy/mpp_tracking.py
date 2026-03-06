@@ -315,24 +315,24 @@ class MPPTracking(BaseMeasurement, PlotSection):
                 name='Power density',
             )
         )
-
-        fig.add_trace(
-            go.Scatter(
-                x=self.time.to('hr'),
-                y=power_density_abs_filtered_rough,
-                mode='lines',
-                name='Power density for threshold (filtered 20% window)',
+        if power_density_abs_filtered_rough:
+            fig.add_trace(
+                go.Scatter(
+                    x=self.time.to('hr'),
+                    y=power_density_abs_filtered_rough,
+                    mode='lines',
+                    name='Power density for threshold (filtered 20% window)',
+                )
             )
-        )
-
-        fig.add_trace(
-            go.Scatter(
-                x=self.time.to('hr'),
-                y=power_density_abs_filtered_win10,
-                mode='lines',
-                name='Power density for init power (filtered 10-point window)',
+        if power_density_abs_filtered_win10 is not None:
+            fig.add_trace(
+                go.Scatter(
+                    x=self.time.to('hr'),
+                    y=power_density_abs_filtered_win10,
+                    mode='lines',
+                    name='Power density for init power (filtered 10-point window)',
+                )
             )
-        )
 
         # Add vertical lines for thresholds
         line_specs = [
@@ -366,8 +366,8 @@ class MPPTracking(BaseMeasurement, PlotSection):
 
         time = self.time
         power_density = self.power_density
-        if len(time) < 10:
-            return None, None, None, None, None, None
+        if len(time) < 10 or max(time) < 1 * ureg.hr:
+            return None, None, None, None, None, None, None
         # Initial setup
         t0 = np.min(time)
         power_density_abs = np.abs(power_density)
