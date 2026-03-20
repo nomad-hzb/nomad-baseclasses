@@ -249,10 +249,7 @@ class CENECCElectrodeID(ReadableIdentifiersCustom):
             props=dict(
                 suggestions=[
                     'Matthew Mayer',
-                    'Siddharth Gupta',
-                    'Christina Roukounaki',
-                    'Gumaa El-Nagar',
-                    'Uttam Gupta',
+                    'Flora Haun',
                 ]
             ),
         ),

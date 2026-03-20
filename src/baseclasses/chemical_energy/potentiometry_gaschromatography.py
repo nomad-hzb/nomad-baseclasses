@@ -661,10 +661,11 @@ class GasFEResults(ArchiveSection):
                 f'The FE of {self.gas_type} is removed because it is more than 100%. '
                 f'Please check if {self.gas_type} is a feed gas.'
             )
-        self.mean_fe = np.mean(self.faradaic_efficiency)
-        self.minimum_fe = np.min(self.faradaic_efficiency)
-        self.maximum_fe = np.max(self.faradaic_efficiency)
-        self.variance_fe = np.var(self.faradaic_efficiency)
+        if self.faradaic_efficiency is not None and len(self.faradaic_efficiency) > 0:
+            self.mean_fe = np.mean(self.faradaic_efficiency)
+            self.minimum_fe = np.min(self.faradaic_efficiency)
+            self.maximum_fe = np.max(self.faradaic_efficiency)
+            self.variance_fe = np.var(self.faradaic_efficiency)
 
 
 class PotentiometryGasChromatographyResults(ArchiveSection):
