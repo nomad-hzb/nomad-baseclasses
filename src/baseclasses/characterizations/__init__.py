@@ -31,6 +31,7 @@ from .xps import (
     PES,
     XPS,
     PESSpecsLabProdigyAnalyzerParameters,
+    PESSpecsLabProdigyInstrumentSettings,
     PESSpecsLabProdigySettings,
     PESSpecsLabProdigySourceParameters,
     XPSLibrary,

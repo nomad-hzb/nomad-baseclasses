@@ -23,6 +23,17 @@ from nomad.metainfo import Quantity, Section, SubSection
 from .. import BaseMeasurement, LibraryMeasurement
 
 
+class PESSpecsLabProdigyInstrumentSettings(ArchiveSection):
+    count_rate = Quantity(type=str)
+    separate_scan_data = Quantity(type=str)
+    separate_channel_data = Quantity(type=str)
+    separate_non_energy_channels = Quantity(type=str)
+    external_channel_data = Quantity(type=str)
+    transmission_function = Quantity(type=str)
+    error_bar = Quantity(type=str)
+    operation_results = Quantity(type=str)
+
+
 class PESSpecsLabProdigyAnalyzerParameters(ArchiveSection):
     polar_angle = Quantity(type=np.dtype(np.float64), unit='degree')
     azimuth_angle = Quantity(type=np.dtype(np.float64), unit='degree')
@@ -31,7 +42,7 @@ class PESSpecsLabProdigyAnalyzerParameters(ArchiveSection):
     bias_voltage_ions = Quantity(type=np.dtype(np.float64), unit='V')
     bias_voltage_electrons = Quantity(type=np.dtype(np.float64), unit='V')
     detector_voltage = Quantity(type=np.dtype(np.float64), unit='V')
-    work_function = Quantity(type=np.dtype(np.float64))
+    work_function = Quantity(type=np.dtype(np.float64), unit='eV')
     focus_displacement = Quantity(type=np.dtype(np.float64))
     l1 = Quantity(type=np.dtype(np.float64))
 
@@ -58,25 +69,28 @@ class PESSpecsLabProdigySourceParameters(ArchiveSection):
 
 class PESSpecsLabProdigySettings(ArchiveSection):
     region = Quantity(type=str)
+    spectrum_id = Quantity(type=str)
     calibration_file = Quantity(type=str)
+    transmission_file = Quantity(type=str)
     analyzer_lens_mode = Quantity(type=str)
     scan_variable = Quantity(type=str)
+    energy_minimum = Quantity(type=np.dtype(np.float64), unit='eV')
+    energy_maximum = Quantity(type=np.dtype(np.float64), unit='eV')
     step_size = Quantity(type=np.dtype(np.float64), unit='eV')
     dwell_time = Quantity(type=np.dtype(np.float64), unit='s')
     excitation_energy = Quantity(type=np.dtype(np.float64), unit='eV')
     kinetic_energy = Quantity(type=np.dtype(np.float64), unit='eV')
     binding_energy = Quantity(type=np.dtype(np.float64), unit='eV')
     pass_energy = Quantity(type=np.dtype(np.float64), unit='eV')
-    bias_voltage = Quantity(type=np.dtype(np.float64), unit='V')
-    detector_voltage = Quantity(type=np.dtype(np.float64), unit='V')
-    effective_work_function = Quantity(type=np.dtype(np.float64), unit='eV')
     iris_diameter = Quantity(type=np.dtype(np.float64), unit='mm')
     sample_bias_voltage = Quantity(type=np.dtype(np.float64), unit='V')
     he_gas_pressure = Quantity(type=np.dtype(np.float64), unit='mbar')
     analyzer_slit = Quantity(type=str)
     analyzer_lens_voltage = Quantity(type=str)
+    comment = Quantity(type=str)
     analyzer_parameters = SubSection(section_def=PESSpecsLabProdigyAnalyzerParameters)
     source_parameters = SubSection(section_def=PESSpecsLabProdigySourceParameters)
+    instrument_settings = SubSection(section_def=PESSpecsLabProdigyInstrumentSettings)
 
 
 class PES(BaseMeasurement):
