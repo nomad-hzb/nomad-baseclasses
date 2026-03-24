@@ -405,7 +405,7 @@ class MPPTracking(BaseMeasurement, PlotSection):
         p_max_idx = np.argmax(power_density_abs_filtered)
         t_at_p_max = time[p_max_idx]
         p_at_max = power_density_abs_filtered[p_max_idx]
-        p_at_max_raw = power_density_abs[p_max_idx]
+        p_at_max_raw = np.max(power_density_abs)
 
         # Helper function to find time when power drops below threshold
         def find_threshold_time(time_ref, power_ref, threshold_fraction):
