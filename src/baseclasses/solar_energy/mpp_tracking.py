@@ -315,7 +315,7 @@ class MPPTracking(BaseMeasurement, PlotSection):
                 name='Power density',
             )
         )
-        if power_density_abs_filtered_rough:
+        if power_density_abs_filtered_rough is not None:
             fig.add_trace(
                 go.Scatter(
                     x=self.time.to('hr'),
