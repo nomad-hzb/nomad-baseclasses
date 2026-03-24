@@ -111,7 +111,7 @@ class StabilityFiguresOfMerit(MeasurementResult):
     """
     Perovskite solar cell stability figures of merit. More information can be found in
     the publication Consensus statement for stability assessment and reporting for
-    perovskite photovoltaics based on ISOS procedures published in NAture Energy
+    perovskite photovoltaics based on ISOS procedures published in Nature Energy
     https://www.nature.com/articles/s41560-019-0529-5/.
     """
 
@@ -221,7 +221,9 @@ class StabilityFiguresOfMerit(MeasurementResult):
         unit=('mW/cm**2'),
         shape=[],
         description="""
-             The power density at the initial stabilization time of the measurement. Calculated  by fitting.
+            The power density at the initial stabilization time of the measurement. Calculated  by fitting.
+            This is the maximal power density reached on the fitted data.
+
         """,
         a_eln=dict(component='NumberEditQuantity'),
     )
@@ -232,6 +234,7 @@ class StabilityFiguresOfMerit(MeasurementResult):
         shape=[],
         description="""
              The power density at the initial stabilization time of the measurement. Calculated directly on the raw data.
+             This is the maximal power density reached on the raw data.
         """,
         a_eln=dict(component='NumberEditQuantity'),
     )
