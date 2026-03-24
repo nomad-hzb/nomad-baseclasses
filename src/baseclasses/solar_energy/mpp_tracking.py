@@ -111,7 +111,7 @@ class StabilityFiguresOfMerit(MeasurementResult):
     """
     Perovskite solar cell stability figures of merit. More information can be found in
     the publication Consensus statement for stability assessment and reporting for
-    perovskite photovoltaics based on ISOS procedures published in NAture Energy
+    perovskite photovoltaics based on ISOS procedures published in Nature Energy
     https://www.nature.com/articles/s41560-019-0529-5/.
     """
 
@@ -121,7 +121,7 @@ class StabilityFiguresOfMerit(MeasurementResult):
         shape=[],
         description="""
     The time after which the cell performance has degraded by 5 % with respect to the
-    initial performance.
+    initial performance.  Calculated by fitting.
     - If there are uncertainties, only state the best estimate, e.g. write 1000
     and not 950-1050
     - If unknown or not applicable, leave this field empty.
@@ -135,7 +135,7 @@ class StabilityFiguresOfMerit(MeasurementResult):
         shape=[],
         description="""
             The time after which the cell performance has degraded by 5 % with respect
-            to the reached efficiency after a possbile burn in phase.
+            to the reached efficiency after a possbile burn in phase.  Calculated by fitting.
         - If there are uncertainties, only state the best estimate, e.g. write
         1000 and not 950-1050
         - If unknown or not applicable, leave this field empty.
@@ -149,7 +149,7 @@ class StabilityFiguresOfMerit(MeasurementResult):
         shape=[],
         description="""
            The time after which the cell performance has degraded by 20 %
-            with respect to the initial performance.
+            with respect to the initial performance.  Calculated by fitting.
         - If there are uncertainties, only state the best estimate,
         e.g. write 1000 and not 950-1050
         - If unknown or not applicable, leave this field empty.
@@ -163,7 +163,7 @@ class StabilityFiguresOfMerit(MeasurementResult):
         shape=[],
         description="""
              The time after which the cell performance has degraded by 20 % with respect
-            to the reached efficiency after a possbile burn in phase.
+            to the reached efficiency after a possbile burn in phase.  Calculated by fitting.
         - If there are uncertainties, only state the best estimate, e.g.
         write 1000 and not 950-1050
         - If unknown or not applicable, leave this field empty.
@@ -193,6 +193,49 @@ class StabilityFiguresOfMerit(MeasurementResult):
         to reach a maximun PCE value in the transient. This values is needed to
         report the
         Ts80 and Ts95 values.""",
+        a_eln=dict(component='NumberEditQuantity'),
+    )
+
+    power_density_at_t0 = Quantity(
+        type=np.dtype(np.float64),
+        unit=('mW/cm**2'),
+        shape=[],
+        description="""
+             The power density at the initial time of the measurement. Calculated by fitting.
+        """,
+        a_eln=dict(component='NumberEditQuantity'),
+    )
+
+    power_density_at_t0_raw = Quantity(
+        type=np.dtype(np.float64),
+        unit=('mW/cm**2'),
+        shape=[],
+        description="""
+             The power density at the initial time of the measurement. Calculated directly on the raw data.
+        """,
+        a_eln=dict(component='NumberEditQuantity'),
+    )
+
+    power_density_at_initial_stabilization_time = Quantity(
+        type=np.dtype(np.float64),
+        unit=('mW/cm**2'),
+        shape=[],
+        description="""
+            The power density at the initial stabilization time of the measurement. Calculated  by fitting.
+            This is the maximal power density reached on the fitted data.
+
+        """,
+        a_eln=dict(component='NumberEditQuantity'),
+    )
+
+    power_density_at_initial_stabilization_time_raw = Quantity(
+        type=np.dtype(np.float64),
+        unit=('mW/cm**2'),
+        shape=[],
+        description="""
+             The power density at the initial stabilization time of the measurement. Calculated directly on the raw data.
+             This is the maximal power density reached on the raw data.
+        """,
         a_eln=dict(component='NumberEditQuantity'),
     )
 
@@ -358,9 +401,11 @@ class MPPTracking(BaseMeasurement, PlotSection):
 
         # Get reference values
         p_at_t0 = power_density_abs_filtered[np.argmin(time)]
+        p_at_t0_raw = power_density_abs[np.argmin(time)]
         p_max_idx = np.argmax(power_density_abs_filtered)
         t_at_p_max = time[p_max_idx]
         p_at_max = power_density_abs_filtered[p_max_idx]
+        p_at_max_raw = np.max(power_density_abs)
 
         # Helper function to find time when power drops below threshold
         def find_threshold_time(time_ref, power_ref, threshold_fraction):
@@ -390,7 +435,18 @@ class MPPTracking(BaseMeasurement, PlotSection):
         T80 = find_threshold_time(t0, p_at_t0, 0.80)
         Ts95 = find_threshold_time(t_at_p_max, p_at_max, 0.95)
         Ts80 = find_threshold_time(t_at_p_max, p_at_max, 0.80)
-        return T95, T80, Ts95, Ts80, t_at_p_max, power_density_abs_filtered
+        return (
+            T95,
+            T80,
+            Ts95,
+            Ts80,
+            t_at_p_max,
+            p_at_t0,
+            p_at_max,
+            p_at_t0_raw,
+            p_at_max_raw,
+            power_density_abs_filtered,
+        )
 
     def normalize(self, archive, logger):
         self.method = 'MPP Tracking'
@@ -402,6 +458,10 @@ class MPPTracking(BaseMeasurement, PlotSection):
                 Ts95,
                 Ts80,
                 initial_stabilization_time,
+                p_at_t0,
+                p_at_max,
+                p_at_t0_raw,
+                p_at_max_raw,
                 power_density_abs_filtered,
             ) = self.calculate_performance_parameters()
             if not self.results:
@@ -422,6 +482,28 @@ class MPPTracking(BaseMeasurement, PlotSection):
                 self.results[0].initial_stabilization_time
                 if self.results and self.results[0].initial_stabilization_time
                 else initial_stabilization_time
+            )
+            self.results[0].power_density_at_t0 = (
+                self.results[0].power_density_at_t0
+                if self.results and self.results[0].power_density_at_t0
+                else p_at_t0
+            )
+            self.results[0].power_density_at_t0_raw = (
+                self.results[0].power_density_at_t0_raw
+                if self.results and self.results[0].power_density_at_t0_raw
+                else p_at_t0_raw
+            )
+            self.results[0].power_density_at_initial_stabilization_time = (
+                self.results[0].power_density_at_initial_stabilization_time
+                if self.results
+                and self.results[0].power_density_at_initial_stabilization_time
+                else p_at_max
+            )
+            self.results[0].power_density_at_initial_stabilization_time_raw = (
+                self.results[0].power_density_at_initial_stabilization_time_raw
+                if self.results
+                and self.results[0].power_density_at_initial_stabilization_time_raw
+                else p_at_max_raw
             )
 
             fig1 = self.make_mppt_figure(
