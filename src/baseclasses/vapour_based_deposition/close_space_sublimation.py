@@ -58,6 +58,22 @@ class CSSProcessPreparation(ArchiveSection):
     )
 
 
+class CSSSourceMaterial(ArchiveSection):
+    material_2 = SubSection(
+        links=['http://purl.obolibrary.org/obo/RO_0000057'],
+        section_def=PubChemPureSubstanceSectionCustom,
+    )
+
+    mixing_ratio = Quantity(
+        type=np.dtype(np.float64),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            props=dict(minValue=0),
+        ),
+        description='Relative weight ratio value for this source material, e.g. A:B = 3:1.',
+    )
+
+
 class CSSProcess(ArchiveSection):
     chemical = Quantity(
         links=['http://purl.obolibrary.org/obo/CHEBI_59999'],
@@ -73,6 +89,11 @@ class CSSProcess(ArchiveSection):
     source_materials = SubSection(
         links=['http://purl.obolibrary.org/obo/RO_0000057'],
         section_def=PubChemPureSubstanceSectionCustom,
+        repeats=True,
+    )
+
+    source_material_mixture = SubSection(
+        section_def=CSSSourceMaterial,
         repeats=True,
     )
 

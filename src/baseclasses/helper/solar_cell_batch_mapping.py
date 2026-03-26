@@ -31,6 +31,7 @@ from baseclasses.vapour_based_deposition.atomic_layer_deposition import (
 from baseclasses.vapour_based_deposition.close_space_sublimation import (
     CSSProcess,
     CSSProcessPreparation,
+    CSSSourceMaterial,
 )
 from baseclasses.vapour_based_deposition.evaporation import (
     InorganicEvaporation,
@@ -1395,12 +1396,29 @@ def map_sputtering(i, j, lab_ids, data, upload_id, sputter_class):
 def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
     material = get_value(data, 'Material name', '', False)
     source_materials = []
+    source_material_mixture = []
     for mat in ['', ' 1', ' 2', ' 3', ' 4']:
         material_name = get_value(data, f'Material name{mat}', None, False)
         if not material_name:
             continue
+
+        substance = PubChemPureSubstanceSectionCustom(name=material_name, load_data=False)
         source_materials.append(
-            PubChemPureSubstanceSectionCustom(name=material_name, load_data=False)
+            substance
+        )
+        source_material_mixture.append(
+            CSSSourceMaterial(
+                material_2=substance,
+                mixing_ratio=get_value(
+                    data,
+                    [
+                        f'Material ratio{mat}',
+                        f'Material mixing ratio{mat}',
+                        f'Mixing ratio{mat}',
+                    ],
+                    None,
+                ),
+            )
         )
 
     process_preparation = None
@@ -1483,6 +1501,7 @@ def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
             name=get_value(data, 'Material name', None, False), load_data=False
         ),
         source_materials=source_materials,
+        source_material_mixture=source_material_mixture,
         process_preparation=process_preparation,
         material_state=get_value(data, 'Material state', None, False),
     )
