@@ -1395,7 +1395,6 @@ def map_sputtering(i, j, lab_ids, data, upload_id, sputter_class):
 
 def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
     material = get_value(data, 'Material name', '', False)
-    source_materials = []
     source_material_mixture = []
     for mat in ['', ' 1', ' 2', ' 3', ' 4']:
         material_name = get_value(data, f'Material name{mat}', None, False)
@@ -1403,9 +1402,6 @@ def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
             continue
 
         substance = PubChemPureSubstanceSectionCustom(name=material_name, load_data=False)
-        source_materials.append(
-            substance
-        )
         source_material_mixture.append(
             CSSSourceMaterial(
                 material_2=substance,
@@ -1500,7 +1496,6 @@ def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
         chemical_2=PubChemPureSubstanceSectionCustom(
             name=get_value(data, 'Material name', None, False), load_data=False
         ),
-        source_materials=source_materials,
         source_material_mixture=source_material_mixture,
         process_preparation=process_preparation,
         material_state=get_value(data, 'Material state', None, False),

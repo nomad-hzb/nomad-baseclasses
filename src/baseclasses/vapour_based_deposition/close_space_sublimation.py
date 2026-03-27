@@ -86,12 +86,6 @@ class CSSProcess(ArchiveSection):
         section_def=PubChemPureSubstanceSectionCustom,
     )
 
-    source_materials = SubSection(
-        links=['http://purl.obolibrary.org/obo/RO_0000057'],
-        section_def=PubChemPureSubstanceSectionCustom,
-        repeats=True,
-    )
-
     source_material_mixture = SubSection(
         section_def=CSSSourceMaterial,
         repeats=True,
