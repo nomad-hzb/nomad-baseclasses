@@ -26,6 +26,54 @@ from .. import LayerDeposition
 from ..chemical import Chemical
 
 
+class CSSProcessPreparation(ArchiveSection):
+    rotation_speed = Quantity(
+        type=np.dtype(np.float64),
+        unit=('rpm'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='rpm',
+            props=dict(minValue=0),
+        ),
+    )
+
+    rotation_time = Quantity(
+        type=np.dtype(np.float64),
+        unit=('min'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='min',
+            props=dict(minValue=0),
+        ),
+    )
+
+    rest_time = Quantity(
+        type=np.dtype(np.float64),
+        unit=('min'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='min',
+            props=dict(minValue=0),
+        ),
+    )
+
+
+class CSSSourceMaterial(ArchiveSection):
+    material_2 = SubSection(
+        links=['http://purl.obolibrary.org/obo/RO_0000057'],
+        section_def=PubChemPureSubstanceSectionCustom,
+    )
+
+    mixing_ratio = Quantity(
+        type=np.dtype(np.float64),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            props=dict(minValue=0),
+        ),
+        description='Relative weight ratio value for this source material, e.g. A:B = 3:1.',
+    )
+
+
 class CSSProcess(ArchiveSection):
     chemical = Quantity(
         links=['http://purl.obolibrary.org/obo/CHEBI_59999'],
@@ -37,6 +85,13 @@ class CSSProcess(ArchiveSection):
         links=['http://purl.obolibrary.org/obo/RO_0000057'],
         section_def=PubChemPureSubstanceSectionCustom,
     )
+
+    source_material_mixture = SubSection(
+        section_def=CSSSourceMaterial,
+        repeats=True,
+    )
+
+    process_preparation = SubSection(section_def=CSSProcessPreparation)
 
     material_state = Quantity(
         type=str,
