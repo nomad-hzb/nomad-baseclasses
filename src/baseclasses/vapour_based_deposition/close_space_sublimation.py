@@ -59,7 +59,7 @@ class CSSProcessPreparation(ArchiveSection):
 
 
 class CSSSourceMaterial(ArchiveSection):
-    material_2 = SubSection(
+    source_material = SubSection(
         links=['http://purl.obolibrary.org/obo/RO_0000057'],
         section_def=PubChemPureSubstanceSectionCustom,
     )
@@ -70,7 +70,7 @@ class CSSSourceMaterial(ArchiveSection):
             component='NumberEditQuantity',
             props=dict(minValue=0),
         ),
-        description='Relative weight ratio value for this source material, e.g. A:B = 3:1.',
+        description='Relative source-material ratio in wt% terms (e.g. A:B = 3:1).',
     )
 
 

@@ -1397,20 +1397,30 @@ def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
     material = get_value(data, 'Material name', '', False)
     source_material_mixture = []
     for mat in ['', ' 1', ' 2', ' 3', ' 4']:
-        material_name = get_value(data, f'Material name{mat}', None, False)
-        if not material_name:
+        source_material_name = get_value(
+            data,
+            [
+                f'Source material name{mat}',
+                f'Source material{mat}',
+            ],
+            None,
+            False,
+        )
+        if not source_material_name:
             continue
 
-        substance = PubChemPureSubstanceSectionCustom(name=material_name, load_data=False)
+        substance = PubChemPureSubstanceSectionCustom(
+            name=source_material_name, load_data=False
+        )
         source_material_mixture.append(
             CSSSourceMaterial(
-                material_2=substance,
+                source_material=substance,
                 mixing_ratio=get_value(
                     data,
                     [
-                        f'Material ratio{mat}',
-                        f'Material mixing ratio{mat}',
-                        f'Mixing ratio{mat}',
+                        f'Source material ratio{mat}',
+                        f'Source mixing ratio{mat}',
+                        f'Source ratio{mat}',
                     ],
                     None,
                 ),
@@ -1493,9 +1503,9 @@ def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
             unit=['mbar', 'mbar'],
             factor=[1, 1000],
         ),
-        chemical_2=PubChemPureSubstanceSectionCustom(
-            name=get_value(data, 'Material name', None, False), load_data=False
-        ),
+        chemical_2=source_material_mixture[0].source_material
+        if source_material_mixture
+        else None,
         source_material_mixture=source_material_mixture,
         process_preparation=process_preparation,
         material_state=get_value(data, 'Material state', None, False),
