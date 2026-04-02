@@ -224,6 +224,11 @@ def map_batch(sample_ids, batch_id, upload_id, batch_class):
     return (batch_id, archive)
 
 
+def map_subbatch(sample_ids, subbatch_id, upload_id, subbatch_class):
+    """Create a subbatch archive grouping samples that share the same subbatch ID."""
+    return map_batch(sample_ids, subbatch_id, upload_id, subbatch_class)
+
+
 def map_annealing(data):
     annealing = Annealing()
     if get_value(data, 'IR annealing power [W]', None, unit='W') is not None:

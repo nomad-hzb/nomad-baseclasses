@@ -93,6 +93,8 @@ class Batch(Collection):
 
     batch_id = SubSection(section_def=ReadableIdentifiersCustom)
 
+    subbatch_id = SubSection(section_def=ReadableIdentifiersCustom)
+
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
 
