@@ -137,7 +137,8 @@ class SampleReference(CompositeSystemReference):
 
 
 class ExperimentalStepData(ArchiveSection):
-    data_folder = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
+    data_folder = Quantity(type=str, a_eln=dict(
+        component='StringEditQuantity'))
 
     data_files = Quantity(
         type=str,
@@ -278,12 +279,16 @@ class SingleLibraryMeasurement(ArchiveSection):
 
 
 class LibrarySample(CompositeSystem):
-    grid_information = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
+    grid_information = Quantity(
+        type=str, a_eln=dict(component='StringEditQuantity'))
 
     library_id = SubSection(section_def=ReadableIdentifiersCustom)
 
 
 class BaseProcess(Process):
+    """P is a process = Def. p is an occurrent that has temporal proper parts and for some time t, p s-depends_on some material entity at t. (axiom label in BFO2 Reference: [083-003])"""
+    m_def = Section(links=['http://purl.obolibrary.org/obo/BFO_0000015']
+                    )
     # is_standard_process = Quantity(
     #     type=bool,
     #     default=False,
@@ -406,7 +411,8 @@ class LayerProperties(ArchiveSection):
     layer_thickness = Quantity(
         # links=[],
         type=np.dtype(np.float64),
-        description=('The thickness of the sample, either measured or assumed.'),
+        description=(
+            'The thickness of the sample, either measured or assumed.'),
         unit=('nm'),
         shape=[],
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
@@ -414,7 +420,8 @@ class LayerProperties(ArchiveSection):
 
     layer_transmission = Quantity(
         type=np.dtype(np.float64),
-        description=('Percentage of light that gets transmitted through the layer.'),
+        description=(
+            'Percentage of light that gets transmitted through the layer.'),
         a_eln=dict(
             component='NumberEditQuantity', props=dict(minValue=0)
         ),  # is described in percentage
@@ -455,6 +462,7 @@ class LayerProperties(ArchiveSection):
 
 
 class LayerDeposition(BaseProcess):
+    """A material processing which deposits thin layers onto an material entity."""
     m_def = Section(
         links=['https://purl.archive.org/tfsco/TFSCO_00000067'], label_quantity='layer'
     )
@@ -500,7 +508,8 @@ class LayerDeposition(BaseProcess):
                     print(elements)
                     elements_final.extend(list(set(elements)))
                     lm_tmp = (
-                        ','.join([formulas[i][0] for i, _ in enumerate(formulas)])
+                        ','.join([formulas[i][0]
+                                 for i, _ in enumerate(formulas)])
                         if isinstance(formulas, list)
                         else None
                     )
@@ -530,7 +539,8 @@ class LayerDeposition(BaseProcess):
                     if layer_type == 'Hole Transport Layer':
                         hole_transport_layer.append(layer_material_name_tmp)
                     if layer_type == 'Electron Transport Layer':
-                        electron_transport_layer.append(layer_material_name_tmp)
+                        electron_transport_layer.append(
+                            layer_material_name_tmp)
                     if layer_type == 'Back Contact':
                         back_contact.append(layer_material_name_tmp)
                     if layer_type == 'Absorber Layer':
@@ -554,6 +564,7 @@ class LayerDeposition(BaseProcess):
 
 
 class BaseMeasurement(Measurement):
+    """A planned process that has the objective to produce information about a material entity (the evaluant) by examining it."""
     m_def = Section(links=['http://purl.obolibrary.org/obo/OBI_0000070'])
 
     atmosphere = SubSection(
@@ -576,7 +587,11 @@ class BaseMeasurement(Measurement):
 
 
 class LibraryMeasurement(BaseMeasurement):
-    measurements = SubSection(section_def=SingleLibraryMeasurement, repeats=True)
+    """Characterization technique performed on a material library.."""
+    m_def = Section(links=['http://purl.obolibrary.org/obo/OBI_0000066'])
+
+    measurements = SubSection(
+        section_def=SingleLibraryMeasurement, repeats=True)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)

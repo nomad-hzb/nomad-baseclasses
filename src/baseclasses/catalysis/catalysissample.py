@@ -23,7 +23,7 @@ from nomad.datamodel.metainfo.basesections import (
     Measurement,
 )
 from nomad.datamodel.results import Material, Results
-from nomad.metainfo import Quantity, Reference, SubSection
+from nomad.metainfo import Quantity, Reference, Section, SubSection
 from nomad_material_processing.combinatorial import (
     CombinatorialLibrary,
     CombinatorialSample,
@@ -152,6 +152,11 @@ class SynthesisVariation(ArchiveSection):
 
 
 class XRayDiffraction(CombinatorialProperty):
+    m_def = Section(
+        label_quantity='name', links=['	https://w3id.org/nfdi4cat/voc4cat_0000077'],
+        description="A technique which analyses the diffraction pattern produced when X-rays are scattered by a sample bombarded by a focused electron beam."
+    )
+
     def derive_n_values(self):
         if self.intensity is not None:
             return len(self.intensity)
@@ -184,7 +189,7 @@ class Thickness(CombinatorialProperty):
     value = Quantity(
         type=float,
         description="""
-        The (average) thickness of the sample.
+        The(average) thickness of the sample.
         """,
         unit='m',
     )
@@ -200,13 +205,18 @@ class Formula(CombinatorialProperty):
 
 
 class CatalysisXYSample(CombinatorialSample):
-    synthesis_variation = SubSection(section_def=SynthesisVariation, repeats=True)
+    """A spatially defined point on the sample, identified by its XY coordinates, that represents a single material variant with specific composition, thickness, or processing conditions."""
+    synthesis_variation = SubSection(
+        section_def=SynthesisVariation, repeats=True)
     formula = SubSection(section_def=Formula)
     thickness = SubSection(section_def=Thickness)
     xray_diffraction = SubSection(section_def=XRayDiffraction)
 
 
 class CatalysisSample(CombinatorialLibrary):
+    """A representative part of a material of interest on which observations are made."""
+    m_def = Section(links=['https://w3id.org/nfdi4cat/voc4cat_0005056']
+                    )
     active_area = Quantity(
         type=np.dtype(np.float64),
         unit=('cm^2'),
@@ -229,7 +239,8 @@ class CatalysisSample(CombinatorialLibrary):
             if not process['elements']:
                 continue
             archive.results.material.elements.extend(process['elements'])
-        archive.results.material.elements = list(set(archive.results.material.elements))
+        archive.results.material.elements = list(
+            set(archive.results.material.elements))
         super().normalize(archive, logger)
 
 

@@ -41,7 +41,8 @@ def export_lab_id(archive, lab_id):
         archive.results.eln = ELN()
     if lab_id:
         archive.results.eln.lab_ids = []
-        archive.results.eln.lab_ids = [lab_id, '_'.join(lab_id.split('_')[:-1])]
+        archive.results.eln.lab_ids = [
+            lab_id, '_'.join(lab_id.split('_')[:-1])]
 
 
 def correct_lab_id(lab_id):
@@ -60,13 +61,15 @@ def get_next_project_sample_number(data, entry_id):
         ):
             return int(lab_ids[0].split('_')[-1])
         project_sample_numbers.extend(
-            [int(lab_id.split('_')[-1]) for lab_id in lab_ids if correct_lab_id(lab_id)]
+            [int(lab_id.split('_')[-1])
+             for lab_id in lab_ids if correct_lab_id(lab_id)]
         )
     return max(project_sample_numbers) + 1 if project_sample_numbers else 1
 
 
 class SampleIDCE(ReadableIdentifiersCustom):
-    m_def = Section(a_eln=dict(hide=['sample_owner', 'sample_short_name', 'sample_id']))
+    m_def = Section(a_eln=dict(
+        hide=['sample_owner', 'sample_short_name', 'sample_id']))
 
     short_name = Quantity(
         type=str,
@@ -202,7 +205,8 @@ class SampleIDCE2date(ReadableIdentifiersCustom):
             self.datetime = date.today()
 
         if self.institute and self.owner and self.datetime:
-            self.lab_id = build_initial_id(self.institute, self.owner, self.datetime)
+            self.lab_id = build_initial_id(
+                self.institute, self.owner, self.datetime)
 
         create_id(archive, self.lab_id)
 
@@ -270,7 +274,8 @@ class CESample(CompositeSystem):
             try:
                 formulas = [
                     Atoms(
-                        Composition(formula.strip()).get_integer_formula_and_factor()[0]
+                        Composition(formula.strip()
+                                    ).get_integer_formula_and_factor()[0]
                     )
                     for formula in self.chemical_composition_or_formulas.split(',')
                     if formula
@@ -310,7 +315,8 @@ class SampleIDCENOMEdate(SampleIDCE2date):
         type=str,
         description='Alias/short name of the home institute of the owner, i.e. *HZB*.',
         default='CE-NOME',
-        a_eln=dict(component='EnumEditQuantity', props=dict(suggestions=['CE-NOME'])),
+        a_eln=dict(component='EnumEditQuantity',
+                   props=dict(suggestions=['CE-NOME'])),
     )
 
     owner = Quantity(
@@ -357,7 +363,8 @@ class SampleIDCENOME(SampleIDCE2):
         type=str,
         description='Alias/short name of the home institute of the owner, i.e. *HZB*.',
         default='CE-NOME',
-        a_eln=dict(component='EnumEditQuantity', props=dict(suggestions=['CE-NOME'])),
+        a_eln=dict(component='EnumEditQuantity',
+                   props=dict(suggestions=['CE-NOME'])),
     )
 
     owner = Quantity(
@@ -404,7 +411,8 @@ class SampleIDCENESD(SampleIDCE2):
         type=str,
         description='Alias/short name of the home institute of the owner, i.e. *HZB*.',
         default='CE-NESD',
-        a_eln=dict(component='EnumEditQuantity', props=dict(suggestions=['CE-NESD'])),
+        a_eln=dict(component='EnumEditQuantity',
+                   props=dict(suggestions=['CE-NESD'])),
     )
 
     owner = Quantity(
@@ -495,7 +503,8 @@ class CatalystSynthesis(ArchiveSection):
         a_eln=dict(component='RichTextEditQuantity'),
     )
 
-    substances = SubSection(section_def=SubstanceWithConcentration, repeats=True)
+    substances = SubSection(
+        section_def=SubstanceWithConcentration, repeats=True)
 
 
 class ExpectedStructure(ArchiveSection):
@@ -520,7 +529,8 @@ class CENESDSample(CESample):
     )
 
     origin = Quantity(
-        type=str, a_eln=dict(component='StringEditQuantity', label='preparing person')
+        type=str, a_eln=dict(component='StringEditQuantity',
+                             label='preparing person')
     )
 
     active_area = Quantity(
@@ -583,7 +593,8 @@ class CENOMESample(CESample):
         links=['https://w3id.org/nfdi4cat/voc4cat_0007245'],
         type=np.dtype(np.float64),
         unit=('ug/cm^2'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ug/cm^2'),
+        a_eln=dict(component='NumberEditQuantity',
+                   defaultDisplayUnit='ug/cm^2'),
     )
 
     datetime = Quantity(
@@ -644,7 +655,9 @@ class ReferenceElectrode(Electrode):
 
 
 class Equipment(Entity):
-    m_def = Section(links=['https://w3id.org/nfdi4cat/voc4cat_0000061'])
+    """Apparatus, devices, and instruments employed in the construction and operation of experimental setups and the analysis of catalytic reactions and materials."""
+    m_def = Section(links=['https://w3id.org/nfdi4cat/voc4cat_0000187']
+                    )  # link correted, was pointing to synthesis equip.: https://w3id.org/nfdi4cat/voc4cat_0000061
 
     location = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
@@ -661,12 +674,14 @@ class Electrolyte(CESample):
 
     solvent = SubSection(section_def=PubChemPureSubstanceSectionCustom)
 
-    substances = SubSection(section_def=SubstanceWithConcentration, repeats=True)
+    substances = SubSection(
+        section_def=SubstanceWithConcentration, repeats=True)
 
     def normalize(self, archive, logger):
         formulas = []
         if self.solvent is not None and self.solvent.molecular_formula:
-            formulas.append(self.solvent.molecular_formula.strip().replace('.', ''))
+            formulas.append(
+                self.solvent.molecular_formula.strip().replace('.', ''))
         if self.substances is not None:
             formulas.extend(
                 [
@@ -696,7 +711,8 @@ class Purging(ArchiveSection):
         links=['https://w3id.org/nfdi4cat/voc4cat_0000112'],
         type=np.dtype(np.float64),
         unit='minute',
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='minute'),
+        a_eln=dict(component='NumberEditQuantity',
+                   defaultDisplayUnit='minute'),
     )
 
 
@@ -711,7 +727,8 @@ class EnvironmentReference(CompositeSystemReference):
 class Environment(Electrolyte):
     purging = SubSection(section_def=Purging)
 
-    other_environments = SubSection(section_def=EnvironmentReference, repeats=True)
+    other_environments = SubSection(
+        section_def=EnvironmentReference, repeats=True)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
@@ -752,7 +769,8 @@ class ElectroChemicalCell(CESample):
                     self.chemical_composition_or_formulas,
                     self.working_electrode.chemical_composition_or_formulas,
                 ]
-                self.chemical_composition_or_formulas = ','.join(elements_formula)
+                self.chemical_composition_or_formulas = ','.join(
+                    elements_formula)
 
         if self.reference_electrode is not None:
             if self.reference_electrode.chemical_composition_or_formulas is not None:
@@ -760,7 +778,8 @@ class ElectroChemicalCell(CESample):
                     self.chemical_composition_or_formulas,
                     self.reference_electrode.chemical_composition_or_formulas,
                 ]
-                self.chemical_composition_or_formulas = ','.join(elements_formula)
+                self.chemical_composition_or_formulas = ','.join(
+                    elements_formula)
 
         if self.counter_electrode is not None:
             if self.counter_electrode.chemical_composition_or_formulas is not None:
@@ -768,7 +787,8 @@ class ElectroChemicalCell(CESample):
                     self.chemical_composition_or_formulas,
                     self.counter_electrode.chemical_composition_or_formulas,
                 ]
-                self.chemical_composition_or_formulas = ','.join(elements_formula)
+                self.chemical_composition_or_formulas = ','.join(
+                    elements_formula)
 
         if self.electrolyte is not None:
             if self.electrolyte.chemical_composition_or_formulas is not None:
@@ -776,7 +796,8 @@ class ElectroChemicalCell(CESample):
                     self.chemical_composition_or_formulas,
                     self.electrolyte.chemical_composition_or_formulas,
                 ]
-                self.chemical_composition_or_formulas = ','.join(elements_formula)
+                self.chemical_composition_or_formulas = ','.join(
+                    elements_formula)
 
         if self.chemical_composition_or_formulas.startswith(','):
             self.chemical_composition_or_formulas = (
@@ -833,7 +854,8 @@ class ElectroChemicalSetup(CESample):
                     self.chemical_composition_or_formulas,
                     self.reference_electrode.chemical_composition_or_formulas,
                 ]
-                self.chemical_composition_or_formulas = ','.join(elements_formula)
+                self.chemical_composition_or_formulas = ','.join(
+                    elements_formula)
 
         if self.counter_electrode is not None:
             if self.counter_electrode.chemical_composition_or_formulas is not None:
@@ -841,7 +863,8 @@ class ElectroChemicalSetup(CESample):
                     self.chemical_composition_or_formulas,
                     self.counter_electrode.chemical_composition_or_formulas,
                 ]
-                self.chemical_composition_or_formulas = ','.join(elements_formula)
+                self.chemical_composition_or_formulas = ','.join(
+                    elements_formula)
 
         if self.chemical_composition_or_formulas.startswith(','):
             self.chemical_composition_or_formulas = (

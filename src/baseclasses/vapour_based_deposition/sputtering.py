@@ -312,7 +312,8 @@ class MultiTargetSputteringObservables(ArchiveSection):
     )
     step_number = Quantity(type=str)
 
-    base_pressure = Quantity(type=np.dtype(np.float64), unit=('mbar'), minValue=0)
+    base_pressure = Quantity(type=np.dtype(
+        np.float64), unit=('mbar'), minValue=0)
 
     temperature = Quantity(
         links=[
@@ -335,10 +336,11 @@ class MultiTargetSputteringObservables(ArchiveSection):
 
 
 class MultiTargetSputtering(LayerDeposition):
-    """Base class for evaporation of a sample"""
+    """Physical vapor deposition technique where two or more sputtering targets are used simultaneously or sequentially to deposit a film with controlled composition."""
 
     m_def = Section(
-        links=['http://purl.obolibrary.org/obo/CHMO_0001364'],
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000020',
+               'http://purl.obolibrary.org/obo/CHMO_0001364'],
     )
 
     data_file = Quantity(
@@ -347,7 +349,8 @@ class MultiTargetSputtering(LayerDeposition):
         a_browser=dict(adaptor='RawFileAdaptor'),
     )
 
-    substrate = Quantity(type=str, shape=[], a_eln=dict(component='StringEditQuantity'))
+    substrate = Quantity(type=str, shape=[], a_eln=dict(
+        component='StringEditQuantity'))
 
     sample_owner = Quantity(
         type=str, shape=[], a_eln=dict(component='StringEditQuantity')
@@ -361,7 +364,8 @@ class MultiTargetSputtering(LayerDeposition):
         type=str, shape=[], a_eln=dict(component='StringEditQuantity')
     )
 
-    holder = Quantity(type=str, shape=[], a_eln=dict(component='StringEditQuantity'))
+    holder = Quantity(type=str, shape=[], a_eln=dict(
+        component='StringEditQuantity'))
 
     process_properties = SubSection(
         section_def=MultiTargetSputteringProcess, repeats=True
@@ -369,7 +373,8 @@ class MultiTargetSputtering(LayerDeposition):
 
     targets = SubSection(section_def=TargetProperties, repeats=True)
 
-    observables = SubSection(section_def=MultiTargetSputteringObservables, repeats=True)
+    observables = SubSection(
+        section_def=MultiTargetSputteringObservables, repeats=True)
 
     def normalize(self, archive, logger):
         self.method = 'Multi Target Sputtering'
@@ -381,8 +386,10 @@ class MultiTargetSputtering(LayerDeposition):
                 if len(self.targets) != len(step.bias_voltage):
                     continue
                 active = step.bias_voltage > 0
-                active_targets = [t for i, t in enumerate(self.targets) if active[i]]
-                new_elements = [v.material.molecular_formula for v in active_targets]
+                active_targets = [t for i, t in enumerate(
+                    self.targets) if active[i]]
+                new_elements = [
+                    v.material.molecular_formula for v in active_targets]
                 elements.extend(new_elements)
 
             if not archive.results.material:
