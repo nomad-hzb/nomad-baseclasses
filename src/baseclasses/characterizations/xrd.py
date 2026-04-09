@@ -136,8 +136,7 @@ class XRDResults(MeasurementResult):
         type=np.dtype(np.float64),
         description='The position of an identified peak in units of the angle.',
         unit=('degree'),
-        a_eln=dict(component='NumberEditQuantity',
-                   defaultDisplayUnit='degree'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='degree'),
     )
 
     peak_height = Quantity(
@@ -156,8 +155,7 @@ class XRDResults(MeasurementResult):
 class XRD(BaseMeasurement):
     """XRD Measurement"""
 
-    m_def = Section(a_eln=dict(
-        hide=['certified_values', 'certification_institute']))
+    m_def = Section(a_eln=dict(hide=['certified_values', 'certification_institute']))
 
     data_file = Quantity(
         type=str,
@@ -185,8 +183,10 @@ class XRD(BaseMeasurement):
 class XRDLibrary(LibraryMeasurement):
     """X-ray diffraction performed on a material library."""
 
-    m_def = Section(a_eln=dict(
-        hide=['certified_values', 'certification_institute']), links=['http://purl.obolibrary.org/obo/OBI_0000077'])
+    m_def = Section(
+        a_eln=dict(hide=['certified_values', 'certification_institute']),
+        links=['http://purl.obolibrary.org/obo/OBI_0000077'],
+    )
 
     def normalize(self, archive, logger):
         self.method = 'XRD'

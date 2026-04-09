@@ -80,17 +80,18 @@ class XRFProperties(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='s'),
     )
 
-    filter_settings = Quantity(
-        type=str, a_eln=dict(component='StringEditQuantity'))
+    filter_settings = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
 
 class XRF(BaseMeasurement):
     """A non-destructive analytical technique which uses a high-energy X-ray source to expose a material and monitors the emitted characteristic fluorescent X-Rays."""
-   # """UV vis Measurement""" #this was written before, I updated def. to voc4cat
 
-    m_def = Section(a_eln=dict(
-        hide=['certified_values', 'certification_institute']),
-        links=['https://w3id.org/nfdi4cat/voc4cat_0000067'])
+    # """UV vis Measurement""" #this was written before, I updated def. to voc4cat
+
+    m_def = Section(
+        a_eln=dict(hide=['certified_values', 'certification_institute']),
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000067'],
+    )
 
     data_file = Quantity(
         type=str,
@@ -138,11 +139,12 @@ class XRFSingleLibraryMeasurement(SingleLibraryMeasurement):
 class XRFLibrary(LibraryMeasurement):
     """X-ray fluorescence performed on a material library."""
 
-    m_def = Section(a_eln=dict(
-        hide=['certified_values', 'certification_institute']), links=['http://purl.obolibrary.org/obo/OBI_0000067'])
+    m_def = Section(
+        a_eln=dict(hide=['certified_values', 'certification_institute']),
+        links=['http://purl.obolibrary.org/obo/OBI_0000067'],
+    )
 
-    data_folder = Quantity(type=str, a_eln=dict(
-        component='StringEditQuantity'))
+    data_folder = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
     data_file = Quantity(
         type=str,
@@ -165,13 +167,11 @@ class XRFLibrary(LibraryMeasurement):
 
     energy = Quantity(type=np.dtype(np.float64), unit=('nm'), shape=['*'])
 
-    material_names = Quantity(
-        type=str, a_eln=dict(component='StringEditQuantity'))
+    material_names = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
     properties = SubSection(section_def=XRFProperties)
 
-    measurements = SubSection(
-        section_def=XRFSingleLibraryMeasurement, repeats=True)
+    measurements = SubSection(section_def=XRFSingleLibraryMeasurement, repeats=True)
 
     def normalize(self, archive, logger):
         self.method = 'XRF'
