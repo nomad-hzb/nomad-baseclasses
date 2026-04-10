@@ -335,10 +335,13 @@ class MultiTargetSputteringObservables(ArchiveSection):
 
 
 class MultiTargetSputtering(LayerDeposition):
-    """Base class for evaporation of a sample"""
+    """Physical vapor deposition technique where two or more sputtering targets are used simultaneously or sequentially to deposit a film with controlled composition."""
 
     m_def = Section(
-        links=['http://purl.obolibrary.org/obo/CHMO_0001364'],
+        links=[
+            'https://w3id.org/nfdi4cat/voc4cat_0000020',
+            'http://purl.obolibrary.org/obo/CHMO_0001364',
+        ],
     )
 
     data_file = Quantity(

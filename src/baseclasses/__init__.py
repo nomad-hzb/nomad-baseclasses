@@ -284,6 +284,9 @@ class LibrarySample(CompositeSystem):
 
 
 class BaseProcess(Process):
+    """P is a process = Def. p is an occurrent that has temporal proper parts and for some time t, p s-depends_on some material entity at t. (axiom label in BFO2 Reference: [083-003])"""
+
+    m_def = Section(links=['http://purl.obolibrary.org/obo/BFO_0000015'])
     # is_standard_process = Quantity(
     #     type=bool,
     #     default=False,
@@ -455,6 +458,8 @@ class LayerProperties(ArchiveSection):
 
 
 class LayerDeposition(BaseProcess):
+    """A material processing which deposits thin layers onto an material entity."""
+
     m_def = Section(
         links=['https://purl.archive.org/tfsco/TFSCO_00000067'], label_quantity='layer'
     )
@@ -554,6 +559,8 @@ class LayerDeposition(BaseProcess):
 
 
 class BaseMeasurement(Measurement):
+    """A planned process that has the objective to produce information about a material entity (the evaluant) by examining it."""
+
     m_def = Section(links=['http://purl.obolibrary.org/obo/OBI_0000070'])
 
     atmosphere = SubSection(
@@ -576,6 +583,10 @@ class BaseMeasurement(Measurement):
 
 
 class LibraryMeasurement(BaseMeasurement):
+    """Characterization technique performed on a material library.."""
+
+    m_def = Section(links=['http://purl.obolibrary.org/obo/OBI_0000066'])
+
     measurements = SubSection(section_def=SingleLibraryMeasurement, repeats=True)
 
     def normalize(self, archive, logger):

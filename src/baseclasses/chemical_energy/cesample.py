@@ -644,7 +644,11 @@ class ReferenceElectrode(Electrode):
 
 
 class Equipment(Entity):
-    m_def = Section(links=['https://w3id.org/nfdi4cat/voc4cat_0000061'])
+    """Apparatus, devices, and instruments employed in the construction and operation of experimental setups and the analysis of catalytic reactions and materials."""
+
+    m_def = Section(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000187']
+    )  # link correted, was pointing to synthesis equip.: https://w3id.org/nfdi4cat/voc4cat_0000061
 
     location = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 

@@ -181,9 +181,12 @@ class XRD(BaseMeasurement):
 
 
 class XRDLibrary(LibraryMeasurement):
-    """XRD Measurement"""
+    """X-ray diffraction performed on a material library."""
 
-    m_def = Section(a_eln=dict(hide=['certified_values', 'certification_institute']))
+    m_def = Section(
+        a_eln=dict(hide=['certified_values', 'certification_institute']),
+        links=['http://purl.obolibrary.org/obo/OBI_0000077'],
+    )
 
     def normalize(self, archive, logger):
         self.method = 'XRD'
