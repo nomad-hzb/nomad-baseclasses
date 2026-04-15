@@ -28,7 +28,11 @@ from baseclasses.vapour_based_deposition.atomic_layer_deposition import (
     ALDMaterial,
     ALDPropertiesIris,
 )
-from baseclasses.vapour_based_deposition.close_space_sublimation import CSSProcess
+from baseclasses.vapour_based_deposition.close_space_sublimation import (
+    CSSProcess,
+    CSSProcessPreparation,
+    CSSSourceMaterial,
+)
 from baseclasses.vapour_based_deposition.evaporation import (
     InorganicEvaporation,
     OrganicEvaporation,
@@ -1391,6 +1395,82 @@ def map_sputtering(i, j, lab_ids, data, upload_id, sputter_class):
 
 def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
     material = get_value(data, 'Material name', '', False)
+    source_material_mixture = []
+    for mat in ['', ' 1', ' 2', ' 3', ' 4']:
+        source_material_name = get_value(
+            data,
+            [
+                f'Source material name{mat}',
+                f'Source material{mat}',
+            ],
+            None,
+            False,
+        )
+        if not source_material_name:
+            continue
+
+        substance = PubChemPureSubstanceSectionCustom(
+            name=source_material_name, load_data=False
+        )
+        source_material_mixture.append(
+            CSSSourceMaterial(
+                source_material=substance,
+                mixing_ratio=get_value(
+                    data,
+                    [
+                        f'Source material ratio{mat}',
+                        f'Source mixing ratio{mat}',
+                        f'Source ratio{mat}',
+                    ],
+                    None,
+                ),
+            )
+        )
+
+    process_preparation = None
+    if any(
+        [
+            get_value(
+                data,
+                ['Milling rotation speed [rpm]', 'Planetary mill rotation speed [rpm]'],
+                None,
+                unit=['rpm', 'rpm'],
+            ),
+            get_value(
+                data,
+                ['Milling rotation time [min]', 'Planetary mill rotation time [min]'],
+                None,
+                unit=['minute', 'minute'],
+            ),
+            get_value(
+                data,
+                ['Milling rest time [min]', 'Planetary mill rest time [min]'],
+                None,
+                unit=['minute', 'minute'],
+            ),
+        ]
+    ):
+        process_preparation = CSSProcessPreparation(
+            rotation_speed=get_value(
+                data,
+                ['Milling rotation speed [rpm]', 'Planetary mill rotation speed [rpm]'],
+                None,
+                unit=['rpm', 'rpm'],
+            ),
+            rotation_time=get_value(
+                data,
+                ['Milling rotation time [min]', 'Planetary mill rotation time [min]'],
+                None,
+                unit=['minute', 'minute'],
+            ),
+            rest_time=get_value(
+                data,
+                ['Milling rest time [min]', 'Planetary mill rest time [min]'],
+                None,
+                unit=['minute', 'minute'],
+            ),
+        )
+
     archive = css_class(
         name='Close Space Sublimation ' + get_value(data, 'Material name', '', False),
         location=get_value(data, 'Tool/GB name', '', False),
@@ -1416,10 +1496,18 @@ def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
         ),
         deposition_time=get_value(data, 'Deposition Time [s]', unit='s'),
         carrier_gas=get_value(data, 'Carrier gas', None, False),
-        pressure=get_value(data, 'Process pressure [bar]', None, unit='bar'),
-        chemical_2=PubChemPureSubstanceSectionCustom(
-            name=get_value(data, 'Material name', None, False), load_data=False
+        pressure=get_value(
+            data,
+            ['Process pressure [mbar]', 'Process pressure [bar]'],
+            None,
+            unit=['mbar', 'bar'],
+            factor=[1, 1000],
         ),
+        chemical_2=source_material_mixture[0].source_material
+        if source_material_mixture
+        else None,
+        source_material_mixture=source_material_mixture,
+        process_preparation=process_preparation,
         material_state=get_value(data, 'Material state', None, False),
     )
 
