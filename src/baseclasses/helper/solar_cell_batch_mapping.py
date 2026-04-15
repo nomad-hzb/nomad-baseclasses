@@ -1440,13 +1440,13 @@ def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
                 data,
                 ['Milling rotation time [min]', 'Planetary mill rotation time [min]'],
                 None,
-                unit=['min', 'min'],
+                unit=['minute', 'minute'],
             ),
             get_value(
                 data,
                 ['Milling rest time [min]', 'Planetary mill rest time [min]'],
                 None,
-                unit=['min', 'min'],
+                unit=['minute', 'minute'],
             ),
         ]
     ):
@@ -1461,13 +1461,13 @@ def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
                 data,
                 ['Milling rotation time [min]', 'Planetary mill rotation time [min]'],
                 None,
-                unit=['min', 'min'],
+                unit=['minute', 'minute'],
             ),
             rest_time=get_value(
                 data,
                 ['Milling rest time [min]', 'Planetary mill rest time [min]'],
                 None,
-                unit=['min', 'min'],
+                unit=['minute', 'minute'],
             ),
         )
 
@@ -1500,7 +1500,7 @@ def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
             data,
             ['Process pressure [mbar]', 'Process pressure [bar]'],
             None,
-            unit=['mbar', 'mbar'],
+            unit=['mbar', 'bar'],
             factor=[1, 1000],
         ),
         chemical_2=source_material_mixture[0].source_material

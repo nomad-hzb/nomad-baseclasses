@@ -39,20 +39,20 @@ class CSSProcessPreparation(ArchiveSection):
 
     rotation_time = Quantity(
         type=np.dtype(np.float64),
-        unit=('min'),
+        unit=('minute'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='min',
+            defaultDisplayUnit='minute',
             props=dict(minValue=0),
         ),
     )
 
     rest_time = Quantity(
         type=np.dtype(np.float64),
-        unit=('min'),
+        unit=('minute'),
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='min',
+            defaultDisplayUnit='minute',
             props=dict(minValue=0),
         ),
     )
