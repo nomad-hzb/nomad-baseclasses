@@ -26,6 +26,7 @@ from nomad.units import ureg
 
 from .. import ReadableIdentifiersCustom
 from ..helper.add_solar_cell import add_band_gap, add_solar_cell
+from .multijunction import ModuleConfiguration, MultijunctionConfiguration
 from .substrate import Substrate
 
 
@@ -297,6 +298,22 @@ class SolcarCellSample(CompositeSystem):
     sample_id = SubSection(section_def=ReadableIdentifiersCustom)
     parent = SubSection(section_def=CompositeSystemReference)
 
+    module_configuration = SubSection(
+        section_def=ModuleConfiguration,
+        description=(
+            'Module-level configuration: whether pixels are connected and how. '
+            'Orthogonal to multijunction_configuration — a tandem can also be a module.'
+        ),
+    )
+
+    multijunction_configuration = SubSection(
+        section_def=MultijunctionConfiguration,
+        description=(
+            'Multi-junction (tandem, triple-junction, …) device metadata. '
+            'Add one SubcellInfo per junction, ordered bottom (pos 1) to top.'
+        ),
+    )
+
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
 
@@ -329,6 +346,14 @@ class SolcarCellSample(CompositeSystem):
                 archive.results.properties.optoelectronic.solar_cell.device_area = (
                     self.substrate.pixel_area
                 )
+
+        # Sync number_of_junctions from multijunction_configuration
+        if self.multijunction_configuration:
+            mj = self.multijunction_configuration
+            if mj.subcells:
+                self.number_of_junctions = len(mj.subcells)
+            elif mj.number_of_junctions:
+                self.number_of_junctions = mj.number_of_junctions
 
         result_data = collectSampleData(archive)
 

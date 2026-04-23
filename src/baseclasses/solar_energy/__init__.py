@@ -23,6 +23,7 @@ from .conductivity_measurement import (
 )
 from .eqemeasurement import EQEMeasurement, SolarCellEQECustom
 from .jvmeasurement import JVMeasurement, SolarCellJVCurveCustom
+from .multijunction import ModuleConfiguration, MultijunctionConfiguration, SubcellInfo
 from .mpp_tracking import MPPTracking, MPPTrackingProperties
 from .mpp_tracking_hysprint_custom import (
     JVData,
