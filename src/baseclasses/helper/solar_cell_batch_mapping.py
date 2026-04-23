@@ -209,7 +209,7 @@ def map_basic_sample(data, substrate_name, upload_id, sample_class):
     return (data['Nomad ID'], archive)
 
 
-def map_batch(batch_ids, batch_id, upload_id, batch_class):
+def map_batch(sample_ids, batch_id, upload_id, batch_class):    
     archive = batch_class(
         name=batch_id,
         lab_id=batch_id,
@@ -218,10 +218,15 @@ def map_batch(batch_ids, batch_id, upload_id, batch_class):
                 reference=get_reference(upload_id, f'{lab_id}.archive.json'),
                 lab_id=lab_id,
             )
-            for lab_id in batch_ids
+            for lab_id in sample_ids
         ],
     )
     return (batch_id, archive)
+
+
+def map_subbatch(sample_ids, subbatch_id, upload_id, subbatch_class):
+    """Create a subbatch archive grouping samples that share the same subbatch ID."""
+    return map_batch(sample_ids, subbatch_id, upload_id, subbatch_class)
 
 
 def map_annealing(data):
