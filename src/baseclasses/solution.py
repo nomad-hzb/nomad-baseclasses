@@ -87,6 +87,14 @@ class SolutionChemical(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mmol/ml'),
     )
 
+    concentration_vol = Quantity(
+        links=['http://purl.obolibrary.org/obo/PATO_0000033'],
+        description='Volume-to-volume concentration (v/v), e.g. for liquid additives or solvents.',
+        type=np.dtype(np.float64),
+        unit=('ul/ml'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ul/ml'),
+    )
+
     amount_mol = Quantity(
         type=np.dtype(np.float64),
         unit=('mol'),
