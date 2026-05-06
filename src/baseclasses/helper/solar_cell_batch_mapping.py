@@ -1,5 +1,4 @@
 from datetime import datetime
-import re
 
 import pandas as pd
 from nomad.datamodel.metainfo.basesections import CompositeSystemReference
@@ -65,8 +64,8 @@ from baseclasses.wet_chemical_deposition.spin_coating import SpinCoatingRecipeSt
 
 
 def sanitize_filename(value):
-    """Replace characters that are unsafe in filenames with underscores."""
-    return re.sub(r'[\\/<>:"|?*\s]', '_', str(value))
+    """Replace backslashes with underscores to ensure safe use in filenames."""
+    return str(value).replace('\\', '_')
 
 
 def create_product_info(data, prefix):
