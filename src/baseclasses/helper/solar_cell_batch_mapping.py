@@ -63,9 +63,13 @@ from baseclasses.wet_chemical_deposition.slot_die_coating import (
 from baseclasses.wet_chemical_deposition.spin_coating import SpinCoatingRecipeSteps
 
 
-def sanitize_filename(value):
-    """Replace forward slashes with underscores to ensure safe use in filenames."""
-    return str(value).replace('/', '_')
+def sanitize_filename(value, replace_spaces=False):
+    """Replace forward slashes with underscores to ensure safe use in filenames.
+    Optionally also replace spaces with underscores."""
+    result = str(value).replace('/', '_')
+    if replace_spaces:
+        result = result.replace(' ', '_')
+    return result
 
 
 def create_product_info(data, prefix):
@@ -1707,4 +1711,4 @@ def map_generic(i, j, lab_ids, data, upload_id, generic_class):
         ],
     )
     name = get_value(data, 'Name', '', False)
-    return (f'{i}_{j}_generic_process_{sanitize_filename(name)}', archive)
+    return (f'{i}_{j}_generic_process_{sanitize_filename(name, replace_spaces=True)}', archive)
