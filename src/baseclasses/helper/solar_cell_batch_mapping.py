@@ -64,8 +64,8 @@ from baseclasses.wet_chemical_deposition.spin_coating import SpinCoatingRecipeSt
 
 
 def sanitize_filename(value):
-    """Replace backslashes with underscores to ensure safe use in filenames."""
-    return str(value).replace('\\', '_')
+    """Replace forward slashes with underscores to ensure safe use in filenames."""
+    return str(value).replace('/', '_')
 
 
 def create_product_info(data, prefix):
