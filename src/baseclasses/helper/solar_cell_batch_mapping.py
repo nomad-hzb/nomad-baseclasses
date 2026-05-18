@@ -63,6 +63,15 @@ from baseclasses.wet_chemical_deposition.slot_die_coating import (
 from baseclasses.wet_chemical_deposition.spin_coating import SpinCoatingRecipeSteps
 
 
+def sanitize_filename(value, replace_spaces=False):
+    """Replace forward slashes with underscores to ensure safe use in filenames.
+    Optionally also replace spaces with underscores."""
+    result = str(value).replace('/', '_')
+    if replace_spaces:
+        result = result.replace(' ', '_')
+    return result
+
+
 def create_product_info(data, prefix):
     """
     Create a ProductInfo object with data for a specific chemical prefix.
@@ -642,7 +651,7 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
     )
 
     material = get_value(data, 'Material name', '', False)
-    return (f'{i}_{j}_spin_coating_{material}', archive)
+    return (f'{i}_{j}_spin_coating_{sanitize_filename(material)}', archive)
 
 
 def map_blade_coating(i, j, lab_ids, data, upload_id, blade_coating_class):
@@ -709,7 +718,7 @@ def map_blade_coating(i, j, lab_ids, data, upload_id, blade_coating_class):
     )
 
     material = get_value(data, 'Material name', '', False)
-    return (f'{i}_{j}_blade_coating_{material}', archive)
+    return (f'{i}_{j}_blade_coating_{sanitize_filename(material)}', archive)
 
 
 def map_gravure_printing(i, j, lab_ids, data, upload_id, gravure_printing_class):
@@ -771,7 +780,7 @@ def map_gravure_printing(i, j, lab_ids, data, upload_id, gravure_printing_class)
     )
 
     material = get_value(data, 'Material name', '', False)
-    return (f'{i}_{j}_gravure_printing_{material}', archive)
+    return (f'{i}_{j}_gravure_printing_{sanitize_filename(material)}', archive)
 
 
 def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
@@ -835,7 +844,7 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
         quenching=map_air_knife_gas_quenching(data),
     )
     material = get_value(data, 'Material name', '', False)
-    return (f'{i}_{j}_slot_die_coating_{material}', archive)
+    return (f'{i}_{j}_slot_die_coating_{sanitize_filename(material)}', archive)
 
 
 def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
@@ -1013,7 +1022,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
             ),
         )
     material = get_value(data, 'Material name', '', False)
-    return (f'{i}_{j}_inkjet_printing_{material}', archive)
+    return (f'{i}_{j}_inkjet_printing_{sanitize_filename(material)}', archive)
 
 
 def map_screen_printing(i, j, lab_ids, data, upload_id, screen_printing_class):
@@ -1092,7 +1101,7 @@ def map_screen_printing(i, j, lab_ids, data, upload_id, screen_printing_class):
     )
 
     material = get_value(data, 'Material name', '', False)
-    return (f'{i}_{j}_screen_printing_{material}', archive)
+    return (f'{i}_{j}_screen_printing_{sanitize_filename(material)}', archive)
 
 
 def map_lamination(i, j, lab_ids, data, upload_id, lamination_class):
@@ -1407,7 +1416,7 @@ def map_sputtering(i, j, lab_ids, data, upload_id, sputter_class):
     )
     archive.processes = [process]
     material = get_value(data, 'Material name', '', False)
-    return (f'{i}_{j}_sputtering_{material}', archive)
+    return (f'{i}_{j}_sputtering_{sanitize_filename(material)}', archive)
 
 
 def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
@@ -1528,7 +1537,7 @@ def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
         material_state=get_value(data, 'Material state', None, False),
     )
 
-    return (f'{i}_{j}_close_space_subimation_{material}', archive)
+    return (f'{i}_{j}_close_space_subimation_{sanitize_filename(material)}', archive)
 
 
 def map_dip_coating(i, j, lab_ids, data, upload_id, dc_class):
@@ -1577,7 +1586,7 @@ def map_dip_coating(i, j, lab_ids, data, upload_id, dc_class):
         atmosphere=map_atmosphere(data),
     )
     material = get_value(data, 'Material name', '', False)
-    return (f'{i}_{j}_dip_coating_{material}', archive)
+    return (f'{i}_{j}_dip_coating_{sanitize_filename(material)}', archive)
 
 
 def map_laser_scribing(i, j, lab_ids, data, upload_id, laser_class):
@@ -1683,7 +1692,7 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
         ),
     )
     material = get_value(data, 'Material name', '', number=False)
-    return (f'{i}_{j}_ALD_{material}', archive)
+    return (f'{i}_{j}_ALD_{sanitize_filename(material)}', archive)
 
 
 def map_generic(i, j, lab_ids, data, upload_id, generic_class):
@@ -1702,4 +1711,4 @@ def map_generic(i, j, lab_ids, data, upload_id, generic_class):
         ],
     )
     name = get_value(data, 'Name', '', False)
-    return (f'{i}_{j}_generic_process_{name.replace(" ", "_")}', archive)
+    return (f'{i}_{j}_generic_process_{sanitize_filename(name, replace_spaces=True)}', archive)
