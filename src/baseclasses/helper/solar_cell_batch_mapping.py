@@ -5,6 +5,7 @@ from nomad.datamodel.metainfo.basesections import CompositeSystemReference
 from nomad.units import ureg
 
 from baseclasses import LayerProperties, PubChemPureSubstanceSectionCustom
+from baseclasses.helper.naming_normalizer import layer_type_normalizer, solvent_normalizer
 from baseclasses.atmosphere import Atmosphere, GloveboxAtmosphere
 from baseclasses.material_processes_misc import (
     AirKnifeGasQuenching,
@@ -324,9 +325,13 @@ def map_atmosphere(data):
 
 
 def map_layer(data):
+    layer_type = layer_type_normalizer.normalize(
+        get_value(data, 'Layer type', None, False)
+    )
+
     # Common properties for all layer types
     common_layer_props = {
-        'layer_type': get_value(data, 'Layer type', None, False),
+        'layer_type': layer_type,
         'layer_material_name': get_value(data, 'Material name', None, False),
         'layer_thickness': get_value(data, 'Layer thickness [nm]', None, unit='nm'),
         'layer_chemical_id': get_value(data, 'Layer chemical ID', None, False),
@@ -334,7 +339,7 @@ def map_layer(data):
     }
 
     # Guard clause: handle Carbon Paste Layer early
-    if 'Carbon Paste Layer' in get_value(data, 'Layer type', '', False):
+    if layer_type and 'Carbon Paste Layer' in layer_type:
         return [
             CarbonPasteLayerProperties(
                 **common_layer_props,
@@ -384,7 +389,9 @@ def map_solutions(data):
         final_solvents.append(
             SolutionChemical(
                 chemical_2=PubChemPureSubstanceSectionCustom(
-                    name=get_value(data, f'{solvent} name', None, False),
+                    name = solvent_normalizer.normalize(
+                        get_value(data, f'{solvent} name', None, False))
+                    ,
                     load_data=False,
                     product_info=create_product_info(data, solvent),
                 ),
