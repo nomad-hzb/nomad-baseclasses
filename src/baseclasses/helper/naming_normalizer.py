@@ -26,19 +26,24 @@ import re
 # ════════════════════════════════════════════════════════════════
 
 layer_type_aliases = {
+    'electrode': 'Electrode',
+    'blockinglayer': 'Blocking Layer',
     # Electron Transport Layer
-    'electrode': 'Electron Transport Layer',
     'etl': 'Electron Transport Layer',
     'electron transport layer': 'Electron Transport Layer',
     'electrontransportlayer': 'Electron Transport Layer',
+    'electron transport': 'Electron Transport Layer',
     # Absorber
-    'absorber': 'Absorber',
-    'absorber layer': 'Absorber',
-    'perovskite': 'Absorber',
+    'absorber': 'Absorber Layer',
+    'absorber layer': 'Absorber Layer',
+    'perovskite': 'Absorber Layer',
     # Buffer Layer
     'buffer': 'Buffer',
     'buffer layer': 'Buffer',
-    'blockinglayer': 'Buffer',
+    # Anti-Reflective Coating
+    'a.r.c': 'Anti-Reflective Coating',
+    'arc': 'Anti-Reflective Coating',
+    'anti reflective coating': 'Anti-Reflective Coating',
     # Passivation
     'passivation': 'Passivation',
     'passivation layer': 'Passivation',
@@ -47,29 +52,20 @@ layer_type_aliases = {
     'hole transport': 'Hole Transport Layer',
     'hole transport layer': 'Hole Transport Layer',
     'htl': 'Hole Transport Layer',
-    # Electron Transport Layer (short form)
-    'electron transport': 'Electron Transport Layer',
+    # Contact
+    'back contact': 'Contact',
+    'contact': 'Contact',
+    'metal contact': 'Contact',
+    'top contact': 'Contact',
+    'top electrode': 'Contact',
+    'top_electrode': 'Contact',
+    'topcontact': 'Contact',
+    'tco': 'Contact',
 }
 
-"""
-What do we do with Contact, Back Contact, Top Contact, Top Electrode ? 
-    # A.R.C.
-    'anti reflective coating': 'A.R.C.',
-    'anti-reflective coating': 'A.R.C.',
-    'arc': 'A.R.C.',
-    # Back Contact
-    'back contact': 'Back Contact',
-    'metal contact': 'Back Contact',
-    'top contact': 'Back Contact',
-    'top electrode': 'Back Contact',
-    'top_electrode': 'Back Contact',
-    'topcontact': 'Back Contact',
-
-    # Substrate Conductive Layer
-    'substrate conductive layer': 'Substrate Conductive Layer',
-    'tco': 'Substrate Conductive Layer',
-"""
-
+# ════════════════════════════════════════════════════════════════
+# PEROVSKITE CHEMICAL NAME (add MAFA vs FAMa etc)
+# ════════════════════════════════════════════════════════════════
 # ════════════════════════════════════════════════════════════════
 # LAYER MATERIAL NAME  (chemical abbreviations / common names)
 # ════════════════════════════════════════════════════════════════
@@ -79,6 +75,8 @@ layer_material_name_aliases = {
     'silver': 'Ag',
     'copper': 'Cu',
     'cu': 'Cu',                     # upper-case "CU" → standard "Cu"
+    'calcium': 'Ca',
+    'ca' : 'Ca',
     # Lithium fluoride
     'lif': 'LiF',                   # upper-case "LIF" → "LiF"
     # Fullerenes
@@ -102,20 +100,14 @@ layer_material_name_aliases = {
     'phenethylammonium iodide': 'PEAI',
 }
 
-"""
-    # Trailing-punctuation / typo corrections
-    'edai2?': 'EDAI2',
-    'guai?': 'GUAI',
-"""
-
 # ════════════════════════════════════════════════════════════════
 # SOLVENTS
 # ════════════════════════════════════════════════════════════════
 
 solvent_aliases = {
     # Dimethyl sulfoxide  (DMSO / dimethylsulfoxide)
-    'dmso': 'Dimethylsulfoxide',
-    'dimethylsulfoxide': 'Dimethylsulfoxide',
+    'dmso': 'DMSO',
+    'dimethylsulfoxide': 'DMSO',
     # Ethanol  (EtOH / ETOH / EtoH all lowercase to "etoh")
     'etoh': 'Ethanol',
     'etoh (dry)': 'Ethanol',
@@ -124,10 +116,11 @@ solvent_aliases = {
     'absolute ethanol': 'Ethanol',
     'anhydrous ethanol': 'Ethanol',
     # Isopropanol  (IPA / iso-propanol / Iso-proponal)
-    'ipa': 'Isopropanol',
-    'iso-propanol': 'Isopropanol',
-    'iso-proponal': 'Isopropanol',  # typo
-    'isopropanol': 'Isopropanol',
+    'ipa': 'IPA',
+    'iso-propanol': 'IPA',
+    'iso-proponal': 'IPA',  # typo
+    'isopropanol': 'IPA',
+    '2-propanol' : 'IPA',
     # Chlorobenzene  (CB / cb)
     'cb': 'Chlorobenzene',
     'chlorobenzene': 'Chlorobenzene',
@@ -172,10 +165,12 @@ additive_aliases = {
 }
 
 # ════════════════════════════════════════════════════════════════
-# ATMOSPHERE  (annealing / process atmosphere)
+# ATMOSPHERE  (annealing / process atmosphere/ozone cleaning)
 # ════════════════════════════════════════════════════════════════
 
 atmosphere_aliases = {
+    # Vacuum
+    'vac' : 'Vacuum',
     # Air / ambient
     'air': 'Air',
     'ambient': 'Air',
@@ -189,6 +184,9 @@ atmosphere_aliases = {
     'glovebox': 'Glovebox',
     # Fume hood
     'fume hood': 'Fume Hood',
+    # plasma gas
+    'O2' : 'Oxygen',
+    'oxygen' : 'Oxygen',
 }
 
 # ════════════════════════════════════════════════════════════════
@@ -223,7 +221,7 @@ substrate_aliases = {
     'slg': 'Soda Lime Glass',
     'soda lime glass': 'Soda Lime Glass',
     # Other
-    'si_bottom_cell': 'Si Bottom Cell',
+    'si_bottom_cell': 'Silicon',
     # PET  (Polyethylene terephthalate)
     'pet': 'PET',
     'polyethylene terephthalate': 'PET',
@@ -235,6 +233,7 @@ substrate_aliases = {
 
 conducting_material_aliases = {
     # Plain ITO  (ito / ITO (Full) / ITO (patterned))
+    'indium tin oxide' : 'ITO',
     'ito': 'ITO',
     'ito (full)': 'ITO (full)',
     'ito (patterned)': 'ITO (patterned)',
@@ -248,38 +247,34 @@ conducting_material_aliases = {
     'ito-purple': 'Purple ITO',
     # Quartz  (appears in conducting_material column)
     'quartz': 'Quartz',
-    # Full names
-    'indium tin oxide': 'ITO',
 }
 
 # ════════════════════════════════════════════════════════════════
-# EVAPORATION CHAMBER / LOCATION
+# EVAPORATION CHAMBER / GB / LOCATION
 # ════════════════════════════════════════════════════════════════
 
-# evaporation_location_aliases = {
-#     # CSMB
-#     'csmb/ evap': 'CSMB/Evap',
-#     # HySprint Evap  (HyEvap / Hysprint Evap)
-#     'hyevap': 'HySprint Evap',
-#     'hysprint evap': 'HySprint Evap',
-#     # HyVap  (hyvap / Hyvap / HYVAP / HyVap → all lowercase "hyvap")
-#     'hyvap': 'HyVap',
-#     # HyVap Box  (HyVapBox / HZB-HyVap-Box)
-#     'hyvapbox': 'HyVap Box',
-#     'hzb-hyvap-box': 'HyVap Box',
-#     # IRIS  (Iris Evap / IRIS Evap)
-#     'iris': 'IRIS',
-#     'iris evap': 'IRIS',
-#     # IRIS Pero5 Evaporation
-#     'iris hzbgloveboxes pero5evaporation': 'IRIS Pero5 Evaporation',
-#     'iris-pero5 evaporation': 'IRIS Pero5 Evaporation',
-#     # Pero5 Evaporation  (with / without GB suffix)
-#     'pero5 evaporation gb': 'Pero5 Evaporation',
-#     # ProtoVap
-#     'protovap': 'ProtoVap',
-# }
+location_aliases = {
+ 'HyEvap' : 'HyVapBox',
+ 'Hysprint Evap' : 'HyVapBox',
+ 'hyvap' : 'HyVapBox',
+ 'hyvapbox' : 'HyVapBox',
+ 'HZB-HyVap-Box' : 'HyVapBox',
+ 'PEROVAP' : 'HyPeroVapBox',
+ 'protovap' : 'ProtoVapBox',
+ 'HyTinVap' : 'TinVapBox',
+ 'TinVap' : 'TinVapBox',
+ 'InkVap' : 'InkVapBox',
+ 'CSMB/ Evap' : 'CSMB Evap',
+ 'CSMB/Evap' : 'CSMB Evap',
+ 'IRIS' : 'IRIS Evap',
+ 'iris evap' : 'IRIS Evap',
+ 'IRIS HZBGloveBoxes Pero5Evaporation' : 'IRIS Evap',
+ 'IRIS-Pero5 Evaporation' : 'IRIS Evap',
+ 'Pero5 Evaporation' : 'IRIS Evap',
+ 'Pero5 Evaporation GB' : 'IRIS Evap',
+}
 
-evaporation_location_aliases = {}  # populate once equipment names are finalised
+
 
 
 class NamingNormalizer:
@@ -345,4 +340,4 @@ atmosphere_normalizer = NamingNormalizer(
 anti_solvent_normalizer = NamingNormalizer(anti_solvent_aliases)
 substrate_normalizer = NamingNormalizer(substrate_aliases)
 conducting_material_normalizer = NamingNormalizer(conducting_material_aliases)
-evaporation_location_normalizer = NamingNormalizer(evaporation_location_aliases)
+location_normalizer = NamingNormalizer(location_aliases)
