@@ -64,9 +64,6 @@ layer_type_aliases = {
 }
 
 # ════════════════════════════════════════════════════════════════
-# PEROVSKITE CHEMICAL NAME (add MAFA vs FAMa etc)
-# ════════════════════════════════════════════════════════════════
-# ════════════════════════════════════════════════════════════════
 # LAYER MATERIAL NAME  (chemical abbreviations / common names)
 # ════════════════════════════════════════════════════════════════
 
@@ -74,11 +71,11 @@ layer_material_name_aliases = {
     # Metals
     'silver': 'Ag',
     'copper': 'Cu',
-    'cu': 'Cu',                     # upper-case "CU" → standard "Cu"
+    'cu': 'Cu',  # upper-case "CU" → standard "Cu"
     'calcium': 'Ca',
-    'ca' : 'Ca',
+    'ca': 'Ca',
     # Lithium fluoride
-    'lif': 'LiF',                   # upper-case "LIF" → "LiF"
+    'lif': 'LiF',  # upper-case "LIF" → "LiF"
     # Fullerenes
     'buckminsterfullerene': 'C60',
     # BCP (Bathocuproine)
@@ -98,6 +95,21 @@ layer_material_name_aliases = {
     # Passivation materials
     'peai': 'PEAI',
     'phenethylammonium iodide': 'PEAI',
+    # Conducting / TCO materials
+    'indium tin oxide': 'ITO',
+    'ito': 'ITO',
+    'ito (full)': 'ITO (full)',
+    'ito (patterned)': 'ITO (patterned)',
+    # AR-ITO variants  (AR ITO / ARC_ITO / ITO-AR / ITO_ARC)
+    'ar ito': 'AR-ITO',
+    'arc_ito': 'AR-ITO',
+    'ito-ar': 'AR-ITO',
+    'ito_arc': 'AR-ITO',
+    # Purple ITO
+    'purple ito': 'Purple ITO',
+    'ito-purple': 'Purple ITO',
+    # Quartz  (appears in conducting_material column)
+    'quartz': 'Quartz',
 }
 
 # ════════════════════════════════════════════════════════════════
@@ -112,7 +124,7 @@ solvent_aliases = {
     'etoh': 'Ethanol',
     'etoh (dry)': 'Ethanol',
     'ethanol': 'Ethanol',
-    'ethonal': 'Ethanol',           # typo
+    'ethonal': 'Ethanol',  # typo
     'absolute ethanol': 'Ethanol',
     'anhydrous ethanol': 'Ethanol',
     # Isopropanol  (IPA / iso-propanol / Iso-proponal)
@@ -120,7 +132,7 @@ solvent_aliases = {
     'iso-propanol': 'IPA',
     'iso-proponal': 'IPA',  # typo
     'isopropanol': 'IPA',
-    '2-propanol' : 'IPA',
+    '2-propanol': 'IPA',
     # Chlorobenzene  (CB / cb)
     'cb': 'Chlorobenzene',
     'chlorobenzene': 'Chlorobenzene',
@@ -170,7 +182,7 @@ additive_aliases = {
 
 atmosphere_aliases = {
     # Vacuum
-    'vac' : 'Vacuum',
+    'vac': 'Vacuum',
     # Air / ambient
     'air': 'Air',
     'ambient': 'Air',
@@ -185,8 +197,8 @@ atmosphere_aliases = {
     # Fume hood
     'fume hood': 'Fume Hood',
     # plasma gas
-    'O2' : 'Oxygen',
-    'oxygen' : 'Oxygen',
+    'o2': 'Oxygen',
+    'oxygen': 'Oxygen',
 }
 
 # ════════════════════════════════════════════════════════════════
@@ -228,53 +240,29 @@ substrate_aliases = {
 }
 
 # ════════════════════════════════════════════════════════════════
-# CONDUCTING / TCO MATERIAL  (substrate electrode layer)
-# ════════════════════════════════════════════════════════════════
-
-conducting_material_aliases = {
-    # Plain ITO  (ito / ITO (Full) / ITO (patterned))
-    'indium tin oxide' : 'ITO',
-    'ito': 'ITO',
-    'ito (full)': 'ITO (full)',
-    'ito (patterned)': 'ITO (patterned)',
-    # AR-ITO variants  (AR ITO / ARC_ITO / ITO-AR / ITO_ARC)
-    'ar ito': 'AR-ITO',
-    'arc_ito': 'AR-ITO',
-    'ito-ar': 'AR-ITO',
-    'ito_arc': 'AR-ITO',
-    # Purple ITO
-    'purple ito': 'Purple ITO',
-    'ito-purple': 'Purple ITO',
-    # Quartz  (appears in conducting_material column)
-    'quartz': 'Quartz',
-}
-
-# ════════════════════════════════════════════════════════════════
 # EVAPORATION CHAMBER / GB / LOCATION
 # ════════════════════════════════════════════════════════════════
 
 location_aliases = {
- 'HyEvap' : 'HyVapBox',
- 'Hysprint Evap' : 'HyVapBox',
- 'hyvap' : 'HyVapBox',
- 'hyvapbox' : 'HyVapBox',
- 'HZB-HyVap-Box' : 'HyVapBox',
- 'PEROVAP' : 'HyPeroVapBox',
- 'protovap' : 'ProtoVapBox',
- 'HyTinVap' : 'TinVapBox',
- 'TinVap' : 'TinVapBox',
- 'InkVap' : 'InkVapBox',
- 'CSMB/ Evap' : 'CSMB Evap',
- 'CSMB/Evap' : 'CSMB Evap',
- 'IRIS' : 'IRIS Evap',
- 'iris evap' : 'IRIS Evap',
- 'IRIS HZBGloveBoxes Pero5Evaporation' : 'IRIS Evap',
- 'IRIS-Pero5 Evaporation' : 'IRIS Evap',
- 'Pero5 Evaporation' : 'IRIS Evap',
- 'Pero5 Evaporation GB' : 'IRIS Evap',
+    'hyevap': 'HyVapBox',
+    'hysprint evap': 'HyVapBox',
+    'hyvap': 'HyVapBox',
+    'hyvapbox': 'HyVapBox',
+    'hzb-hyvap-box': 'HyVapBox',
+    'peroval': 'HyPeroVapBox',
+    'protovap': 'ProtoVapBox',
+    'hytinvap': 'TinVapBox',
+    'tinvap': 'TinVapBox',
+    'inkvap': 'InkVapBox',
+    'csmb/ evap': 'CSMB Evap',
+    'csmb/evap': 'CSMB Evap',
+    'iris': 'IRIS Evap',
+    'iris evap': 'IRIS Evap',
+    'iris hzbgloveboxes pero5evaporation': 'IRIS Evap',
+    'iris-pero5 evaporation': 'IRIS Evap',
+    'pero5 evaporation': 'IRIS Evap',
+    'pero5 evaporation gb': 'IRIS Evap',
 }
-
-
 
 
 class NamingNormalizer:
@@ -339,5 +327,4 @@ atmosphere_normalizer = NamingNormalizer(
 )
 anti_solvent_normalizer = NamingNormalizer(anti_solvent_aliases)
 substrate_normalizer = NamingNormalizer(substrate_aliases)
-conducting_material_normalizer = NamingNormalizer(conducting_material_aliases)
 location_normalizer = NamingNormalizer(location_aliases)

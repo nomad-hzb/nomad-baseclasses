@@ -5,18 +5,18 @@ from nomad.datamodel.metainfo.basesections import CompositeSystemReference
 from nomad.units import ureg
 
 from baseclasses import LayerProperties, PubChemPureSubstanceSectionCustom
+from baseclasses.atmosphere import Atmosphere, GloveboxAtmosphere
 from baseclasses.helper.naming_normalizer import (
+    additive_normalizer,
     anti_solvent_normalizer,
     atmosphere_normalizer,
-    conducting_material_normalizer,
-    location_normalizer,
     layer_material_name_normalizer,
     layer_type_normalizer,
+    location_normalizer,
     solute_normalizer,
     solvent_normalizer,
     substrate_normalizer,
 )
-from baseclasses.atmosphere import Atmosphere, GloveboxAtmosphere
 from baseclasses.material_processes_misc import (
     AirKnifeGasQuenching,
     Annealing,
@@ -229,7 +229,7 @@ def map_basic_sample(data, substrate_name, upload_id, sample_class):
     return (data['Nomad ID'], archive)
 
 
-def map_batch(sample_ids, batch_id, upload_id, batch_class):    
+def map_batch(sample_ids, batch_id, upload_id, batch_class):
     archive = batch_class(
         name=batch_id,
         lab_id=batch_id,
@@ -401,9 +401,9 @@ def map_solutions(data):
         final_solvents.append(
             SolutionChemical(
                 chemical_2=PubChemPureSubstanceSectionCustom(
-                    name = solvent_normalizer.normalize(
-                        get_value(data, f'{solvent} name', None, False))
-                    ,
+                    name=solvent_normalizer.normalize(
+                        get_value(data, f'{solvent} name', None, False)
+                    ),
                     load_data=False,
                     product_info=create_product_info(data, solvent),
                 ),
@@ -443,7 +443,7 @@ def map_solutions(data):
                     data,
                     f'{solute} Concentration [ul/ml]',
                     None,
-                    unit= 'ul/ml',
+                    unit='ul/ml',
                 ),
                 amount_relative=get_value(data, f'{solute} relative amount', None),
                 chemical_id=get_value(data, f'{solute} chemical ID', None, False),
@@ -453,7 +453,9 @@ def map_solutions(data):
         final_additives.append(
             SolutionChemical(
                 chemical_2=PubChemPureSubstanceSectionCustom(
-                    name=get_value(data, [f'{additive} name'], None, False),
+                    name=additive_normalizer.normalize(
+                        get_value(data, [f'{additive} name'], None, False)
+                    ),
                     load_data=False,
                     product_info=create_product_info(data, additive),
                 ),
@@ -474,7 +476,7 @@ def map_solutions(data):
                     data,
                     f'{additive} Concentration [ul/ml]',
                     None,
-                    unit= 'ul/ml',
+                    unit='ul/ml',
                 ),
                 amount_relative=get_value(data, f'{additive} relative amount', None),
                 chemical_id=get_value(data, f'{additive} chemical ID', None, False),
@@ -883,7 +885,9 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
     location = get_value(data, 'Tool/GB name', '', False)
     archive = inkjet_class(
         name='inkjet printing ' + get_value(data, 'Material name', '', False),
-        location=location,
+        location=location_normalizer.normalize(
+            get_value(data, 'Tool/GB name', '', False)
+        ),
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
         operator=get_value(data, 'Operator', '', False),
@@ -1199,7 +1203,10 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
                 ),
                 temperature=get_value(data, f'Temperature {i} [°C]', None, unit='°C'),
                 solvent_2=PubChemPureSubstanceSectionCustom(
-                    name=get_value(data, f'Solvent {i}', None, False), load_data=False
+                    name=solvent_normalizer.normalize(
+                        get_value(data, f'Solvent {i}', None, False)
+                    ),
+                    load_data=False,
                 ),
             )
             for i in range(10)
@@ -1224,7 +1231,9 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
                     unit=['s', 'minute'],
                 ),
                 power=get_value(data, 'Gas-Plasma Power [W]', None, unit='W'),
-                plasma_type=get_value(data, 'Gas-Plasma Gas', None, False),
+                plasma_type=atmosphere_normalizer.normalize(
+                    get_value(data, 'Gas-Plasma Gas', None, False)
+                ),
             )
         ],
         cleaning_corona=[
@@ -1253,7 +1262,7 @@ def map_substrate(data, substrate_class):
                 data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm']
             ),
             layer_type='Substrate Conductive Layer',
-            layer_material_name=conducting_material_normalizer.normalize(
+            layer_material_name=layer_material_name_normalizer.normalize(
                 get_value(data, 'Substrate conductive layer', '', False)
             ),
         )
@@ -1276,9 +1285,11 @@ def map_substrate(data, substrate_class):
         ),
         description=get_value(data, 'Notes', '', False),
         lab_id=get_value(data, 'Bottom Cell Name', '', False),
-        conducting_material=[conducting_material_normalizer.normalize(
-            get_value(data, 'Substrate conductive layer', '', False)
-        )],
+        conducting_material=[
+            layer_material_name_normalizer.normalize(
+                get_value(data, 'Substrate conductive layer', '', False)
+            )
+        ],
         substrate_properties=substrate_props,
     )
     return archive
@@ -1765,4 +1776,7 @@ def map_generic(i, j, lab_ids, data, upload_id, generic_class):
         ],
     )
     name = get_value(data, 'Name', '', False)
-    return (f'{i}_{j}_generic_process_{sanitize_filename(name, replace_spaces=True)}', archive)
+    return (
+        f'{i}_{j}_generic_process_{sanitize_filename(name, replace_spaces=True)}',
+        archive,
+    )
