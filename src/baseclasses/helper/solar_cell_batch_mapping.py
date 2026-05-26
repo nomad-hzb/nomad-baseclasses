@@ -1112,7 +1112,7 @@ def map_lamination(i, j, lab_ids, data, upload_id, lamination_class):
         name='Lamination',
         location=get_value(data, 'Tool/GB name', '', False),
         # Hier muss man evtl was anpassen, da das Lamination ja als letztes von zwei halbstacks ist...
-        position_in_experimental_plan=i,
+        positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
         operator=get_value(data, 'Operator', '', False),
         description=get_value(data, 'Notes', '', False),
