@@ -317,10 +317,6 @@ class BaseProcess(Process):
     )
 
     def normalize(self, archive, logger):
-        from .helper.naming_normalizer import location_normalizer
-
-        if self.location is not None:
-            self.location = location_normalizer.normalize(self.location)
         if not self.positon_in_experimental_plan:
             try:
                 self.positon_in_experimental_plan = float(
