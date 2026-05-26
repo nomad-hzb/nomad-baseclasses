@@ -191,6 +191,8 @@ atmosphere_aliases = {
     'dry air': 'Dry Air',
     # Nitrogen  (N2)
     'n2': 'Nitrogen',
+    # Argon
+    'ar' : 'Argon',
     # Glovebox  (GB)
     'gb': 'Glovebox',
     'glovebox': 'Glovebox',

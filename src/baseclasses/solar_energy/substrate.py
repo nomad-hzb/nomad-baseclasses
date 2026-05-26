@@ -91,6 +91,19 @@ class Substrate(Entity):
     #     ))
 
     def normalize(self, archive, logger):
+        from baseclasses.helper.naming_normalizer import (
+            layer_material_name_normalizer,
+            substrate_normalizer,
+        )
+
+        if self.substrate is not None:
+            self.substrate = substrate_normalizer.normalize(self.substrate)
+        if self.conducting_material:
+            self.conducting_material = [
+                layer_material_name_normalizer.normalize(m)
+                for m in self.conducting_material
+            ]
+
         super().normalize(archive, logger)
         add_solar_cell(archive)
         if self.substrate:

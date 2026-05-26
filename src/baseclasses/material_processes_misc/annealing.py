@@ -71,6 +71,13 @@ class Annealing(ArchiveSection):
         ),
     )
 
+    def normalize(self, archive, logger):
+        from baseclasses.helper.naming_normalizer import atmosphere_normalizer
+
+        if self.atmosphere is not None:
+            self.atmosphere = atmosphere_normalizer.normalize(self.atmosphere)
+        super().normalize(archive, logger)
+
 
 class IRAnnealing(Annealing):
     power = Quantity(

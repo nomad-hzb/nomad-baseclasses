@@ -6,17 +6,7 @@ from nomad.units import ureg
 
 from baseclasses import LayerProperties, PubChemPureSubstanceSectionCustom
 from baseclasses.atmosphere import Atmosphere, GloveboxAtmosphere
-from baseclasses.helper.naming_normalizer import (
-    additive_normalizer,
-    anti_solvent_normalizer,
-    atmosphere_normalizer,
-    layer_material_name_normalizer,
-    layer_type_normalizer,
-    location_normalizer,
-    solute_normalizer,
-    solvent_normalizer,
-    substrate_normalizer,
-)
+
 from baseclasses.material_processes_misc import (
     AirKnifeGasQuenching,
     Annealing,
@@ -260,8 +250,8 @@ def map_annealing(data):
         data, 'Annealing temperature [°C]', None, unit='°C'
     )
     annealing.time = get_value(data, 'Annealing time [min]', None, unit='minute')
-    annealing.atmosphere = atmosphere_normalizer.normalize(
-        get_value(data, ['Annealing athmosphere', 'Annealing atmosphere'], None, False)
+    annealing.atmosphere = get_value(
+        data, ['Annealing athmosphere', 'Annealing atmosphere'], None, False
     )
     return annealing
 
@@ -335,16 +325,12 @@ def map_atmosphere(data):
 
 
 def map_layer(data):
-    layer_type = layer_type_normalizer.normalize(
-        get_value(data, 'Layer type', None, False)
-    )
+    layer_type = get_value(data, 'Layer type', None, False)
 
     # Common properties for all layer types
     common_layer_props = {
         'layer_type': layer_type,
-        'layer_material_name': layer_material_name_normalizer.normalize(
-            get_value(data, 'Material name', None, False)
-        ),
+        'layer_material_name': get_value(data, 'Material name', None, False),
         'layer_thickness': get_value(data, 'Layer thickness [nm]', None, unit='nm'),
         'layer_chemical_id': get_value(data, 'Layer chemical ID', None, False),
         'product_info': create_product_info(data, 'Layer'),
@@ -401,9 +387,7 @@ def map_solutions(data):
         final_solvents.append(
             SolutionChemical(
                 chemical_2=PubChemPureSubstanceSectionCustom(
-                    name=solvent_normalizer.normalize(
-                        get_value(data, f'{solvent} name', None, False)
-                    ),
+                    name=get_value(data, f'{solvent} name', None, False),
                     load_data=False,
                     product_info=create_product_info(data, solvent),
                 ),
@@ -418,10 +402,8 @@ def map_solutions(data):
         final_solutes.append(
             SolutionChemical(
                 chemical_2=PubChemPureSubstanceSectionCustom(
-                    name=solute_normalizer.normalize(
-                        get_value(
-                            data, [f'{solute} type', f'{solute} name'], None, False
-                        )
+                    name=get_value(
+                        data, [f'{solute} type', f'{solute} name'], None, False
                     ),
                     load_data=False,
                     product_info=create_product_info(data, solute),
@@ -453,9 +435,7 @@ def map_solutions(data):
         final_additives.append(
             SolutionChemical(
                 chemical_2=PubChemPureSubstanceSectionCustom(
-                    name=additive_normalizer.normalize(
-                        get_value(data, [f'{additive} name'], None, False)
-                    ),
+                    name=get_value(data, [f'{additive} name'], None, False),
                     load_data=False,
                     product_info=create_product_info(data, additive),
                 ),
@@ -518,9 +498,7 @@ def map_anti_solvent_quenching(data):
             unit=['uL/s', 'uL/s'],
         ),
         anti_solvent_2=PubChemPureSubstanceSectionCustom(
-            name=anti_solvent_normalizer.normalize(
-                get_value(data, 'Anti solvent name', None, False)
-            ),
+            name=get_value(data, 'Anti solvent name', None, False),
             load_data=False,
         ),
     )
@@ -618,9 +596,7 @@ def map_gas_flow_assisted_vacuum_drying(data):
 def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
     archive = sc_class(
         name='spin coating ' + get_value(data, 'Material name', '', False),
-        location=location_normalizer.normalize(
-            get_value(data, 'Tool/GB name', '', False)
-        ),
+        location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
         operator=get_value(data, 'Operator', '', False),
@@ -685,9 +661,7 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
 def map_blade_coating(i, j, lab_ids, data, upload_id, blade_coating_class):
     archive = blade_coating_class(
         name='blade coating ' + get_value(data, 'Material name', '', False),
-        location=location_normalizer.normalize(
-            get_value(data, 'Tool/GB name', '', False)
-        ),
+        location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
         operator=get_value(data, 'Operator', '', False),
@@ -754,9 +728,7 @@ def map_blade_coating(i, j, lab_ids, data, upload_id, blade_coating_class):
 def map_gravure_printing(i, j, lab_ids, data, upload_id, gravure_printing_class):
     archive = gravure_printing_class(
         name='gravure printing ' + get_value(data, 'Material name', '', False),
-        location=location_normalizer.normalize(
-            get_value(data, 'Tool/GB name', '', False)
-        ),
+        location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
         operator=get_value(data, 'Operator', '', False),
@@ -818,9 +790,7 @@ def map_gravure_printing(i, j, lab_ids, data, upload_id, gravure_printing_class)
 def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
     archive = sdc_class(
         name='slot die coating ' + get_value(data, 'Material name', '', False),
-        location=location_normalizer.normalize(
-            get_value(data, 'Tool/GB name', '', False)
-        ),
+        location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
         operator=get_value(data, 'Operator', '', False),
@@ -885,9 +855,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
     location = get_value(data, 'Tool/GB name', '', False)
     archive = inkjet_class(
         name='inkjet printing ' + get_value(data, 'Material name', '', False),
-        location=location_normalizer.normalize(
-            get_value(data, 'Tool/GB name', '', False)
-        ),
+        location=location,
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
         operator=get_value(data, 'Operator', '', False),
@@ -1064,9 +1032,7 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
 def map_screen_printing(i, j, lab_ids, data, upload_id, screen_printing_class):
     archive = screen_printing_class(
         name='screen printing ' + get_value(data, 'Material name', '', False),
-        location=location_normalizer.normalize(
-            get_value(data, 'Tool/GB name', '', False)
-        ),
+        location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
         operator=get_value(data, 'Operator', '', False),
@@ -1145,9 +1111,7 @@ def map_screen_printing(i, j, lab_ids, data, upload_id, screen_printing_class):
 def map_lamination(i, j, lab_ids, data, upload_id, lamination_class):
     archive = lamination_class(
         name='Lamination',
-        location=location_normalizer.normalize(
-            get_value(data, 'Tool/GB name', '', False)
-        ),
+        location=get_value(data, 'Tool/GB name', '', False),
         # Hier muss man evtl was anpassen, da das Lamination ja als letztes von zwei halbstacks ist...
         position_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
@@ -1182,9 +1146,7 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
         operator=get_value(data, 'Operator', '', False),
-        location=location_normalizer.normalize(
-            get_value(data, 'Tool/GB name', '', False)
-        ),
+        location=get_value(data, 'Tool/GB name', '', False),
         description=get_value(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
@@ -1203,9 +1165,7 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
                 ),
                 temperature=get_value(data, f'Temperature {i} [°C]', None, unit='°C'),
                 solvent_2=PubChemPureSubstanceSectionCustom(
-                    name=solvent_normalizer.normalize(
-                        get_value(data, f'Solvent {i}', None, False)
-                    ),
+                    name=get_value(data, f'Solvent {i}', None, False),
                     load_data=False,
                 ),
             )
@@ -1231,9 +1191,7 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
                     unit=['s', 'minute'],
                 ),
                 power=get_value(data, 'Gas-Plasma Power [W]', None, unit='W'),
-                plasma_type=atmosphere_normalizer.normalize(
-                    get_value(data, 'Gas-Plasma Gas', None, False)
-                ),
+                plasma_type=get_value(data, 'Gas-Plasma Gas', None, False),
             )
         ],
         cleaning_corona=[
@@ -1262,9 +1220,7 @@ def map_substrate(data, substrate_class):
                 data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm']
             ),
             layer_type='Substrate Conductive Layer',
-            layer_material_name=layer_material_name_normalizer.normalize(
-                get_value(data, 'Substrate conductive layer', '', False)
-            ),
+            layer_material_name=get_value(data, 'Substrate conductive layer', '', False),
         )
     ]
     archive = substrate_class(
@@ -1280,15 +1236,11 @@ def map_substrate(data, substrate_class):
             data, ['Pixel area', 'Pixel area [cm^2]'], None, unit=['cm**2', 'cm**2']
         ),
         number_of_pixels=get_value(data, 'Number of pixels', None),
-        substrate=substrate_normalizer.normalize(
-            get_value(data, 'Substrate material', '', False)
-        ),
+        substrate=get_value(data, 'Substrate material', '', False),
         description=get_value(data, 'Notes', '', False),
         lab_id=get_value(data, 'Bottom Cell Name', '', False),
         conducting_material=[
-            layer_material_name_normalizer.normalize(
-                get_value(data, 'Substrate conductive layer', '', False)
-            )
+            get_value(data, 'Substrate conductive layer', '', False)
         ],
         substrate_properties=substrate_props,
     )
@@ -1306,9 +1258,7 @@ def map_evaporation(
     )
     archive = evaporation_class(
         name='evaporation ' + get_value(data, 'Material name', '', False),
-        location=location_normalizer.normalize(
-            get_value(data, 'Tool/GB name', '', False)
-        ),
+        location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
         operator=get_value(data, 'Operator', '', False),
@@ -1418,9 +1368,7 @@ def map_annealing_class(i, j, lab_ids, data, upload_id, annealing_class):
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
         operator=get_value(data, 'Operator', '', False),
-        location=location_normalizer.normalize(
-            get_value(data, 'Tool/GB name', '', False)
-        ),
+        location=get_value(data, 'Tool/GB name', '', False),
         description=get_value(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
@@ -1443,9 +1391,7 @@ def map_sputtering(i, j, lab_ids, data, upload_id, sputter_class):
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
         operator=get_value(data, 'Operator', '', False),
-        location=location_normalizer.normalize(
-            get_value(data, 'Tool/GB name', '', False)
-        ),
+        location=get_value(data, 'Tool/GB name', '', False),
         description=get_value(data, 'Notes', '', False),
         samples=[
             CompositeSystemReference(
@@ -1558,9 +1504,7 @@ def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
 
     archive = css_class(
         name='Close Space Sublimation ' + get_value(data, 'Material name', '', False),
-        location=location_normalizer.normalize(
-            get_value(data, 'Tool/GB name', '', False)
-        ),
+        location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
         operator=get_value(data, 'Operator', '', False),
@@ -1604,9 +1548,7 @@ def map_close_space_sublimation(i, j, lab_ids, data, upload_id, css_class):
 def map_dip_coating(i, j, lab_ids, data, upload_id, dc_class):
     archive = dc_class(
         name='dip coating ' + get_value(data, 'Material name', '', False),
-        location=location_normalizer.normalize(
-            get_value(data, 'Tool/GB name', '', False)
-        ),
+        location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
         operator=get_value(data, 'Operator', '', False),
@@ -1689,9 +1631,7 @@ def map_atomic_layer_deposition(i, j, lab_ids, data, upload_id, ald_class):
     archive = ald_class(
         name='atomic layer deposition '
         + get_value(data, 'Material name', '', number=False),
-        location=location_normalizer.normalize(
-            get_value(data, 'Tool/GB name', '', False)
-        ),
+        location=get_value(data, 'Tool/GB name', '', False),
         positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
         operator=get_value(data, 'Operator', '', False),

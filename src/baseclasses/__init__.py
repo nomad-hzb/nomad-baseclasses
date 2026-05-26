@@ -317,6 +317,10 @@ class BaseProcess(Process):
     )
 
     def normalize(self, archive, logger):
+        from .helper.naming_normalizer import location_normalizer
+
+        if self.location is not None:
+            self.location = location_normalizer.normalize(self.location)
         if not self.positon_in_experimental_plan:
             try:
                 self.positon_in_experimental_plan = float(
@@ -455,6 +459,20 @@ class LayerProperties(ArchiveSection):
     product_info = SubSection(
         section_def=ProductInfo, description='Product information'
     )
+
+    def normalize(self, archive, logger):
+        from .helper.naming_normalizer import (
+            layer_material_name_normalizer,
+            layer_type_normalizer,
+        )
+
+        if self.layer_type is not None:
+            self.layer_type = layer_type_normalizer.normalize(self.layer_type)
+        if self.layer_material_name is not None:
+            self.layer_material_name = layer_material_name_normalizer.normalize(
+                self.layer_material_name
+            )
+        super().normalize(archive, logger)
 
 
 class LayerDeposition(BaseProcess):
