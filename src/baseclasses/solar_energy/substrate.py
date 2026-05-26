@@ -47,7 +47,17 @@ class Substrate(Entity):
         type=str,
         a_eln=dict(
             component='EnumEditQuantity',
-            props=dict(suggestions=['glass', 'Ti-foil', 'silicon wafer', 'SLG', 'PET', 'Quartz', 'PDMS',]),
+            props=dict(
+                suggestions=[
+                    'glass',
+                    'Ti-foil',
+                    'silicon wafer',
+                    'SLG',
+                    'PET',
+                    'Quartz',
+                    'PDMS',
+                ]
+            ),
         ),
     )
 
@@ -69,7 +79,6 @@ class Substrate(Entity):
                     'Ag-nw',
                     'Ag-grid',
                     'Au',
-
                 ]
             ),
         ),

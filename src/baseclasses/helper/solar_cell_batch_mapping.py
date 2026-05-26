@@ -6,7 +6,6 @@ from nomad.units import ureg
 
 from baseclasses import LayerProperties, PubChemPureSubstanceSectionCustom
 from baseclasses.atmosphere import Atmosphere, GloveboxAtmosphere
-
 from baseclasses.material_processes_misc import (
     AirKnifeGasQuenching,
     Annealing,
@@ -1220,7 +1219,9 @@ def map_substrate(data, substrate_class):
                 data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm']
             ),
             layer_type='Substrate Conductive Layer',
-            layer_material_name=get_value(data, 'Substrate conductive layer', '', False),
+            layer_material_name=get_value(
+                data, 'Substrate conductive layer', '', False
+            ),
         )
     ]
     archive = substrate_class(
@@ -1239,9 +1240,7 @@ def map_substrate(data, substrate_class):
         substrate=get_value(data, 'Substrate material', '', False),
         description=get_value(data, 'Notes', '', False),
         lab_id=get_value(data, 'Bottom Cell Name', '', False),
-        conducting_material=[
-            get_value(data, 'Substrate conductive layer', '', False)
-        ],
+        conducting_material=[get_value(data, 'Substrate conductive layer', '', False)],
         substrate_properties=substrate_props,
     )
     return archive
