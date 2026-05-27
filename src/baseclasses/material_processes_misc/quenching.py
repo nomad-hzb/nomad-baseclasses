@@ -103,6 +103,12 @@ class AntiSolventQuenching(Quenching):
     )
 
     def normalize(self, archive, logger):
+        from baseclasses.helper.naming_normalizer import anti_solvent_normalizer
+
+        if self.anti_solvent_2 is not None and self.anti_solvent_2.name is not None:
+            self.anti_solvent_2.name = anti_solvent_normalizer.normalize(
+                self.anti_solvent_2.name
+            )
         if self.anti_solvent and self.anti_solvent.name:
             if self.anti_solvent_volume:
                 self.name = self.anti_solvent.name + ' ' + str(self.anti_solvent_volume)

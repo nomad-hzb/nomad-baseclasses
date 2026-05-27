@@ -47,7 +47,17 @@ class Substrate(Entity):
         type=str,
         a_eln=dict(
             component='EnumEditQuantity',
-            props=dict(suggestions=['glass', 'Ti-foil', 'silicon wafer']),
+            props=dict(
+                suggestions=[
+                    'glass',
+                    'Ti-foil',
+                    'silicon wafer',
+                    'SLG',
+                    'PET',
+                    'Quartz',
+                    'PDMS',
+                ]
+            ),
         ),
     )
 
@@ -58,10 +68,8 @@ class Substrate(Entity):
             component='EnumEditQuantity',
             props=dict(
                 suggestions=[
-                    'SLG',
                     'FTO',
                     'ITO',
-                    'PET',
                     'PEN',
                     'AZO',
                     'IZO',
@@ -71,7 +79,6 @@ class Substrate(Entity):
                     'Ag-nw',
                     'Ag-grid',
                     'Au',
-                    'PDMS',
                 ]
             ),
         ),
@@ -93,6 +100,19 @@ class Substrate(Entity):
     #     ))
 
     def normalize(self, archive, logger):
+        from baseclasses.helper.naming_normalizer import (
+            layer_material_name_normalizer,
+            substrate_normalizer,
+        )
+
+        if self.substrate is not None:
+            self.substrate = substrate_normalizer.normalize(self.substrate)
+        if self.conducting_material:
+            self.conducting_material = [
+                layer_material_name_normalizer.normalize(m)
+                for m in self.conducting_material
+            ]
+
         super().normalize(archive, logger)
         add_solar_cell(archive)
         if self.substrate:

@@ -218,7 +218,7 @@ def map_basic_sample(data, substrate_name, upload_id, sample_class):
     return (data['Nomad ID'], archive)
 
 
-def map_batch(sample_ids, batch_id, upload_id, batch_class):    
+def map_batch(sample_ids, batch_id, upload_id, batch_class):
     archive = batch_class(
         name=batch_id,
         lab_id=batch_id,
@@ -324,9 +324,11 @@ def map_atmosphere(data):
 
 
 def map_layer(data):
+    layer_type = get_value(data, 'Layer type', None, False)
+
     # Common properties for all layer types
     common_layer_props = {
-        'layer_type': get_value(data, 'Layer type', None, False),
+        'layer_type': layer_type,
         'layer_material_name': get_value(data, 'Material name', None, False),
         'layer_thickness': get_value(data, 'Layer thickness [nm]', None, unit='nm'),
         'layer_chemical_id': get_value(data, 'Layer chemical ID', None, False),
@@ -334,7 +336,7 @@ def map_layer(data):
     }
 
     # Guard clause: handle Carbon Paste Layer early
-    if 'Carbon Paste Layer' in get_value(data, 'Layer type', '', False):
+    if layer_type and 'Carbon Paste Layer' in layer_type:
         return [
             CarbonPasteLayerProperties(
                 **common_layer_props,
@@ -422,7 +424,7 @@ def map_solutions(data):
                     data,
                     f'{solute} Concentration [ul/ml]',
                     None,
-                    unit= 'ul/ml',
+                    unit='ul/ml',
                 ),
                 amount_relative=get_value(data, f'{solute} relative amount', None),
                 chemical_id=get_value(data, f'{solute} chemical ID', None, False),
@@ -453,7 +455,7 @@ def map_solutions(data):
                     data,
                     f'{additive} Concentration [ul/ml]',
                     None,
-                    unit= 'ul/ml',
+                    unit='ul/ml',
                 ),
                 amount_relative=get_value(data, f'{additive} relative amount', None),
                 chemical_id=get_value(data, f'{additive} chemical ID', None, False),
@@ -495,7 +497,8 @@ def map_anti_solvent_quenching(data):
             unit=['uL/s', 'uL/s'],
         ),
         anti_solvent_2=PubChemPureSubstanceSectionCustom(
-            name=get_value(data, 'Anti solvent name', None, False), load_data=False
+            name=get_value(data, 'Anti solvent name', None, False),
+            load_data=False,
         ),
     )
 
@@ -1109,7 +1112,7 @@ def map_lamination(i, j, lab_ids, data, upload_id, lamination_class):
         name='Lamination',
         location=get_value(data, 'Tool/GB name', '', False),
         # Hier muss man evtl was anpassen, da das Lamination ja als letztes von zwei halbstacks ist...
-        position_in_experimental_plan=i,
+        positon_in_experimental_plan=i,
         datetime=get_datetime(data, 'Datetime'),
         operator=get_value(data, 'Operator', '', False),
         description=get_value(data, 'Notes', '', False),
@@ -1161,7 +1164,8 @@ def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
                 ),
                 temperature=get_value(data, f'Temperature {i} [°C]', None, unit='°C'),
                 solvent_2=PubChemPureSubstanceSectionCustom(
-                    name=get_value(data, f'Solvent {i}', None, False), load_data=False
+                    name=get_value(data, f'Solvent {i}', None, False),
+                    load_data=False,
                 ),
             )
             for i in range(10)
@@ -1711,4 +1715,7 @@ def map_generic(i, j, lab_ids, data, upload_id, generic_class):
         ],
     )
     name = get_value(data, 'Name', '', False)
-    return (f'{i}_{j}_generic_process_{sanitize_filename(name, replace_spaces=True)}', archive)
+    return (
+        f'{i}_{j}_generic_process_{sanitize_filename(name, replace_spaces=True)}',
+        archive,
+    )

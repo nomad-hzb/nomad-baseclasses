@@ -547,6 +547,25 @@ class Solution(CompositeSystem):
     solution_id = SubSection(section_def=ReadableIdentifiersCustom)
 
     def normalize(self, archive, logger):
+        from baseclasses.helper.naming_normalizer import (
+            additive_normalizer,
+            solute_normalizer,
+            solvent_normalizer,
+        )
+
+        if self.solvent:
+            for s in self.solvent:
+                if s.chemical_2 is not None and s.chemical_2.name is not None:
+                    s.chemical_2.name = solvent_normalizer.normalize(s.chemical_2.name)
+        if self.solute:
+            for s in self.solute:
+                if s.chemical_2 is not None and s.chemical_2.name is not None:
+                    s.chemical_2.name = solute_normalizer.normalize(s.chemical_2.name)
+        if self.additive:
+            for a in self.additive:
+                if a.chemical_2 is not None and a.chemical_2.name is not None:
+                    a.chemical_2.name = additive_normalizer.normalize(a.chemical_2.name)
+
         super().normalize(archive, logger)
         if not self.preparation:
             if (

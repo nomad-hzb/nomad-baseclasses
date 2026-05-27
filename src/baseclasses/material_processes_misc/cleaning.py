@@ -71,13 +71,15 @@ class SolutionCleaning(CleaningTechnique):
     )
 
     def normalize(self, archive, logger):
-        if self.solvent:
-            if self.solvent.name:
-                self.name = self.solvent.name
+        from ..helper.naming_normalizer import solvent_normalizer
 
-        if self.solvent_2:
+        if self.solvent is not None:
+            if self.solvent.name:
+                self.name = solvent_normalizer.normalize(self.solvent.name)
+
+        if self.solvent_2 is not None:
             if self.solvent_2.name:
-                self.name = self.solvent_2.name
+                self.name = solvent_normalizer.normalize(self.solvent_2.name)
 
 
 class UVCleaning(CleaningTechnique):
@@ -146,6 +148,12 @@ class PlasmaCleaning(CleaningTechnique):
             props=dict(suggestions=['Oxygen', 'Nitrogen', 'Argon']),
         ),
     )
+
+    def normalize(self, archive, logger):
+        from ..helper.naming_normalizer import atmosphere_normalizer
+
+        if self.plasma_type is not None:
+            self.plasma_type = atmosphere_normalizer.normalize(self.plasma_type)
 
 
 class CoronaCleaning(CleaningTechnique):
