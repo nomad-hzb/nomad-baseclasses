@@ -148,6 +148,7 @@ class Evaporation(ArchiveSection):
             defaultDisplayUnit='mbar',
             props=dict(minValue=0),
         ),
+        description='Chamber pressure before opening evaporation source lid',
     )
 
     pressure_start = Quantity(
@@ -162,6 +163,7 @@ class Evaporation(ArchiveSection):
             defaultDisplayUnit='mbar',
             props=dict(minValue=0),
         ),
+        description='Pressure at deposition start, after opening evaporation lid',
     )
 
     pressure_end = Quantity(
@@ -176,6 +178,7 @@ class Evaporation(ArchiveSection):
             defaultDisplayUnit='mbar',
             props=dict(minValue=0),
         ),
+        description='Pressure at end of deposition'
     )
 
     start_rate = Quantity(
