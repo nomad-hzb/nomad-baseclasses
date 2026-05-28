@@ -21,61 +21,6 @@ from nomad.datamodel.data import ArchiveSection
 from nomad.metainfo import MEnum, Quantity, Section, SubSection
 
 
-class ModuleConfiguration(ArchiveSection):
-    """
-    Tracks whether this solar cell device is a module, i.e. multiple pixels
-    are electrically connected. This is orthogonal to the multi-junction concept:
-    a tandem can also be a module.
-
-    Note: The total number of pixels on the substrate is tracked on the
-    Substrate section (number_of_pixels). This section captures which and
-    how those pixels are connected at the device level.
-    The scribing parameters (P1/P2/P3, laser settings, dead area) are tracked
-    in the LaserScribing process entry and are not duplicated here.
-    """
-
-    m_def = Section()
-
-    is_module = Quantity(
-        type=bool,
-        default=False,
-        description='Whether this device has pixels electrically connected (module configuration).',
-        a_eln=dict(component='BoolEditQuantity'),
-    )
-
-    pixel_connection = Quantity(
-        type=MEnum('Series', 'Parallel', 'Mixed'),
-        description='How the pixels are electrically connected within the module.',
-        a_eln=dict(component='EnumEditQuantity'),
-    )
-
-    number_of_connected_pixels = Quantity(
-        type=np.dtype(np.int64),
-        description=(
-            'Number of pixels connected in this module. '
-            'The total pixels on the substrate are tracked on the Substrate entry.'
-        ),
-        a_eln=dict(component='NumberEditQuantity'),
-    )
-
-    total_module_area = Quantity(
-        type=np.dtype(np.float64),
-        unit='cm**2',
-        description='Total active area of the module (sum of connected pixel areas).',
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm**2'),
-    )
-
-    geometric_fill_factor = Quantity(
-        type=np.dtype(np.float64),
-        description=(
-            'Ratio of active area to total aperture area. '
-            'Accounts for dead area from scribing lines (P1/P2/P3). '
-            'Key figure of merit for module efficiency comparisons.'
-        ),
-        a_eln=dict(component='NumberEditQuantity'),
-    )
-
-
 class SubcellInfo(ArchiveSection):
     """
     Metadata for a single subcell within a multi-junction device.

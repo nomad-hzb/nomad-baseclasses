@@ -26,7 +26,8 @@ from nomad.units import ureg
 
 from .. import ReadableIdentifiersCustom
 from ..helper.add_solar_cell import add_band_gap, add_solar_cell
-from .multijunction import ModuleConfiguration, MultijunctionConfiguration
+from .module import ModuleConfiguration
+from .multijunction import MultijunctionConfiguration
 from .substrate import Substrate
 
 
