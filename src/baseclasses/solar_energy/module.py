@@ -39,7 +39,7 @@ class ModuleConfiguration(ArchiveSection):
     is_module = Quantity(
         type=bool,
         default=False,
-        description='Whether this device has pixels electrically connected (module configuration).',
+        description='Whether this device has pixels electrically connected (module configuration).', 
         a_eln=dict(component='BoolEditQuantity'),
     )
 
@@ -49,14 +49,7 @@ class ModuleConfiguration(ArchiveSection):
         a_eln=dict(component='EnumEditQuantity'),
     )
 
-    number_of_connected_pixels = Quantity(
-        type=np.dtype(np.int64),
-        description=(
-            'Number of pixels connected in this module. '
-            'The total pixels on the substrate are tracked on the Substrate entry.'
-        ),
-        a_eln=dict(component='NumberEditQuantity'),
-    )
+    #number_of_connected_pixels = takes from substrate.number_of_pixels
 
     total_module_area = Quantity(
         type=np.dtype(np.float64),
@@ -65,15 +58,9 @@ class ModuleConfiguration(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm**2'),
     )
 
-    active_area = Quantity(
-        type=np.dtype(np.float64),
-        unit='cm**2',
-        description=(
-            'Effective illuminated area of the module. '
-            'If measured with a mask, this is the mask aperture area.'
-        ),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm**2'),
-    )
+    #module_active_area = pixels * active_area (from substrate)
+
+    #module_dead_area, module_aperture_area and geometrical_fill_factor are in the Substrate class
 
     cell_area = Quantity(
         type=np.dtype(np.float64),

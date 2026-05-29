@@ -25,15 +25,16 @@ from ..helper.add_solar_cell import add_solar_cell
 
 
 class Substrate(Entity):
+    #substrate_dimension = picks up from Sample Dimension label
+    
+    #dimension_after_encapsulation = substrate_dimension + Barrier Foil Dimension 
+
     solar_cell_area = Quantity(
         type=np.dtype(np.float64),
         unit='cm**2',
         shape=[],
         a_eln=dict(component='NumberEditQuantity'),
-    )
-
-    number_of_pixels = Quantity(
-        type=np.dtype(np.float64), shape=[], a_eln=dict(component='NumberEditQuantity')
+        #Sample Area label. unclear on how ppl use it, we can keep it but disregard it, because in most cases it is used as pixel area
     )
 
     pixel_area = Quantity(
@@ -41,6 +42,19 @@ class Substrate(Entity):
         unit='cm**2',
         shape=[],
         a_eln=dict(component='NumberEditQuantity'),
+        # pixel/cell area
+    )
+
+    #active_area = 'The effective area of the cell during IV and stability measurements under illumination. If measured with a mask, this corresponds to the area of the hole in the mask. Otherwise this area is the same as the pixel/cell area.',
+
+    #dead_area = interconnects area, inactive to solar conversion 
+
+    #aperture_area = sum of active and dead area (not the same as illumination aperture)
+    
+    #geometric_fill_factor =ratio of active to aperture area
+
+    number_of_pixels = Quantity(
+        type=np.dtype(np.float64), shape=[], a_eln=dict(component='NumberEditQuantity')
     )
 
     substrate = Quantity(
