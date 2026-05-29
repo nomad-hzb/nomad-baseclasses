@@ -49,7 +49,7 @@ class Substrate(Entity):
             component='EnumEditQuantity',
             props=dict(
                 suggestions=[
-                    'glass',
+                    'Glass',
                     'Ti-foil',
                     'silicon wafer',
                     'SLG',
