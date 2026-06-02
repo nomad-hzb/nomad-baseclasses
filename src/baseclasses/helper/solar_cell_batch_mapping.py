@@ -1254,9 +1254,6 @@ def map_substrate(data, substrate_class):
             unit=['cm**2', 'cm**2'],
         ),
         dead_area=get_value(data, 'Dead area [cm^2]', None, unit=['cm**2']),
-        aperture_area=get_value(
-            data, 'Aperture area [cm^2]', None, unit=['cm**2']
-        ),
         geometrical_fill_factor=get_value(
             data, 'Geometrical fill factor', None
         ),

@@ -334,7 +334,6 @@ class SolcarCellSample(CompositeSystem):
                 self.architecture
             )
 
-        if self.substrate:
             per_cell_area = (
                 getattr(self.substrate, 'active_area', None)
                 or self.substrate.pixel_area
@@ -364,15 +363,14 @@ class SolcarCellSample(CompositeSystem):
                 self.module_configuration.module_dead_area = (
                     per_cell_dead * n_pixels
                 )
-            per_cell_aperture = getattr(self.substrate, 'aperture_area', None)
-            if per_cell_aperture is not None and n_pixels:
-                self.module_configuration.module_aperture_area = (
-                    per_cell_aperture * n_pixels
-                )
+
             gff = getattr(self.substrate, 'geometrical_fill_factor', None)
             if gff is not None:
                 self.module_configuration.module_geometrical_fill_factor = gff
-
+            
+            if self.module_configuration.module_active_area and self.module_configuration.module_dead_area: 
+                self.module_configuration.module_aperture_area = (self.module_configuration.module_active_area + self.module_configuration.module_dead_area) 
+        
         result_data = collectSampleData(archive)
 
         jv_key = ''

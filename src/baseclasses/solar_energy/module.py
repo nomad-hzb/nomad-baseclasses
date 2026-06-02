@@ -44,9 +44,10 @@ class ModuleConfiguration(ArchiveSection):
     )
 
     pixel_connection = Quantity(
-        type=MEnum('Series', 'Parallel', 'Mixed'),
+        type=str,
         description='How the pixels are electrically connected within the module.',
-        a_eln=dict(component='EnumEditQuantity'),
+        a_eln=dict(component = 'EnumEditQuantity',
+                   props = dict(suggestions = ['Parallel', 'Series', 'Mixed']),)
     )
 
     module_active_area = Quantity(
@@ -75,7 +76,6 @@ class ModuleConfiguration(ArchiveSection):
         unit='cm**2',
         description=(
             'Total aperture area of the module (active + dead). '
-            'Computed as substrate.aperture_area × substrate.number_of_pixels.'
         ),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm**2'),
     )
