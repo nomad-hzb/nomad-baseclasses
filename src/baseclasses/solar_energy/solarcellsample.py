@@ -367,9 +367,13 @@ class SolcarCellSample(CompositeSystem):
             gff = getattr(self.substrate, 'geometrical_fill_factor', None)
             if gff is not None:
                 self.module_configuration.module_geometrical_fill_factor = gff
-            
-            if self.module_configuration.module_active_area and self.module_configuration.module_dead_area: 
-                self.module_configuration.module_aperture_area = (self.module_configuration.module_active_area + self.module_configuration.module_dead_area) 
+
+            module_active_area = self.module_configuration.module_active_area
+            module_dead_area = self.module_configuration.module_dead_area
+            if module_active_area is not None and module_dead_area is not None:
+                self.module_configuration.module_aperture_area = (
+                    module_active_area + module_dead_area
+                )
         
         result_data = collectSampleData(archive)
 
