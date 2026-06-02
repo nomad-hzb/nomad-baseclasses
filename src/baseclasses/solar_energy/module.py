@@ -60,11 +60,35 @@ class ModuleConfiguration(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm**2'),
     )
 
-    #module_dead_area = picks up from Substrate.dead_area
-    
-    #module_aperture_area = picks up from Substrate.aperture_area (sum of active and dead area)
+    module_dead_area = Quantity(
+        type=np.dtype(np.float64),
+        unit='cm**2',
+        description=(
+            'Total dead area of the module. '
+            'Computed as substrate.dead_area × substrate.number_of_pixels.'
+        ),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm**2'),
+    )
 
-    #module_geometrical_fill_factor = picks up for Substrate.geometrical_fill_factor
+    module_aperture_area = Quantity(
+        type=np.dtype(np.float64),
+        unit='cm**2',
+        description=(
+            'Total aperture area of the module (active + dead). '
+            'Computed as substrate.aperture_area × substrate.number_of_pixels.'
+        ),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm**2'),
+    )
+
+    module_geometrical_fill_factor = Quantity(
+        type=np.dtype(np.float64),
+        description=(
+            'Ratio of module active area to module aperture area. '
+            'Equal to substrate.geometrical_fill_factor '
+            '(does not change with number of cells).'
+        ),
+        a_eln=dict(component='NumberEditQuantity'),
+    )
 
     module_dimension_after_encapsulation = Quantity(
         type=str,
@@ -75,11 +99,11 @@ class ModuleConfiguration(ArchiveSection):
         a_eln=dict(component='StringEditQuantity'),
     )
 
-    # jv_data_recalculated_per_cell = Quantity(
-    #     type=bool,
-    #     description=(
-    #         'Whether the JV data has been recalculated to average per-cell values. '
-    #         'Preferred for modules to enable downstream comparisons with single cells.'
-    #     ),
-    #     a_eln=dict(component='BoolEditQuantity'),
-    # )
+    jv_data_recalculated_per_cell = Quantity(
+        type=bool,
+        description=(
+            'Whether the JV data has been recalculated to average per-cell values. '
+            'Preferred for modules to enable downstream comparisons with single cells.'
+        ),
+        a_eln=dict(component='BoolEditQuantity'),
+    )

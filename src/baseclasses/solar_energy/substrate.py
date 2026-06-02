@@ -172,6 +172,19 @@ class Substrate(Entity):
                 for m in self.conducting_material
             ]
 
+        # Auto-compute aperture_area and geometrical_fill_factor if not set
+        if self.active_area is not None and self.dead_area is not None:
+            if self.aperture_area is None:
+                self.aperture_area = self.active_area + self.dead_area
+        if self.active_area is not None and self.aperture_area is not None:
+            if self.geometrical_fill_factor is None:
+                try:
+                    self.geometrical_fill_factor = float(
+                        self.active_area / self.aperture_area
+                    )
+                except Exception:
+                    pass
+
         super().normalize(archive, logger)
         add_solar_cell(archive)
         if self.substrate:
