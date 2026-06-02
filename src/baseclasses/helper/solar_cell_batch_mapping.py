@@ -23,6 +23,7 @@ from baseclasses.material_processes_misc.annealing import IRAnnealing
 from baseclasses.material_processes_misc.laser_scribing import LaserScribingProperties
 from baseclasses.product_info import ProductInfo
 from baseclasses.solar_energy.carbonpaste import CarbonPasteLayerProperties
+from baseclasses.solar_energy.module import ModuleConfiguration
 from baseclasses.solution import Solution, SolutionChemical, SolutionWaschingFiltration
 from baseclasses.vapour_based_deposition.atomic_layer_deposition import (
     ALDMaterial,
@@ -209,6 +210,18 @@ def map_basic_sample(data, substrate_name, upload_id, sample_class):
         description=get_value(data, 'Variation', None, False),
         number_of_junctions=get_value(data, 'Number of junctions', None),
     )
+    if hasattr(archive, 'module_configuration'):
+        archive.module_configuration = ModuleConfiguration(
+            is_module=bool(get_value(data, 'Is module', False, False)),
+            pixel_connection=get_value(data, 'Pixel connection', None, False),
+            total_module_area=get_value(
+                data, 'Total module area [cm^2]', None, unit='cm**2'
+            ),
+            substrate_dimension=get_value(data, 'Sample dimension', None, False),
+            jv_data_recalculated_per_cell=get_value(
+                data, 'JV data recalculated per cell', None, False
+            ),
+        )
     if parent_id:
         archive.parent = CompositeSystemReference(
             reference=get_reference(upload_id, f'{parent_id}.archive.json'),
@@ -1232,9 +1245,16 @@ def map_substrate(data, substrate_class):
         + get_value(data, 'Substrate material', '', False)
         + ' '
         + get_value(data, 'Substrate conductive layer', '', False),
+        substrate_dimenstion=get_value(data, 'Sample dimension', '', False),
         solar_cell_area=get_value(data, 'Sample area [cm^2]', None, unit=['cm**2']),
         pixel_area=get_value(
             data, ['Pixel area', 'Pixel area [cm^2]'], None, unit=['cm**2', 'cm**2']
+        ),
+        active_area=get_value(
+            data,
+            ['Active area [cm^2]', 'Aperture area [cm^2]', 'Mask area [cm^2]'],
+            None,
+            unit=['cm**2', 'cm**2', 'cm**2'],
         ),
         number_of_pixels=get_value(data, 'Number of pixels', None),
         substrate=get_value(data, 'Substrate material', '', False),

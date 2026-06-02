@@ -49,44 +49,37 @@ class ModuleConfiguration(ArchiveSection):
         a_eln=dict(component='EnumEditQuantity'),
     )
 
-    #number_of_connected_pixels = takes from substrate.number_of_pixels
-
-    total_module_area = Quantity(
-        type=np.dtype(np.float64),
-        unit='cm**2',
-        description='Total area of the module including dead area (scribing lines, borders).',
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm**2'),
-    )
-
-    #module_active_area = pixels * active_area (from substrate)
-
-    #module_dead_area, module_aperture_area and geometrical_fill_factor are in the Substrate class
-
-    cell_area = Quantity(
+    module_active_area = Quantity(
         type=np.dtype(np.float64),
         unit='cm**2',
         description=(
-            'Area of each individual pixel (cell) within the module, '
-            'defined as the overlap between front and back contacts.'
+            'Total active area of the module. Computed in normalization as '
+            'substrate.active_area (falling back to pixel_area) × '
+            'substrate.number_of_pixels.'
         ),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm**2'),
     )
 
-    geometric_fill_factor = Quantity(
-        type=np.dtype(np.float64),
+    #module_dead_area = picks up from Substrate.dead_area
+    
+    #module_aperture_area = picks up from Substrate.aperture_area (sum of active and dead area)
+
+    #module_geometrical_fill_factor = picks up for Substrate.geometrical_fill_factor
+
+    module_dimension_after_encapsulation = Quantity(
+        type=str,
         description=(
-            'Ratio of active area to total aperture area. '
-            'Accounts for dead area from scribing lines (P1/P2/P3). '
-            'Key figure of merit for module efficiency comparisons.'
+            'Physical dimensions of the module after encapsulation. '
+            'Inherited from the encapsulation barrier foil dimension.'
         ),
-        a_eln=dict(component='NumberEditQuantity'),
+        a_eln=dict(component='StringEditQuantity'),
     )
 
-    jv_data_recalculated_per_cell = Quantity(
-        type=bool,
-        description=(
-            'Whether the JV data has been recalculated to average per-cell values. '
-            'Preferred for modules to enable downstream comparisons with single cells.'
-        ),
-        a_eln=dict(component='BoolEditQuantity'),
-    )
+    # jv_data_recalculated_per_cell = Quantity(
+    #     type=bool,
+    #     description=(
+    #         'Whether the JV data has been recalculated to average per-cell values. '
+    #         'Preferred for modules to enable downstream comparisons with single cells.'
+    #     ),
+    #     a_eln=dict(component='BoolEditQuantity'),
+    # )

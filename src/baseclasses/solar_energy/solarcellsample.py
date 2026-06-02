@@ -335,9 +335,29 @@ class SolcarCellSample(CompositeSystem):
             )
 
         if self.substrate:
-            if self.substrate.pixel_area:
+            per_cell_area = (
+                getattr(self.substrate, 'active_area', None)
+                or self.substrate.pixel_area
+            )
+            if per_cell_area:
                 archive.results.properties.optoelectronic.solar_cell.device_area = (
-                    self.substrate.pixel_area
+                    per_cell_area
+                )
+
+        # Compute module_active_area: per-cell area × number_of_pixels on substrate
+        if (
+            self.module_configuration
+            and self.module_configuration.is_module
+            and self.substrate
+        ):
+            per_cell_area = (
+                getattr(self.substrate, 'active_area', None)
+                or self.substrate.pixel_area
+            )
+            n_pixels = self.substrate.number_of_pixels
+            if per_cell_area is not None and n_pixels:
+                self.module_configuration.module_active_area = (
+                    per_cell_area * n_pixels
                 )
 
         result_data = collectSampleData(archive)
