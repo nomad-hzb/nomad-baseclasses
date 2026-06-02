@@ -178,7 +178,7 @@ class Evaporation(ArchiveSection):
             defaultDisplayUnit='mbar',
             props=dict(minValue=0),
         ),
-        description='Pressure at end of deposition'
+        description='Pressure at end of deposition',
     )
 
     start_rate = Quantity(

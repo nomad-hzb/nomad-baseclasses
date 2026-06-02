@@ -1250,13 +1250,13 @@ def map_substrate(data, substrate_class):
             data, ['Pixel area', 'Pixel area [cm^2]'], None, unit=['cm**2', 'cm**2']
         ),
         active_area=get_value(
-            data, ['Active area [cm^2]', 'Mask area [cm^2]'], None,
+            data,
+            ['Active area [cm^2]', 'Mask area [cm^2]'],
+            None,
             unit=['cm**2', 'cm**2'],
         ),
         dead_area=get_value(data, 'Dead area [cm^2]', None, unit=['cm**2']),
-        geometrical_fill_factor=get_value(
-            data, 'Geometrical fill factor', None
-        ),
+        geometrical_fill_factor=get_value(data, 'Geometrical fill factor', None),
         number_of_pixels=get_value(data, 'Number of pixels', None),
         substrate=get_value(data, 'Substrate material', '', False),
         description=get_value(data, 'Notes', '', False),

@@ -39,15 +39,17 @@ class ModuleConfiguration(ArchiveSection):
     is_module = Quantity(
         type=bool,
         default=False,
-        description='Whether this device has pixels electrically connected (module configuration).', 
+        description='Whether this device has pixels electrically connected (module configuration).',
         a_eln=dict(component='BoolEditQuantity'),
     )
 
     pixel_connection = Quantity(
         type=str,
         description='How the pixels are electrically connected within the module.',
-        a_eln=dict(component = 'EnumEditQuantity',
-                   props = dict(suggestions = ['Parallel', 'Series', 'Mixed']),)
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(suggestions=['Parallel', 'Series', 'Mixed']),
+        ),
     )
 
     module_active_area = Quantity(
@@ -74,9 +76,7 @@ class ModuleConfiguration(ArchiveSection):
     module_aperture_area = Quantity(
         type=np.dtype(np.float64),
         unit='cm**2',
-        description=(
-            'Total aperture area of the module (active + dead). '
-        ),
+        description=('Total aperture area of the module (active + dead). '),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm**2'),
     )
 

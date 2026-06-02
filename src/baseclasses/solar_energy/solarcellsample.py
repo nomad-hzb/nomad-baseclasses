@@ -305,7 +305,6 @@ class SolcarCellSample(CompositeSystem):
             'Orthogonal to multijunction_configuration — a tandem can also be a module.'
         ),
     )
-    
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
@@ -360,9 +359,7 @@ class SolcarCellSample(CompositeSystem):
                 )
             per_cell_dead = getattr(self.substrate, 'dead_area', None)
             if per_cell_dead is not None and n_pixels:
-                self.module_configuration.module_dead_area = (
-                    per_cell_dead * n_pixels
-                )
+                self.module_configuration.module_dead_area = per_cell_dead * n_pixels
 
             gff = getattr(self.substrate, 'geometrical_fill_factor', None)
             if gff is not None:
@@ -374,7 +371,7 @@ class SolcarCellSample(CompositeSystem):
                 self.module_configuration.module_aperture_area = (
                     module_active_area + module_dead_area
                 )
-        
+
         result_data = collectSampleData(archive)
 
         jv_key = ''
