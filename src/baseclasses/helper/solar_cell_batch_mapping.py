@@ -351,8 +351,8 @@ def map_layer(data):
             layer_transmission=get_value(data, 'Transmission [%]', None, True),
             layer_morphology=get_value(data, 'Morphology', None, False),
             layer_sheet_resistance=get_value(
-                data, 'Sheet Resistance [Ohms/square]', None, True
-            ),
+                data, 'Sheet Resistance [Ohms/square]', None, True),
+            layer_transmission=get_value(data, 'Transmission [%]', None, True),
         )
     ]
 
@@ -629,6 +629,18 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
                     None,
                     unit=['°'],
                 ),
+                solution_density=get_value(
+                    data,
+                    'Density [g/cm^3]',
+                    None,
+                    unit=['g/cm^3'],
+                ),
+                solution_surface_tension=get_value(
+                    data,
+                    'Surface tension [mN/m]',
+                    None,
+                    unit=['mN/m'],
+                ),
             )
         ],
         annealing=map_annealing(data),
@@ -692,6 +704,18 @@ def map_blade_coating(i, j, lab_ids, data, upload_id, blade_coating_class):
                     'Contact angle [°]',
                     None,
                     unit=['°'],
+                ),
+                solution_density=get_value(
+                    data,
+                    'Density [g/cm^3]',
+                    None,
+                    unit=['g/cm^3'],
+                ),
+                solution_surface_tension=get_value(
+                    data,
+                    'Surface tension [mN/m]',
+                    None,
+                    unit=['mN/m'],
                 ),
             )
         ],
@@ -760,6 +784,18 @@ def map_gravure_printing(i, j, lab_ids, data, upload_id, gravure_printing_class)
                     None,
                     unit=['°'],
                 ),
+                solution_density=get_value(
+                    data,
+                    'Density [g/cm^3]',
+                    None,
+                    unit=['g/cm^3'],
+                ),
+                solution_surface_tension=get_value(
+                    data,
+                    'Surface tension [mN/m]',
+                    None,
+                    unit=['mN/m'],
+                ),
             )
         ],
         layer=map_layer(data),
@@ -821,6 +857,18 @@ def map_sdc(i, j, lab_ids, data, upload_id, sdc_class):
                     'Contact angle [°]',
                     None,
                     unit=['°'],
+                ),
+                solution_density=get_value(
+                    data,
+                    'Density [g/cm^3]',
+                    None,
+                    unit=['g/cm^3'],
+                ),
+                solution_surface_tension=get_value(
+                    data,
+                    'Surface tension [mN/m]',
+                    None,
+                    unit=['mN/m'],
                 ),
             )
         ],
@@ -889,6 +937,18 @@ def map_inkjet_printing(i, j, lab_ids, data, upload_id, inkjet_class):
                     'Contact angle [°]',
                     None,
                     unit=['°'],
+                ),
+                solution_density=get_value(
+                    data,
+                    'Density [g/cm^3]',
+                    None,
+                    unit=['g/cm^3'],
+                ),
+                solution_surface_tension=get_value(
+                    data,
+                    'Surface tension [mN/m]',
+                    None,
+                    unit=['mN/m'],
                 ),
             )
         ],
@@ -1064,6 +1124,18 @@ def map_screen_printing(i, j, lab_ids, data, upload_id, screen_printing_class):
                     None,
                     unit=['°'],
                 ),
+                solution_density=get_value(
+                    data,
+                    'Density [g/cm^3]',
+                    None,
+                    unit=['g/cm^3'],
+                ),
+                solution_surface_tension=get_value(
+                    data,
+                    'Surface tension [mN/m]',
+                    None,
+                    unit=['mN/m'],
+                ),
             )
         ],
         layer=map_layer(data),
@@ -1216,8 +1288,8 @@ def map_substrate(data, substrate_class):
             layer_thickness=get_value(data, 'TCO thickness [nm]', None, unit=['nm']),
             layer_transmission=get_value(data, 'Transmission [%]', None),
             layer_sheet_resistance=get_value(
-                data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm']
-            ),
+                data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm']),
+            layer_transmission=get_value(data, 'Transmission [%]', None, True),
             layer_type='Substrate Conductive Layer',
             layer_material_name=get_value(
                 data, 'Substrate conductive layer', '', False
@@ -1579,6 +1651,18 @@ def map_dip_coating(i, j, lab_ids, data, upload_id, dc_class):
                     'Contact angle [°]',
                     None,
                     unit=['°'],
+                ),
+                solution_density=get_value(
+                    data,
+                    'Density [g/cm^3]',
+                    None,
+                    unit=['g/cm^3'],
+                ),
+                solution_surface_tension=get_value(
+                    data,
+                    'Surface tension [mN/m]',
+                    None,
+                    unit=['mN/m'],
                 ),
             )
         ],
