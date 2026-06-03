@@ -85,9 +85,7 @@ class PrecursorSolution(ArchiveSection):
 
     solution_density = Quantity(
         description=('The density of the solution.'),
-        links=[
-            'http://www.ontology-of-units-of-measure.org/resource/om-2/Density'
-        ],
+        links=['http://www.ontology-of-units-of-measure.org/resource/om-2/Density'],
         type=np.dtype(np.float64),
         unit=('g/cm^3'),
         a_eln=dict(

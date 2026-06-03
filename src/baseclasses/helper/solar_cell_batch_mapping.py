@@ -361,8 +361,8 @@ def map_layer(data):
             layer_transmission=get_value(data, 'Transmission [%]', None, True),
             layer_morphology=get_value(data, 'Morphology', None, False),
             layer_sheet_resistance=get_value(
-                data, 'Sheet Resistance [Ohms/square]', None, True
-            ),
+                data, 'Sheet Resistance [Ohms/square]', None, True),
+            layer_transmission=get_value(data, 'Transmission [%]', None, True),
         )
     ]
 
@@ -1298,8 +1298,8 @@ def map_substrate(data, substrate_class):
             layer_thickness=get_value(data, 'TCO thickness [nm]', None, unit=['nm']),
             layer_transmission=get_value(data, 'Transmission [%]', None),
             layer_sheet_resistance=get_value(
-                data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm']
-            ),
+                data, 'Sheet Resistance [Ohms/square]', None, unit=['ohm']),
+            layer_transmission=get_value(data, 'Transmission [%]', None, True),
             layer_type='Substrate Conductive Layer',
             layer_material_name=get_value(
                 data, 'Substrate conductive layer', '', False
