@@ -99,11 +99,3 @@ class ModuleConfiguration(ArchiveSection):
         a_eln=dict(component='StringEditQuantity'),
     )
 
-    jv_data_recalculated_per_cell = Quantity(
-        type=bool,
-        description=(
-            'Whether the JV data has been recalculated to average per-cell values. '
-            'Preferred for modules to enable downstream comparisons with single cells.'
-        ),
-        a_eln=dict(component='BoolEditQuantity'),
-    )

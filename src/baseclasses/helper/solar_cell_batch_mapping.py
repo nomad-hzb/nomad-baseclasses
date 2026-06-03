@@ -214,12 +214,10 @@ def map_basic_sample(data, substrate_name, upload_id, sample_class):
         archive.module_configuration = ModuleConfiguration(
             is_module=bool(get_value(data, 'Is module', False, False)),
             pixel_connection=get_value(data, 'Pixel connection', None, False),
-            # module_dimension_after_encapsulation=get_value(
-            #     data, 'Module dimension after encapsulation', None, False
-            # ),
-            # jv_data_recalculated_per_cell=get_value(
-            #     data, 'JV data recalculated per cell', None, False
-            # ),
+            module_dimension_after_encapsulation=get_value(
+                 data, 'Module dimension after encapsulation', None, False
+            ),
+
         )
     if parent_id:
         archive.parent = CompositeSystemReference(
