@@ -301,6 +301,7 @@ class SolcarCellSample(CompositeSystem):
     module_configuration = SubSection(
         section_def=ModuleConfiguration,
         description=(
+            'Section present when sample is module'
             'Module-level configuration: whether pixels are connected and how. '
             'Orthogonal to multijunction_configuration — a tandem can also be a module.'
         ),
