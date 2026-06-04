@@ -15,7 +15,7 @@ classifiers = [
 ]
 name = "nomad-baseclasses"
 description = "A schema package plugin for chemical energy at hzb."
-version = "1.0.0"
+version = "1.0.1"
 readme = "README.rst"
 requires-python = ">=3.10"
 authors = [
