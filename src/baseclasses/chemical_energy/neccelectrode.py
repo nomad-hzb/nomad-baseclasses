@@ -36,6 +36,7 @@ def build_recipe_id_base(archive, recipe_type, element, deposition_method):
         'Spray Dep': 'SD',
         'Ultrasonic Nozzle': 'UN',
         'Dropcast': 'DC',
+        'None': 'no',
     }
     recipe_id_list = [
         recipe_type_mapping.get(recipe_type),
@@ -76,7 +77,7 @@ class CENECCElectrodeRecipeID(ReadableIdentifiersCustom):
     )
 
     deposition_method = Quantity(
-        type=MEnum('Spray Dep', 'Ultrasonic Nozzle', 'Dropcast'),
+        type=MEnum('Spray Dep', 'Ultrasonic Nozzle', 'Dropcast', 'None'),
         shape=[],
         a_eln=dict(
             component='EnumEditQuantity',
