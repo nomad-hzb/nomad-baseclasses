@@ -213,7 +213,7 @@ def map_basic_sample(data, substrate_name, upload_id, sample_class):
     if hasattr(archive, 'module_configuration'):
         archive.module_configuration = ModuleConfiguration(
             is_module=bool(get_value(data, 'Is module', False, False)),
-            pixel_connection=get_value(data, 'Pixel connection', None, False),
+            pixel_connection=get_value(data, 'Pixel/cell connection', None, False),
             module_dimension_after_encapsulation=get_value(
                  data, 'Module dimension after encapsulation', None, False
             ),

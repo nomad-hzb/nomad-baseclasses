@@ -337,11 +337,6 @@ class SolcarCellSample(CompositeSystem):
                     normalized_substrate.conducting_material
                 )
 
-        if self.architecture:
-            archive.results.properties.optoelectronic.solar_cell.device_architecture = (
-                self.architecture
-            )
-
             per_cell_area = (
                 getattr(normalized_substrate, 'active_area', None)
                 or normalized_substrate.pixel_area
@@ -351,10 +346,15 @@ class SolcarCellSample(CompositeSystem):
                     per_cell_area
                 )
 
+        if self.architecture:
+            archive.results.properties.optoelectronic.solar_cell.device_architecture = (
+                self.architecture
+            )
+
         # Compute module_active_area: per-cell area × number_of_pixels on substrate
         if (
             self.module_configuration
-            and self.module_configuration.is_module
+            and self.module_configuration.is_module 
             and normalized_substrate
         ):
             n_pixels = normalized_substrate.number_of_pixels

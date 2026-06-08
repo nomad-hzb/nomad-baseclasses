@@ -51,7 +51,7 @@ class Substrate(Entity):
         unit='cm**2',
         shape=[],
         description=(
-            'Total area of the cell. '
+            'Total area of the cell.'
             'Defined as the overlap between front and back contacts.'
         ),
         a_eln=dict(component='NumberEditQuantity'),
@@ -99,7 +99,8 @@ class Substrate(Entity):
     )
 
     number_of_pixels = Quantity(
-        type=np.dtype(np.float64), shape=[], a_eln=dict(component='NumberEditQuantity')
+        type=np.dtype(np.float64), shape=[], a_eln=dict(component='NumberEditQuantity'),
+        description='Number of pixels/cells.'
     )
 
     substrate = Quantity(
