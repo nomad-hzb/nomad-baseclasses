@@ -26,6 +26,7 @@ from nomad.units import ureg
 
 from .. import ReadableIdentifiersCustom
 from ..helper.add_solar_cell import add_band_gap, add_solar_cell
+from .module import ModuleConfiguration
 from .substrate import Substrate
 
 
@@ -297,26 +298,52 @@ class SolcarCellSample(CompositeSystem):
     sample_id = SubSection(section_def=ReadableIdentifiersCustom)
     parent = SubSection(section_def=CompositeSystemReference)
 
+    module_configuration = SubSection(
+        section_def=ModuleConfiguration,
+        description=(
+            'Section present when sample is module'
+            'Module-level configuration: whether pixels are connected and how. '
+            'Orthogonal to multijunction_configuration — a tandem can also be a module.'
+        ),
+    )
+
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
+
+        normalized_substrate = self.substrate
+        if normalized_substrate is not None and hasattr(normalized_substrate, 'normalize'):
+            try:
+                normalized_substrate.normalize(archive, logger)
+            except Exception:
+                if logger:
+                    logger.debug('Substrate normalize failed in SolcarCellSample.', exc_info=True)
 
         add_solar_cell(archive)
         archive.results.properties.optoelectronic.solar_cell.device_stack = []
         archive.results.properties.optoelectronic.solar_cell.substrate = []
-        if self.substrate is not None:
-            if self.substrate.substrate is not None:
+        if normalized_substrate is not None:
+            if normalized_substrate.substrate is not None:
                 archive.results.properties.optoelectronic.solar_cell.substrate = [
-                    self.substrate.substrate
+                    normalized_substrate.substrate
                 ]
                 archive.results.properties.optoelectronic.solar_cell.device_stack.append(
-                    self.substrate.substrate
+                    normalized_substrate.substrate
                 )
-            if self.substrate.conducting_material is not None:
+            if normalized_substrate.conducting_material is not None:
                 archive.results.properties.optoelectronic.solar_cell.substrate.extend(
-                    self.substrate.conducting_material
+                    normalized_substrate.conducting_material
                 )
                 archive.results.properties.optoelectronic.solar_cell.device_stack.extend(
-                    self.substrate.conducting_material
+                    normalized_substrate.conducting_material
+                )
+
+            per_cell_area = (
+                getattr(normalized_substrate, 'active_area', None)
+                or normalized_substrate.pixel_area
+            )
+            if per_cell_area:
+                archive.results.properties.optoelectronic.solar_cell.device_area = (
+                    per_cell_area
                 )
 
         if self.architecture:
@@ -324,10 +351,34 @@ class SolcarCellSample(CompositeSystem):
                 self.architecture
             )
 
-        if self.substrate:
-            if self.substrate.pixel_area:
-                archive.results.properties.optoelectronic.solar_cell.device_area = (
-                    self.substrate.pixel_area
+        # Compute module_active_area: per-cell area × number_of_pixels on substrate
+        if (
+            self.module_configuration
+            and self.module_configuration.is_module 
+            and normalized_substrate
+        ):
+            n_pixels = normalized_substrate.number_of_pixels
+            per_cell_active = (
+                getattr(normalized_substrate, 'active_area', None)
+                or normalized_substrate.pixel_area
+            )
+            if per_cell_active is not None and n_pixels:
+                self.module_configuration.module_active_area = (
+                    per_cell_active * n_pixels
+                )
+            per_cell_dead = getattr(normalized_substrate, 'dead_area', None)
+            if per_cell_dead is not None and n_pixels:
+                self.module_configuration.module_dead_area = per_cell_dead * n_pixels
+
+            gff = getattr(normalized_substrate, 'geometrical_fill_factor', None)
+            if gff is not None:
+                self.module_configuration.module_geometrical_fill_factor = gff
+
+            module_active_area = self.module_configuration.module_active_area
+            module_dead_area = self.module_configuration.module_dead_area
+            if module_active_area is not None and module_dead_area is not None:
+                self.module_configuration.module_aperture_area = (
+                    module_active_area + module_dead_area
                 )
 
         result_data = collectSampleData(archive)

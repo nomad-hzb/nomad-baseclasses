@@ -110,6 +110,8 @@ layer_material_name_aliases = {
     'ito-purple': 'Purple ITO',
     # Quartz  (appears in conducting_material column)
     'quartz': 'Quartz',
+    # SAM
+    'ph4pacz': 'Ph-4PACz',
 }
 
 # ════════════════════════════════════════════════════════════════

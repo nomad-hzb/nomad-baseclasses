@@ -25,22 +25,82 @@ from ..helper.add_solar_cell import add_solar_cell
 
 
 class Substrate(Entity):
+    substrate_dimension = Quantity(
+        type=str,
+        description=(
+            'Physical dimensions of the substrate '
+            '(e.g. "10 cm × 10 cm"). '
+            'Maps from "Sample dimension" in the batch mapping spreadsheet.'
+        ),
+        a_eln=dict(component='StringEditQuantity'),
+    )
+
     solar_cell_area = Quantity(
         type=np.dtype(np.float64),
         unit='cm**2',
         shape=[],
+        description=(
+            'Sample area from the spreadsheet. Kept for legacy compatibility; '
+            'in practice often used as pixel area.'
+        ),
         a_eln=dict(component='NumberEditQuantity'),
-    )
-
-    number_of_pixels = Quantity(
-        type=np.dtype(np.float64), shape=[], a_eln=dict(component='NumberEditQuantity')
     )
 
     pixel_area = Quantity(
         type=np.dtype(np.float64),
         unit='cm**2',
         shape=[],
+        description=(
+            'Total area of the cell.'
+            'Defined as the overlap between front and back contacts.'
+        ),
         a_eln=dict(component='NumberEditQuantity'),
+    )
+
+    active_area = Quantity(
+        type=np.dtype(np.float64),
+        unit='cm**2',
+        shape=[],
+        description=(
+            'The effective area of the cell during IV and stability measurements '
+            'under illumination. If measured with a mask, this corresponds to the '
+            'area of the hole in the mask. Otherwise equals the pixel area.'
+        ),
+        a_eln=dict(component='NumberEditQuantity'),
+    )
+
+    dead_area = Quantity(
+        type=np.dtype(np.float64),
+        unit='cm**2',
+        shape=[],
+        description=(
+            'Interconnect area of the cell, inactive to solar conversion. '
+            'Includes scribing lines and borders between cells in a module.'
+        ),
+        a_eln=dict(component='NumberEditQuantity'),
+    )
+
+    aperture_area = Quantity(
+        type=np.dtype(np.float64),
+        unit='cm**2',
+        shape=[],
+        description=(
+            'Sum of active area and dead area per cell. '
+            'Not to be confused with the illumination aperture.'
+        ),
+        a_eln=dict(component='NumberEditQuantity'),
+    )
+
+    geometrical_fill_factor = Quantity(
+        type=np.dtype(np.float64),
+        shape=[],
+        description='Ratio of active area to the total aperture area.',
+        a_eln=dict(component='NumberEditQuantity'),
+    )
+
+    number_of_pixels = Quantity(
+        type=np.dtype(np.float64), shape=[], a_eln=dict(component='NumberEditQuantity'),
+        description='Number of pixels/cells.'
     )
 
     substrate = Quantity(
@@ -49,7 +109,7 @@ class Substrate(Entity):
             component='EnumEditQuantity',
             props=dict(
                 suggestions=[
-                    'glass',
+                    'Glass',
                     'Ti-foil',
                     'silicon wafer',
                     'SLG',
@@ -112,6 +172,19 @@ class Substrate(Entity):
                 layer_material_name_normalizer.normalize(m)
                 for m in self.conducting_material
             ]
+
+        # Auto-compute aperture_area and geometrical_fill_factor if not set
+        if self.active_area is not None and self.dead_area is not None:
+            if self.aperture_area is None:
+                self.aperture_area = self.active_area + self.dead_area
+        if self.active_area is not None and self.aperture_area is not None:
+            if self.geometrical_fill_factor is None:
+                try:
+                    self.geometrical_fill_factor = float(
+                        self.active_area / self.aperture_area
+                    )
+                except Exception:
+                    pass
 
         super().normalize(archive, logger)
         add_solar_cell(archive)
