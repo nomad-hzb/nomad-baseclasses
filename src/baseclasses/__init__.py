@@ -443,16 +443,6 @@ class LayerProperties(ArchiveSection):
         ),
     )
 
-    layer_transmission = Quantity(
-        type=np.dtype(np.float64),
-        unit='%',
-        a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='%',
-            props=dict(minValue=0, description='Transmission percentage'),
-        ),
-    )
-
     layer_chemical_id = Quantity(
         type=str,
         description='Identifier of the product used for creating the layer'
