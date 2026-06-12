@@ -83,6 +83,32 @@ class PrecursorSolution(ArchiveSection):
         ),
     )
 
+    solution_density = Quantity(
+        description=('The density of the solution.'),
+        links=['http://www.ontology-of-units-of-measure.org/resource/om-2/Density'],
+        type=np.dtype(np.float64),
+        unit=('g/cm^3'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='g/cm^3',
+            props=dict(minValue=0),
+        ),
+    )
+
+    solution_surface_tension = Quantity(
+        description=('The surface tension of the solution.'),
+        links=[
+            'http://www.ontology-of-units-of-measure.org/resource/om-2/SurfaceTension'
+        ],
+        type=np.dtype(np.float64),
+        unit=('mN/m'),
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='mN/m',
+            props=dict(minValue=0),
+        ),
+    )
+
     solution_details = SubSection(section_def=Solution)
 
     def normalize(self, archive, logger):
