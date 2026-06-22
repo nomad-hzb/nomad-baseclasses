@@ -74,7 +74,7 @@ class CPOERAnalysisResult(AnalysisResult):
     )
     reaction_type = Quantity(
         type=str,
-        description='At the moment only OER CP is supported.'
+        description='At the moment only OER and HER CP is supported.'
         'In the future maybe also NRR CP.',
     )
     voltage_shift = Quantity(
@@ -209,7 +209,7 @@ def get_all_cp_in_upload(data_archive, upload_id):
 
     query = {
         'section_defs.definition_qualified_name': 'baseclasses.chemical_energy.chronopotentiometry.Chronopotentiometry',
-        'results.eln.methods': 'OER Chronopotentiometry',
+        'results.eln.methods:any': ['OER Chronopotentiometry', 'HER Chronopotentiometry',],
         'upload_id': upload_id,
     }
     pagination = MetadataPagination()
