@@ -532,7 +532,11 @@ class Deposition(ArchiveSection):
         ),
     )
 
-    ink_composition = SubSection(section_def=Solvent, repeats=True, links=['https://w3id.org/nfdi4cat/voc4cat_0007246'])
+    ink_composition = SubSection(
+        section_def=Solvent,
+        repeats=True,
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007246'],
+    )
 
     deposition_volume = Quantity(
         type=np.dtype(np.float64),
@@ -625,7 +629,9 @@ class CENESDSample(CESample):
     description = Quantity(
         type=str,
         description='Any information that cannot be captured in the other fields.',
-        a_eln=dict(component='RichTextEditQuantity', props=dict(height=150), label='Notes'),
+        a_eln=dict(
+            component='RichTextEditQuantity', props=dict(height=150), label='Notes'
+        ),
     )
 
 

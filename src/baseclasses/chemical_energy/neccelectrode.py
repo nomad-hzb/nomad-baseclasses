@@ -23,10 +23,11 @@ from nomad.metainfo import MEnum, Quantity, Reference, Section, SubSection
 from .. import ReadableIdentifiersCustom
 from .cesample import (
     CESample,
+    Solvent,
     SubstrateProperties,
     build_initial_id,
     create_id,
-    export_lab_id, Solvent,
+    export_lab_id,
 )
 
 
