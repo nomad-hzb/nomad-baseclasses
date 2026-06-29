@@ -26,7 +26,7 @@ from .cesample import (
     SubstrateProperties,
     build_initial_id,
     create_id,
-    export_lab_id,
+    export_lab_id, Solvent,
 )
 
 
@@ -101,22 +101,6 @@ class CENECCElectrodeRecipeID(ReadableIdentifiersCustom):
                 deposition_method=self.deposition_method,
             )
         create_id(archive, self.lab_id)
-
-
-class Solvent(ArchiveSection):
-    type = Quantity(
-        type=str,
-        a_eln=dict(
-            component='EnumEditQuantity',
-            props=dict(suggestions=['H2O', 'Isopropanol', 'Ethanol']),
-        ),
-    )
-
-    volume = Quantity(
-        type=np.dtype(np.float64),
-        unit=('ml'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'),
-    )
 
 
 class Ionomer(ArchiveSection):
