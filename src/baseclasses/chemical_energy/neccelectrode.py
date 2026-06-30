@@ -23,6 +23,7 @@ from nomad.metainfo import MEnum, Quantity, Reference, Section, SubSection
 from .. import ReadableIdentifiersCustom
 from .cesample import (
     CESample,
+    Solvent,
     SubstrateProperties,
     build_initial_id,
     create_id,
@@ -101,22 +102,6 @@ class CENECCElectrodeRecipeID(ReadableIdentifiersCustom):
                 deposition_method=self.deposition_method,
             )
         create_id(archive, self.lab_id)
-
-
-class Solvent(ArchiveSection):
-    type = Quantity(
-        type=str,
-        a_eln=dict(
-            component='EnumEditQuantity',
-            props=dict(suggestions=['H2O', 'Isopropanol', 'Ethanol']),
-        ),
-    )
-
-    volume = Quantity(
-        type=np.dtype(np.float64),
-        unit=('ml'),
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'),
-    )
 
 
 class Ionomer(ArchiveSection):

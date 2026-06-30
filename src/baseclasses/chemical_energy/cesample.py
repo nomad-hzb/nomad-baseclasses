@@ -416,7 +416,6 @@ class SampleIDCENESD(SampleIDCE2):
             props=dict(
                 suggestions=[
                     'Michelle philippa Browne',
-                    'Maximilian Reinhardt',
                     'Ahmed Aboubakr',
                     'Can Kaplan',
                     'Sweta Sharma',
@@ -482,6 +481,22 @@ class SubstanceWithConcentration(ArchiveSection):
             self.name = self.substance.name
 
 
+class Solvent(ArchiveSection):
+    type = Quantity(
+        type=str,
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(suggestions=['H2O', 'Isopropanol', 'Ethanol']),
+        ),
+    )
+
+    volume = Quantity(
+        type=np.dtype(np.float64),
+        unit=('ml'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='ml'),
+    )
+
+
 class CatalystSynthesis(ArchiveSection):
     method = Quantity(
         type=str,
@@ -496,6 +511,77 @@ class CatalystSynthesis(ArchiveSection):
     )
 
     substances = SubSection(section_def=SubstanceWithConcentration, repeats=True)
+
+
+class Deposition(ArchiveSection):
+    catalyst_layer_deposition_method = Quantity(
+        type=str,
+        description='Technique used to deposit a catalyst on a substrate.',
+        links=['https://w3id.org/nfdi4cat/voc4cat_0000020'],
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=[
+                    'drop cast',
+                    'spray coating',
+                    'sputtering',
+                    'hot press',
+                    'PLD',
+                ]
+            ),
+        ),
+    )
+
+    ink_composition = SubSection(
+        section_def=Solvent,
+        repeats=True,
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007246'],
+    )
+
+    deposition_volume = Quantity(
+        type=np.dtype(np.float64),
+        unit=('µl'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='µl'),
+    )
+
+    catalyst_loading = Quantity(
+        type=np.dtype(np.float64),
+        unit=('mg/cm^2'),
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mg/cm^2'),
+    )
+
+    binder = Quantity(
+        type=str,
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=[
+                    'Nafion (5wt%)',
+                    'Piperion',
+                    'Sustainion',
+                    'Fumasep',
+                ]
+            ),
+        ),
+    )
+
+    deposition_tool = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'),
+    )
+
+    deposition_recipe = Quantity(
+        type=str,
+        a_eln=dict(component='StringEditQuantity'),
+    )
+
+    description = Quantity(
+        type=str,
+        description='Any information that cannot be captured in the other fields.',
+        a_eln=dict(component='RichTextEditQuantity'),
+        props=dict(height=150),
+        label='Notes',
+    )
 
 
 class ExpectedStructure(ArchiveSection):
@@ -532,6 +618,8 @@ class CENESDSample(CESample):
 
     substrate = SubSection(section_def=SubstrateProperties)
 
+    deposition = SubSection(section_def=Deposition)
+
     drying_temperature = Quantity(
         type=np.dtype(np.float64),
         unit=('°C'),
@@ -541,7 +629,9 @@ class CENESDSample(CESample):
     description = Quantity(
         type=str,
         description='Any information that cannot be captured in the other fields.',
-        a_eln=dict(component='RichTextEditQuantity', label='Notes'),
+        a_eln=dict(
+            component='RichTextEditQuantity', props=dict(height=150), label='Notes'
+        ),
     )
 
 
