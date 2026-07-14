@@ -25,7 +25,6 @@ from .inkjet_printing import InkjetPrinting, LP50InkjetPrinting
 from .screen_printing import ScreenPrinting
 from .slot_die_coating import SlotDieCoating, SlotDieCoatingProperties
 from .spin_coating import SpinCoating, SpinCoatingRecipe
-from .spiral_bar_coating import SpiralBarCoating, SpiralBarCoatingProperties
 from .spray_pyrolysis import SprayPyrolysis
 from .vaporization_and_dropcasting import VaporizationAndDropCasting
 from .wet_chemical_deposition import PrecursorSolution, WetChemicalDeposition

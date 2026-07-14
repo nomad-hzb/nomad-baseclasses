@@ -67,9 +67,6 @@ from baseclasses.wet_chemical_deposition.slot_die_coating import (
     SlotDieCoatingProperties,
 )
 from baseclasses.wet_chemical_deposition.spin_coating import SpinCoatingRecipeSteps
-from baseclasses.wet_chemical_deposition.spiral_bar_coating import (
-    SpiralBarCoatingProperties,
-)
 
 
 def sanitize_filename(value, replace_spaces=False):
@@ -765,82 +762,6 @@ def map_blade_coating(i, j, lab_ids, data, upload_id, blade_coating_class):
     return (f'{i}_{j}_blade_coating_{sanitize_filename(material)}', archive)
 
 
-def map_spiral_bar_coating(i, j, lab_ids, data, upload_id, spiral_bar_coating_class):
-    archive = spiral_bar_coating_class(
-        name='spiral bar coating ' + get_value(data, 'Material name', '', False),
-        location=get_value(data, 'Tool/GB name', '', False),
-        positon_in_experimental_plan=i,
-        datetime=get_datetime(data, 'Datetime'),
-        operator=get_value(data, 'Operator', '', False),
-        description=get_value(data, 'Notes', None, False),
-        samples=[
-            CompositeSystemReference(
-                reference=get_reference(upload_id, f'{lab_id}.archive.json'),
-                lab_id=lab_id,
-            )
-            for lab_id in lab_ids
-        ],
-        solution=[
-            PrecursorSolution(
-                solution_details=map_solutions(data),
-                solution_volume=get_value(
-                    data,
-                    ['Solution volume [um]', 'Solution volume [uL]'],
-                    None,
-                    unit=['uL', 'uL'],
-                ),
-                solution_viscosity=get_value(
-                    data,
-                    'Viscosity [mPa*s]',
-                    None,
-                    unit=['mPa*s'],
-                ),
-                solution_contact_angle=get_value(
-                    data,
-                    'Contact angle [°]',
-                    None,
-                    unit=['°'],
-                ),
-                solution_density=get_value(
-                    data,
-                    'Density [g/cm^3]',
-                    None,
-                    unit=['g/cm^3'],
-                ),
-                solution_surface_tension=get_value(
-                    data,
-                    'Surface tension [mN/m]',
-                    None,
-                    unit=['mN/m'],
-                ),
-            )
-        ],
-        layer=map_layer(data),
-        atmosphere=map_atmosphere(data),
-        annealing=map_annealing(data),
-        properties=SpiralBarCoatingProperties(
-            bar_type=get_value(data, 'Bar Type', None, False),
-            wire_diameter=get_value(data, 'Wire Diameter [um]', None, unit='um'),
-            coating_speed=get_value(data, 'Coating Speed [mm/s]', None, unit='mm/s'),
-            wet_film_thickness=get_value(
-                data, 'Wet Film Thickness [um]', None, unit='um'
-            ),
-            dispensed_volume=get_value(data, 'Dispensed Volume [uL]', None, unit='uL'),
-            number_of_passes=get_value(data, 'Number of Passes', None),
-        ),
-    )
-
-    # Set quenching based on available data
-    archive.quenching = (
-        map_vacuum_quenching(data)
-        or map_gas_quenching_with_nozzle(data)
-        or map_air_knife_gas_quenching(data)
-    )
-
-    material = get_value(data, 'Material name', '', False)
-    return (f'{i}_{j}_spiral_bar_coating_{sanitize_filename(material)}', archive)
-
-
 def map_gravure_printing(i, j, lab_ids, data, upload_id, gravure_printing_class):
     archive = gravure_printing_class(
         name='gravure printing ' + get_value(data, 'Material name', '', False),
@@ -1305,56 +1226,6 @@ def map_lamination(i, j, lab_ids, data, upload_id, lamination_class):
 
 
 def map_encapsulation(i, j, lab_ids, data, upload_id, encapsulation_class):
-    processing_type = get_value(data, 'Processing Type', None, False)
-    sides_encapsulated = get_value(data, 'Sides Encapsulated', None, False)
-    method = get_value(data, 'Adhesive Application Method', None, False)
-    curable_by = get_value(data, 'Adhesive Curable By', None, False)
-
-    adhesive_properties = {}
-    if method == 'Spiral Bar Coating':
-        adhesive_properties['spiral_bar_coating'] = SpiralBarCoatingProperties(
-            bar_type=get_value(data, 'Bar Type', None, False),
-            wire_diameter=get_value(data, 'Wire Diameter [um]', None, unit='um'),
-            coating_speed=get_value(data, 'Coating Speed [mm/s]', None, unit='mm/s'),
-            wet_film_thickness=get_value(
-                data, 'Wet Film Thickness [um]', None, unit='um'
-            ),
-            dispensed_volume=get_value(data, 'Dispensed Volume [uL]', None, unit='uL'),
-            number_of_passes=get_value(data, 'Number of Passes', None),
-        )
-    elif method == 'Slot Die Coating':
-        adhesive_properties['slot_die_coating'] = SlotDieCoatingProperties(
-            coating_run=get_value(data, 'Coating run', None, False),
-            flow_rate=get_value(
-                data,
-                ['Flow rate [uL/min]', 'Flow rate [ul/min]'],
-                None,
-                unit=['uL/minute', 'uL/minute'],
-            ),
-            slot_die_head_distance_to_thinfilm=get_value(
-                data, 'Head gap [mm]', None, unit='mm'
-            ),
-            slot_die_head_speed=get_value(data, 'Speed [mm/s]', None, unit='mm/s'),
-            coated_area=get_value(data, 'Coated area [mm²]', None, unit='mm**2'),
-            temperature=get_value(
-                data, 'Chuck heating temperature [°C]', None, unit='°C'
-            ),
-        )
-    elif method == 'Blade Coating':
-        adhesive_properties['blade_coating'] = BladeCoatingProperties(
-            blade_speed=get_value(data, 'Blade Speed [mm/s]', None, unit='mm/s'),
-            dispensed_volume=get_value(
-                data, 'Dispensed Ink Volume [uL]', None, unit='uL'
-            ),
-            blade_substrate_gap=get_value(data, 'Blade Gap [um]', None, unit='um'),
-            blade_size=get_value(data, 'Blade Size', None, False),
-            coating_width=get_value(data, 'Coating Width [mm]', None, unit='mm'),
-            coating_length=get_value(data, 'Coating Length [mm]', None, unit='mm'),
-            dead_length=get_value(data, 'Dead Length [mm]', None, unit='mm'),
-            bed_temperature=get_value(data, 'Bed Temperature [°C]', None, unit='°C'),
-            ink_temperature=get_value(data, 'Ink Temperature [°C]', None, unit='°C'),
-        )
-
     archive = encapsulation_class(
         name='Encapsulation',
         location=get_value(data, 'Tool/GB name', '', False),
@@ -1369,18 +1240,17 @@ def map_encapsulation(i, j, lab_ids, data, upload_id, encapsulation_class):
             )
             for lab_id in lab_ids
         ],
-        processing_type=processing_type,
-        sides_encapsulated=sides_encapsulated,
-        rewind=bool(get_value(data, 'Rewind', False, False)),
+        encapsulation_method=get_value(data, 'Encapsulation Method', None, False),
+        sides_encapsulated=get_value(data, 'Sides Encapsulated', None, False),
         adhesive_application=AdhesiveApplication(
-            method=method,
-            adhesive_name=get_value(data, 'Adhesive Name', None, False),
-            product_info=create_product_info(data, 'Adhesive'),
-            curable_by=curable_by,
-            wet_thickness=get_value(
-                data, 'Adhesive Wet Thickness [um]', None, unit='um'
+            method=get_value(data, 'Adhesive Application Method', None, False),
+            adhesive_layer_info=LayerProperties(
+                layer_material_name=get_value(data, 'Adhesive Name', None, False),
+                layer_thickness=get_value(
+                    data, 'Adhesive Thickness [um]', None, unit='um'
+                ),
+                product_info=create_product_info(data, 'Adhesive'),
             ),
-            **adhesive_properties,
         ),
         barrier_lamination=BarrierFoilLamination(
             barrier_foil=get_value(data, 'Barrier Foil', None, False),
@@ -1399,14 +1269,13 @@ def map_encapsulation(i, j, lab_ids, data, upload_id, encapsulation_class):
             ),
         ),
         curing=UVCuring(
-            lamp_type=get_value(data, 'Curing Lamp Type', None, False),
+            lamp_details=get_value(data, 'Curing Lamp Details', None, False),
             wavelength=get_value(data, 'Curing Wavelength [nm]', None, unit='nm'),
             intensity=get_value(
                 data, 'Curing Intensity [mW/cm²]', None, unit='mW/cm**2'
             ),
-            time=get_value(data, 'Curing Time [s]', None, unit='s'),
-            belt_speed=get_value(data, 'Curing Belt Speed [mm/s]', None, unit='mm/s'),
-            number_of_passes=get_value(data, 'Curing Number of Passes', None),
+            exposure_time=get_value(data, 'Curing Exposure Time [s]', None, unit='s'),
+            distance=get_value(data, 'Curing Distance [mm]', None, unit='mm'),
             atmosphere=get_value(data, 'Curing Atmosphere', None, False),
         ),
     )

@@ -18,20 +18,19 @@
 
 import numpy as np
 from nomad.datamodel.data import ArchiveSection
-from nomad.metainfo import MEnum, Quantity, Section, SubSection
+from nomad.metainfo import Quantity, Section, SubSection
 
-from . import LayerDeposition
+from . import LayerDeposition, LayerProperties
 from .material_processes_misc.lamination import LaminationSettings
 from .product_info import ProductInfo
-from .wet_chemical_deposition.blade_coating import BladeCoatingProperties
-from .wet_chemical_deposition.slot_die_coating import SlotDieCoatingProperties
-from .wet_chemical_deposition.spiral_bar_coating import SpiralBarCoatingProperties
 
 
 class UVCuring(ArchiveSection):
     """Curing of a UV-curable adhesive using a UV-lamp."""
 
-    lamp_type = Quantity(type=str, shape=[], a_eln=dict(component='StringEditQuantity'))
+    lamp_details = Quantity(
+        type=str, shape=[], a_eln=dict(component='StringEditQuantity')
+    )
 
     wavelength = Quantity(
         type=np.dtype(np.float64),
@@ -55,7 +54,7 @@ class UVCuring(ArchiveSection):
         ),
     )
 
-    time = Quantity(
+    exposure_time = Quantity(
         type=np.dtype(np.float64),
         unit=('s'),
         shape=[],
@@ -66,23 +65,15 @@ class UVCuring(ArchiveSection):
         ),
     )
 
-    belt_speed = Quantity(
+    distance = Quantity(
         type=np.dtype(np.float64),
-        unit=('mm/s'),
+        unit=('mm'),
         shape=[],
         a_eln=dict(
             component='NumberEditQuantity',
-            defaultDisplayUnit='mm/s',
+            defaultDisplayUnit='mm',
             props=dict(minValue=0),
         ),
-        description='Conveyor/belt speed under the UV lamp for in-line '
-        '(e.g. roll-to-roll) curing.',
-    )
-
-    number_of_passes = Quantity(
-        type=np.dtype(np.int32),
-        shape=[],
-        a_eln=dict(component='NumberEditQuantity', props=dict(minValue=0)),
     )
 
     atmosphere = Quantity(
@@ -134,50 +125,26 @@ class AdhesiveApplication(ArchiveSection):
     m_def = Section(label_quantity='method')
 
     method = Quantity(
-        type=MEnum(
-            'Spiral Bar Coating',
-            'Slot Die Coating',
-            'Blade Coating',
-            'Dispensing',
-            'Pressure Sensitive Adhesive Film',
-            'Other',
-        ),
-        shape=[],
-        a_eln=dict(component='EnumEditQuantity'),
-    )
-
-    adhesive_name = Quantity(
         type=str,
         shape=[],
-        a_eln=dict(component='StringEditQuantity'),
-        description='Name/product of the adhesive or pressure sensitive adhesive '
-        '(PSA) film.',
-    )
-
-    product_info = SubSection(
-        section_def=ProductInfo, description='Product information'
-    )
-
-    curable_by = Quantity(
-        type=MEnum('UV', 'Heat', 'Pressure Only', 'Other'),
-        shape=[],
-        a_eln=dict(component='EnumEditQuantity'),
-    )
-
-    wet_thickness = Quantity(
-        type=np.dtype(np.float64),
-        unit=('um'),
-        shape=[],
         a_eln=dict(
-            component='NumberEditQuantity',
-            defaultDisplayUnit='um',
-            props=dict(minValue=0),
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=[
+                    'Spiral Bar Coating',
+                    'Slot Die Coating',
+                    'Blade Coating',
+                    'Dispensing',
+                    'Pressure Sensitive Adhesive Film',
+                    'Other',
+                ]
+            ),
         ),
     )
 
-    spiral_bar_coating = SubSection(section_def=SpiralBarCoatingProperties)
-    slot_die_coating = SubSection(section_def=SlotDieCoatingProperties)
-    blade_coating = SubSection(section_def=BladeCoatingProperties)
+    adhesive_layer_info = SubSection(
+        section_def=LayerProperties, description='Product information'
+    )
 
 
 class Encapsulation(LayerDeposition):
@@ -190,26 +157,25 @@ class Encapsulation(LayerDeposition):
     if the substrate itself is already a barrier foil) or to both sides.
     """
 
-    processing_type = Quantity(
-        type=MEnum('Sheet-to-Sheet (S2S)', 'Roll-to-Roll (R2R)'),
+    encapsulation_method = Quantity(
+        type=str,
         shape=[],
-        a_eln=dict(component='EnumEditQuantity'),
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(suggestions=['Sheet-to-Sheet (S2S)', 'Roll-to-Roll (R2R)']),
+        ),
     )
 
     sides_encapsulated = Quantity(
-        type=MEnum('Single Side', 'Both Sides'),
+        type=str,
         shape=[],
-        a_eln=dict(component='EnumEditQuantity'),
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(suggestions=['Single Side', 'Both Sides']),
+        ),
         description='Whether the encapsulation sequence below was applied to a '
         'single side of the sample (e.g. because the substrate itself is already '
         'a barrier foil) or to both sides.',
-    )
-
-    rewind = Quantity(
-        type=bool,
-        shape=[],
-        a_eln=dict(component='BoolEditQuantity'),
-        description='Whether the roll was rewound',
     )
 
     adhesive_application = SubSection(section_def=AdhesiveApplication)
