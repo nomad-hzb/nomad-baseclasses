@@ -6,15 +6,12 @@ from nomad.units import ureg
 
 from baseclasses import LayerProperties, PubChemPureSubstanceSectionCustom
 from baseclasses.atmosphere import Atmosphere, GloveboxAtmosphere
-from baseclasses.encapsulation import (
-    AdhesiveApplication,
-    BarrierFoilLamination,
-    UVCuring,
-)
 from baseclasses.material_processes_misc import (
+    AdhesiveApplication,
     AirKnifeGasQuenching,
     Annealing,
     AntiSolventQuenching,
+    BarrierFoilLamination,
     CoronaCleaning,
     GasFlowAssistedVacuumDrying,
     GasQuenchingWithNozzle,
@@ -22,6 +19,7 @@ from baseclasses.material_processes_misc import (
     PlasmaCleaning,
     SolutionCleaning,
     UVCleaning,
+    UVCuring,
     VacuumQuenching,
 )
 from baseclasses.material_processes_misc.annealing import IRAnnealing

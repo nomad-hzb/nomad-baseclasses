@@ -24,6 +24,12 @@ from .cleaning import (
     SolutionCleaning,
     UVCleaning,
 )
+from .encapsulation import (
+    AdhesiveApplication,
+    BarrierFoilLamination,
+    Encapsulation,
+    UVCuring,
+)
 from .lamination import Lamination, LaminationSettings
 from .laser_scribing import LaserScribing
 from .quenching import (
