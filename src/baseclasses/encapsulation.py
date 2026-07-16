@@ -33,6 +33,7 @@ class UVCuring(ArchiveSection):
     )
 
     wavelength = Quantity(
+        links = 'http://purl.obolibrary.org/obo/PATO_0001242',
         type=np.dtype(np.float64),
         unit=('nm'),
         shape=[],
@@ -44,6 +45,7 @@ class UVCuring(ArchiveSection):
     )
 
     intensity = Quantity(
+        links = 'https://purl.archive.org/tfsco/TFSCO_00001128',
         type=np.dtype(np.float64),
         unit=('mW/cm**2'),
         shape=[],
@@ -66,6 +68,7 @@ class UVCuring(ArchiveSection):
     )
 
     distance = Quantity(
+        links = 'https://purl.archive.org/tfsco/TFSCO_00005720',
         type=np.dtype(np.float64),
         unit=('mm'),
         shape=[],
