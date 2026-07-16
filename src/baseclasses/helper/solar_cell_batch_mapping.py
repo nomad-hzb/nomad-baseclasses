@@ -7,9 +7,11 @@ from nomad.units import ureg
 from baseclasses import LayerProperties, PubChemPureSubstanceSectionCustom
 from baseclasses.atmosphere import Atmosphere, GloveboxAtmosphere
 from baseclasses.material_processes_misc import (
+    AdhesiveApplication,
     AirKnifeGasQuenching,
     Annealing,
     AntiSolventQuenching,
+    BarrierFoilLamination,
     CoronaCleaning,
     GasFlowAssistedVacuumDrying,
     GasQuenchingWithNozzle,
@@ -17,6 +19,7 @@ from baseclasses.material_processes_misc import (
     PlasmaCleaning,
     SolutionCleaning,
     UVCleaning,
+    UVCuring,
     VacuumQuenching,
 )
 from baseclasses.material_processes_misc.annealing import IRAnnealing
@@ -1218,6 +1221,63 @@ def map_lamination(i, j, lab_ids, data, upload_id, lamination_class):
         ),
     )
     return (f'{i}_{j}_lamination', archive)
+
+
+def map_encapsulation(i, j, lab_ids, data, upload_id, encapsulation_class):
+    archive = encapsulation_class(
+        name='Encapsulation',
+        location=get_value(data, 'Tool/GB name', '', False),
+        positon_in_experimental_plan=i,
+        datetime=get_datetime(data, 'Datetime'),
+        operator=get_value(data, 'Operator', '', False),
+        description=get_value(data, 'Notes', '', False),
+        samples=[
+            CompositeSystemReference(
+                reference=get_reference(upload_id, f'{lab_id}.archive.json'),
+                lab_id=lab_id,
+            )
+            for lab_id in lab_ids
+        ],
+        encapsulation_method=get_value(data, 'Encapsulation Method', None, False),
+        sides_encapsulated=get_value(data, 'Sides Encapsulated', None, False),
+        adhesive_application=AdhesiveApplication(
+            method=get_value(data, 'Adhesive Application Method', None, False),
+            adhesive_layer_info=LayerProperties(
+                layer_material_name=get_value(data, 'Adhesive Name', None, False),
+                layer_thickness=get_value(
+                    data, 'Adhesive Thickness [um]', None, unit='um'
+                ),
+                product_info=create_product_info(data, 'Adhesive'),
+            ),
+        ),
+        barrier_lamination=BarrierFoilLamination(
+            barrier_foil=get_value(data, 'Barrier Foil', None, False),
+            product_info=create_product_info(data, 'Barrier Foil'),
+            temperature=get_value(data, 'Lamination Temperature [°C]', None, unit='°C'),
+            pressure=get_value(data, 'Lamination Pressure [MPa]', None, unit='MPa'),
+            force=get_value(data, 'Lamination Force [N]', None, unit='N'),
+            area=get_value(data, 'Lamination Area [mm²]', None, unit='mm**2'),
+            time=get_value(data, 'Lamination Time [s]', None, unit='s'),
+            heat_up_time=get_value(data, 'Lamination Heat up time [s]', None, unit='s'),
+            cool_down_time=get_value(
+                data, 'Lamination Cool down time [s]', None, unit='s'
+            ),
+            line_speed=get_value(
+                data, 'Lamination Line Speed [mm/s]', None, unit='mm/s'
+            ),
+        ),
+        curing=UVCuring(
+            lamp_details=get_value(data, 'Curing Lamp Details', None, False),
+            wavelength=get_value(data, 'Curing Wavelength [nm]', None, unit='nm'),
+            intensity=get_value(
+                data, 'Curing Intensity [mW/cm²]', None, unit='mW/cm**2'
+            ),
+            exposure_time=get_value(data, 'Curing Exposure Time [s]', None, unit='s'),
+            distance=get_value(data, 'Curing Distance [mm]', None, unit='mm'),
+            atmosphere=get_value(data, 'Curing Atmosphere', None, False),
+        ),
+    )
+    return (f'{i}_{j}_encapsulation', archive)
 
 
 def map_cleaning(i, j, lab_ids, data, upload_id, cleaning_class):
