@@ -28,6 +28,8 @@ from nomad.metainfo import Datetime, Quantity, Reference, SubSection
 from unidecode import unidecode
 
 from baseclasses import PubChemPureSubstanceSectionCustom
+from baseclasses.chemical_energy import Equipment, Electrolyte
+from baseclasses.chemical_energy.cesample import Deposition, SubstrateProperties
 from baseclasses.helper.utilities import create_short_id, export_lab_id
 
 from .. import BaseMeasurement
@@ -49,10 +51,7 @@ def make_nesd_id(archive):
 
 
 class NESDElectrode(CompositeSystem):
-    electrolyte = Quantity(
-        type=str,
-        shape=[],
-    )
+    electrolyte = SubSection(section_def=Electrolyte)
 
     catalyst = Quantity(
         type=str,
@@ -61,11 +60,34 @@ class NESDElectrode(CompositeSystem):
 
     electrode_area = Quantity(type=np.dtype(np.float64), unit='mm**2')
 
-    electrode_material = SubSection(section_def=PubChemPureSubstanceSectionCustom)
+    substrate = SubSection(section_def=SubstrateProperties)
 
     gasket_material = SubSection(section_def=PubChemPureSubstanceSectionCustom)
 
     gasket_thickness = Quantity(type=np.dtype(np.float64), unit='mm')
+
+    ionomer = Quantity(
+        type=str,
+        a_eln=dict(
+            component='EnumEditQuantity',
+            props=dict(
+                suggestions=[
+                    'Nafion (5wt%)',
+                    'Piperion',
+                    'Sustainion',
+                    'Fumasep',
+                ]
+            ),
+        ),
+    )
+
+    catalyst_layer_thickness = Quantity(
+        type=np.dtype(np.float64),
+        unit='nm',
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
+    )
+
+    preparation_method = SubSection(section_def=Deposition)
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
@@ -84,7 +106,22 @@ class ElectrolyserProperties(CompositeSystem):
         shape=[],
     )
 
-    torque = Quantity(type=np.dtype(np.float64), unit='newton * meter')
+    torque = Quantity(
+        type=np.dtype(np.float64),
+        unit='newton * meter',
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='newton * meter'),
+    )
+
+    flow_rate = Quantity(
+        type=np.dtype(np.float64),
+        unit='mL / min',
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mL / min'),
+    )
+
+    peristaltic_pump_info = Quantity(
+        type=Reference(Equipment.m_def),
+        a_eln=dict(component='ReferenceEditQuantity'),
+    )
 
     anode = SubSection(section_def=NESDElectrode)
 
@@ -105,13 +142,13 @@ class ElectrolyserProperties(CompositeSystem):
         if self.cathode:
             if self.is_valid_formula(self.cathode.catalyst, logger):
                 elements += self.cathode.catalyst
-            if self.is_valid_formula(self.cathode.electrode_material.name, logger):
-                elements += self.cathode.electrode_material.name
+            if self.is_valid_formula(self.cathode.substrate.substrate_type, logger):
+                elements += self.cathode.substrate.substrate_type
         if self.anode:
             if self.is_valid_formula(self.anode.catalyst, logger):
                 elements += self.anode.catalyst
-            if self.is_valid_formula(self.anode.electrode_material.name, logger):
-                elements += self.anode.electrode_material.name
+            if self.is_valid_formula(self.anode.substrate.substrate_type, logger):
+                elements += self.anode.substrate.substrate_type
         if elements and not archive.results:
             archive.results = Results()
         archive.results.material = Material()

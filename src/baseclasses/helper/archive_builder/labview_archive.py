@@ -10,6 +10,11 @@ from baseclasses.chemical_energy.electrolyser_performance import (
     ElectrolyserProperties,
     NESDElectrode,
 )
+from baseclasses.chemical_energy import (
+    Environment,
+    SubstanceWithConcentration,
+    SubstrateProperties,
+)
 
 
 def get_pint_from_string(magnitude_string, unit):
@@ -25,7 +30,18 @@ def get_pint_from_string(magnitude_string, unit):
 
 def get_electrode(metadata, electrode_type):
     electrode = NESDElectrode()
-    electrode.electrolyte = metadata.get(f'Electrolyte_{electrode_type}')
+    electrode.electrolyte = Environment(
+        name=metadata.get(f'Electrolyte_{electrode_type}'),
+        solvent=PubChemPureSubstanceSectionCustom(name='H20', load_data=False),
+        substances=[
+            SubstanceWithConcentration(
+                name=metadata.get(f'Electrolyte_{electrode_type}'),
+                substance=PubChemPureSubstanceSectionCustom(
+                    name=metadata.get(f'Electrolyte_{electrode_type}'), load_data=False
+                ),
+            )
+        ]
+    )
     electrode.catalyst = metadata.get(f'Catalyst_{electrode_type}')
     electrode.gasket_material = PubChemPureSubstanceSectionCustom(
         name=metadata.get(f'Gasket_Material_{electrode_type}'), load_data=False
@@ -38,8 +54,8 @@ def get_electrode(metadata, electrode_type):
     )
     area_cathode_magnitude = metadata.get(f'Electrode_Area_sqmm_{electrode_type}')
     electrode.electrode_area = get_pint_from_string(area_cathode_magnitude, 'mm ** 2')
-    electrode.electrode_material = PubChemPureSubstanceSectionCustom(
-        name=metadata.get(f'Electrode_Material_{electrode_type}'), load_data=False
+    electrode.substrate = SubstrateProperties(
+        substrate_type=metadata.get(f'Electrode_Material_{electrode_type}'),
     )
     return electrode
 
