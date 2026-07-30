@@ -149,6 +149,18 @@ def get_value(data, key, default=None, number=True, unit=None, factor=1.0):
         raise e
 
 
+def get_bool_value(data, key, default=False):
+    """
+    Parse a boolean-ish spreadsheet cell (e.g. 'TRUE'/'FALSE', 0/1, or an
+    actual bool) into a Python bool. Unlike bool(get_value(..., number=False)),
+    this does not treat the string 'FALSE' as truthy.
+    """
+    value = get_value(data, key, default, False)
+    if isinstance(value, bool):
+        return value
+    return str(value).strip().lower() in ('true', '1', 'yes', 'x')
+
+
 def get_datetime(data, key):
     """
     Parse datetime from data using multiple date formats.
@@ -215,7 +227,7 @@ def map_basic_sample(data, substrate_name, upload_id, sample_class):
     )
     if hasattr(archive, 'module_configuration'):
         archive.module_configuration = ModuleConfiguration(
-            is_module=bool(get_value(data, 'Is module', False, False)),
+            is_module=get_bool_value(data, 'Is module', False),
             pixel_connection=get_value(data, 'Pixel/cell connection', None, False),
             module_dimension_after_encapsulation=get_value(
                  data, 'Module dimension after encapsulation', None, False
