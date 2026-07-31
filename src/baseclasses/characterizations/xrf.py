@@ -125,13 +125,18 @@ class XRFSingleLibraryMeasurement(SingleLibraryMeasurement):
                     'thickness',
                     'position_x',
                     'position_y',
+                    'position_z',
+                    'description',
                 ]
             )
         ),
     )
 
-    # data = SubSection(
-    #     section_def=XRFData)
+    description = Quantity(
+        type=str,
+        description='Any information that cannot be captured in the other fields.',
+        a_eln=dict(component='RichTextEditQuantity'),
+    )
 
     layer = SubSection(section_def=XRFLayer, repeats=True)
 
