@@ -56,6 +56,7 @@ class NESDElectrode(CompositeSystem):
     catalyst = Quantity(
         type=str,
         shape=[],
+        a_eln=dict(component='StringEditQuantity'),
     )
 
     electrode_area = Quantity(type=np.dtype(np.float64), unit='mm**2')
@@ -79,6 +80,12 @@ class NESDElectrode(CompositeSystem):
                 ]
             ),
         ),
+    )
+
+    membrane = Quantity(
+        type=str,
+        shape=[],
+        a_eln=dict(component='StringEditQuantity'),
     )
 
     catalyst_layer_thickness = Quantity(
@@ -114,8 +121,14 @@ class ElectrolyserProperties(CompositeSystem):
 
     flow_rate = Quantity(
         type=np.dtype(np.float64),
-        unit='mL / min',
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mL / min'),
+        unit='mL / minute',
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mL / minute'),
+    )
+
+    system_temperature = Quantity(
+        type=np.dtype(np.float64),
+        unit='°C',
+        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='°C'),
     )
 
     peristaltic_pump_info = Quantity(
