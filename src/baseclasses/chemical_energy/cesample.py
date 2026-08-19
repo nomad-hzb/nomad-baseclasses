@@ -578,9 +578,11 @@ class Deposition(ArchiveSection):
     description = Quantity(
         type=str,
         description='Any information that cannot be captured in the other fields.',
-        a_eln=dict(component='RichTextEditQuantity'),
-        props=dict(height=150),
-        label='Notes',
+        a_eln={
+            'component': 'RichTextEditQuantity',
+            'props': {'height': 150},
+            'label': 'Notes',
+        },
     )
 
 
