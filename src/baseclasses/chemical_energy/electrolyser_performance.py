@@ -136,6 +136,13 @@ class ElectrolyserProperties(CompositeSystem):
         a_eln=dict(component='ReferenceEditQuantity'),
     )
 
+    equipment = Quantity(
+        links=['https://w3id.org/nfdi4cat/voc4cat_0007250'],
+        type=Reference(Equipment.m_def),
+        shape=['*'],
+        a_eln=dict(component='ReferenceEditQuantity'),
+    )
+
     anode = SubSection(section_def=NESDElectrode)
 
     cathode = SubSection(section_def=NESDElectrode)
