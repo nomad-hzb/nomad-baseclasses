@@ -31,6 +31,26 @@ def get_jv_archive(jv_dict, mainfile, jvm, append=False):
     if jv_dict.get('datetime'):
         jvm.datetime = jv_dict.get('datetime')
     jvm.active_area = jv_dict['active_area'] if 'active_area' in jv_dict else None
+
+    # Calculate current density scaling factor if corrected_active_area is provided
+    current_density_scaling_factor = 1.0
+    resistance_scaling_factor = 1.0
+
+    if (
+        jvm.corrected_active_area is not None
+        and jvm.active_area is not None
+        and jvm.active_area != 0
+        and jvm.corrected_active_area != 0
+        and jvm.corrected_active_area != jvm.active_area
+    ):
+        current_density_scaling_factor = (
+            jvm.active_area / jvm.corrected_active_area
+        ).magnitude
+
+        resistance_scaling_factor = (
+            jvm.corrected_active_area / jvm.active_area
+        ).magnitude
+
     jvm.intensity = jv_dict['intensity'] if 'intensity' in jv_dict else None
     jvm.integration_time = (
         jv_dict['integration_time'] if 'integration_time' in jv_dict else None
@@ -46,32 +66,58 @@ def get_jv_archive(jv_dict, mainfile, jvm, append=False):
             jv_set = SolarCellJVCurveDarkCustom(
                 cell_name=curve['name'],
                 voltage=curve['voltage'],
-                current_density=curve['current_density'],
+                current_density=curve['current_density']
+                * current_density_scaling_factor,
                 dark=True,
             )
         else:
+            # Get original values
+            original_V_oc = jv_dict['V_oc'][light_idx]
+            original_J_sc = jv_dict['J_sc'][light_idx]
+            original_J_MPP = jv_dict['J_MPP'][light_idx]
+            original_U_MPP = jv_dict['U_MPP'][light_idx]
+            original_intensity = jv_dict.get('intensity')
+
+            # Apply scaling
+            new_J_sc = original_J_sc * current_density_scaling_factor
+            new_J_MPP = original_J_MPP * current_density_scaling_factor
+            new_R_ser = jv_dict['R_ser'][light_idx] * resistance_scaling_factor
+            new_R_par = jv_dict['R_par'][light_idx] * resistance_scaling_factor
+
+            # Recalculate fill factor based on scaled values
+            new_fill_factor = (original_U_MPP * new_J_MPP) / (original_V_oc * new_J_sc)
+
+            # Recalculate efficiency based on scaled values (if intensity is available)
+            if original_intensity and original_intensity != 0:
+                new_efficiency = (
+                    (new_J_sc * original_V_oc * new_fill_factor)
+                    / original_intensity
+                    * 100
+                )
+            else:
+                new_efficiency = jv_dict['Efficiency'][
+                    light_idx
+                ]  # Keep original if can't recalculate
+
             jv_set = SolarCellJVCurveCustom(
                 cell_name=curve['name'],
                 voltage=curve['voltage'],
-                current_density=curve['current_density'],
+                current_density=curve['current_density']
+                * current_density_scaling_factor,
                 light_intensity=jv_dict['intensity']
                 if 'intensity' in jv_dict
                 else None,
-                open_circuit_voltage=round(jv_dict['V_oc'][light_idx], 8) * ureg('V'),
-                short_circuit_current_density=round(jv_dict['J_sc'][light_idx], 8)
+                open_circuit_voltage=round(original_V_oc, 8) * ureg('V'),
+                short_circuit_current_density=round(new_J_sc, 8) * ureg('mA/cm^2'),
+                fill_factor=round(
+                    new_fill_factor, 8
+                ),  # Don't multiply by 0.01 as it's already a fraction
+                efficiency=round(new_efficiency, 8),
+                potential_at_maximum_power_point=round(original_U_MPP, 8) * ureg('V'),
+                current_density_at_maximun_power_point=round(new_J_MPP, 8)
                 * ureg('mA/cm^2'),
-                fill_factor=round(jv_dict['Fill_factor'][light_idx], 8) * 0.01,
-                efficiency=round(jv_dict['Efficiency'][light_idx], 8),
-                potential_at_maximum_power_point=round(jv_dict['U_MPP'][light_idx], 8)
-                * ureg('V'),
-                current_density_at_maximun_power_point=round(
-                    jv_dict['J_MPP'][light_idx], 8
-                )
-                * ureg('mA/cm^2'),
-                series_resistance=round(jv_dict['R_ser'][light_idx], 8)
-                * ureg('ohm*cm^2'),
-                shunt_resistance=round(jv_dict['R_par'][light_idx], 8)
-                * ureg('ohm*cm^2'),
+                series_resistance=round(new_R_ser, 8) * ureg('ohm*cm^2'),
+                shunt_resistance=round(new_R_par, 8) * ureg('ohm*cm^2'),
             )
             light_idx += 1
         jvm.jv_curve.append(jv_set)
