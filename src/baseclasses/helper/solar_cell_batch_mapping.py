@@ -224,6 +224,7 @@ def map_basic_sample(data, substrate_name, upload_id, sample_class):
         substrate=get_reference(upload_id, substrate_name) if substrate_name else None,
         description=get_value(data, 'Variation', None, False),
         number_of_junctions=get_value(data, 'Number of junctions', None),
+        architecture=get_value(data, 'Architecture', None, False),
     )
     if hasattr(archive, 'module_configuration'):
         archive.module_configuration = ModuleConfiguration(
@@ -830,8 +831,8 @@ def map_gravure_printing(i, j, lab_ids, data, upload_id, gravure_printing_class)
                 data, 'Coating Speed [m/min]', None, True, unit='m/minute'
             ),
             screen_ruling=get_value(data, 'Screen Ruling [lines/cm]', None, True, None),
-            gp_method=get_value(data, 'R2R or S2S', '', False),
-            gp_direction=get_value(data, 'Forward or Reverse', '', False),
+            gp_method=get_value(data, 'R2R or S2S', None, False),
+            gp_direction=get_value(data, 'Forward or Reverse', None, False),
             cell_type=get_value(data, 'Cell Type', None, False),
             ink_temperature=get_value(data, 'Ink Temperature [°C]', None, unit='°C'),
         ),
