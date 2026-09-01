@@ -123,9 +123,9 @@ class HotPlateAnnealing(Annealing):
     #                    ])))
 
 
-class AnnealingStandAlone(BaseProcess):
-    """Base class for annealing as a standalone, top-level process (not just a
-    nested sub-section of another process)."""
+class ThermalAnnealing(BaseProcess):
+    """Annealing as a standalone, top-level process (not just a nested
+    sub-section of another process)."""
 
     annealing = SubSection(section_def=Annealing)
 
@@ -135,11 +135,7 @@ class AnnealingStandAlone(BaseProcess):
         self.method = 'Annealing'
 
 
-class ThermalAnnealing(AnnealingStandAlone):
-    pass
-
-
-# class SolventAnnealing(AnnealingStandAlone):
+# class SolventAnnealing(ThermalAnnealing):
 #     solvent = Quantity(
 #         type=Reference(Chemical.m_def),
 #         a_eln=dict(component='ReferenceEditQuantity'))
