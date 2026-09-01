@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-from .annealing import Annealing, IRAnnealing
+from .annealing import Annealing, IRAnnealing, ThermalAnnealing
 from .cleaning import (
     Cleaning,
     CoronaCleaning,

@@ -18,7 +18,9 @@
 
 import numpy as np
 from nomad.datamodel.data import ArchiveSection
-from nomad.metainfo import Quantity, Section
+from nomad.metainfo import Quantity, Section, SubSection
+
+from .. import BaseProcess
 
 
 class Annealing(ArchiveSection):
@@ -121,14 +123,20 @@ class HotPlateAnnealing(Annealing):
     #                    ])))
 
 
-# class AnnealingStandAlone(Annealing,ProcessOnSample):
-#     def normalize(self, archive, logger):
-#         super(Annealing, self).normalize(archive, logger)
+class AnnealingStandAlone(BaseProcess):
+    """Base class for annealing as a standalone, top-level process (not just a
+    nested sub-section of another process)."""
 
-#         self.method = "Annealing"
+    annealing = SubSection(section_def=Annealing)
 
-# class ThermalAnnealing(AnnealingStandAlone):
-#     pass
+    def normalize(self, archive, logger):
+        super().normalize(archive, logger)
+
+        self.method = 'Annealing'
+
+
+class ThermalAnnealing(AnnealingStandAlone):
+    pass
 
 
 # class SolventAnnealing(AnnealingStandAlone):
