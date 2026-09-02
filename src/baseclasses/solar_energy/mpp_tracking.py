@@ -21,7 +21,7 @@ import plotly.graph_objects as go
 from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.basesections import MeasurementResult
 from nomad.datamodel.metainfo.plot import PlotlyFigure, PlotSection
-from nomad.metainfo import Quantity, Section, SubSection
+from nomad.metainfo import Datetime, MEnum, Quantity, Section, SubSection
 from nomad.units import ureg
 
 from .. import BaseMeasurement
@@ -237,6 +237,91 @@ class StabilityFiguresOfMerit(MeasurementResult):
              This is the maximal power density reached on the raw data.
         """,
         a_eln=dict(component='NumberEditQuantity'),
+    )
+
+    fit_method = Quantity(
+        type=str,
+        shape=[],
+        description="""
+            The method used to compute this set of figures of merit, e.g.
+            'savgol_filter' (the automatic Savitzky-Golay smoothing applied on
+            normalization) or the name of a fit model used by an external analysis
+            app, e.g. 'Stretched Exponential', 'Linear', 'Exponential',
+            'Biexponential', 'Logistic + Exponential' or 'ERFC + Linear'.
+        - If unknown or not applicable, leave this field empty.
+        """,
+        a_eln=dict(component='StringEditQuantity'),
+    )
+
+    fit_range_start = Quantity(
+        type=np.dtype(np.float64),
+        unit=('s'),
+        shape=[],
+        description="""
+            The start of the time window of the measurement that was used for the fit.
+        - If the whole series was used, leave this field empty.
+        """,
+        a_eln=dict(component='NumberEditQuantity'),
+    )
+
+    fit_range_end = Quantity(
+        type=np.dtype(np.float64),
+        unit=('s'),
+        shape=[],
+        description="""
+            The end of the time window of the measurement that was used for the fit.
+        - If the whole series was used, leave this field empty.
+        """,
+        a_eln=dict(component='NumberEditQuantity'),
+    )
+
+    fitted_time = Quantity(
+        type=np.dtype(np.float64),
+        shape=['*'],
+        unit=('s'),
+        description="""
+            The time array of the persisted fitted/smoothed curve, paired 1:1 with
+            fitted_power_density.
+        """,
+    )
+
+    fitted_power_density = Quantity(
+        type=np.dtype(np.float64),
+        shape=['*'],
+        unit=('mW/cm**2'),
+        description="""
+            The persisted fitted/smoothed power density curve underlying this set of
+            figures of merit, paired 1:1 with fitted_time.
+        """,
+    )
+
+    fit_source = Quantity(
+        type=MEnum('automatic', 'manual'),
+        shape=[],
+        description="""
+            Whether this set of figures of merit was computed automatically on
+            normalization (savgol_filter) or written back by an external analysis app
+            after a manual/interactive fit.
+        """,
+        a_eln=dict(component='EnumEditQuantity'),
+    )
+
+    fit_computed_by = Quantity(
+        type=str,
+        shape=[],
+        description="""
+            The app and/or user that computed a manual fit, e.g. "MPPT_Analysis v0.x" or
+            a username.
+        - Leave empty for an automatic fit.
+        """,
+        a_eln=dict(component='StringEditQuantity'),
+    )
+
+    fit_computed_at = Quantity(
+        type=Datetime,
+        description='The date and time at which this set of figures of merit was '
+        'computed.',
+        a_eln=dict(component='DateTimeEditQuantity'),
     )
 
 
@@ -504,6 +589,30 @@ class MPPTracking(BaseMeasurement, PlotSection):
                 if self.results
                 and self.results[0].power_density_at_initial_stabilization_time_raw
                 else p_at_max_raw
+            )
+            self.results[0].fitted_time = (
+                self.results[0].fitted_time
+                if self.results
+                and self.results[0].fitted_time is not None
+                and len(self.results[0].fitted_time)
+                else self.time
+            )
+            self.results[0].fitted_power_density = (
+                self.results[0].fitted_power_density
+                if self.results
+                and self.results[0].fitted_power_density is not None
+                and len(self.results[0].fitted_power_density)
+                else power_density_abs_filtered
+            )
+            self.results[0].fit_method = (
+                self.results[0].fit_method
+                if self.results and self.results[0].fit_method
+                else 'savgol_filter'
+            )
+            self.results[0].fit_source = (
+                self.results[0].fit_source
+                if self.results and self.results[0].fit_source
+                else 'automatic'
             )
 
             fig1 = self.make_mppt_figure(
