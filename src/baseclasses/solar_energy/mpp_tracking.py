@@ -26,6 +26,27 @@ from nomad.units import ureg
 
 from .. import BaseMeasurement
 
+FITTED_CURVE_POINTS = 200
+
+
+def _resample_curve(time, values, n_points=FITTED_CURVE_POINTS):
+    """
+    Resample a time/value curve to at most n_points, evenly spaced in time, via linear
+    interpolation. Returns the input unchanged if it already has n_points or fewer.
+    """
+    time_magnitude = np.asarray(getattr(time, 'magnitude', time), dtype=np.float64)
+    values_magnitude = np.asarray(
+        getattr(values, 'magnitude', values), dtype=np.float64
+    )
+    if len(time_magnitude) <= n_points:
+        return time, values
+
+    resampled_time = np.linspace(time_magnitude[0], time_magnitude[-1], n_points)
+    resampled_values = np.interp(resampled_time, time_magnitude, values_magnitude)
+    if hasattr(time, 'units'):
+        resampled_time = resampled_time * time.units
+    return resampled_time, resampled_values
+
 
 class MPPTrackingProperties(ArchiveSection):
     start_voltage_manually = Quantity(
@@ -104,6 +125,51 @@ class MPPTrackingProperties(ArchiveSection):
         measurement""",
         unit=('V'),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
+    )
+
+
+class FitParameter(ArchiveSection):
+    """
+    A single named parameter of a fit, as produced by a curve-fitting model. Stored
+    generically (rather than as dedicated fields per model) since different fit models
+    have different parameter sets, of varying size and meaning.
+    """
+
+    name = Quantity(
+        type=str,
+        description="""
+            Parameter name as used by the fitting tool, e.g. 'A', 'tau', 'beta',
+            'slope', 'PCE0'.
+        """,
+        a_eln=dict(component='StringEditQuantity'),
+    )
+
+    value = Quantity(
+        type=np.dtype(np.float64),
+        description="""
+            Parameter value, in the unit given by this entry's own `unit` field.
+        """,
+        a_eln=dict(component='NumberEditQuantity'),
+    )
+
+    unit = Quantity(
+        type=str,
+        description="""
+            Unit the value is expressed in, as a plain string (e.g. 'h', 's',
+            'mW/cm^2', or '' for dimensionless) - parameters across different fit
+            models have genuinely mixed units, so this is a label rather than a
+            pint-aware Quantity unit.
+        """,
+        a_eln=dict(component='StringEditQuantity'),
+    )
+
+    error = Quantity(
+        type=np.dtype(np.float64),
+        description="""
+            Standard error / uncertainty on value, if the fitting tool computed one.
+        - Leave empty if not available.
+        """,
+        a_eln=dict(component='NumberEditQuantity'),
     )
 
 
@@ -279,9 +345,11 @@ class StabilityFiguresOfMerit(MeasurementResult):
         type=np.dtype(np.float64),
         shape=['*'],
         unit=('s'),
-        description="""
+        description=f"""
             The time array of the persisted fitted/smoothed curve, paired 1:1 with
-            fitted_power_density.
+            fitted_power_density. Resampled to at most {FITTED_CURVE_POINTS} evenly
+            spaced points rather than the full measurement resolution, so this can be
+            stored and displayed cheaply.
         """,
     )
 
@@ -289,10 +357,52 @@ class StabilityFiguresOfMerit(MeasurementResult):
         type=np.dtype(np.float64),
         shape=['*'],
         unit=('mW/cm**2'),
-        description="""
+        description=f"""
             The persisted fitted/smoothed power density curve underlying this set of
-            figures of merit, paired 1:1 with fitted_time.
+            figures of merit, paired 1:1 with fitted_time. Resampled to at most
+            {FITTED_CURVE_POINTS} evenly spaced points rather than the full
+            measurement resolution, so this can be stored and displayed cheaply.
         """,
+        a_plot=[
+            {
+                'label': 'Fitted power density',
+                'x': 'fitted_time',
+                'y': 'fitted_power_density',
+                'layout': {
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+                'config': {'editable': True, 'scrollZoom': True},
+            }
+        ],
+    )
+
+    fit_parameters = SubSection(section_def=FitParameter, repeats=True)
+
+    fit_r_squared = Quantity(
+        type=np.dtype(np.float64),
+        shape=[],
+        description="""
+            Goodness of fit (R^2) of the fit that produced this set of figures of
+            merit.
+        - Only populated for a manual fit; the automatic savgol_filter path has no
+        concept of R^2.
+        """,
+        a_eln=dict(component='NumberEditQuantity'),
+    )
+
+    lifetime_energy_yield = Quantity(
+        type=np.dtype(np.float64),
+        unit=('kWh/m**2'),
+        shape=[],
+        description="""
+            Lifetime energy yield computed from the fitted curve: the time-integral
+            of the fitted power density up to the capped T80, combining both power
+            output and durability into a single figure.
+        - Only populated for a manual fit; the automatic savgol_filter path has no
+        concept of a lifetime energy yield.
+        """,
+        a_eln=dict(component='NumberEditQuantity'),
     )
 
     fit_source = Quantity(
@@ -590,20 +700,17 @@ class MPPTracking(BaseMeasurement, PlotSection):
                 and self.results[0].power_density_at_initial_stabilization_time_raw
                 else p_at_max_raw
             )
-            self.results[0].fitted_time = (
-                self.results[0].fitted_time
-                if self.results
-                and self.results[0].fitted_time is not None
-                and len(self.results[0].fitted_time)
-                else self.time
-            )
-            self.results[0].fitted_power_density = (
-                self.results[0].fitted_power_density
-                if self.results
-                and self.results[0].fitted_power_density is not None
-                and len(self.results[0].fitted_power_density)
-                else power_density_abs_filtered
-            )
+            if (
+                self.results[0].fitted_time is None
+                or not len(self.results[0].fitted_time)
+                or self.results[0].fitted_power_density is None
+                or not len(self.results[0].fitted_power_density)
+            ):
+                resampled_time, resampled_power_density = _resample_curve(
+                    self.time, power_density_abs_filtered
+                )
+                self.results[0].fitted_time = resampled_time
+                self.results[0].fitted_power_density = resampled_power_density
             self.results[0].fit_method = (
                 self.results[0].fit_method
                 if self.results and self.results[0].fit_method
