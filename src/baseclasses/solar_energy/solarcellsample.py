@@ -21,7 +21,7 @@ from nomad.datamodel.metainfo.basesections import (
     CompositeSystemReference,
 )
 from nomad.datamodel.results import Material  # BandGapOptical, Material
-from nomad.metainfo import Quantity, Reference, SubSection
+from nomad.metainfo import Datetime, Quantity, Reference, SubSection
 from nomad.units import ureg
 
 from .. import ReadableIdentifiersCustom
@@ -95,6 +95,7 @@ def collectJVMeasurement(entry, entry_id, entry_data):
             'short_circuit_current_density': short_circuit_current_density,
             'light_intensity': light_intensity,
             'device_area': device_area,
+            'datetime': entry_data['datetime'] if 'datetime' in entry_data else None,
         }
     )
 
@@ -307,6 +308,39 @@ class SolcarCellSample(CompositeSystem):
         ),
     )
 
+    jv_history_datetime = Quantity(
+        type=Datetime,
+        shape=['*'],
+        description=(
+            'Datetime of each JV measurement connected to this sample, one entry '
+            'per connected JV measurement, aligned by index with '
+            'jv_history_efficiency. Populated during normalization.'
+        ),
+    )
+
+    jv_history_efficiency = Quantity(
+        type=np.dtype(np.float64),
+        shape=['*'],
+        description=(
+            'Best-pixel power conversion efficiency from each JV measurement '
+            'connected to this sample, one entry per connected JV measurement, '
+            'aligned by index with jv_history_datetime. Unlike '
+            'results.properties.optoelectronic.solar_cell.efficiency (which only '
+            'keeps the single best measurement), this retains the full history so '
+            'efficiency can be plotted against measurement date.'
+        ),
+        a_plot=[
+            {
+                'x': 'jv_history_datetime',
+                'y': 'jv_history_efficiency',
+                'layout': {
+                    'yaxis': {'fixedrange': False},
+                    'xaxis': {'fixedrange': False},
+                },
+            }
+        ],
+    )
+
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
 
@@ -423,6 +457,22 @@ class SolcarCellSample(CompositeSystem):
                 archive.results.properties.optoelectronic.solar_cell.device_area = (
                     result_data['JVs'][jv_key]['device_area'] * ureg('cm**2')
                 )
+
+        # Best-pixel efficiency per connected JV measurement, so efficiency can be
+        # plotted against measurement date (unlike the single overall-best value
+        # above, which discards all but the highest-efficiency measurement).
+        jv_history = []
+        for entry, jv_data in result_data['JVs'].items():
+            entry_datetime = jv_data.get('datetime')
+            if not entry_datetime:
+                continue
+            entry_effs = [eff for eff in jv_data['efficiency'] if not np.isnan(eff)]
+            if not entry_effs:
+                continue
+            jv_history.append((entry_datetime, max(entry_effs)))
+        jv_history.sort(key=lambda item: item[0])
+        self.jv_history_datetime = [item[0] for item in jv_history]
+        self.jv_history_efficiency = [item[1] for item in jv_history]
 
         eqe_eff_val = 0 * ureg('eV')
         for entry in result_data['EQEs']:
