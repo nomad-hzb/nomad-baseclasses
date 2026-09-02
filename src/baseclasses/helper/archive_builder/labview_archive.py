@@ -8,7 +8,7 @@ import baseclasses
 from baseclasses import PubChemPureSubstanceSectionCustom
 from baseclasses.chemical_energy.electrolyser_performance import (
     ElectrolyserProperties,
-    NESDElectrode,
+    ACMDElectrode,
 )
 from baseclasses.chemical_energy import (
     Environment,
@@ -29,7 +29,7 @@ def get_pint_from_string(magnitude_string, unit):
 
 
 def get_electrode(metadata, electrode_type):
-    electrode = NESDElectrode()
+    electrode = ACMDElectrode()
     electrode.electrolyte = Environment(
         name=metadata.get(f'Electrolyte_{electrode_type}'),
         solvent=PubChemPureSubstanceSectionCustom(name='H20', load_data=False),
