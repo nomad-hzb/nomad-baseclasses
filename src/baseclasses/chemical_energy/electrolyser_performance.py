@@ -35,7 +35,7 @@ from baseclasses.helper.utilities import create_short_id, export_lab_id
 from .. import BaseMeasurement
 
 
-def make_nesd_id(archive):
+def make_acmd_id(archive):
     author = archive.metadata.main_author
     first_short, last_short = 'E', ''
     try:
@@ -44,13 +44,13 @@ def make_nesd_id(archive):
     except Exception:
         pass
     lab_id = create_short_id(
-        archive, str(first_short) + str(last_short), 'CE_NESD_Electrolyser'
+        archive, str(first_short) + str(last_short), 'CE_ACMD_Electrolyser'
     )
     export_lab_id(archive, lab_id)
     return lab_id
 
 
-class NESDElectrode(CompositeSystem):
+class ACMDElectrode(CompositeSystem):
     electrolyte = SubSection(section_def=Electrolyte)
 
     catalyst = Quantity(
@@ -143,9 +143,9 @@ class ElectrolyserProperties(CompositeSystem):
         a_eln=dict(component='ReferenceEditQuantity'),
     )
 
-    anode = SubSection(section_def=NESDElectrode)
+    anode = SubSection(section_def=ACMDElectrode)
 
-    cathode = SubSection(section_def=NESDElectrode)
+    cathode = SubSection(section_def=ACMDElectrode)
 
     def is_valid_formula(self, formula, logger):
         try:
@@ -157,7 +157,7 @@ class ElectrolyserProperties(CompositeSystem):
 
     def normalize(self, archive, logger):
         if not self.lab_id:
-            self.lab_id = make_nesd_id(archive)
+            self.lab_id = make_acmd_id(archive)
         elements = ''
         if self.cathode:
             if self.is_valid_formula(self.cathode.catalyst, logger):

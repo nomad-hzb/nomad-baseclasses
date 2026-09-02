@@ -387,7 +387,7 @@ class SampleIDCENOME(SampleIDCE2):
         super().normalize(archive, logger)
 
 
-class SampleIDCENESD(SampleIDCE2):
+class SampleIDCEACMD(SampleIDCE2):
     m_def = Section(
         a_eln=dict(
             hide=[
@@ -403,8 +403,8 @@ class SampleIDCENESD(SampleIDCE2):
     institute = Quantity(
         type=str,
         description='Alias/short name of the home institute of the owner, i.e. *HZB*.',
-        default='CE-NESD',
-        a_eln=dict(component='EnumEditQuantity', props=dict(suggestions=['CE-NESD'])),
+        default='CE-ACMD',
+        a_eln=dict(component='EnumEditQuantity', props=dict(suggestions=['CE-ACMD'])),
     )
 
     owner = Quantity(
@@ -600,7 +600,7 @@ class ExpectedStructure(ArchiveSection):
     )
 
 
-class CENESDSample(CESample):
+class CEACMDSample(CESample):
     preparation_date = Quantity(
         type=Datetime,
         description='The date where the sample was prepared.',

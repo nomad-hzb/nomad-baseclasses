@@ -18,7 +18,7 @@
 
 from .cesample import (
     CatalystSynthesis,
-    CENESDSample,
+    CEACMDSample,
     CENOMESample,
     CENSLISample,
     CESample,
@@ -31,7 +31,7 @@ from .cesample import (
     ExpectedStructure,
     Purging,
     ReferenceElectrode,
-    SampleIDCENESD,
+    SampleIDCEACMD,
     SampleIDCENOME,
     SubstanceWithConcentration,
     SubstrateProperties,
@@ -55,7 +55,7 @@ from .electrochemical_impedance_spectroscopy import (
 from .electrolyser_performance import (
     ElectrolyserPerformanceEvaluation,
     ElectrolyserProperties,
-    NESDElectrode,
+    ACMDElectrode,
 )
 from .galvanodynamic_sweep import GalvanodynamicSweep, LSGProperties
 from .general_process import GeneralProcess
