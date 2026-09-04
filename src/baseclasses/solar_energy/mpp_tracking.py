@@ -347,9 +347,8 @@ class StabilityFiguresOfMerit(MeasurementResult):
         unit=('s'),
         description=f"""
             The time array of the persisted fitted/smoothed curve, paired 1:1 with
-            fitted_power_density. Resampled to at most {FITTED_CURVE_POINTS} evenly
-            spaced points rather than the full measurement resolution, so this can be
-            stored and displayed cheaply.
+            fitted_power_density. Resampled to a suggested {FITTED_CURVE_POINTS}
+            points rather than full resolution, to keep storage cheap.
         """,
     )
 
@@ -358,10 +357,9 @@ class StabilityFiguresOfMerit(MeasurementResult):
         shape=['*'],
         unit=('mW/cm**2'),
         description=f"""
-            The persisted fitted/smoothed power density curve underlying this set of
-            figures of merit, paired 1:1 with fitted_time. Resampled to at most
-            {FITTED_CURVE_POINTS} evenly spaced points rather than the full
-            measurement resolution, so this can be stored and displayed cheaply.
+            The persisted fitted/smoothed power density curve, paired 1:1 with
+            fitted_time. Resampled to a suggested {FITTED_CURVE_POINTS} points
+            rather than full resolution, to keep storage cheap.
         """,
         a_plot=[
             {
