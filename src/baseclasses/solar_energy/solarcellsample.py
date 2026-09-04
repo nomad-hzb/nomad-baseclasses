@@ -85,6 +85,10 @@ def collectJVMeasurement(entry, entry_id, entry_data):
         curve['light_intensity'] if 'light_intensity' in curve else np.nan
         for curve in entry_data['jv_curve']
     ]
+    cell_name = [
+        curve['cell_name'] if 'cell_name' in curve else ''
+        for curve in entry_data['jv_curve']
+    ]
     device_area = entry_data['active_area'] if 'active_area' in entry_data else np.nan
 
     entry[entry_id].update(
@@ -94,6 +98,7 @@ def collectJVMeasurement(entry, entry_id, entry_data):
             'open_circuit_voltage': open_circuit_voltage,
             'short_circuit_current_density': short_circuit_current_density,
             'light_intensity': light_intensity,
+            'cell_name': cell_name,
             'device_area': device_area,
             'datetime': entry_data['datetime'] if 'datetime' in entry_data else None,
         }
@@ -312,9 +317,20 @@ class SolcarCellSample(CompositeSystem):
         type=Datetime,
         shape=['*'],
         description=(
-            'Datetime of each JV measurement connected to this sample, one entry '
-            'per connected JV measurement, aligned by index with '
-            'jv_history_efficiency. Populated during normalization.'
+            'Datetime of the JV measurement each entry came from, one entry per '
+            'measured cell/pixel (not just the best one) across every JV '
+            'measurement connected to this sample, aligned by index with '
+            'jv_history_efficiency and jv_history_cell_name. Populated during '
+            'normalization.'
+        ),
+    )
+
+    jv_history_cell_name = Quantity(
+        type=str,
+        shape=['*'],
+        description=(
+            'Cell/pixel identifier for each entry, aligned by index with '
+            'jv_history_datetime and jv_history_efficiency.'
         ),
     )
 
@@ -322,17 +338,19 @@ class SolcarCellSample(CompositeSystem):
         type=np.dtype(np.float64),
         shape=['*'],
         description=(
-            'Best-pixel power conversion efficiency from each JV measurement '
-            'connected to this sample, one entry per connected JV measurement, '
-            'aligned by index with jv_history_datetime. Unlike '
-            'results.properties.optoelectronic.solar_cell.efficiency (which only '
-            'keeps the single best measurement), this retains the full history so '
-            'efficiency can be plotted against measurement date.'
+            'Power conversion efficiency of each measured cell/pixel (not just the '
+            'best one) across every JV measurement connected to this sample, '
+            'aligned by index with jv_history_datetime and jv_history_cell_name. '
+            'Unlike results.properties.optoelectronic.solar_cell.efficiency (which '
+            'only keeps the single best measurement), this retains the full '
+            'per-cell history so efficiency can be plotted against measurement '
+            'date.'
         ),
         a_plot=[
             {
                 'x': 'jv_history_datetime',
                 'y': 'jv_history_efficiency',
+                'lines': [{'mode': 'markers'}],
                 'layout': {
                     'yaxis': {'fixedrange': False},
                     'xaxis': {'fixedrange': False},
@@ -466,13 +484,16 @@ class SolcarCellSample(CompositeSystem):
             entry_datetime = jv_data.get('datetime')
             if not entry_datetime:
                 continue
-            entry_effs = [eff for eff in jv_data['efficiency'] if not np.isnan(eff)]
-            if not entry_effs:
-                continue
-            jv_history.append((entry_datetime, max(entry_effs)))
+            cell_names = jv_data.get('cell_name') or []
+            for j, eff in enumerate(jv_data['efficiency']):
+                if np.isnan(eff):
+                    continue
+                cell_name = cell_names[j] if j < len(cell_names) else ''
+                jv_history.append((entry_datetime, eff, cell_name))
         jv_history.sort(key=lambda item: item[0])
         self.jv_history_datetime = [item[0] for item in jv_history]
         self.jv_history_efficiency = [item[1] for item in jv_history]
+        self.jv_history_cell_name = [item[2] for item in jv_history]
 
         eqe_eff_val = 0 * ureg('eV')
         for entry in result_data['EQEs']:

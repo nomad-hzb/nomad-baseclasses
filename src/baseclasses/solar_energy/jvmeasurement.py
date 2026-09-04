@@ -476,3 +476,33 @@ class JVMeasurement(BaseMeasurement):
             solar_cell.fill_factor = self.jv_curve[max_idx].fill_factor
             solar_cell.efficiency = self.jv_curve[max_idx].efficiency
             solar_cell.illumination_intensity = self.jv_curve[max_idx].light_intensity
+
+        self.reprocess_connected_samples(archive, logger)
+
+    def reprocess_connected_samples(self, archive, logger):
+        """
+        Samples derive cached fields (e.g. best efficiency, jv_history_*) from all
+        JV measurements that reference them, but only recompute those fields when the
+        sample itself is (re)processed. Without this, editing/reprocessing a JV
+        measurement after its sample was last processed leaves the sample stale
+        until someone manually reprocesses it. Touch each connected sample's raw
+        file so it gets queued for reprocessing too.
+        """
+        if not self.samples:
+            return
+        for sample_ref in self.samples:
+            lab_id = getattr(sample_ref, 'lab_id', None)
+            if not lab_id:
+                continue
+            file_name = f'{lab_id}.archive.json'
+            try:
+                if archive.m_context.raw_path_exists(file_name):
+                    archive.m_context.process_updated_raw_file(
+                        file_name, allow_modify=True
+                    )
+            except Exception:
+                if logger:
+                    logger.debug(
+                        'Could not trigger reprocessing of connected sample.',
+                        exc_info=True,
+                    )
