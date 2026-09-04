@@ -20,6 +20,7 @@ from nomad.datamodel.metainfo.basesections import (
     CompositeSystem,
     CompositeSystemReference,
 )
+from nomad.datamodel.metainfo.plot import PlotlyFigure, PlotSection
 from nomad.datamodel.results import Material  # BandGapOptical, Material
 from nomad.metainfo import Datetime, Quantity, Reference, SubSection
 from nomad.units import ureg
@@ -258,7 +259,7 @@ class BasicSampleWithID(CompositeSystem):
     sample_id = SubSection(section_def=ReadableIdentifiersCustom)
 
 
-class SolcarCellSample(CompositeSystem):
+class SolcarCellSample(CompositeSystem, PlotSection):
     substrate = Quantity(
         type=Reference(Substrate.m_def), a_eln=dict(component='ReferenceEditQuantity')
     )
@@ -344,19 +345,9 @@ class SolcarCellSample(CompositeSystem):
             'Unlike results.properties.optoelectronic.solar_cell.efficiency (which '
             'only keeps the single best measurement), this retains the full '
             'per-cell history so efficiency can be plotted against measurement '
-            'date.'
+            'date. Plotted (with cell names as a color-coded legend) in the '
+            '"JV History" figure built in normalize().'
         ),
-        a_plot=[
-            {
-                'x': 'jv_history_datetime',
-                'y': 'jv_history_efficiency',
-                'lines': [{'mode': 'markers'}],
-                'layout': {
-                    'yaxis': {'fixedrange': False},
-                    'xaxis': {'fixedrange': False},
-                },
-            }
-        ],
     )
 
     def normalize(self, archive, logger):
@@ -494,6 +485,71 @@ class SolcarCellSample(CompositeSystem):
         self.jv_history_datetime = [item[0] for item in jv_history]
         self.jv_history_efficiency = [item[1] for item in jv_history]
         self.jv_history_cell_name = [item[2] for item in jv_history]
+
+        self.figures = [f for f in self.figures if f.label != 'JV History']
+        if jv_history:
+            import json
+            import re
+
+            import pandas as pd
+            import plotly.express as px
+
+            def scan_direction(cell_name):
+                name_lower = (cell_name or '').lower()
+                if 'reverse' in name_lower:
+                    return 'reverse'
+                if 'forward' in name_lower:
+                    return 'forward'
+                return 'unknown'
+
+            def pixel_name(cell_name):
+                # Strip the forward/reverse token (and its separators) so that
+                # both scan directions of the same physical pixel share one
+                # color, e.g. 'Pixel_1_forward'/'Pixel_1_reverse' -> 'Pixel_1'.
+                base = re.sub(
+                    r'[\s_-]*(forward|reverse)[\s_-]*',
+                    ' ',
+                    cell_name or '',
+                    flags=re.IGNORECASE,
+                ).strip(' _-')
+                return base or cell_name
+
+            df = pd.DataFrame(
+                {
+                    'Datetime': self.jv_history_datetime,
+                    'Efficiency (%)': self.jv_history_efficiency,
+                    'Cell': self.jv_history_cell_name,
+                    'Pixel': [
+                        pixel_name(cell) for cell in self.jv_history_cell_name
+                    ],
+                    'Scan direction': [
+                        scan_direction(cell) for cell in self.jv_history_cell_name
+                    ],
+                }
+            )
+            fig = px.scatter(
+                df,
+                x='Datetime',
+                y='Efficiency (%)',
+                color='Pixel',
+                symbol='Scan direction',
+                symbol_map={
+                    'forward': 'circle',
+                    'reverse': 'cross',
+                    'unknown': 'circle',
+                },
+                hover_name='Cell',
+                title='JV History',
+            )
+            fig.update_traces(marker=dict(size=8))
+            fig.update_layout(
+                showlegend=True,
+                xaxis=dict(fixedrange=False),
+                yaxis=dict(fixedrange=False),
+            )
+            self.figures.append(
+                PlotlyFigure(label='JV History', figure=json.loads(fig.to_json()))
+            )
 
         eqe_eff_val = 0 * ureg('eV')
         for entry in result_data['EQEs']:
