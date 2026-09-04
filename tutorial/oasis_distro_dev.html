@@ -1,0 +1,824 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../assets/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-8.1.1">
+    
+    
+      
+        <title>Development environment for the NOMAD plugins - NOMAD HZB Base Sections Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.23b6d78a.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.e6a45f82.min.css">
+        
+          
+          
+          <meta name="theme-color" content="">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web:300,400,400i,700%7C&display=fallback">
+        <style>:root{--md-text-font:"Titillium Web";--md-code-font:""}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="#2a4cdf" data-md-color-accent="#008a67">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#development-environment-for-the-nomad-plugins" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="https://nomad-lab.eu" title="NOMAD HZB Base Sections Documentation" class="md-header__button md-logo" aria-label="NOMAD HZB Base Sections Documentation" data-md-component="logo">
+      
+  <img src="../assets/nomad-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            NOMAD HZB Base Sections Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Development environment for the NOMAD plugins
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/RoteKekse/nomad-baseclasses" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://nomad-lab.eu" title="NOMAD HZB Base Sections Documentation" class="md-nav__button md-logo" aria-label="NOMAD HZB Base Sections Documentation" data-md-component="logo">
+      
+  <img src="../assets/nomad-logo.png" alt="logo">
+
+    </a>
+    NOMAD HZB Base Sections Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/RoteKekse/nomad-baseclasses" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Explanation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Explanation" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Explanation
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../explanation/measurements.html" class="md-nav__link">
+        Measurements
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../explanation/synthesis.html" class="md-nav__link">
+        Synthesis
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          How-To Guides
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="How-To Guides" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          How-To Guides
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how_to/browse_your_upload.html" class="md-nav__link">
+        Browse Your Upload
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how_to/create_entry.html" class="md-nav__link">
+        Create an Entry
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how_to/create_experimental_plan.html" class="md-nav__link">
+        Create an Experimental Plan
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how_to/create_solution.html" class="md-nav__link">
+        Create a Solution
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how_to/create_standard_sample.html" class="md-nav__link">
+        Create a Standard Sample
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how_to/create_wet_chemical_deposition.html" class="md-nav__link">
+        Create Wet Chemical Deposition
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how_to/upload_measurement.html" class="md-nav__link">
+        Upload Measurement
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          References
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="References" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          References
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../references/solution.html" class="md-nav__link">
+        Solution
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../references/wet_chemical_deposition.html" class="md-nav__link">
+        Wet Chemical Deposition
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          Tutorials
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Tutorials" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Tutorials
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="oasis_deployment.html" class="md-nav__link">
+        Configuring and deploying NOMAD OASIS
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Development environment for the NOMAD plugins
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="oasis_distro_dev.html" class="md-nav__link md-nav__link--active">
+        Development environment for the NOMAD plugins
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#setting-up-nomad-distro-dev-on-linux-or-macos" class="md-nav__link">
+    Setting up nomad-distro-dev on Linux or macOS
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setting-up-nomad-distro-dev-on-windows" class="md-nav__link">
+    Setting up nomad-distro-dev on Windows
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-information" class="md-nav__link">
+    Additional information
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="solar_cells.html" class="md-nav__link">
+        Solar Cells
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#setting-up-nomad-distro-dev-on-linux-or-macos" class="md-nav__link">
+    Setting up nomad-distro-dev on Linux or macOS
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setting-up-nomad-distro-dev-on-windows" class="md-nav__link">
+    Setting up nomad-distro-dev on Windows
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#additional-information" class="md-nav__link">
+    Additional information
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+
+<h1 id="development-environment-for-the-nomad-plugins">Development environment for the NOMAD plugins<a class="headerlink" href="#development-environment-for-the-nomad-plugins" title="Permanent link">&para;</a></h1>
+<p>NOMAD OASIS can be customized using NOMAD plugins - either existing ones or newly created or modified for a specific purpose. However, developing plugins within a standard OASIS deployment is inconvenient and unnecessarily time-consuming: the Docker images will have to be generated and deployed anew after each correction to the plugin code. Instead, a local development environment can be utilized to develop multiple plugins (as well as the central NOMAD package) in a consistent, centralized and much easier way. This can be done using <a href="https://github.com/FAIRmat-NFDI/nomad-distro-dev"><code>nomad-distro-dev</code></a> repository on GitHub. The development environment is designed to natively work with Linux and macOS; it is still possible to run it on Windows systems; however, the environment may run slower or require more resources. Below we describe these two cases separately.</p>
+<h2 id="setting-up-nomad-distro-dev-on-linux-or-macos">Setting up <code>nomad-distro-dev</code> on Linux or macOS<a class="headerlink" href="#setting-up-nomad-distro-dev-on-linux-or-macos" title="Permanent link">&para;</a></h2>
+<p>Start with forking <a href="https://github.com/FAIRmat-NFDI/nomad-distro-dev"><code>nomad-distro-dev</code></a> repository (<code>Fork</code> -&gt; <code>Create a new fork</code> in the upper right part of the page). You will also need the following software installed on your system:</p>
+<ul>
+<li>
+<p><a href="https://docs.docker.com/engine/install/">Docker</a> - generally, only <code>docker-compose</code> functionality will be needed</p>
+</li>
+<li>
+<p><a href="https://docs.astral.sh/uv/getting-started/installation/">uv</a> python package manager, version 0.5.14 or above</p>
+</li>
+<li>
+<p><a href="https://nodejs.org/en">node.js</a> version 20 or above and <a href="https://classic.yarnpkg.com/en/docs/install">yarn</a> version 1.22 or above are necessary to run the GUI</p>
+</li>
+<li>
+<p><a href="https://github.com/git-guides/install-git">git</a> for version control and interaction with GitHub</p>
+</li>
+<li>
+<p>Some IDE for plugin development, such as <a href="https://code.visualstudio.com/docs/setup/linux">VS Code</a></p>
+</li>
+</ul>
+<p>Clone the forked repository from GitHub:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>git clone https://github.com/&lt;your-username&gt;/nomad-distro-dev.git
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>cd nomad-distro-dev
+</code></pre></div>
+<p>And run Docker containers in detached mode:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker compose up -d
+</code></pre></div>
+<p>To stop the containers, run the following command from the same folder:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker compose down
+</code></pre></div>
+<p>Then, follow the <code>Step-by-Step Setup</code> instructions in the <code>nomad-distro-dev</code> readme file.</p>
+<p>If the plugin you are developing has its own sub-plugins (or any other submodules), such as <a href="https://github.com/FAIRmat-NFDI/pynxtools">pynxtools</a>, you will need to reinitialize submodules after adding the plugin by running again:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>git submodule update --init --recursive
+</code></pre></div>
+<p>Note that the plugins added to the repository are each also git repositories, so you can choose to work on a specific branch and push or pull changes as usual by using <code>git</code> commands from the corresponding folder, for example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>cd packages/&lt;plugin-name&gt;
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>git checkout -b New-feature-branch
+</code></pre></div>
+<h2 id="setting-up-nomad-distro-dev-on-windows">Setting up <code>nomad-distro-dev</code> on Windows<a class="headerlink" href="#setting-up-nomad-distro-dev-on-windows" title="Permanent link">&para;</a></h2>
+<p>Start with forking <a href="https://github.com/FAIRmat-NFDI/nomad-distro-dev"><code>nomad-distro-dev</code></a> repository (<code>Fork</code> -&gt; <code>Create a new fork</code> in the upper right part of the page). You will also need the following software installed on your system:</p>
+<ul>
+<li>
+<p><a href="https://docs.docker.com/desktop/setup/install/windows-install/">Docker Desktop</a> - choose the default option with WSL. On first launch, Docker will prompt you to create an account and update the installed version of WSL; proceed according to the instructions provided by Docker.</p>
+</li>
+<li>
+<p><a href="https://code.visualstudio.com/docs/setup/linux">VS Code</a> for plugin development</p>
+</li>
+<li>
+<p><code>Dev Containers</code> extension for VS Code. In order to install it, start VS Code, go to the <code>Extensions</code> tab on the left side (also <code>Ctrl + Shift + X</code> by default) and type <code>Dev Containers</code> into the search. Install the official extension from Microsoft with this name.</p>
+</li>
+<li>
+<p><a href="https://github.com/git-guides/install-git">git</a> for version control and interaction with GitHub</p>
+</li>
+</ul>
+<p>Clone the forked repository from GitHub:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>git clone https://github.com/&lt;your-username&gt;/nomad-distro-dev.git
+</code></pre></div>
+<p>Make sure Docker Desktop is running, then open the folder containing the cloned repository in VS Code. A notification that the folder contains a Dev Container configuration file should appear; click <code>Reopen in Container</code>. This step may take a few minutes, depending on the system; you can see the log while waiting. <code>uv</code> will be automatically installed during this step.</p>
+<p>Next, open a new terminal within VS Code (<code>+</code> on the upper right of the existing terminal, or via drop-down menu <code>Terminal</code> on the top of the main window) and continue with the setup:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker compose up -d
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>git submodule update --init --recursive
+</code></pre></div>
+<p>Add the desired plugins as described in the readme file of <code>nomad-distro-dev</code> (this step is the same for all OS):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>git submodule add https://github.com/&lt;user_name&gt;/&lt;package_name&gt;.git packages/&lt;package_name&gt;
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>uv add packages/&lt;package_name&gt;
+</code></pre></div>
+<p>For example, in order to add <code>nomad-perovskite-solar-cells-database</code> plugin, run:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>git submodule add https://github.com/FAIRmat-NFDI/nomad-perovskite-solar-cells-database.git packages/nomad-perovskite-solar-cells-database
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>uv add packages/nomad-perovskite-solar-cells-database/
+</code></pre></div>
+<p>If the plugin you are developing has its own sub-plugins (or any other submodules), such as <a href="https://github.com/FAIRmat-NFDI/pynxtools">pynxtools</a>, you will need to repeat submodules initialization after adding the plugin by running again:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>git submodule update --init --recursive
+</code></pre></div>
+<p>Note that the plugins added to the repository are each also git repositories, so you can choose to work on a specific branch and push or pull changes as usual by using <code>git</code> commands from the corresponding folder, for example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>cd packages/&lt;plugin-name&gt;
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>git checkout -b New-feature-branch
+</code></pre></div>
+<p>Next, update the environment and install all the necessary dependencies:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>uv run poe setup
+</code></pre></div>
+<p>This step may take a significant amount of time on the first run - 30 minutes is not unusual.</p>
+<p>Finally, start the NOMAD API app and NOMAD GUI:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>uv run poe start
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>uv run poe gui start
+</code></pre></div>
+<p>Either command will occupy the terminal, so run these two in separate terminals.</p>
+<h2 id="additional-information">Additional information<a class="headerlink" href="#additional-information" title="Permanent link">&para;</a></h2>
+<p>If you modify the plugin code and need to restart NOMAD, in most cases stopping and restarting NOMAD API app is sufficient (<code>Ctrl + C</code> in the corresponding terminal, then <code>uv run poe start</code>). In some cases, GUI also has to be restarted.</p>
+<p>In order to stop the local NOMAD instance, interrupt both the API app and the GUI using <code>Ctrl + C</code>, then stop Docker images:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>docker compose down
+</code></pre></div>
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="oasis_deployment.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Configuring and deploying NOMAD OASIS" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Configuring and deploying NOMAD OASIS
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="solar_cells.html" class="md-footer__link md-footer__link--next" aria-label="Next: Solar Cells" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Solar Cells
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant"], "search": "../assets/javascripts/workers/search.c7dec7e7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.da79ceb7.min.js"></script>
+      
+    
+  </body>
+</html>
