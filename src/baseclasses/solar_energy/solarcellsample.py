@@ -350,6 +350,37 @@ class SolcarCellSample(CompositeSystem, PlotSection):
         ),
     )
 
+    jv_history_fill_factor = Quantity(
+        type=np.dtype(np.float64),
+        shape=['*'],
+        description=(
+            'Fill factor of each measured cell/pixel, aligned by index with '
+            'jv_history_datetime, jv_history_efficiency and jv_history_cell_name. '
+            'Plotted in the "JV History (FF)" figure built in normalize().'
+        ),
+    )
+
+    jv_history_open_circuit_voltage = Quantity(
+        type=np.dtype(np.float64),
+        shape=['*'],
+        description=(
+            'Open circuit voltage (in V) of each measured cell/pixel, aligned by '
+            'index with jv_history_datetime and jv_history_cell_name. Plotted in '
+            'the "JV History (Voc)" figure built in normalize().'
+        ),
+    )
+
+    jv_history_short_circuit_current_density = Quantity(
+        type=np.dtype(np.float64),
+        shape=['*'],
+        description=(
+            'Short circuit current density (in mA/cm**2) of each measured '
+            'cell/pixel, aligned by index with jv_history_datetime and '
+            'jv_history_cell_name. Plotted in the "JV History (Jsc)" figure '
+            'built in normalize().'
+        ),
+    )
+
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
 
@@ -476,20 +507,50 @@ class SolcarCellSample(CompositeSystem, PlotSection):
             if not entry_datetime:
                 continue
             cell_names = jv_data.get('cell_name') or []
+            fill_factors = jv_data.get('fill_factor') or []
+            open_circuit_voltages = jv_data.get('open_circuit_voltage') or []
+            short_circuit_current_densities = (
+                jv_data.get('short_circuit_current_density') or []
+            )
             for j, eff in enumerate(jv_data['efficiency']):
                 if np.isnan(eff):
                     continue
                 cell_name = cell_names[j] if j < len(cell_names) else ''
-                jv_history.append((entry_datetime, eff, cell_name))
+                fill_factor = fill_factors[j] if j < len(fill_factors) else np.nan
+                voc = (
+                    open_circuit_voltages[j]
+                    if j < len(open_circuit_voltages)
+                    else np.nan
+                )
+                jsc = (
+                    short_circuit_current_densities[j]
+                    if j < len(short_circuit_current_densities)
+                    else np.nan
+                )
+                jv_history.append(
+                    (entry_datetime, eff, cell_name, fill_factor, voc, jsc)
+                )
         jv_history.sort(key=lambda item: item[0])
         self.jv_history_datetime = [item[0] for item in jv_history]
         self.jv_history_efficiency = [item[1] for item in jv_history]
         self.jv_history_cell_name = [item[2] for item in jv_history]
+        self.jv_history_fill_factor = [item[3] for item in jv_history]
+        self.jv_history_open_circuit_voltage = [item[4] for item in jv_history]
+        self.jv_history_short_circuit_current_density = [
+            item[5] for item in jv_history
+        ]
 
-        self.figures = [f for f in self.figures if f.label != 'JV History']
+        jv_history_labels = (
+            'JV History',
+            'JV History (FF)',
+            'JV History (Boxplot)',
+            'JV History (PCE)',
+            'JV History (Voc)',
+            'JV History (Jsc)',
+        )
+        self.figures = [f for f in self.figures if f.label not in jv_history_labels]
         if jv_history:
             import json
-            import re
 
             import pandas as pd
             import plotly.express as px
@@ -502,54 +563,58 @@ class SolcarCellSample(CompositeSystem, PlotSection):
                     return 'forward'
                 return 'unknown'
 
-            def pixel_name(cell_name):
-                # Strip the forward/reverse token (and its separators) so that
-                # both scan directions of the same physical pixel share one
-                # color, e.g. 'Pixel_1_forward'/'Pixel_1_reverse' -> 'Pixel_1'.
-                base = re.sub(
-                    r'[\s_-]*(forward|reverse)[\s_-]*',
-                    ' ',
-                    cell_name or '',
-                    flags=re.IGNORECASE,
-                ).strip(' _-')
-                return base or cell_name
-
             df = pd.DataFrame(
                 {
                     'Datetime': self.jv_history_datetime,
                     'Efficiency (%)': self.jv_history_efficiency,
+                    'Fill Factor': self.jv_history_fill_factor,
+                    'Open Circuit Voltage (V)': self.jv_history_open_circuit_voltage,
+                    'Short Circuit Current Density (mA/cm^2)': (
+                        self.jv_history_short_circuit_current_density
+                    ),
                     'Cell': self.jv_history_cell_name,
-                    'Pixel': [
-                        pixel_name(cell) for cell in self.jv_history_cell_name
-                    ],
                     'Scan direction': [
                         scan_direction(cell) for cell in self.jv_history_cell_name
                     ],
                 }
             )
-            fig = px.scatter(
-                df,
-                x='Datetime',
-                y='Efficiency (%)',
-                color='Pixel',
-                symbol='Scan direction',
-                symbol_map={
-                    'forward': 'circle',
-                    'reverse': 'cross',
-                    'unknown': 'circle',
-                },
-                hover_name='Cell',
-                title='JV History',
-            )
-            fig.update_traces(marker=dict(size=8))
-            fig.update_layout(
-                showlegend=True,
-                xaxis=dict(fixedrange=False),
-                yaxis=dict(fixedrange=False),
-            )
-            self.figures.append(
-                PlotlyFigure(label='JV History', figure=json.loads(fig.to_json()))
-            )
+
+            for y_column, label in (
+                ('Efficiency (%)', 'JV History (PCE)'),
+                ('Fill Factor', 'JV History (FF)'),
+                ('Open Circuit Voltage (V)', 'JV History (Voc)'),
+                ('Short Circuit Current Density (mA/cm^2)', 'JV History (Jsc)'),
+            ):
+                box_fig = px.box(
+                    df,
+                    x='Datetime',
+                    y=y_column,
+                    color='Scan direction',
+                    points=False,
+                    title=label,
+                )
+                # Box traces default to hovering the aggregate box stats, not
+                # individual points, even with points='all' - overlay a strip
+                # plot (hoveron='points' by construction) so hovering a point
+                # shows its Cell name instead.
+                strip_fig = px.strip(
+                    df,
+                    x='Datetime',
+                    y=y_column,
+                    color='Scan direction',
+                    hover_data=['Cell'],
+                )
+                for trace in strip_fig.data:
+                    trace.showlegend = False
+                    box_fig.add_trace(trace)
+                box_fig.update_layout(
+                    showlegend=True,
+                    xaxis=dict(fixedrange=False),
+                    yaxis=dict(fixedrange=False),
+                )
+                self.figures.append(
+                    PlotlyFigure(label=label, figure=json.loads(box_fig.to_json()))
+                )
 
         eqe_eff_val = 0 * ureg('eV')
         for entry in result_data['EQEs']:
