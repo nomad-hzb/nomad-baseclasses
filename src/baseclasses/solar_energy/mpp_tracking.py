@@ -589,7 +589,9 @@ class MPPTracking(BaseMeasurement, PlotSection):
         # Initial setup
         t0 = np.min(time)
         power_density_abs = np.abs(power_density)
-        window_size = len(power_density_abs) // 5
+        window_size = min(len(power_density_abs) // 5, 3601)
+        if window_size % 2 == 0:
+            window_size += 1  
         power_density_abs_filtered = savgol_filter(power_density_abs, window_size, 3)
 
         # Get reference values
