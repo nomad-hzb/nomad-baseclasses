@@ -396,10 +396,20 @@ class MPPTracking(BaseMeasurement, PlotSection):
         # Initial setup
         t0 = np.min(time)
         power_density_abs = np.abs(power_density)
-        window_size = min(len(power_density_abs) // 5, 3601)
-        if window_size % 2 == 0:
-            window_size += 1  
-        power_density_abs_filtered = savgol_filter(power_density_abs, window_size, 3)
+        MIN_SAVGOL_WINDOW = 5  # polyorder=3 -> smallest valid odd window > 3
+        def _savgol_window_size(n_samples, max_window=3601, min_window=MIN_SAVGOL_WINDOW):
+            if n_samples < min_window:
+                return None  # too short to filter; caller should skip savgol_filter
+            window_size = min(n_samples // 5, max_window, n_samples)
+            window_size = max(window_size, min_window)
+            if window_size % 2 == 0:
+                window_size -= 1  # subtract, not add: adding could push it past n_samples
+            return window_size
+        window_size = _savgol_window_size(len(power_density_abs))
+        if window_size is None:
+            power_density_abs_filtered = power_density_abs
+        else:
+            power_density_abs_filtered = savgol_filter(power_density_abs, window_size, 3)
 
         # Get reference values
         p_at_t0 = power_density_abs_filtered[np.argmin(time)]
