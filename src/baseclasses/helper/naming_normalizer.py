@@ -243,6 +243,24 @@ substrate_aliases = {
     'polyethylene terephthalate': 'PET',
 }
 
+# ════════════════════════════════════════════════════════════════
+# JV SCAN DIRECTION  (SolarCellJVCurve.scan_direction, MEnum('forward', 'reverse'))
+# Matched token-by-token against a JV curve's cell_name by
+# baseclasses.solar_energy.jvmeasurement.parse_jv_curve_name - not a
+# whole-string match, since cell_name is usually a compound name like
+# 'Pixel_1_forward' or 'a_rev'.
+# ════════════════════════════════════════════════════════════════
+
+scan_direction_aliases = {
+    'forward': 'forward',
+    'fwd': 'forward',
+    'fw': 'forward',
+    'for': 'forward',
+    'reverse': 'reverse',
+    'rev': 'reverse',
+    'rv': 'reverse',
+}
+
 
 class NamingNormalizer:
     def __init__(self, normalization_dict: dict, regex_rules: list = None):
@@ -306,3 +324,4 @@ atmosphere_normalizer = NamingNormalizer(
 )
 anti_solvent_normalizer = NamingNormalizer(anti_solvent_aliases)
 substrate_normalizer = NamingNormalizer(substrate_aliases)
+scan_direction_normalizer = NamingNormalizer(scan_direction_aliases)
