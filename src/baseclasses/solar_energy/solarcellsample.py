@@ -90,6 +90,10 @@ def collectJVMeasurement(entry, entry_id, entry_data):
         curve['cell_name'] if 'cell_name' in curve else ''
         for curve in entry_data['jv_curve']
     ]
+    scan_direction = [
+        curve['scan_direction'] if 'scan_direction' in curve else None
+        for curve in entry_data['jv_curve']
+    ]
     device_area = entry_data['active_area'] if 'active_area' in entry_data else np.nan
 
     entry[entry_id].update(
@@ -100,6 +104,7 @@ def collectJVMeasurement(entry, entry_id, entry_data):
             'short_circuit_current_density': short_circuit_current_density,
             'light_intensity': light_intensity,
             'cell_name': cell_name,
+            'scan_direction': scan_direction,
             'device_area': device_area,
             'datetime': entry_data['datetime'] if 'datetime' in entry_data else None,
         }
@@ -335,6 +340,19 @@ class SolcarCellSample(CompositeSystem, PlotSection):
         ),
     )
 
+    jv_history_scan_direction = Quantity(
+        type=str,
+        shape=['*'],
+        description=(
+            'Scan direction ("forward"/"reverse", or "unknown" if not '
+            'determined) for each entry, aligned by index with '
+            'jv_history_datetime. Taken directly from each JV curve\'s own '
+            'scan_direction field (SolarCellJVCurve.scan_direction) rather than '
+            're-derived from cell_name, so it is correct regardless of naming '
+            'convention (e.g. "b_rev"/"b_for" abbreviations).'
+        ),
+    )
+
     jv_history_efficiency = Quantity(
         type=np.dtype(np.float64),
         shape=['*'],
@@ -507,6 +525,7 @@ class SolcarCellSample(CompositeSystem, PlotSection):
             if not entry_datetime:
                 continue
             cell_names = jv_data.get('cell_name') or []
+            scan_directions = jv_data.get('scan_direction') or []
             fill_factors = jv_data.get('fill_factor') or []
             open_circuit_voltages = jv_data.get('open_circuit_voltage') or []
             short_circuit_current_densities = (
@@ -516,6 +535,9 @@ class SolcarCellSample(CompositeSystem, PlotSection):
                 if np.isnan(eff):
                     continue
                 cell_name = cell_names[j] if j < len(cell_names) else ''
+                scan_direction = (
+                    scan_directions[j] if j < len(scan_directions) else None
+                )
                 fill_factor = fill_factors[j] if j < len(fill_factors) else np.nan
                 voc = (
                     open_circuit_voltages[j]
@@ -528,16 +550,25 @@ class SolcarCellSample(CompositeSystem, PlotSection):
                     else np.nan
                 )
                 jv_history.append(
-                    (entry_datetime, eff, cell_name, fill_factor, voc, jsc)
+                    (
+                        entry_datetime,
+                        eff,
+                        cell_name,
+                        scan_direction or 'unknown',
+                        fill_factor,
+                        voc,
+                        jsc,
+                    )
                 )
         jv_history.sort(key=lambda item: item[0])
         self.jv_history_datetime = [item[0] for item in jv_history]
         self.jv_history_efficiency = [item[1] for item in jv_history]
         self.jv_history_cell_name = [item[2] for item in jv_history]
-        self.jv_history_fill_factor = [item[3] for item in jv_history]
-        self.jv_history_open_circuit_voltage = [item[4] for item in jv_history]
+        self.jv_history_scan_direction = [item[3] for item in jv_history]
+        self.jv_history_fill_factor = [item[4] for item in jv_history]
+        self.jv_history_open_circuit_voltage = [item[5] for item in jv_history]
         self.jv_history_short_circuit_current_density = [
-            item[5] for item in jv_history
+            item[6] for item in jv_history
         ]
 
         jv_history_labels = (
@@ -555,14 +586,6 @@ class SolcarCellSample(CompositeSystem, PlotSection):
             import pandas as pd
             import plotly.express as px
 
-            def scan_direction(cell_name):
-                name_lower = (cell_name or '').lower()
-                if 'reverse' in name_lower:
-                    return 'reverse'
-                if 'forward' in name_lower:
-                    return 'forward'
-                return 'unknown'
-
             df = pd.DataFrame(
                 {
                     'Datetime': self.jv_history_datetime,
@@ -573,9 +596,7 @@ class SolcarCellSample(CompositeSystem, PlotSection):
                         self.jv_history_short_circuit_current_density
                     ),
                     'Cell': self.jv_history_cell_name,
-                    'Scan direction': [
-                        scan_direction(cell) for cell in self.jv_history_cell_name
-                    ],
+                    'Scan direction': self.jv_history_scan_direction,
                 }
             )
 

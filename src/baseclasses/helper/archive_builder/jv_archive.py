@@ -26,7 +26,7 @@ from baseclasses.solar_energy.jvmeasurement import (
 )
 
 
-def get_jv_archive(jv_dict, mainfile, jvm, append=False):
+def get_jv_archive(jv_dict, mainfile, jvm, archive, logger=None):
     jvm.file_name = os.path.basename(mainfile)
     if jv_dict.get('datetime'):
         jvm.datetime = jv_dict.get('datetime')
@@ -38,8 +38,7 @@ def get_jv_archive(jv_dict, mainfile, jvm, append=False):
     jvm.settling_time = jv_dict['settling_time'] if 'settling_time' in jv_dict else None
     jvm.averaging = jv_dict['averaging'] if 'averaging' in jv_dict else None
     jvm.compliance = jv_dict['compliance'] if 'compliance' in jv_dict else None
-    if not append:
-        jvm.jv_curve = []
+    jvm.jv_curve = []
     light_idx = 0
     for curve_idx, curve in enumerate(jv_dict['jv_curve']):
         if curve.get('dark'):
@@ -49,6 +48,13 @@ def get_jv_archive(jv_dict, mainfile, jvm, append=False):
                 current_density=curve['current_density'],
                 dark=True,
             )
+            # jv_curve is built here, inside the measurement's own normalize()
+            # call - NOMAD's recursive normalizer captures a section's
+            # subsections *before* calling that section's normalize(), so it
+            # never visits curves created this way on its own. Normalize each
+            # one explicitly so curve-level derived fields (pixel_id,
+            # scan_direction, cell_params()-computed values, ...) get set.
+            jv_set.normalize(archive, logger)
         else:
             jv_set = SolarCellJVCurveCustom(
                 cell_name=curve['name'],
@@ -73,5 +79,6 @@ def get_jv_archive(jv_dict, mainfile, jvm, append=False):
                 shunt_resistance=round(jv_dict['R_par'][light_idx], 8)
                 * ureg('ohm*cm^2'),
             )
+            jv_set.normalize(archive, logger)
             light_idx += 1
         jvm.jv_curve.append(jv_set)
