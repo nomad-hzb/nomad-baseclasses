@@ -50,7 +50,10 @@ _JV_PIXEL_FUSED_RE = re.compile(r'(?:pixel|px|p)(\d{1,2})$')
 _LETTER_TO_PIXEL_NUMBER = {c: str(i + 1) for i, c in enumerate(string.ascii_lowercase)}
 
 
-def _match_jv_pixel_token(token, prev_token):
+def _match_explicit_pixel_token(token, prev_token):
+    # 'Pixel1'/'P1' fused, or 'Pixel'/'1' as separate tokens - safe to
+    # recognize unconditionally, no direction anchor needed: the literal
+    # word 'pixel'/'px'/'p' rarely appears by accident.
     low = token.lower()
     fused = _JV_PIXEL_FUSED_RE.fullmatch(low)
     if fused:
@@ -61,8 +64,18 @@ def _match_jv_pixel_token(token, prev_token):
         'p',
     ):
         return f'pixel_{low}'
-    if re.fullmatch(r'[a-z]', low):
-        return f'pixel_{_LETTER_TO_PIXEL_NUMBER[low]}'
+    return None
+
+
+def _match_jv_pixel_token(token, prev_token):
+    # Like _match_explicit_pixel_token, plus a bare single letter - only
+    # safe when anchored next to a confirmed direction token (see caller),
+    # since a lone letter is otherwise too likely to be incidental.
+    explicit = _match_explicit_pixel_token(token, prev_token)
+    if explicit:
+        return explicit
+    if re.fullmatch(r'[a-z]', token.lower()):
+        return f'pixel_{_LETTER_TO_PIXEL_NUMBER[token.lower()]}'
     return None
 
 
@@ -97,22 +110,12 @@ def parse_jv_curve_name(name):
 
     if pixel_id is None:
         # Unconditional fallback: only the explicit 'pixel'/'px'/'p' + digit
-        # pattern is safe to recognize without a direction anchor nearby -
-        # a bare letter or number alone is too likely to be incidental
-        # (sample ids, dates, channel numbers, ...).
+        # pattern is safe without a direction anchor nearby - a bare letter
+        # alone is too likely to be incidental (sample ids, dates, ...).
         for i, token in enumerate(tokens):
             prev_token = tokens[i - 1] if i - 1 >= 0 else None
-            low = token.lower()
-            fused = _JV_PIXEL_FUSED_RE.fullmatch(low)
-            if fused:
-                pixel_id = f'pixel_{fused.group(1)}'
-                break
-            if re.fullmatch(r'\d{1,2}', low) and prev_token and prev_token.lower() in (
-                'pixel',
-                'px',
-                'p',
-            ):
-                pixel_id = f'pixel_{low}'
+            pixel_id = _match_explicit_pixel_token(token, prev_token)
+            if pixel_id:
                 break
 
     return pixel_id, direction

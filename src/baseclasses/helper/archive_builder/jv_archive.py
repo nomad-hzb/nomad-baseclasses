@@ -27,6 +27,12 @@ from baseclasses.solar_energy.jvmeasurement import (
 
 
 def get_jv_archive(jv_dict, mainfile, jvm, archive, logger=None):
+    # Each jv_set.normalize() call below is required, not optional: jv_curve
+    # is built here, inside the measurement's own normalize() call, and
+    # NOMAD's recursive normalizer captures a section's subsections *before*
+    # calling that section's normalize() - so it never visits curves created
+    # this way on its own. Normalizing explicitly is what sets curve-level
+    # derived fields (pixel_id, scan_direction, ...).
     jvm.file_name = os.path.basename(mainfile)
     if jv_dict.get('datetime'):
         jvm.datetime = jv_dict.get('datetime')
@@ -48,12 +54,6 @@ def get_jv_archive(jv_dict, mainfile, jvm, archive, logger=None):
                 current_density=curve['current_density'],
                 dark=True,
             )
-            # jv_curve is built here, inside the measurement's own normalize()
-            # call - NOMAD's recursive normalizer captures a section's
-            # subsections *before* calling that section's normalize(), so it
-            # never visits curves created this way on its own. Normalize each
-            # one explicitly so curve-level derived fields (pixel_id,
-            # scan_direction, cell_params()-computed values, ...) get set.
             jv_set.normalize(archive, logger)
         else:
             jv_set = SolarCellJVCurveCustom(
