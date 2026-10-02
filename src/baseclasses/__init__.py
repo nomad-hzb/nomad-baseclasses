@@ -34,6 +34,7 @@ from nomad.datamodel.metainfo.basesections import (
     PureSubstanceSection,
 )
 from nomad.datamodel.metainfo.eln import ElnWithFormulaBaseSection
+from nomad.datamodel.metainfo.plot import PlotlyFigure, PlotSection
 from nomad.datamodel.results import Material, Results
 from nomad.metainfo import (
     Datetime,
@@ -77,7 +78,7 @@ class PubChemPureSubstanceSectionCustom(PubChemPureSubstanceSection):
             super(PubChemPureSubstanceSection, self).normalize(archive, logger)
 
 
-class Batch(Collection):
+class Batch(Collection, PlotSection):
     export_batch_ids = Quantity(
         type=bool, default=False, a_eln=dict(component='ActionEditQuantity')
     )
@@ -120,6 +121,114 @@ class Batch(Collection):
             self.csv_export_file = export_file_name
             # except BaseException:
             #     pass
+
+        self._update_jv_history_plots()
+
+    def _update_jv_history_plots(self):
+        # Pool each connected sample's own jv_history_* (itself aggregated per
+        # sample from that sample's connected JV measurements - see
+        # SolcarCellSample.normalize()) into one set of batch-wide boxplots,
+        # so every sample in the batch can be compared on one timeline.
+        def _as_array(value):
+            # jv_history_* quantities come back as real numpy arrays (for the
+            # float-typed ones) when read from a processed entry - `value or
+            # []`/`not value` raise ValueError on any array with more than one
+            # element ("truth value is ambiguous"), so never use truthiness
+            # on them. An explicit `is None` check is the only safe way.
+            return [] if value is None else value
+
+        batch_history = []
+        for sample_ref in self.entities or []:
+            sample = sample_ref.reference
+            if sample is None:
+                continue
+            datetimes = _as_array(sample.jv_history_datetime)
+            if len(datetimes) == 0:
+                continue
+            sample_label = sample.lab_id or sample.name or ''
+            efficiencies = _as_array(sample.jv_history_efficiency)
+            cell_names = _as_array(sample.jv_history_cell_name)
+            directions = _as_array(sample.jv_history_scan_direction)
+            fill_factors = _as_array(sample.jv_history_fill_factor)
+            ocvs = _as_array(sample.jv_history_open_circuit_voltage)
+            jscs = _as_array(sample.jv_history_short_circuit_current_density)
+            for i, dt in enumerate(datetimes):
+                batch_history.append(
+                    (
+                        dt,
+                        sample_label,
+                        efficiencies[i] if i < len(efficiencies) else np.nan,
+                        fill_factors[i] if i < len(fill_factors) else np.nan,
+                        ocvs[i] if i < len(ocvs) else np.nan,
+                        jscs[i] if i < len(jscs) else np.nan,
+                        cell_names[i] if i < len(cell_names) else '',
+                        directions[i] if i < len(directions) else 'unknown',
+                    )
+                )
+
+        jv_history_labels = (
+            'Batch JV History (PCE)',
+            'Batch JV History (FF)',
+            'Batch JV History (Voc)',
+            'Batch JV History (Jsc)',
+        )
+        self.figures = [f for f in self.figures if f.label not in jv_history_labels]
+        if not batch_history:
+            return
+
+        import pandas as pd
+        import plotly.express as px
+
+        df = pd.DataFrame(
+            batch_history,
+            columns=[
+                'Datetime',
+                'Sample',
+                'Efficiency (%)',
+                'Fill Factor',
+                'Open Circuit Voltage (V)',
+                'Short Circuit Current Density (mA/cm^2)',
+                'Cell',
+                'Scan direction',
+            ],
+        )
+
+        for y_column, label in (
+            ('Efficiency (%)', 'Batch JV History (PCE)'),
+            ('Fill Factor', 'Batch JV History (FF)'),
+            ('Open Circuit Voltage (V)', 'Batch JV History (Voc)'),
+            ('Short Circuit Current Density (mA/cm^2)', 'Batch JV History (Jsc)'),
+        ):
+            box_fig = px.box(
+                df,
+                x='Datetime',
+                y=y_column,
+                color='Scan direction',
+                points=False,
+                title=label,
+            )
+            # Box traces default to hovering the aggregate box stats, not
+            # individual points, even with points='all' - overlay a strip
+            # plot (hoveron='points' by construction) so hovering a point
+            # shows which sample/cell it came from instead.
+            strip_fig = px.strip(
+                df,
+                x='Datetime',
+                y=y_column,
+                color='Scan direction',
+                hover_data=['Sample', 'Cell'],
+            )
+            for trace in strip_fig.data:
+                trace.showlegend = False
+                box_fig.add_trace(trace)
+            box_fig.update_layout(
+                showlegend=True,
+                xaxis=dict(fixedrange=False),
+                yaxis=dict(fixedrange=False),
+            )
+            self.figures.append(
+                PlotlyFigure(label=label, figure=json.loads(box_fig.to_json()))
+            )
 
 
 class SampleReference(CompositeSystemReference):
