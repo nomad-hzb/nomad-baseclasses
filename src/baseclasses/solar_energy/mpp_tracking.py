@@ -30,6 +30,7 @@ FITTED_CURVE_POINTS = 200
 SAVGOL_POLYORDER = 3
 SAVGOL_MIN_WINDOW = SAVGOL_POLYORDER + 2
 SHORT_MEASUREMENT_SECONDS = 2 * 60 * 60
+MINUTE_SMOTHING_SECONDS = 60
 HOURLY_SMOOTHING_SECONDS = 60 * 60
 DAILY_SMOOTHING_SECONDS = 24 * 60 * 60
 
@@ -588,50 +589,52 @@ class MPPTracking(BaseMeasurement, PlotSection):
 
     def calculate_window_size(self):
         """
-        Calculate the window size for the savgol filter based on the length and 
-        sampling frequency of the power density array. Possible cases:
-        - Short MPP tracking 10s - 120 min: window_size = len(power_density) // 5
-        - Long MPP tracking with sampling near 1s: smooth over approximately 1 hour
-        - Long MPP tracking with sampling_rate >= 60s: smooth over approximately 1 hour
-        - Long MPP tracking with sampling_rate >= 3600s: smooth over approximately 1 day
-        - Long MPP tracking and no sampling_rate: window_size = len(power_density) // 20
+        Calculate the window size for the savgol filter based on the length (measurement_duration and number of points) 
+        and sampling interval of the power density array. If no sampling interval is set in the 
+        parser, it is estimated from measurement_duration_s and number_of_points.
+        Possible cases for different window lengths:
+        - Short MPP tracking 5s - 120 minutes: smooth over approximately 1 minute
+        - Long MPP tracking with sampling_interval_s < 3600s: smooth over approximately 1 hour
+        - Long MPP tracking with sampling_interval_s >= 3600s: smooth over approximately 1 day
         """
         power_density_abs = np.abs(self.power_density)
         number_of_points = len(power_density_abs)
-        if number_of_points < SAVGOL_MIN_WINDOW:
-            raise ValueError(
-                f'Insufficient data points for savgol filter. At least '
-                f'{SAVGOL_MIN_WINDOW} points are required.'
-            )
+        #if number_of_points < SAVGOL_MIN_WINDOW:
+        #    raise ValueError(
+        #        f'Insufficient data points for savgol filter. At least '
+        #        f'{SAVGOL_MIN_WINDOW} points are required.'
+        #    )
+
+        measurement_duration_s = self.time[-1] - self.time[0]
+        measurement_duration_s = (
+            float(measurement_duration_s.to('s').magnitude)
+            if hasattr(measurement_duration_s, 'to')
+            else float(measurement_duration_s)
+        )
 
         properties = self.properties
-        sampling_rate = (
+        sampling_interval_s = (
             properties.perturbation_frequency if properties is not None else None
         )
-        sampling_rate = (
-            float(sampling_rate.magnitude)
-            if hasattr(sampling_rate, 'magnitude')
-            else sampling_rate
+        sampling_interval_s = (
+            float(sampling_interval_s.magnitude)
+            if hasattr(sampling_interval_s, 'magnitude')
+            else sampling_interval_s
         )
 
-        if sampling_rate is None or sampling_rate <= 0:
-            window_size = number_of_points // 20
+        if sampling_interval_s is None:
+            sampling_interval_s = measurement_duration_s / number_of_points
+
+            
+        if measurement_duration_s <= SHORT_MEASUREMENT_SECONDS:
+            target_duration = MINUTE_SMOTHING_SECONDS
         else:
-            measurement_duration = self.time[-1] - self.time[0]
-            measurement_duration = (
-                float(measurement_duration.to('s').magnitude)
-                if hasattr(measurement_duration, 'to')
-                else float(measurement_duration)
+            target_duration = (
+                DAILY_SMOOTHING_SECONDS
+                if sampling_interval_s >= 60 * 60
+                else HOURLY_SMOOTHING_SECONDS
             )
-            if measurement_duration <= SHORT_MEASUREMENT_SECONDS:
-                window_size = number_of_points // 5
-            else:
-                target_duration = (
-                    DAILY_SMOOTHING_SECONDS
-                    if sampling_rate >= 60 * 60
-                    else HOURLY_SMOOTHING_SECONDS
-                )
-                window_size = round(target_duration / sampling_rate)
+        window_size = round(target_duration / sampling_interval_s)
                 
 
         window_size = max(window_size, SAVGOL_MIN_WINDOW)
