@@ -599,11 +599,11 @@ class MPPTracking(BaseMeasurement, PlotSection):
         """
         power_density_abs = np.abs(self.power_density)
         number_of_points = len(power_density_abs)
-        #if number_of_points < SAVGOL_MIN_WINDOW:
-        #    raise ValueError(
-        #        f'Insufficient data points for savgol filter. At least '
-        #        f'{SAVGOL_MIN_WINDOW} points are required.'
-        #    )
+        if number_of_points < SAVGOL_MIN_WINDOW:
+           raise ValueError(
+                f'Insufficient data points for savgol filter. At least '
+                f'{SAVGOL_MIN_WINDOW} points are required.'
+            )
 
         measurement_duration_s = self.time[-1] - self.time[0]
         measurement_duration_s = (
