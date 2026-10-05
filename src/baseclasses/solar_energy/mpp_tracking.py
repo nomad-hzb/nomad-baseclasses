@@ -30,7 +30,7 @@ FITTED_CURVE_POINTS = 200
 SAVGOL_POLYORDER = 3
 SAVGOL_MIN_WINDOW = SAVGOL_POLYORDER + 2
 SHORT_MEASUREMENT_SECONDS = 2 * 60 * 60
-MINUTE_SMOTHING_SECONDS = 60
+MINUTE_SMOOTHING_SECONDS = 60
 HOURLY_SMOOTHING_SECONDS = 60 * 60
 DAILY_SMOOTHING_SECONDS = 24 * 60 * 60
 
@@ -622,12 +622,12 @@ class MPPTracking(BaseMeasurement, PlotSection):
             else sampling_interval_s
         )
 
-        if sampling_interval_s is None:
-            sampling_interval_s = measurement_duration_s / number_of_points
+        if sampling_interval_s is None or sampling_interval_s <= 0:
+            sampling_interval_s = measurement_duration_s / max(number_of_points - 1, 1)
 
             
         if measurement_duration_s <= SHORT_MEASUREMENT_SECONDS:
-            target_duration = MINUTE_SMOTHING_SECONDS
+            target_duration = MINUTE_SMOOTHING_SECONDS
         else:
             target_duration = (
                 DAILY_SMOOTHING_SECONDS
