@@ -27,6 +27,12 @@ from nomad.units import ureg
 from .. import BaseMeasurement
 
 FITTED_CURVE_POINTS = 200
+SAVGOL_POLYORDER = 3
+SAVGOL_MIN_WINDOW = SAVGOL_POLYORDER + 2
+SHORT_MEASUREMENT_SECONDS = 2 * 60 * 60
+MINUTE_SMOOTHING_SECONDS = 60
+HOURLY_SMOOTHING_SECONDS = 60 * 60
+DAILY_SMOOTHING_SECONDS = 24 * 60 * 60
 
 
 def _resample_curve(time, values, n_points=FITTED_CURVE_POINTS):
@@ -581,6 +587,62 @@ class MPPTracking(BaseMeasurement, PlotSection):
         )
         return fig
 
+    def calculate_window_size(self):
+        """
+        Calculate the window size for the savgol filter based on the length (measurement_duration and number of points) 
+        and sampling interval of the power density array. If no sampling interval is set in the 
+        parser, it is estimated from measurement_duration_s and number_of_points.
+        Possible cases for different window lengths:
+        - Short MPP tracking 5s - 120 minutes: smooth over approximately 1 minute
+        - Long MPP tracking with sampling_interval_s < 3600s: smooth over approximately 1 hour
+        - Long MPP tracking with sampling_interval_s >= 3600s: smooth over approximately 1 day
+        """
+        power_density_abs = np.abs(self.power_density)
+        number_of_points = len(power_density_abs)
+        if number_of_points < SAVGOL_MIN_WINDOW:
+           raise ValueError(
+                f'Insufficient data points for savgol filter. At least '
+                f'{SAVGOL_MIN_WINDOW} points are required.'
+            )
+
+        measurement_duration_s = self.time[-1] - self.time[0]
+        measurement_duration_s = (
+            float(measurement_duration_s.to('s').magnitude)
+            if hasattr(measurement_duration_s, 'to')
+            else float(measurement_duration_s)
+        )
+
+        properties = self.properties
+        sampling_interval_s = (
+            properties.perturbation_frequency if properties is not None else None
+        )
+        sampling_interval_s = (
+            float(sampling_interval_s.magnitude)
+            if hasattr(sampling_interval_s, 'magnitude')
+            else sampling_interval_s
+        )
+
+        if sampling_interval_s is None or sampling_interval_s <= 0:
+            sampling_interval_s = measurement_duration_s / max(number_of_points - 1, 1)
+
+            
+        if measurement_duration_s <= SHORT_MEASUREMENT_SECONDS:
+            target_duration = MINUTE_SMOOTHING_SECONDS
+        else:
+            target_duration = (
+                DAILY_SMOOTHING_SECONDS
+                if sampling_interval_s >= 60 * 60
+                else HOURLY_SMOOTHING_SECONDS
+            )
+        window_size = round(target_duration / sampling_interval_s)
+                
+
+        window_size = max(window_size, SAVGOL_MIN_WINDOW)
+        window_size = min(window_size, number_of_points)
+        if window_size % 2 == 0:
+            window_size -= 1
+        return window_size
+
     def calculate_performance_parameters(self):
         from scipy.signal import savgol_filter
 
@@ -589,8 +651,10 @@ class MPPTracking(BaseMeasurement, PlotSection):
         # Initial setup
         t0 = np.min(time)
         power_density_abs = np.abs(power_density)
-        window_size = len(power_density_abs) // 5
-        power_density_abs_filtered = savgol_filter(power_density_abs, window_size, 3)
+        window_size = self.calculate_window_size()
+        power_density_abs_filtered = savgol_filter(
+            power_density_abs, window_size, SAVGOL_POLYORDER
+        )
 
         # Get reference values
         p_at_t0 = power_density_abs_filtered[np.argmin(time)]
