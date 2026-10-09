@@ -16,12 +16,109 @@
 # limitations under the License.
 #
 
+import re
+import string
+
 import numpy as np
 from nomad.datamodel.metainfo.plot import PlotSection
-from nomad.metainfo import Quantity, Section, SubSection
+from nomad.metainfo import MEnum, Quantity, Section, SubSection
 
 from .. import BaseMeasurement
 from ..helper.add_solar_cell import add_solar_cell
+from ..helper.naming_normalizer import scan_direction_normalizer
+
+# Curve names arriving from different instruments/parsers use wildly different
+# conventions for the same information, e.g. 'Pixel_1_forward', 'b_rev',
+# 'a_Forward_Dark', '958.1a_loc2_forward.txt'. parse_jv_curve_name extracts a
+# normalized pixel_id ('pixel_<n>') and scan_direction ('forward'/'reverse')
+# from cell_name so curves can be queried/tagged consistently regardless of
+# which plugin/parser produced them, without requiring every parser to be
+# updated. Formatting artifacts inserted by our own parsers (not instrument
+# data) are skipped when hunting for the pixel token near a direction word.
+_JV_NAME_FILLER_TOKENS = {
+    'loc1',
+    'loc2',
+    'loc3',
+    'txt',
+    'jv',
+    'csv',
+    'iv',
+    'dark',
+    'light',
+}
+_JV_PIXEL_FUSED_RE = re.compile(r'(?:pixel|px|p)(\d{1,2})$')
+_LETTER_TO_PIXEL_NUMBER = {c: str(i + 1) for i, c in enumerate(string.ascii_lowercase)}
+
+
+def _match_explicit_pixel_token(token, prev_token):
+    # 'Pixel1'/'P1' fused, or 'Pixel'/'1' as separate tokens - safe to
+    # recognize unconditionally, no direction anchor needed: the literal
+    # word 'pixel'/'px'/'p' rarely appears by accident.
+    low = token.lower()
+    fused = _JV_PIXEL_FUSED_RE.fullmatch(low)
+    if fused:
+        return f'pixel_{fused.group(1)}'
+    if re.fullmatch(r'\d{1,2}', low) and prev_token and prev_token.lower() in (
+        'pixel',
+        'px',
+        'p',
+    ):
+        return f'pixel_{low}'
+    return None
+
+
+def _match_jv_pixel_token(token, prev_token):
+    # Like _match_explicit_pixel_token, plus a bare single letter - only
+    # safe when anchored next to a confirmed direction token (see caller),
+    # since a lone letter is otherwise too likely to be incidental.
+    explicit = _match_explicit_pixel_token(token, prev_token)
+    if explicit:
+        return explicit
+    if re.fullmatch(r'[a-z]', token.lower()):
+        return f'pixel_{_LETTER_TO_PIXEL_NUMBER[token.lower()]}'
+    return None
+
+
+def parse_jv_curve_name(name):
+    """
+    Derive (pixel_id, scan_direction) from a free-text JV curve name. Returns
+    (None, None) parts whenever they can't be determined with confidence -
+    never guesses a value that isn't backed by a recognizable pattern.
+    """
+    if not name:
+        return None, None
+    tokens = [t for t in re.split(r'[\s_.\-]+', name) if t]
+
+    direction = None
+    direction_idx = None
+    for i, token in enumerate(tokens):
+        normalized = scan_direction_normalizer.normalize(token)
+        if normalized in ('forward', 'reverse'):
+            direction, direction_idx = normalized, i
+            break
+
+    pixel_id = None
+    if direction_idx is not None:
+        # Walk backward from the direction token, skipping known filler
+        # tokens, and try the first real token as the pixel candidate.
+        j = direction_idx - 1
+        while j >= 0 and tokens[j].lower() in _JV_NAME_FILLER_TOKENS:
+            j -= 1
+        if j >= 0:
+            prev_token = tokens[j - 1] if j - 1 >= 0 else None
+            pixel_id = _match_jv_pixel_token(tokens[j], prev_token)
+
+    if pixel_id is None:
+        # Unconditional fallback: only the explicit 'pixel'/'px'/'p' + digit
+        # pattern is safe without a direction anchor nearby - a bare letter
+        # alone is too likely to be incidental (sample ids, dates, ...).
+        for i, token in enumerate(tokens):
+            prev_token = tokens[i - 1] if i - 1 >= 0 else None
+            pixel_id = _match_explicit_pixel_token(token, prev_token)
+            if pixel_id:
+                break
+
+    return pixel_id, direction
 
 
 class SolarCellJV(PlotSection):
@@ -287,6 +384,28 @@ class SolarCellJVCurve(SolarCellJV):
         a_eln=dict(component='StringEditQuantity'),
     )
 
+    pixel_id = Quantity(
+        type=str,
+        shape=[],
+        description=(
+            'Normalized pixel identifier ("pixel_<n>"), auto-derived from '
+            'cell_name during normalization regardless of which plugin/parser '
+            'produced it - see parse_jv_curve_name(). Left unset when cell_name '
+            "doesn't contain a recognizable pixel pattern, or when this curve "
+            'is the only one in its measurement (nothing to disambiguate).'
+        ),
+    )
+
+    scan_direction = Quantity(
+        type=MEnum('forward', 'reverse'),
+        shape=[],
+        description=(
+            'Scan direction, auto-derived from cell_name during normalization - '
+            'see parse_jv_curve_name(). Left unset when cell_name does not '
+            'contain a recognizable forward/reverse token.'
+        ),
+    )
+
     current_density = Quantity(
         links=[
             'https://purl.archive.org/tfsco/TFSCO_00000064',
@@ -311,6 +430,11 @@ class SolarCellJVCurve(SolarCellJV):
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
+        parsed_pixel_id, parsed_direction = parse_jv_curve_name(self.cell_name)
+        if self.pixel_id is None:
+            self.pixel_id = parsed_pixel_id
+        if self.scan_direction is None:
+            self.scan_direction = parsed_direction
         if (
             self.current_density is not None
             and self.efficiency is None
@@ -454,6 +578,12 @@ class JVMeasurement(BaseMeasurement):
         self.method = 'JV Measurement'
         super().normalize(archive, logger)
 
+        if len(self.jv_curve) == 1:
+            # pixel_id exists to disambiguate between multiple pixels in one
+            # measurement - meaningless (and, for messy filename-derived
+            # names, riskier to guess) when there's only one curve.
+            self.jv_curve[0].pixel_id = None
+
         max_idx = -1
         eff = -1
         for i, curve in enumerate(self.jv_curve):
@@ -476,3 +606,33 @@ class JVMeasurement(BaseMeasurement):
             solar_cell.fill_factor = self.jv_curve[max_idx].fill_factor
             solar_cell.efficiency = self.jv_curve[max_idx].efficiency
             solar_cell.illumination_intensity = self.jv_curve[max_idx].light_intensity
+
+        self.reprocess_connected_samples(archive, logger)
+
+    def reprocess_connected_samples(self, archive, logger):
+        """
+        Samples derive cached fields (e.g. best efficiency, jv_history_*) from all
+        JV measurements that reference them, but only recompute those fields when the
+        sample itself is (re)processed. Without this, editing/reprocessing a JV
+        measurement after its sample was last processed leaves the sample stale
+        until someone manually reprocesses it. Touch each connected sample's raw
+        file so it gets queued for reprocessing too.
+        """
+        if not self.samples:
+            return
+        for sample_ref in self.samples:
+            lab_id = getattr(sample_ref, 'lab_id', None)
+            if not lab_id:
+                continue
+            file_name = f'{lab_id}.archive.json'
+            try:
+                if archive.m_context.raw_path_exists(file_name):
+                    archive.m_context.process_updated_raw_file(
+                        file_name, allow_modify=True
+                    )
+            except Exception:
+                if logger:
+                    logger.debug(
+                        'Could not trigger reprocessing of connected sample.',
+                        exc_info=True,
+                    )
