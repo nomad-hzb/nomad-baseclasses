@@ -20,6 +20,8 @@ import json
 
 import hdf5plugin
 import numpy as np
+import pandas as pd
+import plotly.express as px
 from nomad.datamodel.data import ArchiveSection
 from nomad.datamodel.metainfo.basesections import (
     Collection,
@@ -51,6 +53,17 @@ from .customreadable_identifier import ReadableIdentifiersCustom
 from .helper.add_solar_cell import add_solar_cell
 from .helper.utilities import get_processes, update_archive
 from .product_info import ProductInfo
+
+# The 4 JV metrics plotted as boxplots by both Batch._update_jv_history_plots()
+# (below) and SolcarCellSample.normalize() (solar_energy/solarcellsample.py) -
+# (data column, metric suffix) pairs, so '<prefix> JV History (<metric>)'
+# labels and the y-columns they plot can't drift out of sync between the two.
+JV_HISTORY_METRICS = (
+    ('Efficiency (%)', 'PCE'),
+    ('Fill Factor', 'FF'),
+    ('Open Circuit Voltage (V)', 'Voc'),
+    ('Short Circuit Current Density (mA/cm^2)', 'Jsc'),
+)
 
 
 class PubChemPureSubstanceSectionCustom(PubChemPureSubstanceSection):
@@ -112,7 +125,6 @@ class Batch(Collection, PlotSection):
                     [sample_id]
                     + [p[1] for p in get_processes(archive, sample_entry_id)]
                 )
-            import pandas as pd
 
             df = pd.DataFrame(samples)
             export_file_name = f'list_of_ids_{self.name}.csv'
@@ -166,18 +178,12 @@ class Batch(Collection, PlotSection):
                     )
                 )
 
-        jv_history_labels = (
-            'Batch JV History (PCE)',
-            'Batch JV History (FF)',
-            'Batch JV History (Voc)',
-            'Batch JV History (Jsc)',
+        jv_history_labels = tuple(
+            f'Batch JV History ({metric})' for _, metric in JV_HISTORY_METRICS
         )
         self.figures = [f for f in self.figures if f.label not in jv_history_labels]
         if not batch_history:
             return
-
-        import pandas as pd
-        import plotly.express as px
 
         df = pd.DataFrame(
             batch_history,
@@ -193,12 +199,8 @@ class Batch(Collection, PlotSection):
             ],
         )
 
-        for y_column, label in (
-            ('Efficiency (%)', 'Batch JV History (PCE)'),
-            ('Fill Factor', 'Batch JV History (FF)'),
-            ('Open Circuit Voltage (V)', 'Batch JV History (Voc)'),
-            ('Short Circuit Current Density (mA/cm^2)', 'Batch JV History (Jsc)'),
-        ):
+        for y_column, metric in JV_HISTORY_METRICS:
+            label = f'Batch JV History ({metric})'
             box_fig = px.box(
                 df,
                 x='Datetime',

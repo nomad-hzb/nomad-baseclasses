@@ -25,7 +25,7 @@ from nomad.datamodel.results import Material  # BandGapOptical, Material
 from nomad.metainfo import Datetime, Quantity, Reference, SubSection
 from nomad.units import ureg
 
-from .. import ReadableIdentifiersCustom
+from .. import JV_HISTORY_METRICS, ReadableIdentifiersCustom
 from ..helper.add_solar_cell import add_band_gap, add_solar_cell
 from .module import ModuleConfiguration
 from .substrate import Substrate
@@ -573,13 +573,8 @@ class SolcarCellSample(CompositeSystem, PlotSection):
         self.jv_history_open_circuit_voltage = [item[5] for item in jv_history]
         self.jv_history_short_circuit_current_density = [item[6] for item in jv_history]
 
-        jv_history_labels = (
-            'JV History',
-            'JV History (FF)',
-            'JV History (Boxplot)',
-            'JV History (PCE)',
-            'JV History (Voc)',
-            'JV History (Jsc)',
+        jv_history_labels = ('JV History', 'JV History (Boxplot)') + tuple(
+            f'JV History ({metric})' for _, metric in JV_HISTORY_METRICS
         )
         self.figures = [f for f in self.figures if f.label not in jv_history_labels]
         if jv_history:
@@ -602,12 +597,8 @@ class SolcarCellSample(CompositeSystem, PlotSection):
                 }
             )
 
-            for y_column, label in (
-                ('Efficiency (%)', 'JV History (PCE)'),
-                ('Fill Factor', 'JV History (FF)'),
-                ('Open Circuit Voltage (V)', 'JV History (Voc)'),
-                ('Short Circuit Current Density (mA/cm^2)', 'JV History (Jsc)'),
-            ):
+            for y_column, metric in JV_HISTORY_METRICS:
+                label = f'JV History ({metric})'
                 box_fig = px.box(
                     df,
                     x='Datetime',
