@@ -346,7 +346,7 @@ class SolcarCellSample(CompositeSystem, PlotSection):
         description=(
             'Scan direction ("forward"/"reverse", or "unknown" if not '
             'determined) for each entry, aligned by index with '
-            'jv_history_datetime. Taken directly from each JV curve\'s own '
+            "jv_history_datetime. Taken directly from each JV curve's own "
             'scan_direction field (SolarCellJVCurve.scan_direction) rather than '
             're-derived from cell_name, so it is correct regardless of naming '
             'convention (e.g. "b_rev"/"b_for" abbreviations).'
@@ -403,12 +403,16 @@ class SolcarCellSample(CompositeSystem, PlotSection):
         super().normalize(archive, logger)
 
         normalized_substrate = self.substrate
-        if normalized_substrate is not None and hasattr(normalized_substrate, 'normalize'):
+        if normalized_substrate is not None and hasattr(
+            normalized_substrate, 'normalize'
+        ):
             try:
                 normalized_substrate.normalize(archive, logger)
             except Exception:
                 if logger:
-                    logger.debug('Substrate normalize failed in SolcarCellSample.', exc_info=True)
+                    logger.debug(
+                        'Substrate normalize failed in SolcarCellSample.', exc_info=True
+                    )
 
         add_solar_cell(archive)
         archive.results.properties.optoelectronic.solar_cell.device_stack = []
@@ -446,7 +450,7 @@ class SolcarCellSample(CompositeSystem, PlotSection):
         # Compute module_active_area: per-cell area × number_of_pixels on substrate
         if (
             self.module_configuration
-            and self.module_configuration.is_module 
+            and self.module_configuration.is_module
             and normalized_substrate
         ):
             n_pixels = normalized_substrate.number_of_pixels
@@ -567,9 +571,7 @@ class SolcarCellSample(CompositeSystem, PlotSection):
         self.jv_history_scan_direction = [item[3] for item in jv_history]
         self.jv_history_fill_factor = [item[4] for item in jv_history]
         self.jv_history_open_circuit_voltage = [item[5] for item in jv_history]
-        self.jv_history_short_circuit_current_density = [
-            item[6] for item in jv_history
-        ]
+        self.jv_history_short_circuit_current_density = [item[6] for item in jv_history]
 
         jv_history_labels = (
             'JV History',

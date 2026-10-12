@@ -27,6 +27,8 @@ from baseclasses.solar_energy.jvmeasurement import (
 
 
 def get_jv_archive(jv_dict, mainfile, jvm, archive, logger=None):
+    # WARNING: needs following change in your local plugin:
+    # get_jv_archive(jv_dict, self.data_file, self, archive, logger)
     # Each jv_set.normalize() call below is required, not optional: jv_curve
     # is built here, inside the measurement's own normalize() call, and
     # NOMAD's recursive normalizer captures a section's subsections *before*

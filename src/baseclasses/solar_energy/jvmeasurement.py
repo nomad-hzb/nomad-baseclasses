@@ -58,10 +58,15 @@ def _match_explicit_pixel_token(token, prev_token):
     fused = _JV_PIXEL_FUSED_RE.fullmatch(low)
     if fused:
         return f'pixel_{fused.group(1)}'
-    if re.fullmatch(r'\d{1,2}', low) and prev_token and prev_token.lower() in (
-        'pixel',
-        'px',
-        'p',
+    if (
+        re.fullmatch(r'\d{1,2}', low)
+        and prev_token
+        and prev_token.lower()
+        in (
+            'pixel',
+            'px',
+            'p',
+        )
     ):
         return f'pixel_{low}'
     return None
@@ -391,7 +396,7 @@ class SolarCellJVCurve(SolarCellJV):
             'Normalized pixel identifier ("pixel_<n>"), auto-derived from '
             'cell_name during normalization regardless of which plugin/parser '
             'produced it - see parse_jv_curve_name(). Left unset when cell_name '
-            "doesn't contain a recognizable pixel pattern, or when this curve "
+            'does not contain a recognizable pixel pattern, or when this curve'
             'is the only one in its measurement (nothing to disambiguate).'
         ),
     )
