@@ -52,8 +52,11 @@ layer_type_aliases = {
     'hole transport': 'Hole Transport Layer',
     'hole transport layer': 'Hole Transport Layer',
     'htl': 'Hole Transport Layer',
+    # Back Contact (kept separate from 'Contact', it is used to fill
+    # results.properties.optoelectronic.solar_cell.back_contact)
+    'back contact': 'Back Contact',
+    'backcontact': 'Back Contact',
     # Contact
-    'back contact': 'Contact',
     'contact': 'Contact',
     'metal contact': 'Contact',
     'top contact': 'Contact',
@@ -61,6 +64,20 @@ layer_type_aliases = {
     'top_electrode': 'Contact',
     'topcontact': 'Contact',
     'tco': 'Contact',
+    # Multijunction layers
+    'front contact': 'Front Contact',
+    'transparent conducting oxide': 'Transparent Conducting Oxide',
+    'recombination layer': 'Recombination Layer',
+    'recombination': 'Recombination Layer',
+    'interconnecting layer': 'Recombination Layer',
+    'interconnection layer': 'Recombination Layer',
+    'tunnel junction': 'Recombination Layer',
+    'middle contact': 'Middle Contact',
+    'self-assembled monolayer': 'Self-Assembled Monolayer',
+    'self assembled monolayer': 'Self-Assembled Monolayer',
+    'sam': 'Self-Assembled Monolayer',
+    'optical spacer': 'Optical Spacer',
+    'spectral splitter': 'Spectral Splitter',
 }
 
 # ════════════════════════════════════════════════════════════════

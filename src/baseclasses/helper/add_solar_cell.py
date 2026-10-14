@@ -69,6 +69,30 @@ def add_band_gap(archive, band_gap):
         archive.results.properties.electronic = electronic
 
 
+def add_band_gaps(archive, band_gaps):
+    """Adds one band gap per absorber, e.g. for the subcells of a multijunction
+    device. band_gaps is a list of (value in eV, label) tuples, the label says
+    which subcell the band gap belongs to.
+    """
+    band_gaps = [(value, label) for value, label in band_gaps if value is not None]
+    if not band_gaps:
+        return
+    if not archive.results:
+        archive.results = Results()
+    if not archive.results.properties:
+        archive.results.properties = Properties()
+    archive.results.properties.electronic = ElectronicProperties(
+        band_gap=[
+            BandGap(
+                value=np.float64(value) * ureg('eV'),
+                label=label,
+                provenance=ProvenanceTracker(label=label),
+            )
+            for value, label in band_gaps
+        ]
+    )
+
+
 # def addOpticalBandGap(archive):
 #     '''Adds metainfo structure for solar cell data.'''
 #     if not archive.results:

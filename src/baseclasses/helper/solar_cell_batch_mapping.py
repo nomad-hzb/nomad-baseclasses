@@ -27,6 +27,7 @@ from baseclasses.material_processes_misc.laser_scribing import LaserScribingProp
 from baseclasses.product_info import ProductInfo
 from baseclasses.solar_energy.carbonpaste import CarbonPasteLayerProperties
 from baseclasses.solar_energy.module import ModuleConfiguration
+from baseclasses.solar_energy.multijunction import MultijunctionConfiguration
 from baseclasses.solution import Solution, SolutionChemical, SolutionWaschingFiltration
 from baseclasses.vapour_based_deposition.atomic_layer_deposition import (
     ALDMaterial,
@@ -161,6 +162,14 @@ def get_bool_value(data, key, default=False):
     return str(value).strip().lower() in ('true', '1', 'yes', 'x')
 
 
+def get_int_value(data, key, default=None):
+    """Parse a numeric spreadsheet cell into an int, e.g. 2.0 -> 2."""
+    value = get_value(data, key, None)
+    if value is None:
+        return default
+    return int(value)
+
+
 def get_datetime(data, key):
     """
     Parse datetime from data using multiple date formats.
@@ -217,13 +226,14 @@ def get_datetime(data, key):
 
 def map_basic_sample(data, substrate_name, upload_id, sample_class):
     parent_id = get_value(data, 'Parent ID', None, False)
+    number_of_junctions = get_int_value(data, 'Number of junctions')
     archive = sample_class(
         datetime=get_datetime(data, 'Date'),
         name=data['Nomad ID'],
         lab_id=data['Nomad ID'],
         substrate=get_reference(upload_id, substrate_name) if substrate_name else None,
         description=get_value(data, 'Variation', None, False),
-        number_of_junctions=get_value(data, 'Number of junctions', None),
+        number_of_junctions=number_of_junctions,
         architecture=get_value(data, 'Architecture', None, False),
     )
     if hasattr(archive, 'module_configuration'):
@@ -234,6 +244,16 @@ def map_basic_sample(data, substrate_name, upload_id, sample_class):
                  data, 'Module dimension after encapsulation', None, False
             ),
 
+        )
+    number_of_terminals = get_int_value(data, 'Number of terminals')
+    tandem_integration = get_value(data, 'Tandem integration', None, False)
+    if hasattr(archive, 'multijunction_configuration') and (
+        number_of_terminals is not None or tandem_integration is not None
+    ):
+        archive.multijunction_configuration = MultijunctionConfiguration(
+            integration=tandem_integration,
+            number_of_terminals=number_of_terminals,
+            number_of_junctions=number_of_junctions,
         )
     if parent_id:
         archive.parent = CompositeSystemReference(
@@ -359,6 +379,7 @@ def map_layer(data):
         'layer_thickness': get_value(data, 'Layer thickness [nm]', None, unit='nm'),
         'layer_chemical_id': get_value(data, 'Layer chemical ID', None, False),
         'product_info': create_product_info(data, 'Layer'),
+        'subcell_index': get_int_value(data, 'Subcell'),
     }
 
     # Guard clause: handle Carbon Paste Layer early

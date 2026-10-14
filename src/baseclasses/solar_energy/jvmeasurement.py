@@ -443,6 +443,28 @@ class JVMeasurement(BaseMeasurement):
         ),
     )
 
+    subcell_index = Quantity(
+        type=int,
+        default=0,
+        description="""
+            For multijunction devices: which part of the device was measured.
+            0 = the complete device; 1 = the bottom subcell; 2 = the second
+            subcell; 3 = the third subcell. Only measurements with 0 are used for
+            the device efficiency.
+            """,
+        a_eln=dict(component='NumberEditQuantity', props=dict(minValue=0)),
+    )
+
+    filtered_by_upper_subcells = Quantity(
+        type=bool,
+        description="""
+            TRUE if a subcell was measured under light filtered through the
+            subcells above it, e.g. a silicon bottom cell measured below a
+            perovskite top cell (standard for 4-terminal efficiency).
+            """,
+        a_eln=dict(component='BoolEditQuantity'),
+    )
+
     jv_curve = SubSection(
         links=['http://purl.obolibrary.org/obo/OBI_0000299'],
         section_def=SolarCellJVCurveCustom,
