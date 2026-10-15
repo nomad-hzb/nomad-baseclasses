@@ -63,10 +63,12 @@ layer_type_aliases = {
     'top electrode': 'Contact',
     'top_electrode': 'Contact',
     'topcontact': 'Contact',
-    'tco': 'Contact',
+    # Transparent Conducting Oxide
+    'tco': 'Transparent Conducting Oxide',
+    'transparent conducting oxide': 'Transparent Conducting Oxide',
+    'transparent conductive oxide': 'Transparent Conducting Oxide',
     # Multijunction layers
     'front contact': 'Front Contact',
-    'transparent conducting oxide': 'Transparent Conducting Oxide',
     'recombination layer': 'Recombination Layer',
     'recombination': 'Recombination Layer',
     'interconnecting layer': 'Recombination Layer',
