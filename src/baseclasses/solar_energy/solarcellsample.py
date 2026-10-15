@@ -88,7 +88,9 @@ def collectJVMeasurement(entry, entry_id, entry_data):
         for curve in entry_data['jv_curve']
     ]
     device_area = entry_data['active_area'] if 'active_area' in entry_data else np.nan
-    subcell_index = entry_data['subcell_index'] if 'subcell_index' in entry_data else 0
+    subcell_index = (
+        entry_data['subcell_index'] if 'subcell_index' in entry_data else None
+    )
 
     entry[entry_id].update(
         {
@@ -490,7 +492,7 @@ class SolcarCellSample(CompositeSystem):
         jv_eff_val = 0
         for entry in result_data['JVs']:
             # only measurements on the complete device give the device efficiency
-            if result_data['JVs'][entry].get('subcell_index', 0) not in (0, None):
+            if result_data['JVs'][entry]['subcell_index']:
                 continue
             for j, eff in enumerate(result_data['JVs'][entry]['efficiency']):
                 if not np.isnan(eff) and eff > jv_eff_val:

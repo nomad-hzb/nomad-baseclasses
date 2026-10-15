@@ -282,29 +282,6 @@ class SolarCellEQE(PlotSection):
         a_eln=dict(component='NumberEditQuantity'),
     )
 
-    light_bias_wavelength = Quantity(
-        type=np.dtype(np.float64),
-        unit='nm',
-        shape=[],
-        description="""
-        Peak wavelength of the bias light. For multijunction devices the bias
-        light saturates the other subcells, e.g. blue bias light to measure the
-        bottom subcell.
-        """,
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='nm'),
-    )
-
-    bias_voltage = Quantity(
-        type=np.dtype(np.float64),
-        unit='V',
-        shape=[],
-        description="""
-        Voltage bias applied during the EQE measurement, e.g. to operate the
-        measured subcell of a 2-terminal multijunction device near short circuit.
-        """,
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
-    )
-
     bandgap_eqe = Quantity(
         links=[
             'https://purl.archive.org/tfsco/TFSCO_00002140',

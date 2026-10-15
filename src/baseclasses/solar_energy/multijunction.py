@@ -39,10 +39,7 @@ class SubcellConfiguration(ArchiveSection):
     declares itself as part of the multijunction (part_of_multijunction).
     """
 
-    m_def = Section(
-        label_quantity='absorber_material',
-        a_eln=dict(hide=['absorber_material_from_sample', 'band_gap_from_sample']),
-    )
+    m_def = Section(label_quantity='absorber_material')
 
     subcell_index = Quantity(
         type=int,
@@ -57,8 +54,9 @@ class SubcellConfiguration(ArchiveSection):
     absorber_material = Quantity(
         type=str,
         description="""
-            The absorber material, e.g. Cs0.05FA0.8MA0.15Pb(I0.8Br0.2)3. Follows
-            the absorber layers of the subcell sample, unless changed by hand.
+            The absorber material, e.g. Cs0.05FA0.8MA0.15Pb(I0.8Br0.2)3. Filled
+            from the absorber layers of the subcell sample when empty, so a value
+            entered by hand is kept. Clear it to take the sample's value again.
             """,
         a_eln=dict(component='StringEditQuantity'),
     )
@@ -67,9 +65,9 @@ class SubcellConfiguration(ArchiveSection):
         type=np.dtype(np.float64),
         unit='eV',
         description="""
-            Band gap of the subcell absorber. Follows the EQE measured on this
-            subcell in the device, otherwise the band gap of the subcell sample,
-            unless changed by hand.
+            Band gap of the subcell absorber. Filled when empty from the EQE
+            measured on this subcell in the device, otherwise from the band gap
+            of the subcell sample. Clear it to take the measured value again.
             """,
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='eV'),
     )
@@ -82,19 +80,6 @@ class SubcellConfiguration(ArchiveSection):
             subcell from the results of its subcell sample.
             """,
     )
-
-    absorber_material_from_sample = Quantity(type=str)
-
-    band_gap_from_sample = Quantity(type=np.dtype(np.float64), unit='eV')
-
-    def follow_sample(self, name, value):
-        """Sets the quantity `name` to the value taken from the subcell sample or
-        its measurements, unless it was changed by hand since it was last set.
-        The last automatic value is kept in the hidden `<name>_from_sample`."""
-        current = getattr(self, name)
-        if current is None or current == getattr(self, f'{name}_from_sample'):
-            setattr(self, name, value)
-        setattr(self, f'{name}_from_sample', value)
 
 
 class MultijunctionReference(CompositeSystemReference):
@@ -191,13 +176,13 @@ class MultijunctionConfiguration(ArchiveSection):
                 subcell = SubcellConfiguration(subcell_index=index)
                 self.m_add_sub_section(MultijunctionConfiguration.subcells, subcell)
             subcell.subcell_sample = subcell_sample['reference']
-            subcell.follow_sample(
-                'absorber_material', ', '.join(subcell_sample['absorber']) or None
-            )
+            if subcell.absorber_material is None:
+                subcell.absorber_material = (
+                    ', '.join(subcell_sample['absorber']) or None
+                )
             band_gap = eqe_band_gaps.get(index, subcell_sample['band_gap'])
-            subcell.follow_sample(
-                'band_gap', band_gap * ureg('eV') if band_gap is not None else None
-            )
+            if subcell.band_gap is None and band_gap is not None:
+                subcell.band_gap = band_gap * ureg('eV')
 
             # The top subcell gets full light, so the efficiency of its own
             # sample can be used. Lower subcells need a measurement under the

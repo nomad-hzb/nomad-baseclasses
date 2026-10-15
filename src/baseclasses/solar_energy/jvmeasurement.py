@@ -445,14 +445,14 @@ class JVMeasurement(BaseMeasurement):
 
     subcell_index = Quantity(
         type=int,
-        default=0,
         description="""
-            For multijunction devices: which part of the device was measured.
-            0 = the complete device; 1 = the bottom subcell; 2 = the second
-            subcell; 3 = the third subcell. Only measurements with 0 are used for
-            the device efficiency.
+            For a measurement on a multijunction sample: the subcell measured,
+            1 = the bottom subcell, 2 = the second subcell. Set from a subN tag in
+            the file name, e.g. <sample ID>.sub1.filtered.jv.txt. Empty for a
+            measurement of the complete sample; only those give the device
+            efficiency.
             """,
-        a_eln=dict(component='NumberEditQuantity', props=dict(minValue=0)),
+        a_eln=dict(component='NumberEditQuantity', props=dict(minValue=1)),
     )
 
     filtered_by_upper_subcells = Quantity(

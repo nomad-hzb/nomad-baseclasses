@@ -165,14 +165,6 @@ def get_bool_value(data, key, default=False):
     return str(value).strip().lower() in ('true', '1', 'yes', 'x')
 
 
-def get_int_value(data, key, default=None):
-    """Parse a numeric spreadsheet cell into an int, e.g. 2.0 -> 2."""
-    value = get_value(data, key, None)
-    if value is None:
-        return default
-    return int(value)
-
-
 def get_datetime(data, key):
     """
     Parse datetime from data using multiple date formats.
@@ -235,7 +227,7 @@ def map_basic_sample(data, substrate_name, upload_id, sample_class):
         lab_id=data['Nomad ID'],
         substrate=get_reference(upload_id, substrate_name) if substrate_name else None,
         description=get_value(data, 'Variation', None, False),
-        number_of_junctions=get_int_value(data, 'Number of junctions'),
+        number_of_junctions=get_value(data, 'Number of junctions', None),
         architecture=get_value(data, 'Architecture', None, False),
     )
     if hasattr(archive, 'module_configuration'):
@@ -247,13 +239,13 @@ def map_basic_sample(data, substrate_name, upload_id, sample_class):
             ),
 
         )
-    number_of_terminals = get_int_value(data, 'Number of terminals')
-    tandem_integration = get_value(data, 'Tandem integration', None, False)
+    number_of_terminals = get_value(data, 'Number of terminals', None)
+    integration = get_value(data, 'Multijunction integration', None, False)
     if hasattr(archive, 'multijunction_configuration') and (
-        number_of_terminals is not None or tandem_integration is not None
+        number_of_terminals is not None or integration is not None
     ):
         archive.multijunction_configuration = MultijunctionConfiguration(
-            integration=tandem_integration,
+            integration=integration,
             number_of_terminals=number_of_terminals,
         )
     if parent_id:
@@ -261,41 +253,31 @@ def map_basic_sample(data, substrate_name, upload_id, sample_class):
             reference=get_reference(upload_id, f'{parent_id}.archive.json'),
             lab_id=parent_id,
         )
-    if hasattr(archive, 'part_of_multijunction'):
-        archive.part_of_multijunction = map_multijunction_references(data, upload_id)
+    # A subcell of one or more multijunction samples: 'Multijunction ID' holds
+    # their Nomad IDs separated by commas, 'Subcell index' one index for all of
+    # them or one per ID.
+    multijunction_ids = get_value(data, 'Multijunction ID', None, False)
+    if multijunction_ids and hasattr(archive, 'part_of_multijunction'):
+        multijunction_ids = [i.strip() for i in multijunction_ids.split(',')]
+        subcell_indices = get_value(data, 'Subcell index', '', False).split(',')
+        subcell_indices = [i for i in subcell_indices if i.strip()]
+        if len(subcell_indices) == 1:
+            subcell_indices = subcell_indices * len(multijunction_ids)
+        if len(subcell_indices) != len(multijunction_ids):
+            raise ValueError(
+                f'{data["Nomad ID"]}: give one Subcell index, '
+                'or one per Multijunction ID'
+            )
+        archive.part_of_multijunction = [
+            MultijunctionReference(
+                reference=get_reference(upload_id, f'{mj_id}.archive.json'),
+                lab_id=mj_id,
+                subcell_index=float(index),
+            )
+            for mj_id, index in zip(multijunction_ids, subcell_indices)
+        ]
 
     return (data['Nomad ID'], archive)
-
-
-def map_multijunction_references(data, upload_id):
-    """
-    A sample that is a subcell of multijunction devices. 'Multijunction ID' holds
-    one or more Nomad IDs separated by commas, 'Subcell index' one index for all
-    of them or one index per ID, e.g. 'Multijunction ID' = 'HZB_X_4T-1, HZB_X_4T-2'
-    and 'Subcell index' = 1.
-    """
-    multijunction_ids = get_value(data, 'Multijunction ID', None, False)
-    subcell_indices = get_value(data, 'Subcell index', None, False)
-    if not multijunction_ids:
-        return []
-    multijunction_ids = [i.strip() for i in multijunction_ids.split(',') if i.strip()]
-    subcell_indices = [
-        int(float(i)) for i in str(subcell_indices or '').split(',') if i.strip()
-    ]
-    if len(subcell_indices) == 1:
-        subcell_indices = subcell_indices * len(multijunction_ids)
-    if len(subcell_indices) != len(multijunction_ids):
-        raise ValueError(
-            f'{data["Nomad ID"]}: give one Subcell index, or one per Multijunction ID'
-        )
-    return [
-        MultijunctionReference(
-            reference=get_reference(upload_id, f'{multijunction_id}.archive.json'),
-            lab_id=multijunction_id,
-            subcell_index=subcell_index,
-        )
-        for multijunction_id, subcell_index in zip(multijunction_ids, subcell_indices)
-    ]
 
 
 def map_batch(sample_ids, batch_id, upload_id, batch_class):
