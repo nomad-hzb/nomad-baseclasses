@@ -393,18 +393,6 @@ class LayerProperties(ArchiveSection):
         ),
     )
 
-    subcell_index = Quantity(
-        type=int,
-        description="""
-            For multijunction devices: the subcell the layer belongs to, counted
-            from the bottom of the device (the side furthest from the sun).
-            0 = a layer shared by the subcells, e.g. a recombination layer;
-            1 = bottom subcell; 2 = second subcell; 3 = third subcell.
-            Leave empty for single-junction devices.
-            """,
-        a_eln=dict(component='NumberEditQuantity', props=dict(minValue=0)),
-    )
-
     layer_material_name = Quantity(
         type=str,
         # links=["https://www.helmholtz-berlin.de"],

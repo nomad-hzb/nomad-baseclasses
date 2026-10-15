@@ -27,7 +27,10 @@ from baseclasses.material_processes_misc.laser_scribing import LaserScribingProp
 from baseclasses.product_info import ProductInfo
 from baseclasses.solar_energy.carbonpaste import CarbonPasteLayerProperties
 from baseclasses.solar_energy.module import ModuleConfiguration
-from baseclasses.solar_energy.multijunction import MultijunctionConfiguration
+from baseclasses.solar_energy.multijunction import (
+    MultijunctionConfiguration,
+    MultijunctionReference,
+)
 from baseclasses.solution import Solution, SolutionChemical, SolutionWaschingFiltration
 from baseclasses.vapour_based_deposition.atomic_layer_deposition import (
     ALDMaterial,
@@ -260,8 +263,41 @@ def map_basic_sample(data, substrate_name, upload_id, sample_class):
             reference=get_reference(upload_id, f'{parent_id}.archive.json'),
             lab_id=parent_id,
         )
+    if hasattr(archive, 'part_of_multijunction'):
+        archive.part_of_multijunction = map_multijunction_references(data, upload_id)
 
     return (data['Nomad ID'], archive)
+
+
+def map_multijunction_references(data, upload_id):
+    """
+    A sample that is a subcell of multijunction devices. 'Multijunction ID' holds
+    one or more Nomad IDs separated by commas, 'Subcell index' one index for all
+    of them or one index per ID, e.g. 'Multijunction ID' = 'HZB_X_4T-1, HZB_X_4T-2'
+    and 'Subcell index' = 1.
+    """
+    multijunction_ids = get_value(data, 'Multijunction ID', None, False)
+    subcell_indices = get_value(data, 'Subcell index', None, False)
+    if not multijunction_ids:
+        return []
+    multijunction_ids = [i.strip() for i in multijunction_ids.split(',') if i.strip()]
+    subcell_indices = [
+        int(float(i)) for i in str(subcell_indices or '').split(',') if i.strip()
+    ]
+    if len(subcell_indices) == 1:
+        subcell_indices = subcell_indices * len(multijunction_ids)
+    if len(subcell_indices) != len(multijunction_ids):
+        raise ValueError(
+            f'{data["Nomad ID"]}: give one Subcell index, or one per Multijunction ID'
+        )
+    return [
+        MultijunctionReference(
+            reference=get_reference(upload_id, f'{multijunction_id}.archive.json'),
+            lab_id=multijunction_id,
+            subcell_index=subcell_index,
+        )
+        for multijunction_id, subcell_index in zip(multijunction_ids, subcell_indices)
+    ]
 
 
 def map_batch(sample_ids, batch_id, upload_id, batch_class):
@@ -379,7 +415,6 @@ def map_layer(data):
         'layer_thickness': get_value(data, 'Layer thickness [nm]', None, unit='nm'),
         'layer_chemical_id': get_value(data, 'Layer chemical ID', None, False),
         'product_info': create_product_info(data, 'Layer'),
-        'subcell_index': get_int_value(data, 'Subcell'),
     }
 
     # Guard clause: handle Carbon Paste Layer early

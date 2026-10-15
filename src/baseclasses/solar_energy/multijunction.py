@@ -18,7 +18,10 @@
 
 import numpy as np
 from nomad.datamodel.data import ArchiveSection
-from nomad.datamodel.metainfo.basesections import CompositeSystem
+from nomad.datamodel.metainfo.basesections import (
+    CompositeSystem,
+    CompositeSystemReference,
+)
 from nomad.metainfo import Quantity, Reference, Section, SubSection
 
 # Names and conventions follow the tandem schema of
@@ -33,7 +36,10 @@ class SubcellConfiguration(ArchiveSection):
     One subcell (junction) of a multijunction device.
     """
 
-    m_def = Section(label_quantity='absorber_technology')
+    m_def = Section(
+        label_quantity='absorber_material',
+        a_eln=dict(hide=['absorber_material_from_sample']),
+    )
 
     subcell_index = Quantity(
         type=int,
@@ -46,32 +52,31 @@ class SubcellConfiguration(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity', props=dict(minValue=1)),
     )
 
-    absorber_technology = Quantity(
-        type=str,
-        description='The photoabsorber technology of the subcell.',
-        a_eln=dict(
-            component='EnumEditQuantity',
-            props=dict(
-                suggestions=[
-                    'Perovskite',
-                    'Silicon',
-                    'CIGS',
-                    'CZTS',
-                    'CdTe',
-                    'GaAs',
-                    'OPV',
-                    'Quantum dot',
-                    'Other',
-                ]
-            ),
-        ),
-    )
-
     absorber_material = Quantity(
         type=str,
-        description='The absorber material, e.g. Cs0.05FA0.8MA0.15Pb(I0.8Br0.2)3.',
+        description="""
+            The absorber material, e.g. Cs0.05FA0.8MA0.15Pb(I0.8Br0.2)3. Filled
+            from the absorber layers of the subcell sample and kept up to date,
+            unless it is changed by hand.
+            """,
         a_eln=dict(component='StringEditQuantity'),
     )
+
+    absorber_material_from_sample = Quantity(
+        type=str,
+        description="""
+            The absorber material last taken from the subcell sample. If
+            absorber_material still equals it, it was not changed by hand and is
+            updated from the subcell sample.
+            """,
+    )
+
+    def update_absorber_material(self, absorber_material):
+        """Takes the absorber material of the subcell sample, unless the user
+        changed absorber_material by hand since it was last filled."""
+        if self.absorber_material in (None, self.absorber_material_from_sample):
+            self.absorber_material = absorber_material
+        self.absorber_material_from_sample = absorber_material
 
     band_gap = Quantity(
         type=np.dtype(np.float64),
@@ -102,20 +107,41 @@ class SubcellConfiguration(ArchiveSection):
         type=Reference(CompositeSystem.m_def),
         description="""
             The sample entry of this subcell, if it exists as a separate sample,
-            e.g. the two cells of a stacked 4-terminal device or a pre-made
-            bottom cell.
+            e.g. the two cells of a mechanically stacked 4-terminal device.
+            Filled automatically from the samples that declare themselves as a
+            subcell of this multijunction (part_of_multijunction).
             """,
         a_eln=dict(component='ReferenceEditQuantity'),
     )
 
-    integrated_jsc = Quantity(
+    efficiency = Quantity(
         type=np.dtype(np.float64),
-        unit='mA/cm**2',
         description="""
-            Short-circuit current density of the subcell integrated from its EQE
-            spectrum. Filled from EQE measurements on this subcell.
+            Best efficiency (in %) of the subcell. Taken from JV measurements on
+            the multijunction sample with this subcell_index, otherwise for the
+            top subcell from the results of its subcell sample.
             """,
-        a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='mA/cm**2'),
+    )
+
+
+class MultijunctionReference(CompositeSystemReference):
+    """
+    Present on a sample that is a subcell of a multijunction device: the
+    multijunction sample it belongs to and its position in it. Repeats, so the
+    same subcell sample (e.g. a silicon bottom cell) can be combined with
+    different top cells in several multijunction devices.
+    """
+
+    m_def = Section(label_quantity='lab_id')
+
+    subcell_index = Quantity(
+        type=int,
+        description="""
+            Position of this sample in the multijunction, counted from the bottom
+            of the device (the side furthest from the sun): 1 = bottom subcell,
+            2 = second subcell (the top cell in a tandem), 3 = third subcell.
+            """,
+        a_eln=dict(component='NumberEditQuantity', props=dict(minValue=1)),
     )
 
 
@@ -134,8 +160,8 @@ class MultijunctionConfiguration(ArchiveSection):
             How the subcells are combined.
             - *Monolithic*: subcells deposited on top of each other and connected
               through a recombination or interconnecting layer.
-            - *Mechanically Stacked*: independently madesubcells on top of each other
-              (typically 4-terminal).
+            - *Mechanically Stacked*: independently made subcells on top of each
+              other (typically 4-terminal).
             - *Laminated*: subcells made separately and laminated together.
             - *Spectral splitter*: the light is split and sent to separate cells.
             """,
@@ -181,25 +207,8 @@ class MultijunctionConfiguration(ArchiveSection):
     photoabsorbers_string = Quantity(
         type=str,
         description="""
-            The photoabsorbers from bottom to top, e.g. "Silicon-Perovskite".
+            The absorber materials from bottom to top, e.g. "Si-CsFAPbIBr".
             Generated from the subcells.
-            """,
-    )
-
-    current_limiting_subcell = Quantity(
-        type=int,
-        description="""
-            Index of the subcell with the lowest EQE-integrated current density.
-            Only set for 2-terminal devices, where it limits the device current.
-            """,
-    )
-
-    combined_efficiency = Quantity(
-        type=np.dtype(np.float64),
-        description="""
-            For devices with independently contacted subcells (4 terminals): the
-            sum of the best efficiencies (in %) measured on each subcell, with
-            lower subcells measured under light filtered by the subcells above.
             """,
     )
 
@@ -226,16 +235,9 @@ class MultijunctionConfiguration(ArchiveSection):
         if self.subcells and self.number_of_junctions is None:
             self.number_of_junctions = len(self.subcells)
 
-        absorbers = [s.absorber_technology or '-' for s in self.sorted_subcells()]
+        absorbers = [s.absorber_material or '-' for s in self.sorted_subcells()]
         if absorbers:
             self.photoabsorbers_string = '-'.join(absorbers)
-
-        self.current_limiting_subcell = None
-        if self.number_of_terminals == 2:
-            with_jsc = [s for s in self.subcells if s.integrated_jsc is not None]
-            if len(with_jsc) > 1:
-                limiting = min(with_jsc, key=lambda s: s.integrated_jsc)
-                self.current_limiting_subcell = limiting.subcell_index
 
     def normalize(self, archive, logger):
         super().normalize(archive, logger)

@@ -85,7 +85,6 @@ def add_band_gaps(archive, band_gaps):
         band_gap=[
             BandGap(
                 value=np.float64(value) * ureg('eV'),
-                label=label,
                 provenance=ProvenanceTracker(label=label),
             )
             for value, label in band_gaps
