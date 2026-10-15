@@ -229,14 +229,13 @@ def get_datetime(data, key):
 
 def map_basic_sample(data, substrate_name, upload_id, sample_class):
     parent_id = get_value(data, 'Parent ID', None, False)
-    number_of_junctions = get_int_value(data, 'Number of junctions')
     archive = sample_class(
         datetime=get_datetime(data, 'Date'),
         name=data['Nomad ID'],
         lab_id=data['Nomad ID'],
         substrate=get_reference(upload_id, substrate_name) if substrate_name else None,
         description=get_value(data, 'Variation', None, False),
-        number_of_junctions=number_of_junctions,
+        number_of_junctions=get_int_value(data, 'Number of junctions'),
         architecture=get_value(data, 'Architecture', None, False),
     )
     if hasattr(archive, 'module_configuration'):
@@ -256,7 +255,6 @@ def map_basic_sample(data, substrate_name, upload_id, sample_class):
         archive.multijunction_configuration = MultijunctionConfiguration(
             integration=tandem_integration,
             number_of_terminals=number_of_terminals,
-            number_of_junctions=number_of_junctions,
         )
     if parent_id:
         archive.parent = CompositeSystemReference(

@@ -305,18 +305,6 @@ class SolarCellEQE(PlotSection):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='V'),
     )
 
-    subcell_index = Quantity(
-        type=int,
-        shape=[],
-        description="""
-        For multijunction devices: the subcell this spectrum belongs to.
-        0 = the complete device; 1 = the bottom subcell; 2 = the second subcell;
-        3 = the third subcell. If empty, the subcell_index of the measurement is
-        used.
-        """,
-        a_eln=dict(component='NumberEditQuantity', props=dict(minValue=0)),
-    )
-
     bandgap_eqe = Quantity(
         links=[
             'https://purl.archive.org/tfsco/TFSCO_00002140',
@@ -527,13 +515,12 @@ class EQEMeasurement(BaseMeasurement):
 
     subcell_index = Quantity(
         type=int,
-        default=0,
         description="""
-        For multijunction devices: the subcell measured, used for all spectra
-        without their own subcell_index. 0 = the complete device; 1 = the bottom
-        subcell; 2 = the second subcell; 3 = the third subcell.
+        For a measurement on a multijunction sample: the subcell measured,
+        1 = the bottom subcell, 2 = the second subcell. Set from a subN tag in
+        the file name, e.g. <sample ID>.sub2.eqe.txt.
         """,
-        a_eln=dict(component='NumberEditQuantity', props=dict(minValue=0)),
+        a_eln=dict(component='NumberEditQuantity', props=dict(minValue=1)),
     )
 
     eqe_data = SubSection(section_def=SolarCellEQECustom, repeats=True)

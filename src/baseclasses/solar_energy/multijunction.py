@@ -23,105 +23,78 @@ from nomad.datamodel.metainfo.basesections import (
     CompositeSystemReference,
 )
 from nomad.metainfo import Quantity, Reference, Section, SubSection
+from nomad.units import ureg
 
 # Names and conventions follow the tandem schema of
-# nomad-perovskite-solar-cells-database (General, SubCellOrigin, device_subset),
-# so lab samples can later be mapped onto tandem database entries.
-# The same subcell_index is used on layers and measurements, where 0 stands for
-# the complete device or a layer shared by the subcells.
+# nomad-perovskite-solar-cells-database (General, device_subset), so lab samples
+# can later be mapped onto tandem database entries.
+# Subcells are counted from the bottom of the device (the side furthest from
+# the sun): 1 = bottom subcell, 2 = second subcell (the top cell in a tandem).
+# On measurements, subcell_index 0 stands for the complete device.
 
 
 class SubcellConfiguration(ArchiveSection):
     """
-    One subcell (junction) of a multijunction device.
+    One subcell of a multijunction device, filled from the subcell sample that
+    declares itself as part of the multijunction (part_of_multijunction).
     """
 
     m_def = Section(
         label_quantity='absorber_material',
-        a_eln=dict(hide=['absorber_material_from_sample']),
+        a_eln=dict(hide=['absorber_material_from_sample', 'band_gap_from_sample']),
     )
 
     subcell_index = Quantity(
         type=int,
-        description="""
-            Position of the subcell, counted from the bottom of the device (the
-            side furthest from the sun): 1 = bottom subcell, 2 = second subcell
-            (the top cell in a tandem), 3 = third subcell. Filled from the
-            position in the list if left empty.
-            """,
-        a_eln=dict(component='NumberEditQuantity', props=dict(minValue=1)),
+        description='Position of the subcell, 1 = bottom subcell.',
+    )
+
+    subcell_sample = Quantity(
+        type=Reference(CompositeSystem.m_def),
+        description='The sample entry of this subcell.',
     )
 
     absorber_material = Quantity(
         type=str,
         description="""
-            The absorber material, e.g. Cs0.05FA0.8MA0.15Pb(I0.8Br0.2)3. Filled
-            from the absorber layers of the subcell sample and kept up to date,
-            unless it is changed by hand.
+            The absorber material, e.g. Cs0.05FA0.8MA0.15Pb(I0.8Br0.2)3. Follows
+            the absorber layers of the subcell sample, unless changed by hand.
             """,
         a_eln=dict(component='StringEditQuantity'),
     )
-
-    absorber_material_from_sample = Quantity(
-        type=str,
-        description="""
-            The absorber material last taken from the subcell sample. If
-            absorber_material still equals it, it was not changed by hand and is
-            updated from the subcell sample.
-            """,
-    )
-
-    def update_absorber_material(self, absorber_material):
-        """Takes the absorber material of the subcell sample, unless the user
-        changed absorber_material by hand since it was last filled."""
-        if self.absorber_material in (None, self.absorber_material_from_sample):
-            self.absorber_material = absorber_material
-        self.absorber_material_from_sample = absorber_material
 
     band_gap = Quantity(
         type=np.dtype(np.float64),
         unit='eV',
         description="""
-            Band gap of the subcell absorber. If left empty, it is filled from EQE
-            spectra measured on this subcell.
+            Band gap of the subcell absorber. Follows the EQE measured on this
+            subcell in the device, otherwise the band gap of the subcell sample,
+            unless changed by hand.
             """,
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='eV'),
-    )
-
-    commercial = Quantity(
-        type=bool,
-        description="""
-            TRUE if the subcell was bought or provided ready-made (e.g. a silicon
-            bottom cell), FALSE if it was made in the lab.
-            """,
-        a_eln=dict(component='BoolEditQuantity'),
-    )
-
-    supplier = Quantity(
-        type=str,
-        description='Company or research group the subcell comes from.',
-        a_eln=dict(component='StringEditQuantity'),
-    )
-
-    subcell_sample = Quantity(
-        type=Reference(CompositeSystem.m_def),
-        description="""
-            The sample entry of this subcell, if it exists as a separate sample,
-            e.g. the two cells of a mechanically stacked 4-terminal device.
-            Filled automatically from the samples that declare themselves as a
-            subcell of this multijunction (part_of_multijunction).
-            """,
-        a_eln=dict(component='ReferenceEditQuantity'),
     )
 
     efficiency = Quantity(
         type=np.dtype(np.float64),
         description="""
-            Best efficiency (in %) of the subcell. Taken from JV measurements on
-            the multijunction sample with this subcell_index, otherwise for the
-            top subcell from the results of its subcell sample.
+            Best efficiency (in %) of the subcell. From JV measurements on the
+            multijunction sample with this subcell_index, otherwise for the top
+            subcell from the results of its subcell sample.
             """,
     )
+
+    absorber_material_from_sample = Quantity(type=str)
+
+    band_gap_from_sample = Quantity(type=np.dtype(np.float64), unit='eV')
+
+    def follow_sample(self, name, value):
+        """Sets the quantity `name` to the value taken from the subcell sample or
+        its measurements, unless it was changed by hand since it was last set.
+        The last automatic value is kept in the hidden `<name>_from_sample`."""
+        current = getattr(self, name)
+        if current is None or current == getattr(self, f'{name}_from_sample'):
+            setattr(self, name, value)
+        setattr(self, f'{name}_from_sample', value)
 
 
 class MultijunctionReference(CompositeSystemReference):
@@ -136,11 +109,7 @@ class MultijunctionReference(CompositeSystemReference):
 
     subcell_index = Quantity(
         type=int,
-        description="""
-            Position of this sample in the multijunction, counted from the bottom
-            of the device (the side furthest from the sun): 1 = bottom subcell,
-            2 = second subcell (the top cell in a tandem), 3 = third subcell.
-            """,
+        description='Position of this sample in the multijunction, 1 = bottom.',
         a_eln=dict(component='NumberEditQuantity', props=dict(minValue=1)),
     )
 
@@ -149,10 +118,8 @@ class MultijunctionConfiguration(ArchiveSection):
     """
     Present when the sample is a multijunction (tandem, triple junction, ...)
     device. Orthogonal to the module configuration: a tandem can also be a
-    module.
+    module. The number of junctions is SolcarCellSample.number_of_junctions.
     """
-
-    m_def = Section()
 
     integration = Quantity(
         type=str,
@@ -189,34 +156,11 @@ class MultijunctionConfiguration(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity', props=dict(minValue=2)),
     )
 
-    number_of_junctions = Quantity(
-        type=int,
-        description="""
-            Number of junctions (subcells). Taken from the number of subcells if
-            left empty.
-            """,
-        a_eln=dict(component='NumberEditQuantity', props=dict(minValue=2)),
-    )
-
     subcells = SubSection(
         section_def=SubcellConfiguration,
         description='The subcells, starting from the bottom of the device.',
         repeats=True,
     )
-
-    photoabsorbers_string = Quantity(
-        type=str,
-        description="""
-            The absorber materials from bottom to top, e.g. "Si-CsFAPbIBr".
-            Generated from the subcells.
-            """,
-    )
-
-    def sorted_subcells(self):
-        return sorted(
-            self.subcells,
-            key=lambda s: s.subcell_index if s.subcell_index is not None else 0,
-        )
 
     def get_subcell(self, subcell_index):
         for subcell in self.subcells:
@@ -224,21 +168,80 @@ class MultijunctionConfiguration(ArchiveSection):
                 return subcell
         return None
 
-    def derive_quantities(self):
-        """Fills the derived quantities. Called in normalize and again by the
-        sample after it filled values from the measurements, since sub-sections
-        are normalized before their parent section."""
-        for i, subcell in enumerate(self.subcells):
-            if subcell.subcell_index is None:
-                subcell.subcell_index = i + 1
+    def update_subcells(self, result_data, number_of_junctions):
+        """
+        Fills the subcells from what SolcarCellSample.normalize collected:
+        result_data['subcells'] are the subcell samples pointing to this
+        multijunction, result_data['EQEs'] and result_data['JVs'] the
+        measurements on the multijunction sample, each with a subcell_index.
+        """
+        eqe_band_gaps = best_per_subcell(result_data['EQEs'].values(), 'band_gap')
+        jv_efficiencies = best_per_subcell(result_data['JVs'].values(), 'efficiency')
+        subcell_samples = sorted(
+            result_data['subcells'].values(), key=lambda s: s['subcell_index']
+        )
+        top_index = number_of_junctions or max(
+            (s['subcell_index'] for s in subcell_samples), default=None
+        )
 
-        if self.subcells and self.number_of_junctions is None:
-            self.number_of_junctions = len(self.subcells)
+        for subcell_sample in subcell_samples:
+            index = subcell_sample['subcell_index']
+            subcell = self.get_subcell(index)
+            if subcell is None:
+                subcell = SubcellConfiguration(subcell_index=index)
+                self.m_add_sub_section(MultijunctionConfiguration.subcells, subcell)
+            subcell.subcell_sample = subcell_sample['reference']
+            subcell.follow_sample(
+                'absorber_material', ', '.join(subcell_sample['absorber']) or None
+            )
+            band_gap = eqe_band_gaps.get(index, subcell_sample['band_gap'])
+            subcell.follow_sample(
+                'band_gap', band_gap * ureg('eV') if band_gap is not None else None
+            )
 
-        absorbers = [s.absorber_material or '-' for s in self.sorted_subcells()]
-        if absorbers:
-            self.photoabsorbers_string = '-'.join(absorbers)
+            # The top subcell gets full light, so the efficiency of its own
+            # sample can be used. Lower subcells need a measurement under the
+            # cells above, which only exists on the multijunction sample.
+            subcell.efficiency = jv_efficiencies.get(index)
+            if subcell.efficiency is None and index == top_index:
+                subcell.efficiency = subcell_sample['efficiency']
 
-    def normalize(self, archive, logger):
-        super().normalize(archive, logger)
-        self.derive_quantities()
+    def four_terminal_efficiency(self, number_of_junctions):
+        """Sum of the subcell efficiencies of a 4-terminal device, if every
+        subcell has one."""
+        efficiencies = [s.efficiency for s in self.subcells if s.efficiency is not None]
+        if (
+            self.number_of_terminals == 4
+            and number_of_junctions
+            and len(efficiencies) == number_of_junctions
+        ):
+            return sum(efficiencies)
+        return None
+
+    def band_gaps(self):
+        """(value in eV, label) for each subcell with a band gap, bottom first."""
+        return [
+            (
+                s.band_gap.to('eV').magnitude,
+                f'subcell {s.subcell_index}'
+                + (f' - {s.absorber_material}' if s.absorber_material else ''),
+            )
+            for s in sorted(self.subcells, key=lambda s: s.subcell_index)
+            if s.band_gap is not None
+        ]
+
+
+def best_per_subcell(measurements, key):
+    """Highest value of `key` per subcell_index > 0, from collected JV or EQE
+    measurements whose `key` holds a list of values."""
+    best = {}
+    for measurement in measurements:
+        index = measurement.get('subcell_index')
+        if not index:
+            continue
+        for value in measurement[key]:
+            if value is None or np.isnan(value):
+                continue
+            if value > best.get(index, -1):
+                best[index] = value
+    return best

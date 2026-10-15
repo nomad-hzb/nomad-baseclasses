@@ -26,12 +26,9 @@ from nomad.units import ureg
 
 from .. import ReadableIdentifiersCustom
 from ..helper.add_solar_cell import add_band_gap, add_band_gaps, add_solar_cell
+from ..helper.utilities import get_reference
 from .module import ModuleConfiguration
-from .multijunction import (
-    MultijunctionConfiguration,
-    MultijunctionReference,
-    SubcellConfiguration,
-)
+from .multijunction import MultijunctionConfiguration, MultijunctionReference
 from .substrate import Substrate
 
 
@@ -107,28 +104,18 @@ def collectJVMeasurement(entry, entry_id, entry_data):
 
 
 def collectEQEMeasurement(entry, entry_id, entry_data):
-    measurement_subcell = (
-        entry_data['subcell_index'] if 'subcell_index' in entry_data else 0
-    )
-    spectra = []
-    if 'eqe_data' in entry_data:
-        spectra.extend(entry_data['eqe_data'])
-    if 'data' in entry_data:
-        spectra.append(entry_data['data'])
-
     band_gap = []
-    subcell_spectra = []
-    for eqe in spectra:
-        band_gap.append(eqe['bandgap_eqe'] if 'bandgap_eqe' in eqe else np.nan)
-        subcell_spectra.append(
-            {
-                'subcell_index': eqe['subcell_index']
-                if 'subcell_index' in eqe
-                else measurement_subcell,
-                'band_gap': eqe['bandgap_eqe'] if 'bandgap_eqe' in eqe else np.nan,
-            }
-        )
-    entry[entry_id].update({'band_gap': band_gap, 'spectra': subcell_spectra})
+    if 'eqe_data' in entry_data:
+        band_gap = [
+            eqe['bandgap_eqe'] if 'bandgap_eqe' in eqe else np.nan
+            for eqe in entry_data['eqe_data']
+        ]
+    if 'data' in entry_data and 'bandgap_eqe' in entry_data['data']:
+        band_gap.append(entry_data['data']['bandgap_eqe'])
+    subcell_index = (
+        entry_data['subcell_index'] if 'subcell_index' in entry_data else None
+    )
+    entry[entry_id].update({'band_gap': band_gap, 'subcell_index': subcell_index})
 
 
 SUBCELL_STACK_KEYS = (
@@ -165,7 +152,7 @@ def collectSubcellSample(entry, entry_id, upload_id, entry_archive, multijunctio
     entry[entry_id].update(
         {
             'subcell_index': subcell_index,
-            'reference': f'../uploads/{upload_id}/archive/{entry_id}#data',
+            'reference': get_reference(upload_id, entry_id),
             'efficiency': from_results(
                 'properties', 'optoelectronic', 'solar_cell', 'efficiency'
             ),
@@ -425,13 +412,6 @@ class SolcarCellSample(CompositeSystem):
     def normalize(self, archive, logger):
         super().normalize(archive, logger)
 
-        multijunction = self.multijunction_configuration
-        if multijunction is not None:
-            if multijunction.number_of_junctions is None:
-                multijunction.number_of_junctions = self.number_of_junctions
-            if multijunction.number_of_junctions is not None:
-                self.number_of_junctions = multijunction.number_of_junctions
-
         normalized_substrate = self.substrate
         if normalized_substrate is not None and hasattr(normalized_substrate, 'normalize'):
             try:
@@ -549,13 +529,15 @@ class SolcarCellSample(CompositeSystem):
                     result_data['JVs'][jv_key]['device_area'] * ureg('cm**2')
                 )
 
-        subcell_band_gaps_added = False
-        if multijunction is not None:
-            subcell_band_gaps_added = self.normalize_multijunction(
+        subcell_band_gaps = []
+        if self.multijunction_configuration is not None:
+            subcell_band_gaps = self.normalize_multijunction(
                 archive, result_data, has_device_jv=bool(jv_key)
             )
 
-        if not subcell_band_gaps_added:
+        if subcell_band_gaps:
+            add_band_gaps(archive, subcell_band_gaps)
+        else:
             eqe_eff_val = 0 * ureg('eV')
             for entry in result_data['EQEs']:
                 for bandgap in result_data['EQEs'][entry]['band_gap']:
@@ -580,8 +562,7 @@ class SolcarCellSample(CompositeSystem):
         if result_data['EQEs'] or result_data['JVs']:
             archive.results.material.functional_type = ['semiconductor', 'solarcell']
 
-        if multijunction is not None:
-            add_subcell_stacks(archive, result_data['subcells'].values())
+        add_subcell_stacks(archive, result_data['subcells'].values())
 
         for process in result_data['processes']:
             if process['layer_deposition']:
@@ -593,111 +574,15 @@ class SolcarCellSample(CompositeSystem):
         archive.results.material.elements = list(set(archive.results.material.elements))
 
     def normalize_multijunction(self, archive, result_data, has_device_jv):
-        """Fills the subcells from the subcell samples that point to this sample
-        and from measurements tagged with a subcell_index: band gap from EQE,
-        subcell efficiencies from JV and, for 4 terminals, their sum as the
-        device efficiency, and one band gap per subcell in the results.
-        Returns True if subcell band gaps were added."""
+        """Updates the subcells of a multijunction sample and, for 4 terminals
+        without a measurement of the complete device, sets the device efficiency
+        to the sum of the subcell efficiencies. Returns the subcell band gaps."""
         multijunction = self.multijunction_configuration
-        subcell_samples = list(result_data.get('subcells', {}).values())
-        self.add_subcell_samples(subcell_samples)
+        multijunction.update_subcells(result_data, self.number_of_junctions)
+        if self.number_of_junctions is None and multijunction.subcells:
+            self.number_of_junctions = len(multijunction.subcells)
 
-        # Highest band gap per subcell from the EQE spectra
-        eqe_band_gaps = {}
-        for entry in result_data['EQEs'].values():
-            for spectrum in entry.get('spectra', []):
-                index, band_gap = spectrum['subcell_index'], spectrum['band_gap']
-                if not index or band_gap is None or np.isnan(band_gap):
-                    continue
-                if band_gap > eqe_band_gaps.get(index, -1):
-                    eqe_band_gaps[index] = band_gap
-
-        for index, band_gap in eqe_band_gaps.items():
-            subcell = multijunction.get_subcell(index)
-            if subcell is not None and subcell.band_gap is None:
-                subcell.band_gap = band_gap * ureg('eV')
-
-        best_subcell_efficiency = self.subcell_efficiencies(
-            result_data['JVs'], subcell_samples
-        )
-        for subcell in multijunction.subcells:
-            subcell.efficiency = best_subcell_efficiency.get(subcell.subcell_index)
-
-        # 4 terminals: the device efficiency is the sum of the subcell
-        # efficiencies, unless the complete device was measured
-        n_subcells = multijunction.number_of_junctions or len(multijunction.subcells)
-        if (
-            multijunction.number_of_terminals == 4
-            and not has_device_jv
-            and n_subcells
-            and len(best_subcell_efficiency) == n_subcells
-        ):
-            archive.results.properties.optoelectronic.solar_cell.efficiency = sum(
-                best_subcell_efficiency.values()
-            )
-
-        multijunction.derive_quantities()
-
-        # One band gap per subcell in the results
-        band_gaps = []
-        for subcell in multijunction.sorted_subcells():
-            if subcell.band_gap is None:
-                continue
-            label = f'subcell {subcell.subcell_index}'
-            if subcell.absorber_material:
-                label += f' - {subcell.absorber_material}'
-            band_gaps.append((subcell.band_gap.to('eV').magnitude, label))
-        for index, band_gap in sorted(eqe_band_gaps.items()):
-            if multijunction.get_subcell(index) is None:
-                band_gaps.append((band_gap, f'subcell {index}'))
-        add_band_gaps(archive, band_gaps)
-        return bool(band_gaps)
-
-    def add_subcell_samples(self, subcell_samples):
-        """Adds the subcell samples that declare themselves as part of this
-        multijunction to its subcells. Values entered by hand are kept."""
-        multijunction = self.multijunction_configuration
-        for subcell_sample in subcell_samples:
-            index = subcell_sample['subcell_index']
-            subcell = multijunction.get_subcell(index)
-            if subcell is None:
-                subcell = SubcellConfiguration(subcell_index=index)
-                multijunction.m_add_sub_section(
-                    MultijunctionConfiguration.subcells, subcell
-                )
-            if subcell.subcell_sample is None:
-                subcell.subcell_sample = subcell_sample['reference']
-            subcell.update_absorber_material(
-                ', '.join(subcell_sample['absorber']) or None
-            )
-            if subcell.band_gap is None and subcell_sample['band_gap'] is not None:
-                subcell.band_gap = subcell_sample['band_gap'] * ureg('eV')
-
-    def subcell_efficiencies(self, jvs, subcell_samples):
-        """Best efficiency per subcell index. From JV measurements on this sample
-        tagged with a subcell_index (e.g. a bottom cell under filtered light).
-        The top subcell gets full light, so the efficiency of its own subcell
-        sample can be used instead. Lower subcells need a measurement under
-        filtered light, which only exists in combination with the cells above."""
-        multijunction = self.multijunction_configuration
-        best_subcell_efficiency = {}
-        for entry in jvs.values():
-            index = entry.get('subcell_index', 0)
-            if not index:
-                continue
-            for eff in entry['efficiency']:
-                if not np.isnan(eff) and eff > best_subcell_efficiency.get(index, -1):
-                    best_subcell_efficiency[index] = eff
-
-        top_index = multijunction.number_of_junctions or max(
-            (s.subcell_index for s in multijunction.subcells if s.subcell_index),
-            default=None,
-        )
-        for subcell_sample in subcell_samples:
-            if (
-                subcell_sample['subcell_index'] == top_index
-                and top_index not in best_subcell_efficiency
-                and subcell_sample['efficiency'] is not None
-            ):
-                best_subcell_efficiency[top_index] = subcell_sample['efficiency']
-        return best_subcell_efficiency
+        efficiency = multijunction.four_terminal_efficiency(self.number_of_junctions)
+        if efficiency is not None and not has_device_jv:
+            archive.results.properties.optoelectronic.solar_cell.efficiency = efficiency
+        return multijunction.band_gaps()
