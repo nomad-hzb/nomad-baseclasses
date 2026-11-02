@@ -740,7 +740,7 @@ class Equipment(Entity):
 
     m_def = Section(
         links=['https://w3id.org/nfdi4cat/voc4cat_0000187']
-    )  # link correted, was pointing to synthesis equip.: https://w3id.org/nfdi4cat/voc4cat_0000061
+    )  # link corrected, was pointing to synthesis equip.: https://w3id.org/nfdi4cat/voc4cat_0000061
 
     location = Quantity(type=str, a_eln=dict(component='StringEditQuantity'))
 
@@ -932,7 +932,12 @@ class ElectroChemicalSetup(CESample):
                 self.chemical_composition_or_formulas = ','.join(elements_formula)
 
         if self.counter_electrode is not None:
-            if self.counter_electrode.chemical_composition_or_formulas is not None:
+            if (
+                getattr(
+                    self.counter_electrode, 'chemical_composition_or_formulas', None
+                )
+                is not None
+            ):
                 elements_formula = [
                     self.chemical_composition_or_formulas,
                     self.counter_electrode.chemical_composition_or_formulas,
