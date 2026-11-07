@@ -56,9 +56,7 @@ class ModuleConfiguration(ArchiveSection):
         type=np.dtype(np.float64),
         unit='cm**2',
         description=(
-            'Total active area of the module. Computed in normalization as '
-            'substrate.active_area (falling back to pixel_area) × '
-            'substrate.number_of_pixels.'
+            'Total active area of the module (per-cell area × number of pixels.'
         ),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm**2'),
     )
@@ -67,8 +65,7 @@ class ModuleConfiguration(ArchiveSection):
         type=np.dtype(np.float64),
         unit='cm**2',
         description=(
-            'Total dead area of the module. '
-            'Computed as substrate.dead_area × substrate.number_of_pixels.'
+            'Total dead area of the module'
         ),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm**2'),
     )
@@ -76,16 +73,16 @@ class ModuleConfiguration(ArchiveSection):
     module_aperture_area = Quantity(
         type=np.dtype(np.float64),
         unit='cm**2',
-        description=('Total aperture area of the module (active + dead). '),
+        description=(
+            'Total aperture area of the module (active + dead).'
+        ),
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='cm**2'),
     )
 
     module_geometrical_fill_factor = Quantity(
         type=np.dtype(np.float64),
         description=(
-            'Ratio of module active area to module aperture area. '
-            'Equal to substrate.geometrical_fill_factor '
-            '(does not change with number of cells).'
+            'Ratio of module active area to module aperture area.'
         ),
         a_eln=dict(component='NumberEditQuantity'),
     )
@@ -98,4 +95,3 @@ class ModuleConfiguration(ArchiveSection):
         ),
         a_eln=dict(component='StringEditQuantity'),
     )
-

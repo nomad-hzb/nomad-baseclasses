@@ -229,11 +229,25 @@ def map_basic_sample(data, substrate_name, upload_id, sample_class):
     if hasattr(archive, 'module_configuration'):
         archive.module_configuration = ModuleConfiguration(
             is_module=get_bool_value(data, 'Is module', False),
-            pixel_connection=get_value(data, 'Pixel/cell connection', None, False),
+            pixel_connection=get_value(data, 'Pixel connection', None, False),
             module_dimension_after_encapsulation=get_value(
                  data, 'Module dimension after encapsulation', None, False
             ),
-
+            module_active_area=get_value(
+                data,
+                ['Module Active Area [cm^2]', 'Module Active Area [cm²]'],
+                None,
+                unit=['cm**2', 'cm**2'],
+            ),
+            module_dead_area=get_value(
+                data,
+                ['Module Dead Area [cm^2]', 'Module Dead Area [cm²]'],
+                None,
+                unit=['cm**2', 'cm**2'],
+            ),
+            module_geometrical_fill_factor=get_value(
+                data, 'Module Geometrical Fill Factor', None
+            ),
         )
     if parent_id:
         archive.parent = CompositeSystemReference(

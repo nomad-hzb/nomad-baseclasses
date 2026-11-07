@@ -447,35 +447,31 @@ class SolcarCellSample(CompositeSystem, PlotSection):
                 self.architecture
             )
 
-        # Compute module_active_area: per-cell area × number_of_pixels on substrate
-        if (
-            self.module_configuration
-            and self.module_configuration.is_module
-            and normalized_substrate
-        ):
-            n_pixels = normalized_substrate.number_of_pixels
-            per_cell_active = (
-                getattr(normalized_substrate, 'active_area', None)
-                or normalized_substrate.pixel_area
+        # module values are entered directly; only missing ones are derived
+        module = self.module_configuration
+        if module and module.is_module and module.module_active_area is not None:
+            if module.module_aperture_area is None:
+                if module.module_dead_area is not None:
+                    module.module_aperture_area = (
+                        module.module_active_area + module.module_dead_area
+                    )
+                elif module.module_geometrical_fill_factor:
+                    module.module_aperture_area = (
+                        module.module_active_area
+                        / module.module_geometrical_fill_factor
+                    )
+            if module.module_aperture_area:
+                if module.module_dead_area is None:
+                    module.module_dead_area = (
+                        module.module_aperture_area - module.module_active_area
+                    )
+                if module.module_geometrical_fill_factor is None:
+                    module.module_geometrical_fill_factor = float(
+                        module.module_active_area / module.module_aperture_area
+                    )
+            archive.results.properties.optoelectronic.solar_cell.device_area = (
+                module.module_active_area
             )
-            if per_cell_active is not None and n_pixels:
-                self.module_configuration.module_active_area = (
-                    per_cell_active * n_pixels
-                )
-            per_cell_dead = getattr(normalized_substrate, 'dead_area', None)
-            if per_cell_dead is not None and n_pixels:
-                self.module_configuration.module_dead_area = per_cell_dead * n_pixels
-
-            gff = getattr(normalized_substrate, 'geometrical_fill_factor', None)
-            if gff is not None:
-                self.module_configuration.module_geometrical_fill_factor = gff
-
-            module_active_area = self.module_configuration.module_active_area
-            module_dead_area = self.module_configuration.module_dead_area
-            if module_active_area is not None and module_dead_area is not None:
-                self.module_configuration.module_aperture_area = (
-                    module_active_area + module_dead_area
-                )
 
         result_data = collectSampleData(archive)
 
