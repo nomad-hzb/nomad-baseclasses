@@ -28,7 +28,7 @@ from nomad.metainfo import Datetime, Quantity, Reference, SubSection
 from unidecode import unidecode
 
 from baseclasses import PubChemPureSubstanceSectionCustom
-from baseclasses.chemical_energy import Equipment, Electrolyte
+from baseclasses.chemical_energy import Electrolyte, Equipment
 from baseclasses.chemical_energy.cesample import Deposition, SubstrateProperties
 from baseclasses.helper.utilities import create_short_id, export_lab_id
 

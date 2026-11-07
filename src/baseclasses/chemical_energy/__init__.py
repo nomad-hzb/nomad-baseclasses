@@ -53,9 +53,9 @@ from .electrochemical_impedance_spectroscopy import (
     ElectrochemicalImpedanceSpectroscopyMultiple,
 )
 from .electrolyser_performance import (
+    ACMDElectrode,
     ElectrolyserPerformanceEvaluation,
     ElectrolyserProperties,
-    ACMDElectrode,
 )
 from .galvanodynamic_sweep import GalvanodynamicSweep, LSGProperties
 from .general_process import GeneralProcess
