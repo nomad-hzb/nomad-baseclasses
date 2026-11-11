@@ -6,14 +6,14 @@ from nomad.units import ureg
 
 import baseclasses
 from baseclasses import PubChemPureSubstanceSectionCustom
-from baseclasses.chemical_energy.electrolyser_performance import (
-    ElectrolyserProperties,
-    ACMDElectrode,
-)
 from baseclasses.chemical_energy import (
     Environment,
     SubstanceWithConcentration,
     SubstrateProperties,
+)
+from baseclasses.chemical_energy.electrolyser_performance import (
+    ACMDElectrode,
+    ElectrolyserProperties,
 )
 
 
