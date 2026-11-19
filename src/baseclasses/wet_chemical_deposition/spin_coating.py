@@ -67,6 +67,17 @@ class SpinCoatingRecipeSteps(ArchiveSection):
         a_eln=dict(component='NumberEditQuantity', defaultDisplayUnit='rpm/s'),
     )
 
+    spin_delay = Quantity(
+        type=np.dtype(np.float64),
+        unit=('s'),
+        description='Delay before spinning starts',
+        a_eln=dict(
+            component='NumberEditQuantity',
+            defaultDisplayUnit='s',
+            props=dict(minValue=0),
+        ),
+    )
+
 
 class SpinCoatingRecipe(Entity):
     steps = SubSection(section_def=SpinCoatingRecipeSteps, repeats=True)
