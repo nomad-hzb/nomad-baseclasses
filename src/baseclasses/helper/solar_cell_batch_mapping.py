@@ -692,6 +692,7 @@ def map_spin_coating(i, j, lab_ids, data, upload_id, sc_class):
                 acceleration=get_value(
                     data, f'Acceleration {step}[rpm/s]', None, unit='rpm/s'
                 ),
+                spin_delay=get_value(data, 'Spin Delay [s]', None, unit='s'),
             )
             for step in ['', '1 ', '2 ', '3 ', '4 ']
             if get_value(data, f'Rotation time {step}[s]')
